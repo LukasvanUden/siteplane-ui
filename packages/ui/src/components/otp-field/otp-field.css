@@ -1,0 +1,110 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* Joined layout (layout="joined").
+   *
+   * The root is an InputGroup, so the field surface and its invalid state come
+   * from there, exactly as for an Input. The slots keep the state logic of the
+   * separate slots and only change where it is drawn:
+   *
+   * - The current slot, the focused one, takes the focus ring of a separate slot,
+   *   inside the field. The field itself takes no focus ring (design-rework.css),
+   *   so the ring marks the slot and not the whole field.
+   * - There is no caret and no highlight fill, as in a separate slot.
+   * - The other slots stay bare cells in the surface of the field.
+   * - A disabled field keeps its surface and fades, like the separate slots. */
+
+  /* An xl Input has the larger surface radius; the joined field follows it. */
+  [data-slot="otp-field"][data-layout="joined"][data-size="xl"] {
+    border-radius: var(--sp-rw-radius-surface);
+  }
+
+  /* A slot inside the field. The `[data-size]` term ranks this above the
+   * per-size rules that give a separate slot its own box: the slot takes its
+   * share of the field, and its ring runs flush along the edge of the field. */
+  :root
+    [data-slot="otp-field"][data-layout="joined"][data-size]
+    > [data-slot="otp-field-input"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  /* The first and the last slot follow the corners of the field. */
+  :root
+    [data-slot="otp-field"][data-layout="joined"][data-size]
+    > [data-slot="otp-field-input"]:first-of-type {
+    border-start-start-radius: inherit;
+    border-end-start-radius: inherit;
+  }
+
+  :root
+    [data-slot="otp-field"][data-layout="joined"][data-size]
+    > [data-slot="otp-field-input"]:last-of-type {
+    border-start-end-radius: inherit;
+    border-end-end-radius: inherit;
+  }
+
+  /* Only the focused slot is drawn. Its ring comes from the rule that gives a
+   * separate slot its ring (design-rework.css): the focus ring, or the invalid
+   * contour of an invalid field. */
+  :root
+    [data-slot="otp-field"][data-layout="joined"][data-size]
+    > [data-slot="otp-field-input"]:not(:focus-visible) {
+    box-shadow: none;
+  }
+
+  :root
+    [data-slot="otp-field"][data-layout="joined"][data-size]
+    > [data-slot="otp-field-input"]:disabled {
+    cursor: not-allowed;
+  }
+
+  /* The InputGroup darkens a disabled field with a subtle fill. A disabled OTP
+   * Field keeps its surface and only fades, in both layouts. */
+  :root
+    [data-slot="otp-field"][data-layout="joined"]:has(
+      [data-slot="otp-field-input"]:disabled
+    ) {
+    background-color: transparent;
+  }
+
+  /* One divider precedes every slot. Only the dividers that follow another slot
+   * show, so the first slot and the slot after a separator start without one. */
+  [data-slot="otp-field"][data-layout="joined"]
+    > [data-slot="separator"][data-orientation="vertical"] {
+    display: none;
+  }
+
+  [data-slot="otp-field"][data-layout="joined"]
+    > [data-slot="otp-field-input"]
+    + [data-slot="separator"][data-orientation="vertical"] {
+    display: block;
+    flex: none;
+    align-self: center;
+    width: var(--sp-rw-border-default);
+    height: var(--sp-rw-space-4);
+    border-radius: 0;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-state);
+  }
+
+  /* The dividers on both sides of the current slot give way to its ring. */
+  [data-slot="otp-field"][data-layout="joined"]
+    > [data-slot="separator"][data-orientation="vertical"]:has(
+      + [data-slot="otp-field-input"]:focus-visible
+    ),
+  [data-slot="otp-field"][data-layout="joined"]
+    > [data-slot="otp-field-input"]:focus-visible
+    + [data-slot="separator"][data-orientation="vertical"] {
+    opacity: 0;
+  }
+
+  /* OTPFieldSeparator still groups slots of a joined field with its short dash;
+   * the dash keeps space on both sides because the field has no gap. */
+  [data-slot="otp-field"][data-layout="joined"]
+    > [data-slot="separator"][data-orientation="horizontal"] {
+    flex: none;
+    margin-inline: var(--sp-rw-space-2);
+  }
+}

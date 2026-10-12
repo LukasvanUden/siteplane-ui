@@ -1,0 +1,119 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The Badge light: two lights, the brand accent and the amber highlight, run
+   * half a turn apart around the badge's edge, and a soft halo follows them
+   * outside. Both are drawn inside the badge, so a lit badge places and sizes
+   * like any other badge. A registered angle turns one conic gradient that
+   * paints the 1 px ring on the edge and the blurred halo around it. */
+  @property --sp-badge-light-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  /* A lit badge is its own stacking context, so the halo's negative z-index
+   * stays inside it: above the badge's fill, below its label and its focus
+   * outline, and never under the background of a card or page around it. The
+   * ring and the halo measure the badge's edge from its border, the kit's
+   * hairline width. */
+  :root [data-foundation="badge"][data-light] {
+    --sp-badge-light-edge: var(--sp-rw-border-default);
+    isolation: isolate;
+  }
+
+  /* Each part shows only outside its content box, so the fill stays clean. */
+  .siteplane-badge-light-halo,
+  .siteplane-badge-light-ring {
+    --sp-badge-light-brand: oklch(
+      from var(--sp-rw-bg-accent) calc(l + 0.05) c h
+    );
+    position: absolute;
+    background: conic-gradient(
+      from var(--sp-badge-light-angle),
+      transparent 0deg,
+      oklch(from var(--sp-badge-light-brand) l c h / 0.85) 50deg,
+      oklch(
+          from var(--sp-badge-light-brand) calc(l + 0.2) calc(c * 0.55) h / 0.6
+        )
+        85deg,
+      transparent 130deg,
+      transparent 180deg,
+      oklch(from var(--sp-rw-bg-highlight) l c h / 0.85) 230deg,
+      oklch(from var(--sp-rw-bg-highlight) calc(l + 0.1) calc(c * 0.55) h / 0.6)
+        265deg,
+      transparent 310deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: siteplane-badge-light-turn var(--motion-duration-badge-light)
+      var(--motion-ease-linear) infinite;
+  }
+
+  /* The halo. Insets start at the badge's padding box, one border width inside
+   * its edge. The gradient fills the badge grown by 2 px and blurs outwards;
+   * 26 px of transparent border give the blur room inside the mask, and the
+   * content box, which the mask cuts out, is the badge itself. Its radius is
+   * the badge's own plus those 28 px, so the cut-out keeps the badge's corners
+   * at any radius and the gradient stays concentric with them. */
+  .siteplane-badge-light-halo {
+    inset: calc((var(--sp-badge-light-edge) + 28px) * -1);
+    z-index: -1;
+    border: 26px solid transparent;
+    border-radius: calc(
+      var(--sp-rw-radius-badge, var(--sp-rw-radius-xs)) + 28px
+    );
+    padding: 2px;
+    background-clip: padding-box;
+    filter: blur(7px);
+    opacity: 0.4;
+    transition: opacity var(--motion-duration-base) var(--motion-ease-standard);
+  }
+
+  /* The light itself: a 1 px ring on the badge's edge, above its fill. */
+  .siteplane-badge-light-ring {
+    inset: calc(var(--sp-badge-light-edge) * -1);
+    border-radius: inherit;
+    padding: 1px;
+  }
+
+  [data-foundation="badge"][data-light]:hover > .siteplane-badge-light-halo {
+    opacity: 0.55;
+  }
+
+  /* A lit badge answers hover with the stronger halo, not the grey link tint. */
+  :root :is(a, button)[data-foundation="badge"][data-light]:hover {
+    background-image: none;
+  }
+
+  @keyframes siteplane-badge-light-turn {
+    to {
+      --sp-badge-light-angle: 360deg;
+    }
+  }
+
+  /* Reduced motion keeps the lights still and the hover instant (M5): the
+   * document mode, the provider preset and the system setting. */
+  html[data-motion-reduce="true"] .siteplane-badge-light-halo,
+  html[data-motion-reduce="true"] .siteplane-badge-light-ring,
+  [data-sp-motion="reduced"] .siteplane-badge-light-halo,
+  [data-sp-motion="reduced"] .siteplane-badge-light-ring {
+    animation: none;
+    transition-duration: 1ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-badge-light-halo,
+    .siteplane-badge-light-ring {
+      animation: none;
+      transition-duration: 1ms;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.sp-focus-ring:focus-visible,
+.sp-focus-ring--visible {
+  outline: var(--sp-semantic-state-focus-width) solid
+    var(--sp-semantic-color-focus);
+  outline-offset: var(--sp-semantic-state-focus-offset);
+}
+
+.sp-focus-ring--inset:focus-visible,
+.sp-focus-ring--inset.sp-focus-ring--visible {
+  outline-offset: calc(var(--sp-semantic-state-focus-width) * -1);
+}
+
+.sp-focus-ring--ring:focus-visible,
+.sp-focus-ring--ring.sp-focus-ring--visible {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--sp-primitive-dimension-px) var(--sp-semantic-color-background),
+    0 0 0 calc(var(--sp-primitive-dimension-px) + 2px)
+      var(--sp-semantic-color-ring);
+}

@@ -1,0 +1,99 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer components {
+  .siteplane-checkbox-motion {
+    color: var(--color-neutral-800);
+  }
+
+  :is(.dark, [data-theme="dark"]) .siteplane-checkbox-motion {
+    color: rgb(242 242 243);
+  }
+
+  .siteplane-checkbox-motion [data-slot="checkbox-indicator"] {
+    background-color: transparent;
+    opacity: 0;
+    transform: scale(var(--motion-check-pop-scale));
+    transform-origin: center;
+    transition-duration: var(--motion-duration-slow);
+    transition-property: background-color, opacity, transform;
+    transition-timing-function: var(--motion-ease-standard);
+  }
+
+  .siteplane-checkbox-motion [data-slot="checkbox-indicator"][data-checked],
+  .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"][data-indeterminate] {
+    background-color: var(--sp-semantic-color-primary);
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"][data-starting-style],
+  .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"][data-ending-style] {
+    background-color: transparent;
+    opacity: 0;
+    transform: scale(var(--motion-check-pop-scale));
+  }
+
+  /* A checked indicator lingers on its way out, as the Radio's does. */
+  .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"][data-ending-style] {
+    transition-duration: var(--motion-duration-linger);
+  }
+
+  /* Rulebook I5: a checkbox before text centres on the first text line, also
+   * when the text wraps. That is a checkbox that leads a label or a row in a
+   * label, or that stands before a label, as in a row with a description. A
+   * checkbox taller than the line starts at the line's top, so a one-line label
+   * keeps its height. A component rule, so a margin utility on the checkbox
+   * still replaces it. */
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > [data-foundation="checkbox"][data-profile="control"]:first-child,
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > :where(span, div)
+    > [data-foundation="checkbox"][data-profile="control"]:first-child,
+  [data-foundation="checkbox"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    align-self: flex-start;
+    margin-block: max(0px, calc((1lh - var(--sp-rw-choice-size)) / 2));
+  }
+
+  /* Beside its label, the checkbox does not inherit the label's line but its
+   * container's. It takes the 21 px line of a label next to a choice control
+   * (S13), so the 1lh above measures the label's first line. */
+  [data-foundation="checkbox"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    line-height: var(--sp-rw-line-21);
+  }
+
+  /* The check and the indeterminate dash draw through the shared check motion
+   * in motion.css, which the check of a menu row uses too. */
+
+  /* Reduced motion is instant in the three channels the kit has: the forced
+   * document mode, the provider preset and the system setting. The system rule
+   * leads with :root so the state rules above, which are as specific as the
+   * indicator selector plus one attribute, do not outrank it. */
+  html[data-motion-reduce="true"]
+    .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"],
+  [data-sp-motion="reduced"]
+    .siteplane-checkbox-motion
+    [data-slot="checkbox-indicator"] {
+    animation: none;
+    transform: none;
+    transition-duration: 1ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root .siteplane-checkbox-motion [data-slot="checkbox-indicator"] {
+      animation: none;
+      transform: none;
+      transition-duration: 1ms;
+    }
+  }
+}

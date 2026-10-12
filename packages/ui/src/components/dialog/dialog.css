@@ -1,0 +1,66 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The motion of the Dialog popup and its backdrop belongs to
+   * design-rework.css, which Dialog and AlertDialog share. */
+
+  /* Global search uses the public Dialog command profile, including its
+   * motion: it appears within 0.8 of the micro step and leaves within half of
+   * it, almost at once. */
+  :root .siteplane-command-viewport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-rw-space-4);
+  }
+  :root [data-foundation="dialog"][data-profile="command"] {
+    width: min(
+      calc(100dvw - var(--sp-rw-space-12) - var(--sp-rw-space-12)),
+      40rem
+    );
+    height: min(30rem, calc(100dvh - var(--sp-rw-space-8)));
+    max-width: none;
+    max-height: none;
+    overflow: hidden;
+    grid-row: 1;
+    border-radius: var(--sp-rw-radius-dialog);
+    transform: none;
+    transition: opacity calc(var(--motion-duration-micro) * 0.8)
+      var(--motion-ease-linear);
+  }
+
+  :root [data-foundation="dialog"][data-profile="command"][data-starting-style],
+  :root [data-foundation="dialog"][data-profile="command"][data-ending-style] {
+    opacity: 0;
+    transform: none;
+  }
+
+  :root [data-foundation="dialog"][data-profile="command"][data-ending-style] {
+    transition-duration: calc(var(--motion-duration-micro) / 2);
+  }
+
+  @media (min-width: 64rem) {
+    :root [data-foundation="dialog"][data-profile="command"] {
+      width: min(
+        calc(100dvw - var(--sp-rw-space-12) - var(--sp-rw-space-12)),
+        48rem
+      );
+    }
+  }
+
+  /* Reduced motion shows and hides the search at once (M5). The provider
+   * preset ranks above the profile rule, as the document mode does. */
+  @media (prefers-reduced-motion: reduce) {
+    :root [data-foundation="dialog"][data-profile="command"] {
+      transition: none;
+    }
+  }
+
+  html[data-motion-reduce="true"]
+    [data-foundation="dialog"][data-profile="command"],
+  :root
+    [data-sp-motion="reduced"]
+    [data-foundation="dialog"][data-profile="command"] {
+    transition: none;
+  }
+}

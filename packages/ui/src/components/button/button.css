@@ -1,0 +1,178 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  .siteplane-button-motion {
+    --sp-semantic-color-background: var(--color-white);
+    --sp-semantic-color-foreground: var(--color-neutral-800);
+    --sp-semantic-color-popover: var(--color-white);
+    --sp-semantic-color-primary: oklch(0.335 0.061 267.9);
+    --sp-semantic-color-primary-foreground: var(--color-neutral-50);
+    --sp-semantic-color-secondary: rgb(0 0 0 / 4%);
+    --sp-semantic-color-secondary-foreground: var(--color-neutral-800);
+    --sp-semantic-color-accent: rgb(0 0 0 / 4%);
+    --sp-semantic-color-destructive: var(--color-red-500);
+    --sp-semantic-color-destructive-foreground: var(--color-red-700);
+    --sp-semantic-color-input: rgb(0 0 0 / 10%);
+    --sp-semantic-color-ring: var(--color-neutral-400);
+    --sp-semantic-color-success: var(--color-emerald-500);
+    --sp-semantic-color-success-foreground: var(--color-emerald-700);
+    --sp-semantic-color-warning: var(--color-amber-500);
+    --sp-semantic-color-warning-foreground: var(--color-amber-700);
+    --button-text-base: oklch(0.466 0.027 271.6);
+    --button-text-hover-base: oklch(0.317 0.021 281.4);
+    --button-text: var(--button-text-base);
+    --button-text-hover: var(--button-text-hover-base);
+  }
+
+  :is(.dark, [data-theme="dark"]) .siteplane-button-motion {
+    --sp-semantic-color-background: color-mix(
+      in srgb,
+      var(--color-neutral-950) 95%,
+      var(--color-white)
+    );
+    --sp-semantic-color-foreground: var(--color-neutral-100);
+    --sp-semantic-color-popover: color-mix(
+      in srgb,
+      var(--sp-semantic-color-background) 98%,
+      var(--color-white)
+    );
+    --sp-semantic-color-primary-foreground: var(--color-neutral-50);
+    --sp-semantic-color-secondary: rgb(255 255 255 / 4%);
+    --sp-semantic-color-secondary-foreground: var(--color-neutral-100);
+    --sp-semantic-color-accent: rgb(255 255 255 / 4%);
+    --sp-semantic-color-destructive: color-mix(
+      in srgb,
+      var(--color-red-500) 90%,
+      var(--color-white)
+    );
+    --sp-semantic-color-destructive-foreground: var(--color-red-400);
+    --sp-semantic-color-input: rgb(255 255 255 / 8%);
+    --sp-semantic-color-ring: var(--color-neutral-500);
+    --sp-semantic-color-success-foreground: var(--color-emerald-400);
+    --sp-semantic-color-warning-foreground: var(--color-amber-400);
+    --button-text-base: oklch(0.879 0.016 270);
+    --button-text-hover-base: oklch(0.977 0.005 275);
+  }
+
+  .siteplane-button-motion [data-slot="button-loading-indicator"] {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .siteplane-button-motion[data-loading] > [data-slot="button-content"] {
+    color: transparent;
+  }
+
+  .siteplane-loading-button-shell {
+    display: inline-flex;
+    max-width: 100%;
+  }
+
+  .siteplane-loading-button-idle,
+  .siteplane-loading-button-pending {
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-micro);
+    transition-timing-function: var(--motion-ease-standard);
+  }
+
+  .siteplane-loading-button-shell[data-loading-button-phase="loading"]
+    .siteplane-loading-button-idle,
+  .siteplane-loading-button-shell[data-loading-button-phase="idle"]
+    .siteplane-loading-button-pending {
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-button-motion,
+    .siteplane-loading-button-idle,
+    .siteplane-loading-button-pending,
+    .siteplane-button-motion [data-slot="button-loading-indicator"] {
+      transition-duration: 1ms;
+    }
+
+    .siteplane-button-motion [data-slot="button-loading-indicator"] {
+      animation: none;
+    }
+  }
+
+  html[data-motion-reduce="true"] .siteplane-button-motion,
+  html[data-motion-reduce="true"] .siteplane-loading-button-idle,
+  html[data-motion-reduce="true"] .siteplane-loading-button-pending,
+  [data-sp-motion="reduced"] .siteplane-button-motion,
+  [data-sp-motion="reduced"] .siteplane-loading-button-idle,
+  [data-sp-motion="reduced"] .siteplane-loading-button-pending,
+  html[data-motion-reduce="true"]
+    .siteplane-button-motion
+    [data-slot="button-loading-indicator"],
+  [data-sp-motion="reduced"]
+    .siteplane-button-motion
+    [data-slot="button-loading-indicator"] {
+    transition-duration: 1ms;
+  }
+
+  html[data-motion-reduce="true"]
+    .siteplane-button-motion
+    [data-slot="button-loading-indicator"],
+  [data-sp-motion="reduced"]
+    .siteplane-button-motion
+    [data-slot="button-loading-indicator"] {
+    animation: none;
+  }
+
+  /* Placement only: a Badge in an icon button is an overlay on the control's top
+   * trailing corner, never a second flex item. Its presentation (the count
+   * geometry) belongs to Badge's `count` profile. Only an icon button that
+   * contains a Badge anchors it to the control instead of the smaller content
+   * wrapper; every other icon button keeps its content above the chassis layers. */
+  :root
+    [data-chassis][data-size^="icon"]
+    > [data-slot="button-content"]:has(> [data-foundation="badge"]) {
+    position: static;
+  }
+
+  :root
+    [data-chassis][data-size^="icon"]
+    > [data-slot="button-content"]
+    > [data-foundation="badge"] {
+    position: absolute;
+    inset-block-start: -0.25rem;
+    inset-inline-end: -0.25rem;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Avatar controls keep the portrait, interaction surface and focus ring circular. */
+  :root [data-chassis][data-profile="avatar"][data-size] {
+    border-radius: 50%;
+    padding: 0;
+  }
+
+  :root [data-chassis][data-profile="avatar"] > [data-slot="button-content"] {
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  /* The portrait fills the whole control and has a surface of its own (a photo or
+   * the fallback fill), so the shared interaction layer, which lies beneath the
+   * content (z-index 30) in every other Button, would never show. Here it lies over
+   * the portrait instead. Its colour, hover, pressed and open levels stay the
+   * variant's own and it stays circular through the control's radius, so a hover,
+   * a press and an open menu darken the portrait, also over a photo. Only the
+   * stacking order differs: no state of its own is declared for the avatar. */
+  :root
+    [data-chassis][data-profile="avatar"]
+    > [data-slot="button-chassis-interaction"] {
+    z-index: 31;
+  }
+
+  :root
+    [data-chassis][data-profile="avatar"]
+    > [data-slot="button-content"]
+    > [data-slot="avatar"] {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+}

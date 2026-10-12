@@ -1,0 +1,123 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer components {
+  /* Rulebook I5: a radio before text centres on the first text line, also
+   * when the text wraps, as the Checkbox does (checkbox.css). A radio taller
+   * than the line starts at the line's top. */
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > [data-foundation="radio"][data-profile="control"]:first-child,
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > :where(span, div)
+    > [data-foundation="radio"][data-profile="control"]:first-child,
+  [data-foundation="radio"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    align-self: flex-start;
+    margin-block: max(0px, calc((1lh - var(--sp-rw-choice-size)) / 2));
+  }
+
+  /* Beside its label, the radio does not inherit the label's line but its
+   * container's. It takes the 21 px line of a label next to a choice control
+   * (S13), so the 1lh above measures the label's first line. */
+  [data-foundation="radio"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    line-height: var(--sp-rw-line-21);
+  }
+
+  /* The indicator pops and fades with the Checkbox's motion: the same slow
+   * duration, standard curve and pop scale, and the same linger on the way
+   * out (--motion-duration-linger). Every duration and curve is a
+   * motion token (rulebook M1). */
+  .siteplane-radio-motion [data-slot="radio-indicator"] {
+    background-color: transparent;
+    opacity: 0;
+    transform: scale(var(--motion-check-pop-scale));
+    transform-origin: center;
+    transition-duration: var(--motion-duration-slow);
+    transition-property: background-color, opacity, transform;
+    transition-timing-function: var(--motion-ease-standard);
+  }
+
+  .siteplane-radio-motion [data-slot="radio-indicator"][data-checked] {
+    background-color: var(--sp-semantic-color-primary);
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .siteplane-radio-motion
+    [data-slot="radio-indicator"]:is(
+      [data-starting-style],
+      [data-ending-style]
+    ) {
+    background-color: transparent;
+    opacity: 0;
+    transform: scale(var(--motion-check-pop-scale));
+  }
+
+  .siteplane-radio-motion [data-slot="radio-indicator"][data-ending-style] {
+    transition-duration: var(--motion-duration-linger);
+  }
+
+  /* The dot grows after its box has started to pop: half a base duration. */
+  .siteplane-radio-motion [data-slot="radio-indicator"]::before {
+    transform: scale(0);
+    transform-origin: center;
+    transition-duration: var(--motion-duration-slow);
+    transition-delay: calc(var(--motion-duration-base) / 2);
+    transition-property: transform;
+    transition-timing-function: var(--motion-ease-standard);
+  }
+
+  .siteplane-radio-motion [data-slot="radio-indicator"][data-checked]::before {
+    transform: scale(1);
+  }
+
+  .siteplane-radio-motion
+    [data-slot="radio-indicator"]:is(
+      [data-starting-style],
+      [data-ending-style]
+    )::before {
+    transform: scale(0);
+  }
+
+  .siteplane-radio-motion
+    [data-slot="radio-indicator"][data-ending-style]::before {
+    transition-delay: 0ms;
+    transition-duration: var(--motion-duration-linger);
+  }
+
+  html[data-motion-reduce="true"]
+    .siteplane-radio-motion
+    [data-slot="radio-indicator"],
+  html[data-motion-reduce="true"]
+    .siteplane-radio-motion
+    [data-slot="radio-indicator"]::before,
+  [data-sp-motion="reduced"]
+    .siteplane-radio-motion
+    [data-slot="radio-indicator"],
+  [data-sp-motion="reduced"]
+    .siteplane-radio-motion
+    [data-slot="radio-indicator"]::before {
+    animation: none;
+    transform: none;
+    transition-delay: 0ms;
+    transition-duration: 1ms;
+  }
+}
+
+/* The reduced-motion override sits in the kit layer, where it keeps its order
+ * against design-rework.css. */
+@layer siteplane {
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-radio-motion [data-slot="radio-indicator"],
+    .siteplane-radio-motion [data-slot="radio-indicator"]::before {
+      animation: none;
+      transform: none;
+      transition-delay: 0ms;
+      transition-duration: 1ms;
+    }
+  }
+}

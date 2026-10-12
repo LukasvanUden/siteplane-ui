@@ -1,0 +1,239 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  .siteplane-color-picker-trigger {
+    text-transform: uppercase;
+  }
+
+  .siteplane-color-picker-trigger-with-value {
+    min-width: 8rem;
+    justify-content: flex-start;
+    font-family: var(--sp-semantic-font-family-mono);
+    font-size: var(--sp-rw-font-12);
+    font-weight: 400;
+  }
+
+  /* The swatch is a fixed share (5/8) of the trigger's height, so every size keeps
+   * the same proportion and inset. The heights are the control scale of the
+   * Button, which sets `data-size` on the trigger: a text size, or its icon size
+   * when only the swatch shows. */
+  .siteplane-color-picker-trigger {
+    --siteplane-color-picker-trigger-height: var(--sp-rw-control-md);
+  }
+
+  .siteplane-color-picker-trigger:is([data-size="sm"], [data-size="icon-sm"]) {
+    --siteplane-color-picker-trigger-height: var(--sp-rw-control-sm);
+  }
+
+  .siteplane-color-picker-trigger:is([data-size="lg"], [data-size="icon-lg"]) {
+    --siteplane-color-picker-trigger-height: var(--sp-rw-control-lg);
+  }
+
+  .siteplane-color-picker-trigger:is([data-size="xl"], [data-size="icon-xl"]) {
+    --siteplane-color-picker-trigger-height: var(--sp-rw-control-xl);
+  }
+
+  .siteplane-color-picker-trigger-swatch {
+    width: calc(var(--siteplane-color-picker-trigger-height) * 0.625);
+    height: calc(var(--siteplane-color-picker-trigger-height) * 0.625);
+    flex: none;
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: max(0px, calc(var(--sp-rw-radius-control) - 4px));
+  }
+
+  /* One compact width at every size (250 px): the saturation area, the hue row,
+   * the hex row and the three channel fields fit it without wrapping, so a
+   * larger control size only makes the fields taller. */
+  .siteplane-color-picker-popover {
+    z-index: 50;
+    width: 15.625rem;
+    max-width: calc(100vw - 1.5rem);
+    padding: var(--sp-rw-space-3);
+    outline: none;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  .siteplane-color-picker-dialog {
+    display: grid;
+    gap: var(--sp-rw-space-3);
+    outline: none;
+  }
+
+  .siteplane-color-picker-area-frame {
+    width: 100%;
+    height: 8rem;
+    overflow: hidden;
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: var(--sp-rw-radius-control);
+    background-clip: padding-box;
+  }
+
+  [data-size="sm"] .siteplane-color-picker-area-frame {
+    height: 7rem;
+  }
+
+  [data-size="lg"] .siteplane-color-picker-area-frame {
+    height: 9rem;
+  }
+
+  [data-size="xl"] .siteplane-color-picker-area-frame {
+    height: 10rem;
+  }
+
+  .siteplane-color-picker-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .siteplane-color-picker-area-thumb,
+  .siteplane-color-picker-hue-thumb {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid white;
+    border-radius: 999px;
+    background: var(--color, transparent);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 24%);
+    outline: none;
+    transform: translate(-50%, -50%);
+  }
+
+  /* React Aria places a slider thumb along its track only (`left`, plus the
+   * centring transform above). The cross axis is left to the consumer, so without
+   * this the thumb hangs from the track's top edge. Half the track height puts
+   * its centre on the track's centre line. */
+  .siteplane-color-picker-hue-thumb {
+    top: 50%;
+  }
+
+  .siteplane-color-picker-area-thumb[data-focus-visible],
+  .siteplane-color-picker-hue-thumb[data-focus-visible] {
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 24%),
+      0 0 0 3px var(--sp-semantic-color-focus);
+  }
+
+  .siteplane-color-picker-hue-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-3);
+  }
+
+  .siteplane-color-picker-current-swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: 999px;
+  }
+
+  .siteplane-color-picker-hue {
+    flex: 1;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .siteplane-color-picker-hue-track {
+    position: relative;
+    height: 0.875rem;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      #f00,
+      #ff0,
+      #0f0,
+      #0ff,
+      #00f,
+      #f0f,
+      #f00
+    );
+  }
+
+  :dir(rtl) .siteplane-color-picker-hue-track {
+    background: linear-gradient(
+      to left,
+      #f00,
+      #ff0,
+      #0f0,
+      #0ff,
+      #00f,
+      #f0f,
+      #f00
+    );
+  }
+
+  .siteplane-color-picker-hex-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--sp-rw-space-2);
+  }
+
+  .siteplane-color-picker-hex-input,
+  .siteplane-color-picker-channel-input {
+    font-family: var(--sp-semantic-font-family-mono);
+    font-size: var(--sp-rw-font-12);
+  }
+
+  .siteplane-color-picker-hex-input input {
+    text-transform: uppercase;
+  }
+
+  .siteplane-color-picker-channels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-rw-space-2);
+  }
+
+  .siteplane-color-picker-channel {
+    display: grid;
+    gap: var(--sp-rw-space-1);
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-semantic-font-weight-medium);
+    text-align: center;
+  }
+
+  .siteplane-color-picker-channel-input input {
+    text-align: center;
+  }
+
+  .siteplane-color-picker-popover[data-entering] {
+    animation: siteplane-color-picker-enter var(--motion-duration-overlay)
+      var(--motion-ease-standard) both;
+  }
+
+  .siteplane-color-picker-popover[data-exiting] {
+    animation: siteplane-color-picker-exit var(--motion-duration-fast)
+      var(--motion-ease-soft-in-out) both;
+  }
+
+  @keyframes siteplane-color-picker-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  @keyframes siteplane-color-picker-exit {
+    to {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-color-picker-popover[data-entering],
+    .siteplane-color-picker-popover[data-exiting] {
+      animation-duration: 1ms;
+    }
+  }
+
+  html[data-motion-reduce="true"]
+    .siteplane-color-picker-popover[data-entering],
+  html[data-motion-reduce="true"] .siteplane-color-picker-popover[data-exiting],
+  [data-sp-motion="reduced"] .siteplane-color-picker-popover[data-entering],
+  [data-sp-motion="reduced"] .siteplane-color-picker-popover[data-exiting] {
+    animation-duration: 1ms;
+  }
+}

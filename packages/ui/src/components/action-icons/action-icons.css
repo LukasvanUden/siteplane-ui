@@ -1,0 +1,132 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The copy feedback of CopyRedrawIcon (rulebook T7) on the motion tokens;
+   * useCopyIconPhase times its phases from the same tokens. The check draws
+   * in over two micro steps, holds, fades over the fast step, then the copy
+   * icon draws itself again over the slow step, the kit's time for a draw.
+   * Its glyphs sit in a Button, whose shared icon opacity (design-rework.css)
+   * is a zero-specificity rule of this layer, so the phases below refine it
+   * without raising their importance; at rest the copy glyph keeps the
+   * Button's opacity. */
+  .siteplane-copy-check {
+    opacity: 0;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-linear);
+  }
+
+  .siteplane-copy-check path {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+  }
+
+  .siteplane-copy[data-phase="check"] .siteplane-copy-check {
+    opacity: 1;
+    transition: none;
+  }
+
+  .siteplane-copy[data-phase="check"] .siteplane-copy-check path {
+    animation: siteplane-check-draw calc(var(--motion-duration-micro) * 2)
+      var(--motion-ease-linear) both;
+  }
+
+  @keyframes siteplane-check-draw {
+    from {
+      stroke-dashoffset: -1.1;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .siteplane-copy-draw [data-draw] {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+  }
+
+  .siteplane-copy[data-phase="check"] .siteplane-copy-draw,
+  .siteplane-copy[data-phase="check-out"] .siteplane-copy-draw {
+    opacity: 0;
+  }
+
+  .siteplane-copy[data-phase="check"] .siteplane-copy-draw [data-draw],
+  .siteplane-copy[data-phase="check-out"] .siteplane-copy-draw [data-draw] {
+    stroke-dashoffset: 1.1;
+  }
+
+  .siteplane-copy[data-phase="redraw"] .siteplane-copy-check {
+    opacity: 0;
+    transition: none;
+  }
+
+  .siteplane-copy[data-phase="redraw"] .siteplane-copy-draw [data-draw] {
+    animation: siteplane-stroke-draw var(--motion-duration-slow)
+      var(--motion-ease-linear) both;
+  }
+
+  .siteplane-copy[data-phase="redraw"] .siteplane-copy-draw [data-draw="2"] {
+    animation-delay: calc(var(--motion-duration-slow) * 0.8);
+  }
+
+  @keyframes siteplane-stroke-draw {
+    from {
+      stroke-dashoffset: 1.1;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Reduced motion (M5): the check shows and the copy icon draws at once,
+   * and the check stays whole until the icon returns. The document mode, the
+   * provider preset and the system setting each switch it; every selector
+   * names the phase, so it ranks above the phase rules it stops. */
+  html[data-motion-reduce="true"]
+    .siteplane-copy[data-phase]
+    :is(
+      .siteplane-copy-check,
+      .siteplane-copy-check path,
+      .siteplane-copy-draw [data-draw]
+    ),
+  [data-sp-motion="reduced"]
+    .siteplane-copy[data-phase]
+    :is(
+      .siteplane-copy-check,
+      .siteplane-copy-check path,
+      .siteplane-copy-draw [data-draw]
+    ) {
+    transition-duration: 1ms;
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+
+  html[data-motion-reduce="true"]
+    .siteplane-copy[data-phase="check-out"]
+    .siteplane-copy-check,
+  [data-sp-motion="reduced"]
+    .siteplane-copy[data-phase="check-out"]
+    .siteplane-copy-check {
+    opacity: 1;
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root
+      .siteplane-copy[data-phase]
+      :is(
+        .siteplane-copy-check,
+        .siteplane-copy-check path,
+        .siteplane-copy-draw [data-draw]
+      ) {
+      transition-duration: 1ms;
+      animation-duration: 1ms;
+      animation-delay: 0ms;
+    }
+
+    :root .siteplane-copy[data-phase="check-out"] .siteplane-copy-check {
+      opacity: 1;
+      transition: none;
+    }
+  }
+}

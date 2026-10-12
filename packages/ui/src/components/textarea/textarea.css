@@ -1,0 +1,151 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  [data-slot="textarea-control"] {
+    --sp-semantic-color-background: var(--color-white);
+    --sp-semantic-color-border: rgb(0 0 0 / 8%);
+    --sp-semantic-color-destructive: var(--color-red-500);
+    --sp-semantic-color-foreground: var(--color-neutral-800);
+    --sp-semantic-color-input: rgb(0 0 0 / 10%);
+    --sp-semantic-color-ring: var(--color-neutral-400);
+    --input: rgb(0 0 0 / 10%);
+    --ring: var(--color-neutral-400);
+    --textarea-resize-handle-color: var(--input);
+    --textarea-resize-handle-color-focus: var(--ring);
+    --textarea-surface-subtle: rgb(0 0 0 / 4%);
+  }
+
+  [data-foundation="textarea"][data-profile="input-group"] {
+    display: contents;
+  }
+
+  [data-foundation="textarea"][data-profile="input-group"]::before {
+    display: none;
+  }
+
+  [data-foundation="textarea"][data-profile="input-group"]
+    [data-slot="textarea"] {
+    min-height: calc(var(--spacing) * 20.5);
+    border-radius: 0;
+    padding-block: calc(var(--spacing) * 2 - 1px);
+    resize: vertical;
+  }
+
+  @media (width < 40rem) {
+    [data-foundation="textarea"][data-profile="input-group"]
+      [data-slot="textarea"] {
+      min-height: calc(var(--spacing) * 23.5);
+    }
+  }
+
+  [data-slot="textarea-control"]:not([data-unstyled]):has(:disabled) {
+    background-color: var(--textarea-surface-subtle);
+  }
+
+  textarea[data-slot="textarea"]:focus-visible {
+    --textarea-resize-handle-color: var(--textarea-resize-handle-color-focus);
+  }
+
+  textarea[data-slot="textarea"]::-webkit-resizer {
+    border: 0;
+    background:
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 3px bottom 3px / 9px 9px no-repeat,
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 3px bottom 3px / 4.75px 4.75px no-repeat;
+  }
+
+  [data-radius="none"] textarea[data-slot="textarea"]::-webkit-resizer,
+  [data-radius="sm"] textarea[data-slot="textarea"]::-webkit-resizer {
+    background:
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 3px bottom 3px / 9px 9px no-repeat,
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 3px bottom 3px / 4.75px 4.75px no-repeat;
+  }
+
+  [data-radius="lg"] textarea[data-slot="textarea"]::-webkit-resizer {
+    background:
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 5px bottom 5px / 9px 9px no-repeat,
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 5px bottom 5px / 4.75px 4.75px no-repeat;
+  }
+
+  [data-radius="xl"] textarea[data-slot="textarea"]::-webkit-resizer {
+    background:
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 6px bottom 6px / 8.5px 8.5px no-repeat,
+      linear-gradient(
+          135deg,
+          transparent calc(50% - 0.65px),
+          var(--textarea-resize-handle-color) 0 calc(50% + 0.65px),
+          transparent 0
+        )
+        right 6px bottom 6px / 4.75px 4.75px no-repeat;
+  }
+
+  :is(.dark, [data-theme="dark"]) [data-slot="textarea-control"] {
+    --sp-semantic-color-background: color-mix(
+      in srgb,
+      var(--color-neutral-950) 95%,
+      var(--color-white)
+    );
+    --sp-semantic-color-border: rgb(255 255 255 / 6%);
+    --sp-semantic-color-destructive: color-mix(
+      in srgb,
+      var(--color-red-500) 90%,
+      var(--color-white)
+    );
+    --sp-semantic-color-foreground: var(--color-neutral-100);
+    --sp-semantic-color-input: rgb(255 255 255 / 8%);
+    --sp-semantic-color-ring: var(--color-neutral-500);
+    --input: rgb(255 255 255 / 8%);
+    --ring: var(--color-neutral-500);
+    --textarea-surface-subtle: rgb(255 255 255 / 4%);
+  }
+
+  :is(.dark, [data-theme="dark"])
+    [data-slot="textarea-control"]:not([data-unstyled]):has(:disabled) {
+    background-color: color-mix(
+      in oklab,
+      var(--sp-semantic-color-input) 32%,
+      transparent
+    );
+  }
+}

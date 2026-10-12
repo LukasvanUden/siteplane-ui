@@ -1,0 +1,187 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  [data-slot="input-control"]:not([data-unstyled]) {
+    --siteplane-input-segment-background: color-mix(
+      in srgb,
+      var(--color-blue-500) 16%,
+      transparent
+    );
+    --siteplane-input-segment-padding-block: calc(var(--spacing) * 0.5);
+    --siteplane-input-segment-padding-inline: var(--spacing);
+    --siteplane-input-surface-subtle: rgb(0 0 0 / 4%);
+    --sp-semantic-color-background: var(--color-white);
+    --sp-semantic-color-border: rgb(0 0 0 / 8%);
+    --sp-semantic-color-destructive: var(--color-red-500);
+    --sp-semantic-color-foreground: var(--color-neutral-800);
+    --sp-semantic-color-input: rgb(0 0 0 / 10%);
+    --sp-semantic-color-muted-foreground: color-mix(
+      in srgb,
+      var(--color-neutral-500) 90%,
+      var(--color-black)
+    );
+    --sp-semantic-color-ring: var(--color-neutral-400);
+  }
+
+  [data-foundation="input"][data-profile="input-group"] {
+    display: contents;
+  }
+
+  [data-foundation="input"][data-profile="input-group"]::before {
+    display: none;
+  }
+
+  /* Embedded Combobox inputs keep the public Input layout contract while the
+   * surrounding popup owns the visible surface and focus treatment. */
+  [data-foundation="input"][data-profile="combobox"][data-profile-mode="embedded"] {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    min-width: 0;
+    height: var(--sp-rw-control-md);
+  }
+
+  [data-foundation="input"][data-profile="combobox"][data-profile-mode="embedded"][data-size="sm"] {
+    height: var(--sp-rw-control-sm);
+  }
+
+  [data-foundation="input"][data-profile="combobox"][data-profile-mode="embedded"][data-size="lg"] {
+    height: var(--sp-rw-control-lg);
+  }
+
+  [data-foundation="input"][data-profile="combobox"][data-profile-mode="embedded"][data-size="xl"] {
+    height: var(--sp-rw-control-xl);
+  }
+
+  [data-foundation="input"][data-profile="input-group"] [data-slot="input"] {
+    flex: 1 1 0%;
+    height: var(--siteplane-composite-control-height, 100%);
+    border-radius: 0;
+    padding-block-start: var(
+      --siteplane-composite-control-padding-block-start,
+      0
+    );
+    padding-block-end: var(--siteplane-composite-control-padding-block-end, 0);
+    padding-inline-start: var(
+      --siteplane-composite-control-padding-inline-start,
+      var(--siteplane-input-padding-inline, calc(var(--spacing) * 3))
+    );
+    padding-inline-end: var(
+      --siteplane-composite-control-padding-inline-end,
+      var(--siteplane-input-padding-inline, calc(var(--spacing) * 3))
+    );
+  }
+
+  :is(.dark, [data-theme="dark"])
+    [data-slot="input-control"]:not([data-unstyled]) {
+    --siteplane-input-surface-subtle: rgb(255 255 255 / 4%);
+    --sp-semantic-color-background: color-mix(
+      in srgb,
+      var(--color-neutral-950) 95%,
+      var(--color-white)
+    );
+    --sp-semantic-color-border: rgb(255 255 255 / 6%);
+    --sp-semantic-color-destructive: color-mix(
+      in srgb,
+      var(--color-red-500) 90%,
+      var(--color-white)
+    );
+    --sp-semantic-color-foreground: var(--color-neutral-100);
+    --sp-semantic-color-input: rgb(255 255 255 / 8%);
+    --sp-semantic-color-muted-foreground: color-mix(
+      in srgb,
+      var(--color-neutral-500) 90%,
+      var(--color-white)
+    );
+    --sp-semantic-color-ring: var(--color-neutral-500);
+  }
+
+  [data-slot="input-control"]:not([data-unstyled])[data-variant="soft"] {
+    background-color: var(--siteplane-input-surface-subtle);
+  }
+
+  [data-slot="input-control"]:not(
+      [data-unstyled]
+    )[data-variant="soft"]:focus-within {
+    background-color: var(--sp-semantic-color-background);
+  }
+
+  [data-slot="input-control"]:not([data-unstyled]):has(:disabled) {
+    background-color: var(--siteplane-input-surface-subtle);
+  }
+
+  [data-slot="input-control"]:not([data-unstyled]):has(:autofill) {
+    background-color: color-mix(
+      in oklab,
+      var(--sp-semantic-color-foreground) 4%,
+      transparent
+    );
+  }
+
+  :is(.dark, [data-theme="dark"])
+    [data-slot="input-control"]:not([data-unstyled]):has(:autofill) {
+    background-color: color-mix(
+      in oklab,
+      var(--sp-semantic-color-foreground) 8%,
+      transparent
+    );
+  }
+
+  .siteplane-input-hide-picker::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
+  .siteplane-date-input {
+    --input-segment-background: var(--siteplane-input-segment-background);
+    --input-segment-padding-block: var(--siteplane-input-segment-padding-block);
+    --input-segment-padding-inline: var(
+      --siteplane-input-segment-padding-inline
+    );
+  }
+
+  .siteplane-date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  .siteplane-date-input::-webkit-datetime-edit-day-field,
+  .siteplane-date-input::-webkit-datetime-edit-month-field,
+  .siteplane-date-input::-webkit-datetime-edit-year-field {
+    border-radius: var(--radius-md);
+    padding-block: var(--input-segment-padding-block);
+    padding-inline: var(--input-segment-padding-inline);
+  }
+
+  .siteplane-date-input::-webkit-datetime-edit-day-field:focus,
+  .siteplane-date-input::-webkit-datetime-edit-month-field:focus,
+  .siteplane-date-input::-webkit-datetime-edit-year-field:focus {
+    background-color: var(--input-segment-background);
+  }
+
+  .siteplane-date-input::selection,
+  .siteplane-date-input::-webkit-datetime-edit-day-field::selection,
+  .siteplane-date-input::-webkit-datetime-edit-month-field::selection,
+  .siteplane-date-input::-webkit-datetime-edit-year-field::selection {
+    background-color: transparent;
+  }
+
+  /* Embedded search headers: Input owns sizing, typography and native states. */
+  :root [data-foundation="input"][data-profile="command"] {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    height: var(--sp-rw-line-24);
+  }
+  :root [data-foundation="input"][data-profile="command"] [data-slot="input"] {
+    flex: 1;
+    height: var(--sp-rw-line-24);
+    padding: 0;
+    font-size: var(--sp-rw-font-16);
+    line-height: var(--sp-rw-line-24);
+  }
+  :root
+    [data-foundation="input"][data-profile="command"]:has(
+      [aria-invalid="true"]
+    ) {
+    outline: 1px solid var(--destructive);
+  }
+}

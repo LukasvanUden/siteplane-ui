@@ -1,0 +1,87 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer components {
+  .siteplane-switch-motion {
+    --sp-semantic-color-background: var(--color-white);
+    --sp-semantic-color-input: rgb(0 0 0 / 10%);
+    --sp-semantic-color-primary: oklch(0.335 0.061 267.9);
+    --sp-semantic-color-ring: var(--color-neutral-400);
+    /* The track's fill changes on the state step, as Checkbox and Radio do,
+     * so the track and the thumb finish together. */
+    transition-duration: var(--motion-duration-fast);
+    transition-property: background-color, box-shadow;
+    transition-timing-function: var(--motion-ease-state);
+  }
+
+  :is(.dark, [data-theme="dark"]) .siteplane-switch-motion {
+    --sp-semantic-color-background: color-mix(
+      in srgb,
+      var(--color-neutral-950) 95%,
+      var(--color-white)
+    );
+    --sp-semantic-color-input: rgb(255 255 255 / 8%);
+    --sp-semantic-color-ring: var(--color-neutral-500);
+  }
+
+  /* The thumb of a menu row travels over the fast step on the browser's
+   * default curve and stretches a micro step after a press. */
+  .siteplane-switch-motion [data-slot="switch-thumb"] {
+    transition:
+      translate var(--motion-duration-fast) var(--motion-ease-navigation),
+      scale var(--motion-duration-micro) var(--motion-ease-navigation)
+        var(--motion-duration-micro),
+      transform-origin var(--motion-duration-fast) var(--motion-ease-navigation);
+  }
+
+  /* Rulebook I5: a switch before text centres on the first text line, also
+   * when the text wraps, as the Checkbox does (checkbox.css). The lg and xl
+   * switches are taller than the 21 px line, so they start at its top and a
+   * one-line label keeps its height. */
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > [data-foundation="switch"][data-profile="control"]:first-child,
+  :where(label, [data-slot="label"], [data-slot="field-label"])
+    > :where(span, div)
+    > [data-foundation="switch"][data-profile="control"]:first-child,
+  [data-foundation="switch"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    align-self: flex-start;
+    margin-block: max(
+      0px,
+      calc((1lh - var(--sp-rw-switch-thumb) - var(--sp-rw-space-1)) / 2)
+    );
+  }
+
+  /* Beside its label, the switch does not inherit the label's line but its
+   * container's. It takes the 21 px line of a label next to a choice control
+   * (S13), so the 1lh above measures the label's first line. */
+  [data-foundation="switch"][data-profile="control"]:first-child:has(
+      ~ :is([data-slot="label"], [data-slot="field-label"]),
+      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    ) {
+    line-height: var(--sp-rw-line-21);
+  }
+
+  html[data-motion-reduce="true"] .siteplane-switch-motion,
+  html[data-motion-reduce="true"]
+    .siteplane-switch-motion
+    [data-slot="switch-thumb"] {
+    animation: none;
+    transition-delay: 0ms;
+    transition-duration: 1ms;
+  }
+}
+
+/* The reduced-motion override sits in the kit layer, where it keeps its order
+ * against design-rework.css. */
+@layer siteplane {
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-switch-motion,
+    .siteplane-switch-motion [data-slot="switch-thumb"] {
+      animation: none;
+      transition-delay: 0ms;
+      transition-duration: 1ms;
+    }
+  }
+}

@@ -1,0 +1,478 @@
+.siteplane-floating-panel {
+  --siteplane-floating-panel-x: 0px;
+  --siteplane-floating-panel-y: calc(var(--motion-floating-panel-offset) * -1);
+  transform-origin: var(--transform-origin, top center);
+  transition-property: opacity, transform;
+  transition-duration: var(--motion-duration-moderate);
+  transition-timing-function: var(--motion-ease-standard);
+  will-change: opacity, transform;
+}
+
+.siteplane-floating-panel[data-side="top"] {
+  --siteplane-floating-panel-y: var(--motion-floating-panel-offset);
+}
+
+.siteplane-floating-panel[data-side="left"],
+.siteplane-floating-panel[data-side="inline-start"] {
+  --siteplane-floating-panel-x: var(--motion-floating-panel-offset);
+  --siteplane-floating-panel-y: 0px;
+}
+
+.siteplane-floating-panel[data-side="right"],
+.siteplane-floating-panel[data-side="inline-end"] {
+  --siteplane-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
+  --siteplane-floating-panel-y: 0px;
+}
+
+.siteplane-floating-panel:dir(rtl)[data-side="inline-start"] {
+  --siteplane-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
+}
+
+.siteplane-floating-panel:dir(rtl)[data-side="inline-end"] {
+  --siteplane-floating-panel-x: var(--motion-floating-panel-offset);
+}
+
+.siteplane-floating-panel[data-side="none"] {
+  --siteplane-floating-panel-y: 0px;
+}
+
+.siteplane-floating-panel[data-starting-style],
+.siteplane-floating-panel[data-ending-style] {
+  opacity: 0;
+  transform: translate(
+      var(--siteplane-floating-panel-x),
+      var(--siteplane-floating-panel-y)
+    )
+    scale(var(--motion-floating-panel-scale));
+}
+
+/* Fade through for a pane that Base UI mounts and unmounts and fades with CSS
+ * transitions, such as a Tabs panel (rulebook M8; swapFadeClassName of the
+ * Motion component). The pane that takes over fades in during the last micro
+ * duration of the base duration; the pane that leaves fades out at once. Zero
+ * specificity, so the reduced-motion rules below and a consumer's utility both
+ * win. */
+:where(.siteplane-swap-fade) {
+  transition-property: opacity;
+  transition-duration: var(--motion-duration-micro);
+  transition-timing-function: var(--motion-ease-standard);
+  transition-delay: max(
+    0ms,
+    calc(var(--motion-duration-base) - var(--motion-duration-micro))
+  );
+}
+
+:where(.siteplane-swap-fade:is([data-starting-style], [data-ending-style])) {
+  opacity: 0;
+}
+
+:where(.siteplane-swap-fade[data-ending-style]) {
+  transition-timing-function: var(--motion-ease-soft-in-out);
+  transition-delay: 0ms;
+}
+
+.siteplane-calendar-month-motion {
+  --rdp-animation_duration: var(--motion-duration-slow);
+  --rdp-animation_timing: var(--motion-ease-standard);
+  transition: height var(--motion-duration-slow) var(--motion-ease-standard);
+  will-change: height;
+}
+
+.siteplane-calendar-month-motion [data-animated-month="true"] {
+  overflow: hidden;
+}
+
+.siteplane-calendar-title-motion[data-motion-state="enter"][data-direction="next"] {
+  animation: siteplane-calendar-slide-in-from-right var(--motion-duration-slow)
+    var(--motion-ease-standard) both;
+}
+
+.siteplane-calendar-title-motion[data-motion-state="enter"][data-direction="previous"] {
+  animation: siteplane-calendar-slide-in-from-left var(--motion-duration-slow)
+    var(--motion-ease-standard) both;
+}
+
+.siteplane-calendar-title-motion[data-motion-state="exit"][data-direction="next"] {
+  animation: siteplane-calendar-slide-out-to-left var(--motion-duration-slow)
+    var(--motion-ease-standard) both;
+}
+
+.siteplane-calendar-title-motion[data-motion-state="exit"][data-direction="previous"] {
+  animation: siteplane-calendar-slide-out-to-right var(--motion-duration-slow)
+    var(--motion-ease-standard) both;
+}
+
+.siteplane-calendar-month-motion .rdp-weeks_after_enter {
+  animation: siteplane-calendar-slide-in-from-right
+    var(--rdp-animation_duration) var(--rdp-animation_timing) both;
+}
+
+.siteplane-calendar-month-motion .rdp-weeks_before_exit {
+  animation: siteplane-calendar-slide-out-to-left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) both;
+}
+
+.siteplane-calendar-month-motion .rdp-weeks_before_enter {
+  animation: siteplane-calendar-slide-in-from-left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) both;
+}
+
+.siteplane-calendar-month-motion .rdp-weeks_after_exit {
+  animation: siteplane-calendar-slide-out-to-right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) both;
+}
+
+.siteplane-calendar-month-motion .rdp-caption_after_enter,
+.siteplane-calendar-month-motion .rdp-caption_before_enter {
+  animation: siteplane-calendar-caption-in var(--rdp-animation_duration)
+    var(--rdp-animation_timing) both;
+}
+
+.siteplane-calendar-month-motion .rdp-caption_after_exit,
+.siteplane-calendar-month-motion .rdp-caption_before_exit {
+  animation: siteplane-calendar-caption-out var(--rdp-animation_duration)
+    var(--rdp-animation_timing) both;
+}
+
+@keyframes siteplane-calendar-slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes siteplane-calendar-slide-out-to-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes siteplane-calendar-slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes siteplane-calendar-slide-out-to-right {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes siteplane-calendar-caption-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes siteplane-calendar-caption-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.siteplane-icon-pop {
+  animation: siteplane-icon-pop var(--motion-duration-base)
+    var(--motion-ease-standard);
+}
+
+/* A carousel caption fades in as its page slides in, instead of jumping. */
+@keyframes siteplane-carousel-caption-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.siteplane-carousel-caption {
+  animation: siteplane-carousel-caption-in var(--motion-duration-slow)
+    var(--motion-ease-soft-in-out);
+}
+
+html[data-motion-reduce="true"] .siteplane-carousel-caption,
+[data-sp-motion="reduced"] .siteplane-carousel-caption {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siteplane-carousel-caption {
+    animation: none;
+  }
+}
+
+@keyframes siteplane-icon-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* A check that draws itself in and out (rulebook M1, M5). Every check of the
+ * kit draws through these rules, so a check moves the same everywhere: the
+ * Checkbox, the checkbox and radio items of Menu, DropdownMenu, ContextMenu and
+ * DrawerMenu, the selected-item checks of Select, Combobox, ListBox and
+ * ColorSwatchPicker, the selection mark of a ResourceList row and the selection
+ * box of a Table. The path draws in when the indicator that holds the glyph is
+ * checked and draws back out when it is not. The indicator is the parent of the
+ * glyph: the element that carries data-checked or data-indeterminate (the Base
+ * UI Checkbox, Radio and menu items, the indicator of a Table box) or
+ * data-selected (the Base UI Select and Combobox item indicators, a swatch, the
+ * selection slot of a ResourceList row, the indicator of a Table box) and,
+ * while it enters or leaves, data-starting-style and data-ending-style. A glyph
+ * that sits deeper inside the element that owns the state, as the check of a
+ * ListBox row does, names that element with `siteplane-check-item`. A glyph
+ * with a geometry of its own, as the mark of a ResourceList row and the Table
+ * box have, takes pathLength 24 so that the dash of 24 covers its path exactly
+ * and the draw runs along its whole length. */
+.siteplane-check-path-motion,
+.siteplane-checkbox-indeterminate {
+  opacity: 0;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  transition-duration: var(--motion-duration-slow);
+  transition-property: opacity, stroke-dashoffset;
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+:is([data-checked], [data-selected]) > svg > .siteplane-check-path-motion,
+.siteplane-check-item:is([data-checked], [data-selected])
+  .siteplane-check-path-motion,
+[data-indeterminate] > svg > .siteplane-checkbox-indeterminate {
+  opacity: 1;
+  stroke-dashoffset: 0;
+}
+
+[data-starting-style]
+  > svg
+  > :is(.siteplane-check-path-motion, .siteplane-checkbox-indeterminate),
+[data-ending-style]
+  > svg
+  > :is(.siteplane-check-path-motion, .siteplane-checkbox-indeterminate) {
+  opacity: 0;
+  stroke-dashoffset: 24;
+}
+
+/* The glyph of a row also pops with its check, as the indicator of the
+ * Checkbox does: it grows from --motion-check-pop-scale as the check draws in
+ * and shrinks back as it draws out. The Checkbox and Radio pop their whole
+ * indicator instead (checkbox.css, radio-group.css), with the same token. */
+.siteplane-check-glyph-motion {
+  transform: scale(var(--motion-check-pop-scale));
+  transform-origin: center;
+  transition-duration: var(--motion-duration-slow);
+  transition-property: transform;
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+:is([data-checked], [data-selected]) > .siteplane-check-glyph-motion,
+.siteplane-check-item:is([data-checked], [data-selected])
+  .siteplane-check-glyph-motion {
+  transform: none;
+}
+
+[data-starting-style] > .siteplane-check-glyph-motion,
+[data-ending-style] > .siteplane-check-glyph-motion {
+  transform: scale(var(--motion-check-pop-scale));
+}
+
+html[data-motion-reduce="true"] .siteplane-check-path-motion,
+html[data-motion-reduce="true"] .siteplane-checkbox-indeterminate,
+[data-sp-motion="reduced"] .siteplane-check-path-motion,
+[data-sp-motion="reduced"] .siteplane-checkbox-indeterminate {
+  animation: none;
+  stroke-dashoffset: 0;
+  transition-duration: 1ms;
+}
+
+html[data-motion-reduce="true"] .siteplane-check-glyph-motion,
+[data-sp-motion="reduced"] .siteplane-check-glyph-motion {
+  transform: none;
+  transition-duration: 1ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siteplane-check-path-motion,
+  .siteplane-checkbox-indeterminate {
+    animation: none;
+    stroke-dashoffset: 0;
+    transition-duration: 1ms;
+  }
+
+  .siteplane-check-glyph-motion {
+    transform: none;
+    transition-duration: 1ms;
+  }
+}
+
+html[data-motion-reduce="true"] .siteplane-floating-panel,
+:where([data-sp-motion="reduced"]) .siteplane-floating-panel {
+  transition-duration: 1ms;
+}
+
+html[data-motion-reduce="true"] .siteplane-swap-fade,
+:where([data-sp-motion="reduced"]) .siteplane-swap-fade {
+  transition-duration: 1ms;
+  transition-delay: 0ms;
+}
+
+html[data-motion-reduce="true"] .siteplane-icon-pop,
+:where([data-sp-motion="reduced"]) .siteplane-icon-pop {
+  animation-duration: 1ms;
+}
+
+html[data-motion-reduce="true"] .siteplane-calendar-month-motion,
+:where([data-sp-motion="reduced"]) .siteplane-calendar-month-motion {
+  --rdp-animation_duration: 1ms;
+  transition-duration: 1ms;
+}
+
+html[data-motion-reduce="true"]
+  .siteplane-calendar-month-motion
+  :is(
+    .rdp-weeks_after_enter,
+    .rdp-weeks_before_exit,
+    .rdp-weeks_before_enter,
+    .rdp-weeks_after_exit
+  ),
+:where([data-sp-motion="reduced"])
+  .siteplane-calendar-month-motion
+  :is(
+    .rdp-weeks_after_enter,
+    .rdp-weeks_before_exit,
+    .rdp-weeks_before_enter,
+    .rdp-weeks_after_exit
+  ) {
+  transform: none;
+}
+
+html[data-motion-reduce="true"]
+  .siteplane-calendar-title-motion[data-motion-state][data-direction],
+html[data-motion-reduce="true"]
+  .siteplane-calendar-month-motion
+  :is(
+    .rdp-caption_after_enter,
+    .rdp-caption_after_exit,
+    .rdp-caption_before_enter,
+    .rdp-caption_before_exit,
+    .rdp-weeks_after_enter,
+    .rdp-weeks_after_exit,
+    .rdp-weeks_before_enter,
+    .rdp-weeks_before_exit
+  ),
+:where([data-sp-motion="reduced"])
+  .siteplane-calendar-title-motion[data-motion-state][data-direction],
+:where([data-sp-motion="reduced"])
+  .siteplane-calendar-month-motion
+  :is(
+    .rdp-caption_after_enter,
+    .rdp-caption_after_exit,
+    .rdp-caption_before_enter,
+    .rdp-caption_before_exit,
+    .rdp-weeks_after_enter,
+    .rdp-weeks_after_exit,
+    .rdp-weeks_before_enter,
+    .rdp-weeks_before_exit
+  ) {
+  animation-duration: 1ms;
+  animation-delay: 0ms;
+}
+
+html[data-motion-reduce="true"] .siteplane-floating-panel[data-starting-style],
+html[data-motion-reduce="true"] .siteplane-floating-panel[data-ending-style],
+:where([data-sp-motion="reduced"])
+  .siteplane-floating-panel[data-starting-style],
+:where([data-sp-motion="reduced"])
+  .siteplane-floating-panel[data-ending-style] {
+  transform: none;
+}
+
+html[data-motion-reduce="true"] .siteplane-skeleton-motion,
+:where([data-sp-motion="reduced"]) .siteplane-skeleton-motion {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siteplane-floating-panel {
+    transition-duration: 1ms;
+  }
+
+  .siteplane-swap-fade {
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+
+  .siteplane-floating-panel[data-starting-style],
+  .siteplane-floating-panel[data-ending-style] {
+    transform: none;
+  }
+
+  .siteplane-icon-pop {
+    animation-duration: 1ms;
+  }
+
+  .siteplane-calendar-month-motion {
+    --rdp-animation_duration: 1ms;
+    transition-duration: 1ms;
+  }
+
+  .siteplane-calendar-month-motion
+    :is(
+      .rdp-weeks_after_enter,
+      .rdp-weeks_before_exit,
+      .rdp-weeks_before_enter,
+      .rdp-weeks_after_exit
+    ) {
+    transform: none;
+  }
+
+  .siteplane-calendar-title-motion[data-motion-state][data-direction],
+  .siteplane-calendar-month-motion
+    :is(
+      .rdp-caption_after_enter,
+      .rdp-caption_after_exit,
+      .rdp-caption_before_enter,
+      .rdp-caption_before_exit,
+      .rdp-weeks_after_enter,
+      .rdp-weeks_after_exit,
+      .rdp-weeks_before_enter,
+      .rdp-weeks_before_exit
+    ) {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+
+  .siteplane-skeleton-motion {
+    animation: none;
+  }
+}

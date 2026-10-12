@@ -1,0 +1,4936 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "siteplane",
+  "homepage": "https://ui.siteplane.io",
+  "items": [
+    {
+      "name": "base",
+      "title": "Siteplane UI Base",
+      "description": "Provider-free baseline styles and utilities.",
+      "dependencies": [
+        "clsx@2.1.1",
+        "tailwind-merge@3.6.0"
+      ],
+      "devDependencies": [
+        "tailwindcss@4.3.3"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/src/system/styles/base.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/base.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/defaults.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/defaults.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/motion.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/motion.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/design-rework.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/design-rework.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/recipes.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/recipes.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/surface.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/surface.ts"
+        },
+        {
+          "path": "packages/ui/src/system/styles/choice-menu-item.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/choice-menu-item.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/styles/checkbox-glyph.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/checkbox-glyph.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/styles/generated/tokens.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/generated/tokens.css"
+        },
+        {
+          "path": "packages/ui/src/system/styles/generated/tailwind.css",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/generated/tailwind.css"
+        },
+        {
+          "path": "packages/ui/src/system/tokens/primitives.tokens.json",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/tokens/primitives.tokens.json"
+        },
+        {
+          "path": "packages/ui/src/system/tokens/semantic.tokens.json",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/tokens/semantic.tokens.json"
+        },
+        {
+          "path": "packages/ui/src/system/tokens/component.tokens.json",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/tokens/component.tokens.json"
+        },
+        {
+          "path": "packages/ui/src/system/tokens/themes/light.tokens.json",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/tokens/themes/light.tokens.json"
+        },
+        {
+          "path": "packages/ui/src/system/tokens/themes/dark.tokens.json",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/tokens/themes/dark.tokens.json"
+        },
+        {
+          "path": "packages/ui/src/system/utils/cn.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/utils/cn.ts"
+        },
+        {
+          "path": "packages/ui/src/system/recipes/index.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/recipes/index.ts"
+        },
+        {
+          "path": "packages/ui/src/system/recipes/focus-ring.recipe.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/recipes/focus-ring.recipe.ts"
+        },
+        {
+          "path": "packages/ui/src/system/provider/visual-scope-context.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/provider/visual-scope-context.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/provider/siteplane-ui-provider.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/provider/siteplane-ui-provider.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/motion/siteplane-motion-provider.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/motion/siteplane-motion-provider.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/motion/use-reduced-motion-preference.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/motion/use-reduced-motion-preference.ts"
+        },
+        {
+          "path": "packages/ui/src/system/form/use-form-reset.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/form/use-form-reset.ts"
+        },
+        {
+          "path": "packages/ui/src/system/form/aria-invalid.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/form/aria-invalid.ts"
+        },
+        {
+          "path": "packages/ui/src/system/date/native-day.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/date/native-day.ts"
+        },
+        {
+          "path": "packages/ui/src/system/hooks/use-media-query.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/hooks/use-media-query.ts"
+        },
+        {
+          "path": "LICENSE",
+          "type": "registry:file",
+          "target": "~/LICENSE.siteplane-ui"
+        },
+        {
+          "path": "TRADEMARKS.md",
+          "type": "registry:file",
+          "target": "~/TRADEMARKS.siteplane-ui.md"
+        }
+      ],
+      "type": "registry:base"
+    },
+    {
+      "name": "action-icons",
+      "title": "Action Icons",
+      "description": "Animated action-icon helpers.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/action-icons/action-icons.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/action-icons/action-icons.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/action-icons/action-icons.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/action-icons/action-icons.css"
+        },
+        {
+          "path": "packages/ui/src/components/action-icons/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/action-icons/index.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "button",
+      "title": "Button",
+      "description": "Action family with variants, sizes, loading behavior, single-line icon labels, and accessible disabled states.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/spinner.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/badge.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/button/button.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/button/button.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/button/button-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/button/button-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/button/button-recipes.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/button/button-recipes.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/button/button.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/button/button.css"
+        },
+        {
+          "path": "packages/ui/src/components/button/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/button/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/button.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a state that stays pressed; use Toggle.",
+          "Avoid for a link inside running text; use a plain link."
+        ],
+        "description": "Action family with variants, sizes, loading behavior, single-line icon labels, and accessible disabled states.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "button"
+        ],
+        "useWhen": [
+          "Use for any action people trigger, such as submit, open, save or delete. Pass a link through render when the action navigates."
+        ]
+      }
+    },
+    {
+      "name": "color-picker",
+      "title": "Color Picker",
+      "description": "Color editor with saturation, hue, hex and RGB controls.",
+      "dependencies": [
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/color-swatch-picker.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/color-picker/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-picker/color-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/color-picker/color-picker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-picker/color-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/color-picker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-picker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/color-picker.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when selection is limited to a named palette; use Color Swatch Picker."
+        ],
+        "description": "Color editor with saturation, hue, hex and RGB controls.",
+        "knownLimitations": [
+          "Alpha, locale and popup placement are not exposed.",
+          "An invalid hex value falls back to the normalized default, then to black."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "color-picker",
+          "color"
+        ],
+        "useWhen": [
+          "Use when users need to choose an arbitrary color."
+        ]
+      }
+    },
+    {
+      "name": "color-swatch-picker",
+      "title": "Color Swatch Picker",
+      "description": "Single-selection palette of named color swatches.",
+      "dependencies": [
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/color-swatch-picker/color-swatch-picker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-swatch-picker/color-swatch-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/color-swatch-picker/color-swatch-face.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-swatch-picker/color-swatch-face.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/color-swatch-picker/color-swatch-picker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-swatch-picker/color-swatch-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/color-swatch-picker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/color-swatch-picker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/color-swatch-picker.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when people need to enter an arbitrary color; use Color Picker."
+        ],
+        "description": "Single-selection palette of named color swatches.",
+        "knownLimitations": [
+          "The palette is owned by the application; arbitrary children and a native onChange are not part of the wrapper."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "color-swatch-picker",
+          "color"
+        ],
+        "useWhen": [
+          "Use when users choose one color from a predefined palette."
+        ]
+      }
+    },
+    {
+      "name": "input",
+      "title": "Input and Field",
+      "description": "Base UI-backed text input and accessible field boundary.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/input/input.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input/input.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/input/input-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input/input-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/input/input.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input/input.css"
+        },
+        {
+          "path": "packages/ui/src/components/input/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input/index.ts"
+        },
+        {
+          "path": "packages/ui/src/components/field/field.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/field/field.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/field/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/field/index.ts"
+        },
+        {
+          "path": "packages/ui/src/components/field/field-control-bridge.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/field/field-control-bridge.ts"
+        },
+        {
+          "path": "packages/ui/src/components/field/field-error-presence.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/field/field-error-presence.tsx"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/input.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for several lines of text; use Textarea.",
+          "Avoid for a number with stepping; use Number Field."
+        ],
+        "description": "Base UI-backed text input and accessible field boundary.",
+        "knownLimitations": [
+          "A controlled Input does not reset with its form; reset your state in onReset."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "input"
+        ],
+        "useWhen": [
+          "Use for a single line of text or a native input value, such as an email address, a password or a file."
+        ]
+      }
+    },
+    {
+      "name": "calendar",
+      "title": "Calendar",
+      "description": "Locale-aware inline calendar with single, contiguous range and multiple date selection.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/popover.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/calendar/calendar.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/calendar/calendar.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/calendar/calendar.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/calendar/calendar.css"
+        },
+        {
+          "path": "packages/ui/src/components/calendar/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/calendar/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/calendar.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when a date field or picker already owns the complete date-entry workflow."
+        ],
+        "description": "Locale-aware inline calendar with single, contiguous range and multiple date selection.",
+        "knownLimitations": [
+          "The month heading button, its picker and the group of range shortcuts use English accessible labels in every locale.",
+          "Values are native Date objects at local midnight, like the date pickers'; only the day counts, so persist it deliberately, for example as YYYY-MM-DD."
+        ],
+        "providerNotes": [
+          "Use the locale prop for this calendar, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "calendar",
+          "date",
+          "range",
+          "selection"
+        ],
+        "useWhen": [
+          "Use when dates should be selected from an always-visible calendar grid."
+        ]
+      }
+    },
+    {
+      "name": "date-field",
+      "title": "Date Field",
+      "description": "Segmented, locale-aware date entry with optional Calendar action and native form serialization.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/popover.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/date-field/date-field.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-field/date-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/date-field/date-field.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-field/date-field.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-field/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-field/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/date-field.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when a compact button-triggered date choice is sufficient; use DatePicker instead."
+        ],
+        "description": "Segmented, locale-aware date entry with optional Calendar action and native form serialization.",
+        "knownLimitations": [
+          "Values use native Date calendar fields in the local time zone; the locale changes formatting, not the zone."
+        ],
+        "providerNotes": [
+          "Use the locale prop for this field, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "date",
+          "field",
+          "calendar",
+          "form"
+        ],
+        "useWhen": [
+          "Use when users should type a date by segment and may also choose it from a calendar."
+        ]
+      }
+    },
+    {
+      "name": "time-field",
+      "title": "Time Field",
+      "description": "Segmented, locale-aware time entry with an optional compact hour and minute selector. Search terms: hours, minutes, form.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "motion@12.43.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/list-box.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/popover.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-field/time-field.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/time-field/time-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/time-field/time-field.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/time-field/time-field.css"
+        },
+        {
+          "path": "packages/ui/src/components/time-field/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/time-field/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/time-field.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when a date must be edited and submitted with the time; use DateTimePicker instead."
+        ],
+        "description": "Segmented, locale-aware time entry with an optional compact hour and minute selector.",
+        "knownLimitations": [
+          "Supports hour and minute values only, with a fixed 24-hour cycle and HH:mm form serialization; no seconds or 12-hour mode."
+        ],
+        "providerNotes": [
+          "SiteplaneLocaleProvider supplies the React Aria locale; TimeField has no locale prop and keeps a 24-hour hour/minute contract. Translate hourLabel, minuteLabel, hoursLabel, minutesLabel and openPickerLabel explicitly."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "time",
+          "field",
+          "hours",
+          "minutes",
+          "form"
+        ],
+        "useWhen": [
+          "Use when users should type a time by segment and may also choose hour and minute values."
+        ]
+      }
+    },
+    {
+      "name": "date-picker",
+      "title": "Date Picker",
+      "description": "Button-triggered, locale-aware single-date picker with Calendar overlay.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/locale.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/date-picker/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-picker/date-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/date-picker/date-picker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-picker/date-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-picker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-picker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/date-picker.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when direct segmented date entry is required; use DateField instead."
+        ],
+        "description": "Button-triggered, locale-aware single-date picker with Calendar overlay.",
+        "knownLimitations": [
+          "Values use native Date calendar fields in the local time zone; the locale changes formatting, not the zone.",
+          "Formatting changes only the visible label; the form value stays YYYY-MM-DD.",
+          "No readOnly prop: React Aria disables the trigger of a read-only picker, so it would look disabled. Use DateField for a read-only date."
+        ],
+        "providerNotes": [
+          "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "date",
+          "picker",
+          "calendar"
+        ],
+        "useWhen": [
+          "Use when one date should be selected from a compact Calendar disclosure."
+        ]
+      }
+    },
+    {
+      "name": "date-range-picker",
+      "title": "Date Range Picker",
+      "description": "Segmented, locale-aware date-range picker with one Calendar action and two native form values.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/locale.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/date-range-picker/date-range-picker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-range-picker/date-range-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/date-range-picker/date-range-picker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-range-picker/date-range-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-range-picker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-range-picker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/date-range-picker.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a single date or a date and time; use DateField, DatePicker or DateTimePicker instead."
+        ],
+        "description": "Segmented, locale-aware date-range picker with one Calendar action and two native form values.",
+        "knownLimitations": [
+          "Values use native Date calendar fields in the local time zone; the locale changes formatting, not the zone.",
+          "The control commits a complete range, not a start date alone."
+        ],
+        "providerNotes": [
+          "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "date",
+          "range",
+          "picker",
+          "calendar",
+          "form"
+        ],
+        "useWhen": [
+          "Use when users must choose and submit a contiguous start and end date."
+        ]
+      }
+    },
+    {
+      "name": "date-time-picker",
+      "title": "Date Time Picker",
+      "description": "Combined locale-aware date and time picker with separate disclosures and one native form value. Search terms: calendar.",
+      "dependencies": [
+        "@internationalized/date@3.12.3",
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/time-field.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/date-time-picker/date-time-picker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-time-picker/date-time-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/date-time-picker/date-time-picker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-time-picker/date-time-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-time-picker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-time-picker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/date-time-picker.md",
+      "categories": [
+        "Date & color"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when date and time are independent values or only one of them is required."
+        ],
+        "description": "Combined locale-aware date and time picker with separate disclosures and one native form value.",
+        "knownLimitations": [
+          "Values use native Date calendar fields in the local time zone; there is no time zone selector and no conversion between zones.",
+          "The time button stays disabled until a date is set."
+        ],
+        "providerNotes": [
+          "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "date",
+          "time",
+          "picker",
+          "calendar",
+          "form"
+        ],
+        "useWhen": [
+          "Use when one local appointment date and time should be edited and submitted together."
+        ]
+      }
+    },
+    {
+      "name": "input-group",
+      "title": "Input Group",
+      "description": "Composite for related Input and Textarea controls, add-ons, segments, and focus routing.",
+      "dependencies": [
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/textarea.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/input-group/input-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input-group/input-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/input-group/input-group.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input-group/input-group.css"
+        },
+        {
+          "path": "packages/ui/src/components/input-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/input-group.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a plain input with a label; use Input.",
+          "Avoid for joined buttons without a text field; use Group."
+        ],
+        "description": "Composite for related Input and Textarea controls, add-ons, segments, and focus routing.",
+        "knownLimitations": [
+          "Addon text is not a label or a description; connect them with Label, Field or aria-describedby.",
+          "The group manages no values, does not disable its children and neither validates nor submits."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "input-group",
+          "input",
+          "group"
+        ],
+        "useWhen": [
+          "Use to attach text, icons, buttons or other addons to an Input or Textarea so that they share one surface and focus ring."
+        ]
+      }
+    },
+    {
+      "name": "label",
+      "title": "Label",
+      "description": "Polymorphic native label for standalone control association.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/label/label.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/label/label.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/label/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/label/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/label.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid inside a Field: FieldLabel associates the control automatically and carries its validation state."
+        ],
+        "description": "Polymorphic native label for standalone control association.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "label"
+        ],
+        "useWhen": [
+          "Use to give a standalone native form control a visible name."
+        ]
+      }
+    },
+    {
+      "name": "list-box",
+      "title": "List Box",
+      "description": "React Aria single-selection list with check or row-fill appearance, keyboard navigation and rich options.",
+      "dependencies": [
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/list-box/list-box.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/list-box/list-box.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/list-box/list-box.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/list-box/list-box.css"
+        },
+        {
+          "path": "packages/ui/src/components/list-box/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/list-box/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/list-box.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when choices should stay collapsed until the user opens a Select or Combobox."
+        ],
+        "description": "React Aria single-selection list with check or row-fill appearance, keyboard navigation and rich options.",
+        "knownLimitations": [
+          "The list submits no native form value; serialize the selected state yourself."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "list-box",
+          "selection",
+          "options"
+        ],
+        "useWhen": [
+          "Use when a persistent visible list of options allows exactly one selection."
+        ]
+      }
+    },
+    {
+      "name": "form",
+      "title": "Form",
+      "description": "Base UI form root for validation, submission, reset, and server errors.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form/form.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/form/form.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/form/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/form/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/form.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a single control whose change applies at once, such as a Switch in a settings row."
+        ],
+        "description": "Base UI form root for validation, submission, reset, and server errors.",
+        "knownLimitations": [
+          "Kit Buttons default to type=\"button\"; give the submit button type=\"submit\".",
+          "An async Field validate does not stop onSubmit from running; await a server check in the submission handler."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "form"
+        ],
+        "useWhen": [
+          "Use to submit related fields together, with validation, a reset and errors returned by the server."
+        ]
+      }
+    },
+    {
+      "name": "fieldset",
+      "title": "Fieldset",
+      "description": "Base UI fieldset and legend primitives for semantic control groups.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/fieldset/fieldset.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/fieldset/fieldset.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/fieldset/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/fieldset/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/fieldset.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for visual grouping only; use Card or Frame.",
+          "Avoid expecting it to submit, validate or save: compose it within Form."
+        ],
+        "description": "Base UI fieldset and legend primitives for semantic control groups.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "fieldset"
+        ],
+        "useWhen": [
+          "Use to group related fields under a shared legend, such as an address or a set of notification options."
+        ]
+      }
+    },
+    {
+      "name": "icon-morphs",
+      "title": "Icon Morphs",
+      "description": "Menu button whose bars morph into a close icon. Search terms: actions.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/icon-morphs/icon-morphs.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/icon-morphs/icon-morphs.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/icon-morphs/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/icon-morphs/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/icon-morphs.md",
+      "categories": [
+        "Animated"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a toggle that does not open a menu or navigation; use Toggle."
+        ],
+        "description": "Menu button whose bars morph into a close icon.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "icon-morphs",
+          "icon morphs",
+          "actions",
+          "icon",
+          "morphs"
+        ],
+        "useWhen": [
+          "Use for a menu button whose bars morph into a close icon while the navigation it controls is open."
+        ]
+      }
+    },
+    {
+      "name": "frame",
+      "title": "Frame",
+      "description": "Layered surface with headers, panels, descriptions and footers.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/frame/frame.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/frame/frame.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/frame/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/frame/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/frame.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a single card with its own header and actions; use Card.",
+          "Avoid for cards joined in a surrounding surface; use CardFrame."
+        ],
+        "description": "Layered surface with headers, panels, descriptions and footers.",
+        "knownLimitations": [
+          "Frame owns presentation only: it holds no state and no behavior."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "frame"
+        ],
+        "useWhen": [
+          "Use to group raised panels, with a header and a footer, inside one shared surface."
+        ]
+      }
+    },
+    {
+      "name": "group",
+      "title": "Group",
+      "description": "Composition for visually joined controls, text segments, and separators.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/group/group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/group/group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/group.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the controls need shared roving focus; use Toolbar.",
+          "Avoid when the controls share a pressed selection; use Toggle Group."
+        ],
+        "description": "Composition for visually joined controls, text segments, and separators.",
+        "knownLimitations": [
+          "Controls keep their own behavior and focus stops; Group adds no roving focus and no shared selection."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "group"
+        ],
+        "useWhen": [
+          "Use to join related controls, text segments and separators into one visual unit, such as a button beside an input."
+        ]
+      }
+    },
+    {
+      "name": "dialog",
+      "title": "Dialog",
+      "description": "Base UI-backed modal task boundary.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/dialog/dialog.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dialog/dialog.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/dialog/dialog-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dialog/dialog-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/dialog/dialog.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dialog/dialog.css"
+        },
+        {
+          "path": "packages/ui/src/components/dialog/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dialog/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/dialog.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a decision that must be made before continuing; use Alert Dialog.",
+          "Avoid for short contextual content beside a trigger; use Popover."
+        ],
+        "description": "Base UI-backed modal task boundary.",
+        "knownLimitations": [
+          "Do not wrap a submit button in DialogClose: it closes the dialog before the submission has succeeded."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "dialog"
+        ],
+        "useWhen": [
+          "Use for a focused task or a form in an overlay, with a title and a clear close action."
+        ]
+      }
+    },
+    {
+      "name": "combobox",
+      "title": "Combobox",
+      "description": "Searchable single- and multi-selection control with animated chips, grouped results and form integration.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0",
+        "motion@12.43.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/combobox/combobox.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/combobox/combobox.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/combobox/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/combobox/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/combobox.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the options are few and need no search; use Select.",
+          "Avoid when the text may differ from the suggestions; use Autocomplete."
+        ],
+        "description": "Searchable single- and multi-selection control with animated chips, grouped results and form integration.",
+        "knownLimitations": [
+          "For async options the application owns fetching, stale results and the pending and error states."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "combobox"
+        ],
+        "useWhen": [
+          "Use to choose one or several options from a known list with search, such as assigning people or tags."
+        ]
+      }
+    },
+    {
+      "name": "locale",
+      "title": "Locale Provider",
+      "description": "React Aria locale boundary for localized components.",
+      "dependencies": [
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/system/locale/siteplane-locale-provider.tsx",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/system/locale/siteplane-locale-provider.tsx"
+        }
+      ],
+      "type": "registry:lib"
+    },
+    {
+      "name": "avatar",
+      "title": "Avatar",
+      "description": "Image and fallback avatar compound component.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/avatar/avatar.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar/avatar.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/avatar/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/avatar.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a decorative picture or a logo that is not an account; use an image.",
+          "Avoid overlapping several avatars by hand; Avatar Group draws the overlap, the ring and the overflow count."
+        ],
+        "description": "Image and fallback avatar compound component.",
+        "knownLimitations": [
+          "An image needs a meaningful alt. An avatar that shows only initials or an icon can take role=\"img\" and an aria-label.",
+          "Navigation and upload are not managed, and the application supplies the status that the status dot shows."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "avatar"
+        ],
+        "useWhen": [
+          "Use to represent a person, team or account with an image that falls back to initials or an icon."
+        ]
+      }
+    },
+    {
+      "name": "avatar-group",
+      "title": "Avatar Group",
+      "description": "Show several people as a row of overlapping avatars with an optional overflow count. Search terms: avatar stack, facepile, members.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/badge.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/avatar-group/avatar-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar-group/avatar-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/avatar-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/avatar-group.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when every person needs a name on screen; list them, for example in a Resource List.",
+          "Avoid for a single person; use Avatar."
+        ],
+        "description": "Show several people as a row of overlapping avatars with an optional overflow count.",
+        "knownLimitations": [
+          "The application decides how many avatars to show and what the count says; the group does not measure or cut its children.",
+          "The ring takes the color of the kit surface the group sits on, such as a Card, Dialog or Popover, and the page background elsewhere.",
+          "The size prop sizes every avatar and the count, 24, 32, 40 or 48 px, and the overlap is a quarter of it; a size class on one avatar changes that avatar alone.",
+          "The count needs an accessible name that says what it counts, for example visually hidden text after the number."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "avatar-group",
+          "avatar group",
+          "avatar stack",
+          "facepile",
+          "members",
+          "people",
+          "overflow count"
+        ],
+        "useWhen": [
+          "Use to show the people of a project, a team or a conversation in little space.",
+          "Use with a count when a group has more members than it shows."
+        ]
+      }
+    },
+    {
+      "name": "badge",
+      "title": "Badge",
+      "description": "Polymorphic badge with semantic variants and responsive sizes.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/badge/badge.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge/badge.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/badge/badge.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge/badge.css"
+        },
+        {
+          "path": "packages/ui/src/components/badge/badge-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge/badge-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/badge/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/badge.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for the main action of a view; use Button.",
+          "Avoid for feedback that must be announced: a badge is not a live region. Use Alert or Toast."
+        ],
+        "description": "Polymorphic badge with semantic variants and responsive sizes.",
+        "knownLimitations": [
+          "A change of status is not announced; put changing feedback in a live region.",
+          "A count needs a contextual accessible name, and decorative icons should be hidden from assistive technology."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "badge"
+        ],
+        "useWhen": [
+          "Use to label a status, a category or a count next to other content."
+        ]
+      }
+    },
+    {
+      "name": "card",
+      "title": "Card",
+      "description": "Structured application surface for related content and actions.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/card/card.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/card/card.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/card/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/card/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/card.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid turning a card that contains buttons into one large button; keep the controls separate.",
+          "Avoid for raised panels that share one surface; use Frame."
+        ],
+        "description": "Structured application surface for related content and actions.",
+        "knownLimitations": [
+          "The title parts render divs. Pass render={<h2 />} when the title belongs in the document outline."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "card"
+        ],
+        "useWhen": [
+          "Use to group related content and actions on one surface, with an optional header, content and footer."
+        ]
+      }
+    },
+    {
+      "name": "alert",
+      "title": "Alert",
+      "description": "Persistent inline feedback with semantic tone and optional actions.",
+      "dependencies": [
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/alert/alert.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/alert/alert.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/alert/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/alert/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/alert.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for consequential modal decisions; use Alert Dialog.",
+          "Avoid for transient status outside the content flow; use Toast."
+        ],
+        "description": "Persistent inline feedback with semantic tone and optional actions.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "alert"
+        ],
+        "useWhen": [
+          "Use for a message about the state of a page or a form that stays in the content flow, with a tone and optional actions."
+        ]
+      }
+    },
+    {
+      "name": "empty-state",
+      "title": "Empty State",
+      "description": "Empty application-state explanation with media and actions.",
+      "dependencies": [
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/empty-state/empty-state.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/empty-state.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/empty-state/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/empty-state.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid while data is loading; use Skeleton or Spinner.",
+          "Avoid for an error on a page that still has content; use Alert."
+        ],
+        "description": "Empty application-state explanation with media and actions.",
+        "knownLimitations": [
+          "EmptyTitle renders a div. Put a semantic heading inside it when the page outline needs one."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "empty-state",
+          "empty state",
+          "empty",
+          "state"
+        ],
+        "useWhen": [
+          "Use after loading has settled, to explain why a collection is empty and what to do next, with optional media and actions."
+        ]
+      }
+    },
+    {
+      "name": "skeleton",
+      "title": "Skeleton",
+      "description": "Decorative loading placeholder with consumer-owned geometry.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/skeleton/skeleton.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/skeleton/skeleton.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/skeleton/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/skeleton/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/skeleton.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for an operation with measurable progress; use Progress.",
+          "Avoid when the layout of the result is unknown; use Spinner."
+        ],
+        "description": "Decorative loading placeholder with consumer-owned geometry.",
+        "knownLimitations": [
+          "Skeletons are decorative and hidden from assistive technology; the surrounding region owns the busy state and the loading announcement."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "skeleton"
+        ],
+        "useWhen": [
+          "Use to reserve space for content that is loading, sized like the content that replaces it."
+        ]
+      }
+    },
+    {
+      "name": "spinner",
+      "title": "Spinner",
+      "description": "Indeterminate loading status with seven visual variants and reduced-motion behavior.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/spinner/spinner.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/spinner/spinner.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/spinner/spinner.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/spinner/spinner.css"
+        },
+        {
+          "path": "packages/ui/src/components/spinner/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/spinner/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/spinner.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when completion is measurable; use Progress.",
+          "Avoid for content that loads into a known layout; use Skeleton."
+        ],
+        "description": "Indeterminate loading status with seven visual variants and reduced-motion behavior.",
+        "knownLimitations": [
+          "A spinner does not start, cancel or finish a request; the application owns the pending and error state."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "spinner"
+        ],
+        "useWhen": [
+          "Use to show that an operation is in progress when its length is unknown, on its own, inside a button or in an input."
+        ]
+      }
+    },
+    {
+      "name": "stepper",
+      "title": "Stepper",
+      "description": "Ordered workflow progress with read-only and native button items.",
+      "dependencies": [
+        "class-variance-authority@0.7.1",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/stepper/stepper.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/stepper/stepper.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/stepper/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/stepper/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/stepper.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for panels that people switch between freely; use Tabs.",
+          "Avoid for a plain percentage of completion; use Progress."
+        ],
+        "description": "Ordered workflow progress with read-only and native button items.",
+        "knownLimitations": [
+          "Keep one item per step mounted between renders, with a stable key. The marker, the description and the connector then change in place and the content opens and closes; replacing one item component with another remounts the step.",
+          "A step's content is the children of its item. A body that is closing is inert, so focus inside it is lost when it closes; move focus first."
+        ],
+        "providerNotes": [
+          "Depends on the motion component, which the registry installs with the stepper.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make every change instant."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "stepper"
+        ],
+        "useWhen": [
+          "Use to show ordered steps and which are done, current or blocked, with optional content for the open step."
+        ]
+      }
+    },
+    {
+      "name": "code",
+      "title": "Code",
+      "description": "Inline and block code with optional reveal and clipboard actions.",
+      "dependencies": [
+        "class-variance-authority@0.7.1",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/code/code.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/code/code.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/code/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/code/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/code.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for syntax-highlighted listings; Code does not highlight.",
+          "Avoid masking as protection for a secret: a masked value still reaches the browser."
+        ],
+        "description": "Inline and block code with optional reveal and clipboard actions.",
+        "knownLimitations": [
+          "Copying depends on browser permissions and a secure context; a failed copy is shown on the button.",
+          "A reveal by the person survives a new value and resets when mask changes."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "code"
+        ],
+        "useWhen": [
+          "Use to show inline code, or a block of text that people can copy and that can stay masked until revealed."
+        ]
+      }
+    },
+    {
+      "name": "kbd",
+      "title": "Keyboard Key",
+      "description": "Keyboard input notation for keys and grouped shortcuts.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/kbd/kbd.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/kbd/kbd.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/kbd/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/kbd/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/kbd.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid showing a shortcut as the only way to discover an action.",
+          "Avoid for code; use Code."
+        ],
+        "description": "Keyboard input notation for keys and grouped shortcuts.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "kbd",
+          "keyboard key"
+        ],
+        "useWhen": [
+          "Use to show a key or a keyboard shortcut inside text, a button or a menu item."
+        ]
+      }
+    },
+    {
+      "name": "separator",
+      "title": "Separator",
+      "description": "Base UI separator with horizontal and vertical orientation.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/separator/separator.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/separator/separator.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/separator/separator-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/separator/separator-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/separator/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/separator/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/separator.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid as the only structure of a page; name content groups with headings.",
+          "Avoid for spacing alone; use gap or margin."
+        ],
+        "description": "Base UI separator with horizontal and vertical orientation.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "separator"
+        ],
+        "useWhen": [
+          "Use to divide related sections or controls with a horizontal or vertical line."
+        ]
+      }
+    },
+    {
+      "name": "progress",
+      "title": "Progress",
+      "description": "Native determinate or indeterminate task progress.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/progress/progress.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/progress/progress.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/progress/progress.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/progress/progress.css"
+        },
+        {
+          "path": "packages/ui/src/components/progress/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/progress/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/progress.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a measurement within a known range, such as storage used; use Meter.",
+          "Avoid for a short wait without measurable progress; use Spinner."
+        ],
+        "description": "Native determinate or indeterminate task progress.",
+        "knownLimitations": [
+          "Timing, cancellation and failures belong to the application; keep the accessible label stable as the value changes."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "progress"
+        ],
+        "useWhen": [
+          "Use to show how much of an operation has completed, or that it is running when the amount is unknown."
+        ]
+      }
+    },
+    {
+      "name": "meter",
+      "title": "Meter",
+      "description": "Show a measurement within a known range, such as storage used, with an optional status tone.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/meter/meter.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/meter/meter.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/meter/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/meter/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/meter.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for the completion of a task; use Progress.",
+          "Avoid for an unknown or loading state, which Meter has no display for."
+        ],
+        "description": "Show a measurement within a known range, such as storage used, with an optional status tone.",
+        "knownLimitations": [
+          "There are no low, high or optimum thresholds; the application sets the tone."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "meter"
+        ],
+        "useWhen": [
+          "Use to show a measurement within a known range, such as storage used or a score."
+        ]
+      }
+    },
+    {
+      "name": "textarea",
+      "title": "Textarea",
+      "description": "Base UI-backed multi-line text control.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/textarea/textarea.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/textarea/textarea.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/textarea/textarea-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/textarea/textarea-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/textarea/textarea.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/textarea/textarea.css"
+        },
+        {
+          "path": "packages/ui/src/components/textarea/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/textarea/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/textarea.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a single line; use Input.",
+          "Avoid for formatted text: Textarea edits plain text."
+        ],
+        "description": "Base UI-backed multi-line text control.",
+        "knownLimitations": [
+          "There is no autoGrow prop: the field grows with its content through field-sizing: content, where the browser supports it."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "textarea"
+        ],
+        "useWhen": [
+          "Use for text of several lines, such as a message or a description, that grows with its content."
+        ]
+      }
+    },
+    {
+      "name": "checkbox",
+      "title": "Checkbox",
+      "description": "Base UI-backed Boolean form choice.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/checkbox/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox/checkbox.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/checkbox/checkbox-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox/checkbox-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/checkbox/checkbox.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox/checkbox.css"
+        },
+        {
+          "path": "packages/ui/src/components/checkbox/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/checkbox.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for several related choices; use Checkbox Group.",
+          "Avoid for exactly one choice from a set; use Radio Group.",
+          "Avoid for a setting that applies at once; use Switch."
+        ],
+        "description": "Base UI-backed Boolean form choice.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "checkbox"
+        ],
+        "useWhen": [
+          "Use for an independent yes-or-no choice, such as accepting terms or selecting a row."
+        ]
+      }
+    },
+    {
+      "name": "checkbox-group",
+      "title": "Checkbox Group",
+      "description": "Base UI-backed related multi-selection group.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/checkbox.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/checkbox-group/checkbox-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox-group/checkbox-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/checkbox-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/checkbox-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/checkbox-group.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for one independent choice; use Checkbox.",
+          "Avoid when only one option may be chosen; use Radio Group."
+        ],
+        "description": "Base UI-backed related multi-selection group.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "checkbox-group",
+          "checkbox group",
+          "checkbox",
+          "group"
+        ],
+        "useWhen": [
+          "Use for any number of related options that share a label, with an optional parent checkbox that selects all."
+        ]
+      }
+    },
+    {
+      "name": "radio-group",
+      "title": "Radio Group",
+      "description": "Base UI-backed single-selection form group.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/radio-group/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radio-group/radio-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/radio-group/radio-group-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radio-group/radio-group-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/radio-group/radio-group.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radio-group/radio-group.css"
+        },
+        {
+          "path": "packages/ui/src/components/radio-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radio-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/radio-group.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for several independent choices; use Checkbox Group.",
+          "Avoid for a long list of options; use Select."
+        ],
+        "description": "Base UI-backed single-selection form group.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "radio-group",
+          "radio group",
+          "radio",
+          "group"
+        ],
+        "useWhen": [
+          "Use to choose exactly one option from a short, visible set."
+        ]
+      }
+    },
+    {
+      "name": "switch",
+      "title": "Switch",
+      "description": "Base UI-backed on/off preference control.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/switch/switch.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/switch/switch.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/switch/switch-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/switch/switch-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/switch/switch.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/switch/switch.css"
+        },
+        {
+          "path": "packages/ui/src/components/switch/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/switch/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/switch.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a choice that applies only after a submit; use Checkbox.",
+          "Avoid for several related choices; use Checkbox Group, or Radio Group for exactly one."
+        ],
+        "description": "Base UI-backed on/off preference control.",
+        "knownLimitations": [
+          "Switch has no indeterminate state."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "switch"
+        ],
+        "useWhen": [
+          "Use for a setting that is on or off and applies at once, such as a notification preference."
+        ]
+      }
+    },
+    {
+      "name": "toggle",
+      "title": "Toggle",
+      "description": "Base UI-backed pressed-state action.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/toggle/toggle.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toggle/toggle.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/toggle/toggle-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toggle/toggle-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/toggle/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toggle/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/toggle.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a setting in a form; use Switch or Checkbox.",
+          "Avoid for a single action; use Button."
+        ],
+        "description": "Base UI-backed pressed-state action.",
+        "knownLimitations": [
+          "Toggle submits no boolean form value; use Checkbox or Switch, or serialize the state yourself."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "toggle"
+        ],
+        "useWhen": [
+          "Use for a button that stays pressed or unpressed, such as bold in a toolbar."
+        ]
+      }
+    },
+    {
+      "name": "toggle-group",
+      "title": "Toggle Group",
+      "description": "Base UI-backed single or multiple pressed selection.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/toggle.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/toggle-group/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toggle-group/toggle-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/toggle-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toggle-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/toggle-group.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for switching content panels; use Tabs.",
+          "Avoid for a form choice that is submitted; use Radio Group or Checkbox Group."
+        ],
+        "description": "Base UI-backed single or multiple pressed selection.",
+        "knownLimitations": [
+          "Unlike Radio Group, a single selected item can be cleared."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "toggle-group",
+          "toggle group",
+          "toggle",
+          "group"
+        ],
+        "useWhen": [
+          "Use for a set of related pressed-state buttons with single or multiple selection, such as text alignment or a view mode."
+        ]
+      }
+    },
+    {
+      "name": "number-field",
+      "title": "Number Field",
+      "description": "Base UI-backed numeric entry and stepping.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/label.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/number-field/number-field.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/number-field/number-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/number-field/number-field.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/number-field/number-field.css"
+        },
+        {
+          "path": "packages/ui/src/components/number-field/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/number-field/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/number-field.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a value chosen along a range where precision is not needed; use Slider.",
+          "Avoid for digit codes such as a PIN; use OTP Field."
+        ],
+        "description": "Base UI-backed numeric entry and stepping.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "number-field",
+          "number field",
+          "number",
+          "field"
+        ],
+        "useWhen": [
+          "Use for a number that people type, step with the arrow keys or buttons, or scrub, such as a quantity."
+        ]
+      }
+    },
+    {
+      "name": "otp-field",
+      "title": "OTP Field",
+      "description": "Segmented fixed-length input for one-time passwords, verification codes and recovery codes. Search terms: joined.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/label.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/otp-field/otp-field.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/otp-field/otp-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/otp-field/otp-field.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/otp-field/otp-field.css"
+        },
+        {
+          "path": "packages/ui/src/components/otp-field/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/otp-field/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/otp-field.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a code of variable length or free text; use Input."
+        ],
+        "description": "Segmented fixed-length input for one-time passwords, verification codes and recovery codes.",
+        "knownLimitations": [
+          "A completed code is not verified: the server validates it and limits retries."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "otp-field",
+          "otp field",
+          "otp",
+          "field",
+          "joined"
+        ],
+        "useWhen": [
+          "Use to enter a short code of fixed length, such as a one-time password, a verification code or a recovery code."
+        ]
+      }
+    },
+    {
+      "name": "slider",
+      "title": "Slider",
+      "description": "Scalar, range, discrete-label and form slider.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/slider/slider.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/slider/slider.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/slider/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/slider/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/slider.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when people need to enter a precise value; use Number Field.",
+          "Avoid for a choice among a few named options; use Radio Group or Toggle Group."
+        ],
+        "description": "Scalar, range, discrete-label and form slider.",
+        "knownLimitations": [
+          "Chromium may report the hidden native range input as missing an accessible label."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "slider"
+        ],
+        "useWhen": [
+          "Use to choose a number or a range by moving one or more thumbs when an approximate value is enough."
+        ]
+      }
+    },
+    {
+      "name": "alert-dialog",
+      "title": "Alert Dialog",
+      "description": "Modal confirmation dialog for consequential actions.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/alert-dialog/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/alert-dialog/alert-dialog.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/alert-dialog/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/alert-dialog/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/alert-dialog.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a task with fields or several steps; use Dialog.",
+          "Avoid for a message that asks for no decision; use Alert or Toast."
+        ],
+        "description": "Modal confirmation dialog for consequential actions.",
+        "knownLimitations": [
+          "The dialog does not run or await the confirmed action. For an asynchronous confirmation, keep the root controlled and close it after the request succeeds."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "alert-dialog",
+          "alert dialog",
+          "alert",
+          "dialog"
+        ],
+        "useWhen": [
+          "Use for a decision people must make before they continue, such as deleting a project or discarding changes."
+        ]
+      }
+    },
+    {
+      "name": "drawer",
+      "title": "Drawer",
+      "description": "Swipe-aware modal panel anchored to a viewport edge.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/radio-group.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/switch.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/drawer/drawer.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/drawer/drawer.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/drawer/drawer.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/drawer/drawer.css"
+        },
+        {
+          "path": "packages/ui/src/components/drawer/drawer-menu-shared.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/drawer/drawer-menu-shared.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/drawer/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/drawer/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/drawer.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when swipe dismissal is not wanted; use Sheet.",
+          "Avoid for a centered task; use Dialog."
+        ],
+        "description": "Swipe-aware modal panel anchored to a viewport edge.",
+        "knownLimitations": [
+          "Swipe is not the only way to close: keep a visible close action."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "drawer"
+        ],
+        "useWhen": [
+          "Use for a panel that slides in from a viewport edge and closes with a swipe, such as a mobile menu or a list of actions."
+        ]
+      }
+    },
+    {
+      "name": "sheet",
+      "title": "Sheet",
+      "description": "Dialog-backed edge flyout for forms and save/cancel workflows.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/sheet/sheet.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sheet/sheet.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/sheet/sheet-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sheet/sheet-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/sheet/sheet.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sheet/sheet.css"
+        },
+        {
+          "path": "packages/ui/src/components/sheet/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sheet/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/sheet.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a decision that needs an answer before continuing; use Alert Dialog.",
+          "Avoid when swipe dismissal is wanted; use Drawer."
+        ],
+        "description": "Dialog-backed edge flyout for forms and save/cancel workflows.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "sheet"
+        ],
+        "useWhen": [
+          "Use for a form or a short task in a panel at the edge of the screen, with save and cancel actions."
+        ]
+      }
+    },
+    {
+      "name": "popover",
+      "title": "Popover",
+      "description": "Anchored non-modal surface for contextual content.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/popover/popover.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/popover/popover.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/popover/popover-motion.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/popover/popover-motion.ts"
+        },
+        {
+          "path": "packages/ui/src/components/popover/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/popover/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/popover.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a short label on hover or focus; use Tooltip.",
+          "Avoid for a task or a decision that needs the whole focus of the screen; use Dialog."
+        ],
+        "description": "Anchored non-modal surface for contextual content.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "popover"
+        ],
+        "useWhen": [
+          "Use for contextual content beside a trigger that people can interact with, such as fields, buttons or a short form."
+        ]
+      }
+    },
+    {
+      "name": "tooltip",
+      "title": "Tooltip",
+      "description": "Short contextual label for hoverable or focusable controls.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/tooltip/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tooltip/tooltip.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/tooltip/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tooltip/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/tooltip.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for interactive content; use Popover.",
+          "Avoid for essential instructions: do not make them hover-only."
+        ],
+        "description": "Short contextual label for hoverable or focusable controls.",
+        "knownLimitations": [],
+        "providerNotes": [
+          "Mount TooltipProvider once at the application root. It defaults to a 700ms opening delay and a 550ms warm re-hover window; both remain configurable."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "tooltip"
+        ],
+        "useWhen": [
+          "Use for a short, non-essential label on a control that people hover or focus, such as the name of an icon button."
+        ]
+      }
+    },
+    {
+      "name": "preview-card",
+      "title": "Preview Card",
+      "description": "Anchored hover and focus preview for linked content.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/preview-card/preview-card.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/preview-card/preview-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/preview-card/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/preview-card/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/preview-card.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for required content or actions: the card is supplementary. Use Popover or Dialog.",
+          "Avoid when the link is not understandable without the preview."
+        ],
+        "description": "Anchored hover and focus preview for linked content.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "preview-card",
+          "preview card",
+          "preview",
+          "card"
+        ],
+        "useWhen": [
+          "Use to preview the destination of a link on hover or focus without leaving the page."
+        ]
+      }
+    },
+    {
+      "name": "menu",
+      "title": "Menu",
+      "description": "Keyboard-navigable action and selection menu.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/switch.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/menu/menu.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/menu/menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/menu/menu-shared.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/menu/menu-shared.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/menu/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/menu/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/menu.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for site navigation with panels of links; use Navigation Menu.",
+          "Avoid for choosing a value in a form; use Select."
+        ],
+        "description": "Keyboard-navigable action and selection menu.",
+        "knownLimitations": [
+          "Selection in the menu is menu state, not native form submission."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "menu"
+        ],
+        "useWhen": [
+          "Use for a compact list of actions or choices opened from a button, such as an account menu or the actions of a row."
+        ]
+      }
+    },
+    {
+      "name": "context-menu",
+      "title": "Context Menu",
+      "description": "Pointer and keyboard context menu sharing Menu presentation.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/switch.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/context-menu/context-menu.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/context-menu/context-menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/context-menu/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/context-menu/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/context-menu.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid as the only way to reach an action; people who do not find right-click need a visible Menu button as well.",
+          "Avoid for navigation; use real links or Navigation Menu."
+        ],
+        "description": "Pointer and keyboard context menu sharing Menu presentation.",
+        "knownLimitations": [
+          "Selection in the menu is menu state, not native form submission."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "context-menu",
+          "context menu",
+          "context",
+          "menu"
+        ],
+        "useWhen": [
+          "Use for secondary actions on an element, opened by right-click or long press."
+        ]
+      }
+    },
+    {
+      "name": "accordion",
+      "title": "Accordion",
+      "description": "Single or multiple expandable disclosure sections.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/accordion/accordion.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/accordion/accordion.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/accordion/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/accordion/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/accordion.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a single disclosure; use Collapsible.",
+          "Avoid when readers need to compare the content of several sections at once, since closed sections hide it."
+        ],
+        "description": "Single or multiple expandable disclosure sections.",
+        "knownLimitations": [
+          "Enter or Space toggles a focused trigger and Tab moves between the triggers; arrow keys do not move focus.",
+          "A trigger takes no other interactive control inside it."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "accordion"
+        ],
+        "useWhen": [
+          "Use for a list of related sections that people open one or several at a time, such as an FAQ or a group of settings."
+        ]
+      }
+    },
+    {
+      "name": "collapsible",
+      "title": "Collapsible",
+      "description": "Compact disclosure for a single section of content.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/collapsible/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/collapsible/collapsible.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/collapsible/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/collapsible/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/collapsible.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a related list of sections; use Accordion.",
+          "Avoid expecting navigation or data loading: Collapsible only toggles visibility."
+        ],
+        "description": "Compact disclosure for a single section of content.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "collapsible"
+        ],
+        "useWhen": [
+          "Use to show or hide one section of content, such as advanced options or a branch of a file tree."
+        ]
+      }
+    },
+    {
+      "name": "tabs",
+      "title": "Tabs",
+      "description": "Keyboard-navigable single-selection content panels.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/tabs/tabs.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tabs/tabs.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/tabs/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tabs/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/tabs.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for navigation between pages; use Navigation Menu or links.",
+          "Avoid for a related list of expandable sections; use Accordion."
+        ],
+        "description": "Keyboard-navigable single-selection content panels.",
+        "knownLimitations": [
+          "Hidden panels unmount unless keepMounted is set; keep costly state outside the panel.",
+          "Switching tabs swaps the panels: the panel that leaves stays mounted until it has faded out and is taken out of the flow where it sits. The element that holds the panels follows the new height and is clipped while it does; a container that scrolls keeps its own height."
+        ],
+        "providerNotes": [
+          "Panel swaps use the motion package, which the registry installs with the component.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make a swap instant."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "tabs"
+        ],
+        "useWhen": [
+          "Use to switch between associated content panels, one visible at a time, within a page."
+        ]
+      }
+    },
+    {
+      "name": "toolbar",
+      "title": "Toolbar",
+      "description": "Keyboard-navigable group of application controls.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/toolbar/toolbar.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toolbar/toolbar.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/toolbar/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toolbar/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/toolbar.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a few unrelated buttons; use plain Buttons or Group.",
+          "Avoid for choosing among options; use Toggle Group."
+        ],
+        "description": "Keyboard-navigable group of application controls.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "toolbar"
+        ],
+        "useWhen": [
+          "Use for a group of related actions that share one tab stop and arrow-key navigation, such as the formatting controls of an editor."
+        ]
+      }
+    },
+    {
+      "name": "toast",
+      "title": "Toast",
+      "description": "Transient status messages managed through a scoped provider.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/spinner.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/toast/toast.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toast/toast.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/toast/toast.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toast/toast.css"
+        },
+        {
+          "path": "packages/ui/src/components/toast/toast-stack.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toast/toast-stack.ts"
+        },
+        {
+          "path": "packages/ui/src/components/toast/toast-surface.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toast/toast-surface.ts"
+        },
+        {
+          "path": "packages/ui/src/components/toast/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/toast/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/toast.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for an error that blocks a task; keep it beside the field or use Alert Dialog.",
+          "Avoid as the only place for a persistent form error."
+        ],
+        "description": "Transient status messages managed through a scoped provider.",
+        "knownLimitations": [
+          "Each provider keeps its own toasts; with several providers at one position, the stack that received a toast last takes the edge."
+        ],
+        "providerNotes": [
+          "Mount ToastProvider once near the application root."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "toast"
+        ],
+        "useWhen": [
+          "Use for a short message after an action, such as Saved or Upload complete, that goes away by itself."
+        ]
+      }
+    },
+    {
+      "name": "scroll-area",
+      "title": "Scroll Area",
+      "description": "Bounded overflow region with native overlay scrollbars, optional edge fades and gutter handling.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/scroll-area/scroll-area.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/scroll-area/scroll-area.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/scroll-area/scroll-area.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/scroll-area/scroll-area.css"
+        },
+        {
+          "path": "packages/ui/src/components/scroll-area/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/scroll-area/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/scroll-area.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the page itself can scroll; a nested scroll region adds a second place to scroll.",
+          "Avoid hiding the scrollbars of content that people must find by scrolling."
+        ],
+        "description": "Bounded overflow region with native overlay scrollbars, optional edge fades and gutter handling.",
+        "knownLimitations": [
+          "The viewport joins the tab order while its content overflows; name it with aria-label or aria-labelledby."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "scroll-area",
+          "scroll area",
+          "scroll",
+          "area"
+        ],
+        "useWhen": [
+          "Use to constrain overflowing content to a fixed region, with styled scrollbars and optional edge fades."
+        ]
+      }
+    },
+    {
+      "name": "sidebar",
+      "title": "Sidebar",
+      "description": "Application navigation sidebar with desktop collapse and a mobile sheet.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/sheet.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/skeleton.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/sidebar/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sidebar/sidebar.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/sidebar/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sidebar/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/sidebar.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a few top-level pages; a row of links with Navigation Menu is lighter."
+        ],
+        "description": "Application navigation sidebar with desktop collapse and a mobile sheet.",
+        "knownLimitations": [
+          "The desktop state is written to the sidebar_state cookie but not read back; pass defaultOpen from the server or the application. stateCookie renames the cookie, and stateCookie={false} turns it off.",
+          "The provider registers Ctrl/Cmd+B unless keyboardShortcut is false."
+        ],
+        "providerNotes": [
+          "Wrap the sidebar and the content beside it in one SidebarProvider, which holds the open state."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "sidebar"
+        ],
+        "useWhen": [
+          "Use for the main navigation of an application, such as grouped links with a workspace switcher and an account menu. It collapses on desktop and opens as a sheet on mobile."
+        ]
+      }
+    },
+    {
+      "name": "dropdown-menu",
+      "title": "Dropdown Menu",
+      "description": "The Menu under DropdownMenu-prefixed part names.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/menu.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/dropdown-menu/dropdown-menu.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dropdown-menu/dropdown-menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/dropdown-menu/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dropdown-menu/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/dropdown-menu.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid mixing it with the Menu part names in one menu; both are the same component."
+        ],
+        "description": "The Menu under DropdownMenu-prefixed part names.",
+        "knownLimitations": [
+          "DropdownMenu re-exports Menu. Its behavior, styling and API are Menu's, and only the part names differ."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "dropdown-menu",
+          "dropdown menu",
+          "dropdown",
+          "menu"
+        ],
+        "useWhen": [
+          "Use when you want DropdownMenu-prefixed part names, such as DropdownMenuContent, for a menu opened from a button."
+        ]
+      }
+    },
+    {
+      "name": "select",
+      "title": "Select",
+      "description": "Single- and multiple-selection popup with grouped, polymorphic and form-integrated controls.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/select/select.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/select/select.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/select/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/select/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/select.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when people need to search the options; use Combobox.",
+          "Avoid for text that may differ from the options; use Autocomplete."
+        ],
+        "description": "Single- and multiple-selection popup with grouped, polymorphic and form-integrated controls.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "select"
+        ],
+        "useWhen": [
+          "Use to choose one or several options from a fixed list, without text filtering."
+        ]
+      }
+    },
+    {
+      "name": "autocomplete",
+      "title": "Autocomplete",
+      "description": "Text input with suggestions and no selection state.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/autocomplete/autocomplete.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/autocomplete/autocomplete.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/autocomplete/autocomplete-internal.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/autocomplete/autocomplete-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/autocomplete/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/autocomplete/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/autocomplete.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the value must be one of the options; use Combobox.",
+          "Avoid when there is no typing and the options are fixed; use Select."
+        ],
+        "description": "Text input with suggestions and no selection state.",
+        "knownLimitations": [
+          "The value is the text itself and there is no selected item. Use Combobox when the value must come from the list.",
+          "Fetching, stale results and pending or error states for async suggestions belong to the application."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "autocomplete"
+        ],
+        "useWhen": [
+          "Use for a text input that suggests completions while it still accepts free text, such as a search box or an address line."
+        ]
+      }
+    },
+    {
+      "name": "timeline",
+      "title": "Timeline",
+      "description": "Ordered event history with semantic and shaped markers.",
+      "dependencies": [
+        "class-variance-authority@0.7.1"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/timeline/timeline.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/timeline/timeline.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/timeline/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/timeline/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/timeline.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for steps that people move through; use Stepper.",
+          "Avoid for history that people sort or filter; use Table."
+        ],
+        "description": "Ordered event history with semantic and shaped markers.",
+        "knownLimitations": [
+          "Added, removed and reordered events animate on their own. Give every event a stable key: an index as the key makes a removed event leave as its neighbor.",
+          "Events must be direct children of the timeline, not wrapped in a fragment; a fragment around several events is treated as one.",
+          "A leaving event is inert, so focus inside it is lost when it leaves. Move focus before removing it."
+        ],
+        "providerNotes": [
+          "Depends on the motion component, which the registry installs with the timeline.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make every change instant."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "timeline"
+        ],
+        "useWhen": [
+          "Use to present events in chronological order with markers, such as an order history or an audit trail."
+        ]
+      }
+    },
+    {
+      "name": "table",
+      "title": "Table",
+      "description": "React Aria table with composable rows and cells plus optional sorting, row or checkbox selection, captions and footers.",
+      "dependencies": [
+        "lucide-react@1.18.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/table/table.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/table/table.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/table/table-shared.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/table/table-shared.ts"
+        },
+        {
+          "path": "packages/ui/src/components/table/table.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/table/table.css"
+        },
+        {
+          "path": "packages/ui/src/components/table/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/table/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/table.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a short list of labeled values or resources; use Settings List or Resource List."
+        ],
+        "description": "React Aria table with composable rows and cells plus optional sorting, row or checkbox selection, captions and footers.",
+        "knownLimitations": [
+          "The table renders every row it is given and does not virtualize; page or virtualize large collections in the application."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "table",
+          "sorting",
+          "selection"
+        ],
+        "useWhen": [
+          "Use when structured tabular data needs accessible navigation with optional sorting or selection."
+        ]
+      }
+    },
+    {
+      "name": "tag-group",
+      "title": "Tag Group",
+      "description": "React Aria tag collection with controlled or uncontrolled selection, accessible removal and focus recovery. Search terms: tags, labels.",
+      "dependencies": [
+        "lucide-react@1.18.0",
+        "motion@12.43.0",
+        "react-aria-components@1.20.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/tag-group/tag-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tag-group/tag-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/tag-group/tag-group-leaving.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tag-group/tag-group-leaving.ts"
+        },
+        {
+          "path": "packages/ui/src/components/tag-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tag-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/tag-group.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when every item is a persistent toggle and removal is not part of the collection workflow."
+        ],
+        "description": "React Aria tag collection with controlled or uncontrolled selection, accessible removal and focus recovery.",
+        "knownLimitations": [
+          "Give every Tag a stable key. An index as the key makes a removed tag leave as its neighbor.",
+          "A tag that has been removed stays on screen as a picture, inert and hidden from assistive technology, until it has faded out. Focus has moved on as soon as it is removed.",
+          "Each tag sits in a wrapper element inside the grid, so a selector that expects the tags to be direct children of the group does not match."
+        ],
+        "providerNotes": [
+          "Depends on the motion component, which the registry installs with the TagGroup.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make added and removed tags change at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "tag-group",
+          "tags",
+          "labels",
+          "selection",
+          "removal"
+        ],
+        "useWhen": [
+          "Use when a compact visible collection of labels can be selected, removed or both.",
+          "Use when labels are added and removed over time and the group should neither jump nor push the content below it."
+        ]
+      }
+    },
+    {
+      "name": "command",
+      "title": "Command",
+      "description": "Searchable keyboard-first action collection.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/autocomplete.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/dialog.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/kbd.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/command/command.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/command/command.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/command/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/command/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/command.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a short fixed list of actions; use Menu.",
+          "Avoid for text suggestions in a form field; use Autocomplete."
+        ],
+        "description": "Searchable keyboard-first action collection.",
+        "knownLimitations": [
+          "Command registers no global shortcut, runs no command, keeps no history and navigates nothing by itself; the application wires these up."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "command"
+        ],
+        "useWhen": [
+          "Use for a searchable list of actions that people run with the keyboard, inline or in a dialog."
+        ]
+      }
+    },
+    {
+      "name": "pagination",
+      "title": "Pagination",
+      "description": "Navigation between the pages of a long list or table, built from Button links.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/pagination/pagination.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/pagination/pagination.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/pagination/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/pagination/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/pagination.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for infinite scrolling or a Load more action; use Button.",
+          "Avoid for a handful of sections; use Tabs."
+        ],
+        "description": "Navigation between the pages of a long list or table, built from Button links.",
+        "knownLimitations": [
+          "Page count, slicing, URL state and data fetching are not built in; the application owns them."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "pagination"
+        ],
+        "useWhen": [
+          "Use to move between the pages of a long list or table when the application owns the page state."
+        ]
+      }
+    },
+    {
+      "name": "breadcrumb",
+      "title": "Breadcrumb",
+      "description": "Semantic hierarchy trail with native navigation links.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/breadcrumb/breadcrumb.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/breadcrumb/breadcrumb.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/breadcrumb/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/breadcrumb/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/breadcrumb.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for steps in a process; use Stepper.",
+          "Avoid as the only navigation of an application: it shows one path, not the structure."
+        ],
+        "description": "Semantic hierarchy trail with native navigation links.",
+        "knownLimitations": [],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "breadcrumb"
+        ],
+        "useWhen": [
+          "Use to show where the current page sits in a hierarchy and to link to the levels above it."
+        ]
+      }
+    },
+    {
+      "name": "dashboard-shell",
+      "title": "Dashboard Shell",
+      "description": "Responsive application frame with a sidebar, a header and scrolling content.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/sidebar.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/dashboard-shell/dashboard-shell.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dashboard-shell/dashboard-shell.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/dashboard-shell/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/dashboard-shell/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/dashboard-shell.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for pages without persistent navigation, such as a marketing page.",
+          "Avoid more than one shell per page."
+        ],
+        "description": "Responsive application frame with a sidebar, a header and scrolling content.",
+        "knownLimitations": [
+          "The shell adds layout only. Routing, authentication and page data stay with the application.",
+          "Shell layout supports left-to-right direction; RTL mirroring is not implemented."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "dashboard-shell",
+          "dashboard",
+          "shell"
+        ],
+        "useWhen": [
+          "Use once at the boundary of a signed-in application to lay out its sidebar, header and scrolling content."
+        ]
+      }
+    },
+    {
+      "name": "filter-bar",
+      "title": "Filter Bar",
+      "description": "Responsive search, filter summary and action arrangement, with view tabs that open into a search field.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/tabs.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/filter-bar/filter-bar.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/filter-bar/filter-bar.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/filter-bar/filter-bar-tabs.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/filter-bar/filter-bar-tabs.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/filter-bar/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/filter-bar/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/filter-bar.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a collection that needs no search or filters; render the collection alone.",
+          "Avoid FilterBarTabs when the search must stay visible beside the tabs; place FilterBarSearch next to a Tabs list instead."
+        ],
+        "description": "Responsive search, filter summary and action arrangement, with view tabs that open into a search field.",
+        "knownLimitations": [
+          "FilterBar arranges controls only; the application owns the query, the filters and the filtering of the collection.",
+          "Tabs of FilterBarTabs that do not fit scroll inside the bar and fade at the edge where more wait. While they overflow, the scrolling strip takes a tab stop of its own, as a Scroll Area does."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "filter-bar",
+          "filter",
+          "bar",
+          "search",
+          "tabs"
+        ],
+        "useWhen": [
+          "Use to lay out search, filters, a summary of the active filters and actions above a collection.",
+          "Use FilterBarTabs for a list with a few views, such as My projects and Starred, where the search shares the tab bar."
+        ]
+      }
+    },
+    {
+      "name": "detail-drawer",
+      "title": "Detail Drawer",
+      "description": "Right-side drawer for the details of a record, with an optional edit form.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/drawer.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/detail-drawer/detail-drawer.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/detail-drawer/detail-drawer.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/detail-drawer/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/detail-drawer/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/detail-drawer.md",
+      "categories": [
+        "Overlays & disclosure"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a short confirmation; use Alert Dialog.",
+          "Avoid for content other than the details of a record; compose Drawer or Sheet directly."
+        ],
+        "description": "Right-side drawer for the details of a record, with an optional edit form.",
+        "knownLimitations": [
+          "Swipe is not the only way to close: keep a visible close action."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "detail-drawer",
+          "detail",
+          "drawer"
+        ],
+        "useWhen": [
+          "Use to show the details of a record beside its list, with an optional edit form."
+        ]
+      }
+    },
+    {
+      "name": "resource-list",
+      "title": "Resource List",
+      "description": "Reduced entity list with explicit indicator, content and meta slots.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/resource-list/resource-list.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/resource-list/resource-list.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/resource-list/resource-list-focus.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/resource-list/resource-list-focus.ts"
+        },
+        {
+          "path": "packages/ui/src/components/resource-list/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/resource-list/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/resource-list.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the list needs managed keyboard selection; use List Box.",
+          "Avoid for data with sortable columns; use Table."
+        ],
+        "description": "Reduced entity list with explicit indicator, content and meta slots.",
+        "knownLimitations": [
+          "Rows need a stable key. An index as the key makes a removed row leave as its neighbor.",
+          "Rows animate only as direct children of the list; a row inside a wrapper component appears and leaves at once.",
+          "When a row that holds focus leaves, focus moves to the next row, or the previous one at the end. With no other row, it is lost.",
+          "A title or description stays on one line and ends with an ellipsis; its title attribute holds the full text, which a title prop replaces."
+        ],
+        "providerNotes": [
+          "Rows animate through the motion component, which the registry installs with it.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make every change instant."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "resource-list",
+          "resource list",
+          "resource",
+          "list"
+        ],
+        "useWhen": [
+          "Use to list resources such as files, projects or members with an indicator, content and metadata, and optional interactive rows."
+        ]
+      }
+    },
+    {
+      "name": "settings-list",
+      "title": "Settings List",
+      "description": "Sectioned settings surface with passive items and consumer-provided controls, tags and supporting content. Search terms: preferences, rows.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/card.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/settings-list/settings-list.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/settings-list/settings-list.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/settings-list/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/settings-list/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/settings-list.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the whole row, rather than its trailing control, should activate the setting."
+        ],
+        "description": "Sectioned settings surface with passive items and consumer-provided controls, tags and supporting content.",
+        "knownLimitations": [
+          "The list is not a form and submits no values; the controls it renders own their state."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "settings-list",
+          "settings",
+          "preferences",
+          "rows"
+        ],
+        "useWhen": [
+          "Use when settings share one surfaced row anatomy but use different trailing controls."
+        ]
+      }
+    },
+    {
+      "name": "animated-buttons",
+      "title": "Animated Buttons",
+      "description": "Sweep and fixed-layout expanding button family. Search terms: actions.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/animated-buttons/animated-buttons.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/animated-buttons/animated-buttons.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/animated-buttons/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/animated-buttons/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/animated-buttons.md",
+      "categories": [
+        "Animated"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when a standard Button covers the need; Animated Buttons add hover motion only.",
+          "Avoid in narrow parents that would clip an expanding label."
+        ],
+        "description": "Sweep and fixed-layout expanding button family.",
+        "knownLimitations": [
+          "An expanding action moves its content on hover; leave room for the expanded label."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "animated-buttons",
+          "animated buttons",
+          "actions",
+          "buttons"
+        ],
+        "useWhen": [
+          "Use for an action that gains from hover motion. The family has a fill sweep button, an expanding arrow button and an expanding log out button."
+        ]
+      }
+    },
+    {
+      "name": "theme-toggles",
+      "title": "Theme Toggles",
+      "description": "Animated sun and moon toggles that switch between light and dark mode. Search terms: actions.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/toggle.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/theme-toggles/theme-toggles.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/theme-toggles/theme-toggles.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/theme-toggles/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/theme-toggles/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/theme-toggles.md",
+      "categories": [
+        "Animated"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a choice among light, dark and system; use Toggle Group."
+        ],
+        "description": "Animated sun and moon toggles that switch between light and dark mode.",
+        "knownLimitations": [
+          "The toggle reports its state but does not apply the theme; the application provider does."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "theme-toggles",
+          "theme toggles",
+          "actions",
+          "theme",
+          "toggles"
+        ],
+        "useWhen": [
+          "Use for a theme control that morphs between a sun and a moon, in a header or a settings row."
+        ]
+      }
+    },
+    {
+      "name": "pie-chart",
+      "title": "Pie Chart",
+      "description": "Show how a total divides into shares as a donut or pie chart. Search terms: ring, distribution.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/pie-chart/pie-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/pie-chart/pie-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/pie-chart/pie-geometry.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/pie-chart/pie-geometry.ts"
+        },
+        {
+          "path": "packages/ui/src/components/pie-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/pie-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/pie-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when readers must compare values precisely or follow change over time; use a Table or a chart with axes.",
+          "Avoid for more than five or six shares; the colors repeat after the fifth series and small shares become hard to see."
+        ],
+        "description": "Show how a total divides into shares as a donut or pie chart.",
+        "knownLimitations": [
+          "The ring is one focus stop and arrow keys move between segments; segments have no click or selection props.",
+          "variant=\"pie\" fills the disc with a wedge per share and has no hole, so center shows only in the donut; center lies over the ring and never takes the pointer.",
+          "Without the legend the shares and their values are read out as the description of the chart; the legend sits beside the ring and has no position option.",
+          "When the data changes, the shares glide to their new size and a share is told by its id: give each share a stable id, never its position.",
+          "The brand palette shades the brand color from strong to light and spreads the shades over the filled shares (up to five); the categorical palette has the five chart colors. Both repeat from the sixth share, except that the last share never takes the color of the first, where the ring closes; a color on a share always wins.",
+          "No share fades while another is active. popOut is off by default: no share moves, and the tooltip alone marks the active share. With popOut the highlighted share steps out 10 px at any size, so it reaches up to 10 px beyond the box of the chart: an ancestor that clips its overflow close to the chart cuts it. A share that is the whole has nowhere to go and stays.",
+          "The legend does not toggle shares, and its entries are no focus stops. Only with popOut does a mouse over an entry pop its share out (a touch does nothing); without popOut the legend does not react."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "pie-chart",
+          "pie",
+          "donut",
+          "ring",
+          "chart",
+          "share",
+          "distribution"
+        ],
+        "useWhen": [
+          "Use when a few shares of one total should be shown as a donut or a pie with a legend and a tooltip.",
+          "Use variant=\"pie\" when the shares should fill a whole disc, or center when the hole of the ring should carry a figure such as a total.",
+          "Use popOut when the share under the pointer, or the share of the legend entry under the mouse, should step out of the chart."
+        ]
+      }
+    },
+    {
+      "name": "file-type-icon",
+      "title": "File Type Icon",
+      "description": "Show a file’s type as a document icon with its extension. Search terms: file icon, attachment, pdf.",
+      "dependencies": [
+        "react-file-icon@1.6.0"
+      ],
+      "devDependencies": [
+        "@types/react-file-icon@1.0.5"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/file-type-icon/file-type-icon.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-type-icon/file-type-icon.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/file-type-icon/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-type-icon/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/file-type-icon.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when a thumbnail would identify an image or video better.",
+          "Avoid as the only cue for a file’s type: the icon is decorative, so keep the file name visible."
+        ],
+        "description": "Show a file’s type as a document icon with its extension.",
+        "knownLimitations": [
+          "The type comes from the file name or the extension prop only; the file’s contents and MIME type are not read.",
+          "There is no size prop: resize the box with className and keep its proportion.",
+          "The label color follows the type, from the kit status and accent colors; no prop sets it."
+        ],
+        "providerNotes": [
+          "Depends on the react-file-icon package, which the registry installs with the component."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "file-type-icon",
+          "file icon",
+          "document icon",
+          "extension",
+          "attachment",
+          "pdf"
+        ],
+        "useWhen": [
+          "Use when a list, an attachment or an upload row names a file and should show its type at a glance."
+        ]
+      }
+    },
+    {
+      "name": "navigation-menu",
+      "title": "Navigation Menu",
+      "description": "Open site sections from a row of links with dropdown panels. Search terms: navbar, mega menu.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/navigation-menu/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/navigation-menu/index.ts"
+        },
+        {
+          "path": "packages/ui/src/components/navigation-menu/navigation-menu.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/navigation-menu/navigation-menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/navigation-menu/navigation-menu.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/navigation-menu/navigation-menu.css"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/navigation-menu.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the items are commands rather than destinations; use Menu or Dropdown Menu.",
+          "Avoid when the links need no panels; a plain list of links is enough."
+        ],
+        "description": "Open site sections from a row of links with dropdown panels.",
+        "knownLimitations": [
+          "NavigationMenuLink renders a Button-styled anchor; passing render replaces that anchor and its styling.",
+          "A link inside NavigationMenuContent takes the full-width panel row style; set popup to choose the style yourself.",
+          "Render exactly one NavigationMenuPopup inside NavigationMenu.",
+          "Triggers and links take the control size of the provider; the menu has no size prop of its own."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "navigation-menu",
+          "navigation menu",
+          "navbar",
+          "mega menu",
+          "dropdown",
+          "links",
+          "panels"
+        ],
+        "useWhen": [
+          "Use when a site needs a row of links where some items open panels of grouped links.",
+          "Use when panels should share one popup that resizes and cross-fades between items."
+        ]
+      }
+    },
+    {
+      "name": "motion",
+      "title": "Motion",
+      "description": "Animate items that appear, leave, move or replace one another, and numbers that change, with no animation code. Search terms: presence, animate presence, transition, list, reorder, reveal, swap, enter, exit, rolling number, odometer, counter, tween, chart.",
+      "dependencies": [
+        "@base-ui/react@1.7.0",
+        "motion@12.43.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/motion/motion.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-presence.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-presence.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-follow.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-follow.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-number.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-number.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-number-cells.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-number-cells.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-values.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-values.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-follow-value.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-follow-value.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/index.ts"
+        },
+        {
+          "path": "packages/ui/src/system/motion/css-transition.ts",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/system/motion/css-transition.ts"
+        },
+        {
+          "path": "packages/ui/src/system/motion/use-layout-transition.ts",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/system/motion/use-layout-transition.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/motion.md",
+      "categories": [
+        "Layout & utilities"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for one element that already animates itself, such as a Collapsible, a Dialog or a Toast.",
+          "Avoid for lists of hundreds of rows: every item is a Motion element. Virtualize the list instead."
+        ],
+        "description": "Animate items that appear, leave, move or replace one another, and numbers that change, with no animation code.",
+        "knownLimitations": [
+          "Items need a stable key. An index as the key makes a removed item leave as its neighbor.",
+          "In a stack, set the space between items with the gap prop, which adds space between items only and none above the first or below the last. A CSS gap on the list leaves a hole until the item has left.",
+          "Items must be direct children of the list, not wrapped in a fragment: a fragment around several items counts as one.",
+          "A flow list moves the height of its own box when a row of items appears or goes. A list that is display: contents has no box, so pass the element that wraps its items as container.",
+          "While a stack item, a reveal or a swap changes, its own element is the clipping box, so give that element no padding or border and put them on the content inside it.",
+          "A leaving item is inert, so focus inside it is lost when it leaves. Move focus before removing it.",
+          "MotionNumber formats a number in en-US unless you pass locales, so the server and the client always agree. A string is shown as it is and only its Latin digits (0 to 9) roll; every other character fades.",
+          "MotionNumber is read once, as its final text, with no live announcement. Wrap it in your own live region when a change must be announced.",
+          "The value tweens move lists of numbers of the same length. A list that changes its length shows the new values at once, unless the values are keyed with useTweenedRows."
+        ],
+        "providerNotes": [
+          "Depends on the motion package, which the registry installs with the component.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make every part instant."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "motion",
+          "animation",
+          "presence",
+          "animate presence",
+          "transition",
+          "list",
+          "reorder",
+          "reveal",
+          "swap",
+          "enter",
+          "exit",
+          "number",
+          "rolling number",
+          "odometer",
+          "counter",
+          "tween",
+          "chart"
+        ],
+        "useWhen": [
+          "Use when items are added, removed or reordered and the items around them should glide into their new place.",
+          "Use when a message, an error or a bar appears and disappears and should not push the layout.",
+          "Use when a step, a state or a panel replaces another, so that the old content fades out before the new content fades in and the container follows the new height.",
+          "Use when a figure changes in place, such as a total, a rate or a count, and its digits should roll to the new value.",
+          "Use when the marks of a chart should glide to new data: the value tweens move numbers toward their new targets.",
+          "Use when a mark or a card should glide after the pointer from item to item without overshooting, as the crosshair and the tooltip of a chart do."
+        ]
+      }
+    },
+    {
+      "name": "chart",
+      "title": "Chart",
+      "description": "Shared scales, curves, interaction, tooltip, legend and axes behind the Siteplane UI charts. Search terms: chart core, axis, d3, data visualization.",
+      "dependencies": [
+        "d3-scale@4.0.2",
+        "d3-array@3.2.4"
+      ],
+      "devDependencies": [
+        "@types/d3-scale@4.0.9",
+        "@types/d3-array@3.2.2"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/chart/chart-types.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-types.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-data.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-data.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-scales.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-scales.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-stack.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-stack.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-model.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-model.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-format.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-format.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-palette.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-palette.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-curve.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-curve.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/use-chart-width.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/use-chart-width.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-interaction.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-interaction.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-legend.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-legend.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-tooltip.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-tooltip.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-tooltip-place.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-tooltip-place.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-axis-pill.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-axis-pill.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-dimming.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-dimming.ts"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-highlight.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-highlight.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-cartesian.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-cartesian.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/chart-line-area.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-line-area.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/index.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "line-chart",
+      "title": "Line Chart",
+      "description": "Show how one or several measures change over time or across ordered categories. Search terms: trend, time series, graph, analytics.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-chart/line-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/line-chart/line-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/line-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/line-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/line-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the categories have no order, such as countries; use a Bar Chart.",
+          "Avoid for readers who must read exact values: the axis gives a rough scale and the tooltip one value at a time; use a Table.",
+          "Avoid for more than five series; the shades repeat after the fifth."
+        ],
+        "description": "Show how one or several measures change over time or across ordered categories.",
+        "knownLimitations": [
+          "The plot is one focus stop; arrow keys, Home and End step through the x positions. There are no click or selection props, and the legend does not toggle series: a mouse over an entry only steps the other series back.",
+          "A missing value (null, undefined or not a number) breaks the line at that point and leaves the series out of the tooltip for it; a point on its own is drawn as a dot.",
+          "The value axis always includes 0 and has no props of its own for its range.",
+          "Dates must be Date objects; they are written in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. Text x values are categories, shown in the order given.",
+          "A date axis is labeled on calendar ticks (days, weeks or months, as many as fit), evenly spaced, which need not sit on a data point; a text axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them. Neither lets two labels overlap.",
+          "When the data changes the lines morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in.",
+          "Several series share one value axis; a second axis is not provided.",
+          "A series that sets no color takes a shade of the brand color, from strong to light and spread over the number of series (palette brand, the default); palette categorical gives each the chart colors --chart-1 to --chart-5 in order instead. A color that a series sets always wins, and both palettes start over from the sixth series."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "line-chart",
+          "line",
+          "chart",
+          "trend",
+          "time series",
+          "graph",
+          "analytics"
+        ],
+        "useWhen": [
+          "Use when one or several measures should be shown over time or an ordered set, with a tooltip for each position."
+        ]
+      }
+    },
+    {
+      "name": "area-chart",
+      "title": "Area Chart",
+      "description": "Show how one or several measures change over time as filled areas, overlaid or stacked. Search terms: trend, time series, graph, analytics.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/area-chart/area-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/area-chart/area-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/area-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/area-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/area-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the categories have no order, such as countries; use a Bar Chart.",
+          "Avoid overlapping several areas that hide each other; stack them, or use a Line Chart.",
+          "Avoid for readers who must read exact values: the axis gives a rough scale and the tooltip one value at a time; use a Table."
+        ],
+        "description": "Show how one or several measures change over time as filled areas, overlaid or stacked.",
+        "knownLimitations": [
+          "The plot is one focus stop; arrow keys, Home and End step through the x positions. There are no click or selection props, and the legend does not toggle series: a mouse over an entry only steps the other series back.",
+          "A missing value (null, undefined or not a number) breaks the area at that point and leaves the series out of the tooltip for it; a point on its own is drawn as a dot.",
+          "Stacked areas show each series' own value in the tooltip, not the running sum, and a missing value adds nothing to the stack.",
+          "The value axis always includes 0 and has no props of its own for its range.",
+          "Dates must be Date objects; they are written in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. Text x values are categories, shown in the order given.",
+          "A date axis is labeled on calendar ticks (days, weeks or months, as many as fit), evenly spaced, which need not sit on a data point; a text axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them. Neither lets two labels overlap.",
+          "When the data changes the areas morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in.",
+          "Several series share one value axis; a second axis is not provided.",
+          "A series that sets no color takes a shade of the brand color, from strong to light and spread over the number of series (palette brand, the default); palette categorical gives each the chart colors --chart-1 to --chart-5 in order instead. A color that a series sets always wins, and both palettes start over from the sixth series."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "area-chart",
+          "area",
+          "chart",
+          "stacked",
+          "trend",
+          "time series",
+          "graph",
+          "analytics"
+        ],
+        "useWhen": [
+          "Use when one or several measures should be shown over time or an ordered set and the size of the whole, or of its parts when stacked, matters."
+        ]
+      }
+    },
+    {
+      "name": "bar-chart",
+      "title": "Bar Chart",
+      "description": "Compare values across categories as columns or horizontal bars, side by side or stacked. Search terms: grouped, comparison, graph, analytics.",
+      "dependencies": [
+        "d3-scale@4.0.2"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/bar-chart/bar-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bar-chart/bar-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/bar-chart/bar-layout.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bar-chart/bar-layout.ts"
+        },
+        {
+          "path": "packages/ui/src/components/bar-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bar-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/bar-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a trend over dozens of points in time; a Line Chart or an Area Chart reads better beyond about 30 bars.",
+          "Avoid for readers who must read exact values: the axis gives a rough scale and the tooltip one category at a time; use a Table.",
+          "Avoid for more than five series; the shades repeat after the fifth."
+        ],
+        "description": "Compare values across categories as columns or horizontal bars, side by side or stacked.",
+        "knownLimitations": [
+          "The plot is one focus stop; arrow keys, Home and End step through the categories (up and down for horizontal bars). There are no click or selection props, and the legend does not toggle series: a mouse over an entry only steps the other series back.",
+          "A missing value (null, undefined or not a number) leaves its bar out and the series out of the tooltip for that category; a bar of 0 has no length.",
+          "A bar takes the whole band of its category, which is 80% of the space the category has, so a chart with few categories has wide bars. The bars of a category share the band with 4 px between them, and no bar is thinner than 1 px: in a narrow chart with many categories the gap gives way first.",
+          "Only the value end of a bar is rounded, by 8 px or, on a thin bar, by a quarter of its thickness, and in a stack only the outer segment of each sign.",
+          "A stack piles positive values up from 0 and negative values down from it in the order of the series, and a missing value adds nothing. The tooltip shows each series' own value, not the sum.",
+          "A series can name a second color for its bars below 0 (negativeColor); without it every bar keeps the color of its series.",
+          "A series that sets no color takes a shade of the brand color, from strong to light and spread over the number of series (palette brand, the default); palette categorical gives each the chart colors --chart-1 to --chart-5 in order instead. A color that a series sets always wins, and both palettes start over from the sixth series.",
+          "The value axis always includes 0 and has no props of its own for its range.",
+          "Dates are categories. They must be Date objects; the chart shows them in date order and writes them in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. The category axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them.",
+          "In a horizontal chart xAxis still labels the categories and yAxis the values, now at the left and along the bottom. The labels at the left take at most 40% of the width, and a longer label ends there in an ellipsis. The tooltip and the live region that reads it to screen readers name the category in full.",
+          "When the data changes the bars glide to their new values and the value axis moves with them; a bar that is new grows from the 0 line and one that is gone shrinks away. A bar is told by its category and series, so a category must keep the same text or date from one data set to the next. When categories come, go or change order, the bars of the categories that stay glide to their new place and thickness, a new bar grows from the 0 line where it stands and a bar that is gone shrinks where it stood. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in. A change in the number of series, or between side by side and stacked, shows at once.",
+          "Several series share one value axis; a second axis is not provided."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "bar-chart",
+          "bar",
+          "chart",
+          "column",
+          "stacked",
+          "grouped",
+          "horizontal",
+          "comparison",
+          "graph",
+          "analytics"
+        ],
+        "useWhen": [
+          "Use when the values of a few to a few dozen categories should be compared, side by side, stacked or as a ranking, with a tooltip for each category."
+        ]
+      }
+    },
+    {
+      "name": "sparkline",
+      "title": "Sparkline",
+      "description": "Show the trend of one or several measures in a small chart without axes. Search terms: spark chart, spark line, spark area, mini chart, inline chart, metric.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/sparkline/sparkline.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sparkline/sparkline.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/sparkline/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sparkline/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/sparkline.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when readers need exact values or several measures on a shared axis; use a Line Chart or a Table.",
+          "Avoid when a gap in the data must stay visible: a value that is not a number is left out and its neighbors are joined."
+        ],
+        "description": "Show the trend of one or several measures in a small chart without axes.",
+        "knownLimitations": [
+          "There are no axes, labels, tooltip or hover values: the sparkline shows the shape of the data only. Name it with label and show the figure next to it.",
+          "All series share one scale. It includes 0 by default, so a series that varies little around a large value looks flat. With includeZero={false} it spans from the lowest value to the highest, so a small change shows its shape but not its size: put the figure beside the sparkline.",
+          "A value that is not a finite number is left out and its neighbors are joined; no gap is drawn.",
+          "All series are drawn in one color, the color of the surrounding text unless color is given, so several series differ by their shape and overlap only.",
+          "The width follows the room the sparkline is given: give it a width such as w-24 in a table cell or beside text. The stroke stays 2 px at any size.",
+          "New data morphs into the old curves whatever their length, unless a series is one point or none, or the number of series changes, which show at once."
+        ],
+        "providerNotes": [
+          "The morph and the color change use the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show them at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "sparkline",
+          "spark chart",
+          "spark line",
+          "spark area",
+          "trend",
+          "mini chart",
+          "inline chart",
+          "chart",
+          "metric"
+        ],
+        "useWhen": [
+          "Use when a figure, a table row or a card should show at a glance how a measure has moved, next to its value.",
+          "Use when a trend should take the color of its context, such as green for a rise and red for a fall, through the text color of a parent."
+        ]
+      }
+    },
+    {
+      "name": "bar-list",
+      "title": "Bar List",
+      "description": "Rank labeled values with a bar for each, relative to the largest. Search terms: ranking, top list, leaderboard, horizontal bars, chart, analytics.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/chart.json",
+        "https://ui.siteplane.io/registry/v/1.0.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/bar-list/bar-list.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bar-list/bar-list.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/bar-list/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bar-list/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/bar-list.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when rows must be clicked, selected or linked: the rows are not interactive; use a Table, a List Box or a Resource List.",
+          "Avoid when values can be negative or must be read against an axis; use a Bar Chart."
+        ],
+        "description": "Rank labeled values with a bar for each, relative to the largest.",
+        "knownLimitations": [
+          "The rows take no click, hover or focus, and the list is not a focus stop.",
+          "The rows keep the order of the data and are never sorted: sort the data to rank it.",
+          "Each bar is as long as its value is large next to the largest, which fills the track, but any value above zero keeps at least 2% of the track, so a very small value is a short bar and not a hairline. A value that is zero or negative has no bar, and a negative value is written as it is. A value that is not a number counts as 0.",
+          "The values share one column as wide as the widest of them, so every bar has the same track however the values are written.",
+          "A label that does not fit on one line wraps, and its row and bar grow with it; the value stays on the first line.",
+          "An icon is decoration and is hidden from assistive technology. Pass an svg element to take the icon size of the kit.",
+          "Row ids must be unique and stay the same while a row is in the data: a bar glides by its id. A new row grows its bar out of nothing, a row that is gone shrinks its bar away and then leaves, and a value with digits rolls to its new value, unless motion is reduced."
+        ],
+        "providerNotes": [
+          "The glide and the rolling values use the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "stable",
+        "searchTerms": [
+          "bar-list",
+          "bar list",
+          "ranking",
+          "top list",
+          "leaderboard",
+          "horizontal bars",
+          "chart",
+          "analytics"
+        ],
+        "useWhen": [
+          "Use when a short ranked list of labeled values, such as top pages or traffic sources, should read at a glance.",
+          "Use when the order of the rows is the point and each value should be seen next to the largest."
+        ]
+      }
+    }
+  ]
+}

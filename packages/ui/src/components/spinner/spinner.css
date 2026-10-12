@@ -1,0 +1,122 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  @keyframes siteplane-spinner-bars {
+    0%,
+    100% {
+      transform: scaleY(0.4);
+    }
+
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes siteplane-spinner-dot {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.6);
+    }
+
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes siteplane-spinner-spoke {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0.2;
+    }
+  }
+
+  @keyframes siteplane-spinner-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes siteplane-spinner-dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+
+    50% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -35;
+    }
+
+    100% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -124;
+    }
+  }
+
+  @keyframes siteplane-spinner-ping {
+    75%,
+    100% {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+
+  /* Each variant's motion, at zero specificity so the reduced-motion rules
+   * below and a consumer's animate-* utility both win. */
+  :where(
+    [data-slot="spinner"]:is([data-variant="default"], [data-variant="ring"])
+  ) {
+    animation: siteplane-spinner-rotate var(--motion-duration-loop)
+      var(--motion-ease-linear) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="comet"]) {
+    animation: siteplane-spinner-rotate calc(var(--motion-duration-loop) * 2)
+      var(--motion-ease-linear) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="comet"] > circle) {
+    animation: siteplane-spinner-dash calc(var(--motion-duration-loop) * 1.5)
+      var(--motion-ease-loop) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="pulse"] > :first-child) {
+    animation: siteplane-spinner-ping var(--motion-duration-loop)
+      var(--motion-ease-ping) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="dots"] > span) {
+    animation: siteplane-spinner-dot calc(var(--motion-duration-loop) * 1.2)
+      var(--motion-ease-loop) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="bars"] > span) {
+    animation: siteplane-spinner-bars var(--motion-duration-loop)
+      var(--motion-ease-loop) infinite;
+  }
+
+  :where([data-slot="spinner"][data-variant="spokes"] > span) {
+    animation: siteplane-spinner-spoke calc(var(--motion-duration-loop) * 0.8)
+      var(--motion-ease-linear) infinite;
+  }
+
+  html[data-motion-reduce="true"] .siteplane-spinner-motion,
+  html[data-motion-reduce="true"] .siteplane-spinner-motion *,
+  [data-sp-motion="reduced"] .siteplane-spinner-motion,
+  [data-sp-motion="reduced"] .siteplane-spinner-motion * {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-spinner-motion,
+    .siteplane-spinner-motion * {
+      animation: none;
+    }
+  }
+}

@@ -1,0 +1,159 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  .siteplane-color-swatch-picker {
+    display: flex;
+    flex-flow: row wrap;
+    gap: var(--sp-rw-space-4);
+    outline: none;
+  }
+
+  .siteplane-color-swatch-picker[data-disabled] {
+    opacity: var(--sp-semantic-state-disabled-opacity);
+  }
+
+  /* One size, shape and ring per swatch scope. A scope is a ColorSwatchPicker or
+   * the wrapper of a ColorPicker whose trigger is a swatch, so both draw the same
+   * swatch box (`siteplane-color-swatch-item`) from the same rules. */
+  .siteplane-color-swatch-scope {
+    --siteplane-swatch-size: 2rem;
+    --siteplane-swatch-check: 0.875rem;
+    --siteplane-swatch-radius: 999px;
+  }
+
+  .siteplane-color-swatch-scope[data-size="sm"] {
+    --siteplane-swatch-size: 1.75rem;
+    --siteplane-swatch-check: 0.75rem;
+  }
+
+  .siteplane-color-swatch-scope[data-size="lg"] {
+    --siteplane-swatch-size: 2.25rem;
+    --siteplane-swatch-check: 1rem;
+  }
+
+  /* A ColorPicker whose trigger is a swatch takes the same 40 px at xl as the
+   * palette it ends, so a row of swatches and its custom color match at every
+   * size. */
+  .siteplane-color-swatch-scope[data-size="xl"] {
+    --siteplane-swatch-size: 2.5rem;
+    --siteplane-swatch-check: 1.125rem;
+  }
+
+  .siteplane-color-swatch-scope[data-radius="none"] {
+    --siteplane-swatch-radius: 0;
+  }
+
+  .siteplane-color-swatch-scope[data-radius="sm"] {
+    --siteplane-swatch-radius: var(--sp-primitive-dimension-radius-sm);
+  }
+
+  /* Compact swatches sit closer together, so a palette and its neighbours fit one
+   * row. A ring stands 4px outside its swatch and keeps a wider gap. */
+  .siteplane-color-swatch-picker[data-size="sm"] {
+    gap: var(--sp-rw-space-2);
+  }
+
+  .siteplane-color-swatch-picker[data-size="sm"][data-indicator="ring"] {
+    gap: var(--sp-rw-space-3);
+  }
+
+  .siteplane-color-swatch-item {
+    position: relative;
+    display: grid;
+    width: var(--siteplane-swatch-size);
+    height: var(--siteplane-swatch-size);
+    flex: none;
+    cursor: pointer;
+    place-items: center;
+    border-radius: var(--siteplane-swatch-radius);
+    outline: none;
+    transition:
+      opacity var(--motion-duration-fast) var(--motion-ease-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
+  }
+
+  .siteplane-color-swatch-item:hover:not([data-disabled]) {
+    opacity: 0.8;
+  }
+
+  .siteplane-color-swatch-item:active:not([data-disabled]) {
+    opacity: 0.7;
+  }
+
+  /* The gap ring takes the colour of the surface the picker sits on (published by
+   * Card, Dialog, Popover, Sheet), falling back to the page background. */
+  .siteplane-color-swatch-item[data-selected] {
+    box-shadow:
+      0 0 0 2px var(--sp-rw-surface-color, var(--sp-rw-bg-base)),
+      0 0 0 3px var(--sp-semantic-color-border);
+  }
+
+  /* The ring indicator: the same gap, then a 2px accent ring. The accent ink
+   * keeps its contrast on the surface in light and dark. */
+  .siteplane-color-swatch-scope[data-indicator="ring"]
+    .siteplane-color-swatch-item[data-selected] {
+    box-shadow:
+      0 0 0 2px var(--sp-rw-surface-color, var(--sp-rw-bg-base)),
+      0 0 0 4px var(--sp-rw-fg-accent);
+  }
+
+  /* The focus outline is the one of every kit control. */
+  .siteplane-color-swatch-item[data-focus-visible] {
+    outline: var(--sp-semantic-state-focus-width) solid
+      var(--sp-rw-border-focus);
+    outline-offset: var(--sp-semantic-state-focus-offset);
+  }
+
+  /* A selected ring is not covered by the outline: the outline moves out beyond
+   * it, so the selection and the focus both stay visible. */
+  .siteplane-color-swatch-scope[data-indicator="ring"]
+    .siteplane-color-swatch-item[data-selected][data-focus-visible] {
+    outline-offset: calc(4px + var(--sp-semantic-state-focus-offset));
+  }
+
+  .siteplane-color-swatch-item[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--sp-semantic-state-disabled-opacity);
+  }
+
+  /* A disabled picker fades once; its swatches, disabled with it, do not fade a
+   * second time. */
+  .siteplane-color-swatch-picker[data-disabled]
+    .siteplane-color-swatch-item[data-disabled] {
+    opacity: 1;
+  }
+
+  .siteplane-color-swatch-picker-swatch {
+    width: 100%;
+    height: 100%;
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: inherit;
+  }
+
+  /* The picture fills the border box, so the translucent border is drawn over it
+   * and the two never part at a fractional pixel position. */
+  .siteplane-color-swatch-picker-swatch[data-image] {
+    background-origin: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* The check draws and pops through the shared check motion in motion.css: the
+   * glyph carries its classes and this indicator is the element that holds the
+   * selected state around it. Only the box and the glyph size live here. */
+  .siteplane-color-swatch-picker-indicator {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    color: white;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .siteplane-color-swatch-picker-indicator svg {
+    width: var(--siteplane-swatch-check);
+    height: var(--siteplane-swatch-check);
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 32%));
+  }
+}

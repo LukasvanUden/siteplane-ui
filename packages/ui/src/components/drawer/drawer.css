@@ -1,0 +1,135 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The panel slides from its edge and the backdrop fades with it, on the
+   * panel time and curve that Sheet shares (rulebook M1). A panel that is let
+   * go after a swipe settles within the release time, scaled by the swipe's
+   * strength; the backdrop follows the finger without a transition. A bottom
+   * panel at rest also eases its margin and padding as its snap point
+   * changes. Zero specificity, so the reduced-motion rules below and a
+   * consumer's transition utility both win. */
+  :where([data-slot="drawer-popup"]) {
+    transition-property: transform, box-shadow, height, background-color;
+    transition-duration: var(--motion-duration-panel);
+    transition-timing-function: var(--motion-ease-panel);
+  }
+
+  :where(
+    [data-slot="drawer-popup"][data-position="bottom"]:not(
+        [data-starting-style],
+        [data-ending-style]
+      )
+  ) {
+    transition-property:
+      transform, box-shadow, height, background-color, margin, padding;
+  }
+
+  :where([data-slot="drawer-backdrop"]) {
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-panel);
+    transition-timing-function: var(--motion-ease-panel);
+  }
+
+  :where(
+    :is(
+      [data-slot="drawer-popup"],
+      [data-slot="drawer-backdrop"]
+    )[data-ending-style]
+  ) {
+    transition-duration: calc(
+      var(--drawer-swipe-strength) * var(--motion-duration-panel-release)
+    );
+  }
+
+  :where([data-slot="drawer-backdrop"][data-swiping]) {
+    transition-duration: 0ms;
+  }
+
+  /* Reduced motion opens and closes the panel and its backdrop at once (M5):
+   * the document mode, the provider preset and the system setting. */
+  html[data-motion-reduce="true"] [data-slot="drawer-popup"],
+  html[data-motion-reduce="true"] [data-slot="drawer-backdrop"],
+  [data-sp-motion="reduced"] [data-slot="drawer-popup"],
+  [data-sp-motion="reduced"] [data-slot="drawer-backdrop"] {
+    transition-duration: 1ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root [data-slot="drawer-popup"],
+    :root [data-slot="drawer-backdrop"] {
+      transition-duration: 1ms;
+    }
+  }
+
+  /* DrawerMenu touch size (size="xl").
+   *
+   * The shared menu-row recipe in design-rework.css is the compact one: 32px rows
+   * with 14px text and 16px icons, which only a coarse pointer turns into 48px
+   * rows. Navigation and sheets that are tapped ask for the touch size whatever
+   * the pointer: 48px rows, 16px text and a 20px icon slot, as the Sidebar rows at
+   * size xl.
+   *
+   * Every row kind takes the slot through the same two tokens, so the labels of
+   * icon, check, radio, switch and submenu rows still start at the same x
+   * (rulebook I8): the icon width is the width of the check and radio column and
+   * of the slot a switch row keeps, and the Button content gap is the gap of all
+   * of them. The row padding stays 8px, which the menu's negative margin
+   * offsets.
+   *
+   * The extra `[data-slot]` ranks the row rule above the menu-row profile of the
+   * Button, so the two files can load in any order. */
+  :root [data-slot="drawer-menu"][data-size="xl"] {
+    --sp-rw-menu-row-icon: var(--sp-rw-control-icon-xl);
+    --sp-rw-button-content-gap: var(--sp-rw-space-2-5);
+  }
+
+  :root
+    [data-slot="drawer-menu"][data-size="xl"]
+    [data-slot]:is(
+      [data-slot="drawer-menu-item"],
+      [data-slot="drawer-menu-checkbox-item"],
+      [data-slot="drawer-menu-radio-item"],
+      [data-slot="drawer-menu-trigger"]
+    ) {
+    min-height: var(--sp-rw-control-xl);
+    border-radius: var(--sp-rw-radius-surface);
+    padding-block: var(--sp-rw-space-3);
+    font-size: var(--sp-rw-font-16);
+    line-height: var(--sp-rw-line-24);
+  }
+
+  :root
+    [data-slot="drawer-menu"][data-size="xl"]
+    [data-slot="drawer-menu-group-label"] {
+    padding-block: var(--sp-rw-space-2);
+    font-size: var(--sp-rw-font-13);
+    line-height: var(--sp-rw-line-18);
+  }
+
+  :root
+    [data-slot="drawer-menu"][data-size="xl"]
+    [data-slot="drawer-menu-separator"] {
+    margin-block: var(--sp-rw-space-2);
+  }
+
+  /* The current page of a navigation. The row keeps the persistent fill the
+   * Sidebar gives its active row (the pressed glow) and the full foreground, also
+   * under the pointer, so the hover never hides where you are (rulebook T5). */
+  :root
+    [data-slot="drawer-menu-item"][data-chassis][data-variant="text"][aria-current="page"]:not(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    background: var(--sp-rw-glow-pressed);
+    color: var(--sp-rw-fg-primary);
+  }
+
+  :root
+    [data-slot="drawer-menu-item"][aria-current="page"]:not(
+      :disabled,
+      [aria-disabled="true"]
+    )
+    svg {
+    color: var(--sp-rw-fg-primary);
+  }
+}

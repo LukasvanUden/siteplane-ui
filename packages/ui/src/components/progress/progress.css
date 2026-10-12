@@ -1,0 +1,117 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The value transitions: the bar moves linearly over the linger time, the
+   * circle's arc over the slow time. Zero specificity, so the reduced-motion
+   * rules below and a consumer's transition utility both win. */
+  :where([data-slot="progress-indicator"]) {
+    transition-property: width;
+    transition-timing-function: var(--motion-ease-linear);
+    transition-duration: var(--motion-duration-linger);
+  }
+
+  :where([data-slot="progress-circle"] circle:last-child) {
+    transition-property: stroke-dashoffset;
+    transition-timing-function: var(--motion-ease-linear);
+    transition-duration: var(--motion-duration-slow);
+  }
+
+  /* Indeterminate progress (`value={null}`): the bar fills from its start
+   * again and again, and an arc of a quarter circle travels around the circle.
+   * Base UI marks every part data-indeterminate. The continuous-fill class
+   * draws the same fill on an indicator of its own. */
+  :where(
+    [data-slot="progress-indicator"][data-indeterminate],
+    .siteplane-progress-continuous-fill
+  ) {
+    height: 100%;
+    animation: siteplane-progress-continuous-fill
+      calc(var(--motion-duration-linger) * 8) var(--motion-ease-linear) infinite;
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  :where(
+    [data-slot="progress-indicator"][data-indeterminate]:dir(rtl),
+    .siteplane-progress-continuous-fill:dir(rtl)
+  ) {
+    transform-origin: right center;
+  }
+
+  @keyframes siteplane-progress-continuous-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  :where([data-slot="progress-circle"][data-indeterminate] circle:last-child) {
+    stroke-dasharray: 25 75;
+    animation: siteplane-progress-circle-indeterminate
+      calc(var(--motion-duration-loop) * 2) var(--motion-ease-linear) infinite;
+  }
+
+  @keyframes siteplane-progress-circle-indeterminate {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  /* Reduced motion moves the fill and the arc to each new value at once and
+   * holds the indeterminate state still (M5): the bar keeps a segment in its
+   * middle and the circle an arc centred on its top, so neither reads as a
+   * value or as done. The document mode, the provider preset and the system
+   * setting each switch it. */
+  html[data-motion-reduce="true"] [data-slot="progress-indicator"],
+  html[data-motion-reduce="true"] [data-slot="progress-circle"] circle,
+  [data-sp-motion="reduced"] [data-slot="progress-indicator"],
+  [data-sp-motion="reduced"] [data-slot="progress-circle"] circle {
+    transition: none;
+  }
+
+  html[data-motion-reduce="true"]
+    [data-slot="progress-indicator"][data-indeterminate],
+  html[data-motion-reduce="true"] .siteplane-progress-continuous-fill,
+  [data-sp-motion="reduced"]
+    [data-slot="progress-indicator"][data-indeterminate],
+  [data-sp-motion="reduced"] .siteplane-progress-continuous-fill {
+    animation: none;
+    transform: none;
+    clip-path: inset(0 30% round 9999px);
+  }
+
+  html[data-motion-reduce="true"]
+    [data-slot="progress-circle"][data-indeterminate]
+    circle:last-child,
+  [data-sp-motion="reduced"]
+    [data-slot="progress-circle"][data-indeterminate]
+    circle:last-child {
+    animation: none;
+    stroke-dashoffset: -87.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root [data-slot="progress-indicator"],
+    :root [data-slot="progress-circle"] circle {
+      transition: none;
+    }
+
+    :root [data-slot="progress-indicator"][data-indeterminate],
+    :root .siteplane-progress-continuous-fill {
+      animation: none;
+      transform: none;
+      clip-path: inset(0 30% round 9999px);
+    }
+
+    :root [data-slot="progress-circle"][data-indeterminate] circle:last-child {
+      animation: none;
+      stroke-dashoffset: -87.5;
+    }
+  }
+}

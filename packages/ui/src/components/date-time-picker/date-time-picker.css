@@ -1,0 +1,152 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The heights are the Input scale (28, 32, 36 and 48 px), so the picker is as
+   * tall as the Input, Select, Button, DateField and TimeField of the same size. */
+  .siteplane-date-time-picker-control {
+    --date-time-picker-control-height: var(--sp-rw-control-md);
+    --date-time-picker-segment-start: calc(
+      var(--sp-rw-space-3) - var(--input-segment-padding-inline)
+    );
+    max-width: 100%;
+    height: var(--date-time-picker-control-height);
+    overflow: hidden;
+  }
+
+  .siteplane-date-time-picker-control[data-size="sm"] {
+    --date-time-picker-control-height: var(--sp-rw-control-sm);
+    --date-time-picker-segment-start: calc(
+      var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
+    );
+  }
+
+  .siteplane-date-time-picker-control[data-size="lg"] {
+    --date-time-picker-control-height: var(--sp-rw-control-lg);
+  }
+
+  .siteplane-date-time-picker-control[data-size="xl"] {
+    --date-time-picker-control-height: var(--sp-rw-control-xl);
+    --date-time-picker-segment-start: calc(
+      var(--sp-rw-space-4) - var(--input-segment-padding-inline)
+    );
+  }
+
+  .siteplane-date-time-picker-segment[data-date-time-part="date"] {
+    order: 1;
+  }
+
+  .siteplane-date-time-picker-control [data-date-time-part="date-action"] {
+    order: 2;
+  }
+
+  .siteplane-date-time-picker-control [data-date-time-part="separator"] {
+    order: 3;
+  }
+
+  .siteplane-date-time-picker-segment[data-date-time-part="time"] {
+    order: 4;
+  }
+
+  .siteplane-date-time-picker-control [data-date-time-part="time-action"] {
+    order: 5;
+  }
+
+  .siteplane-date-time-picker-segment[data-date-time-part="hidden"] {
+    display: none;
+  }
+
+  .siteplane-date-time-picker-control
+    .siteplane-date-time-picker-segment[data-date-time-part="date"]:first-child,
+  .siteplane-date-time-picker-control
+    .siteplane-date-time-picker-segment[data-date-time-part="hidden"]:first-child
+    + .siteplane-date-time-picker-segment[data-date-time-part="date"] {
+    margin-inline-start: var(--date-time-picker-segment-start);
+  }
+
+  /* The surface (border, radius, shadow) is the floating-md recipe that
+   * design-rework.css draws for each popover's data-slot. */
+  .siteplane-date-time-picker-calendar-popover,
+  .siteplane-date-time-picker-time-popover {
+    z-index: 50;
+    outline: none;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  .siteplane-date-time-picker-calendar-popover {
+    width: max-content;
+    padding: var(--sp-rw-space-4);
+  }
+
+  /* The time selector is the Time Field's: its width comes from
+   * .siteplane-time-field-popover, and its padding is the compact one of the Time
+   * Field's Popover, so both selectors look alike. */
+  .siteplane-date-time-picker-time-popover {
+    padding: var(--sp-rw-space-2);
+  }
+
+  :is(
+    .siteplane-date-time-picker-calendar-popover,
+    .siteplane-date-time-picker-time-popover
+  )[data-entering] {
+    animation: siteplane-date-time-popover-enter var(--motion-duration-overlay)
+      var(--motion-ease-standard) both;
+  }
+
+  :is(
+    .siteplane-date-time-picker-calendar-popover,
+    .siteplane-date-time-picker-time-popover
+  )[data-exiting] {
+    animation: siteplane-date-time-popover-exit var(--motion-duration-fast)
+      var(--motion-ease-soft-in-out) both;
+  }
+
+  @keyframes siteplane-date-time-popover-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  @keyframes siteplane-date-time-popover-exit {
+    to {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-entering],
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-exiting] {
+      animation-duration: 1ms;
+    }
+  }
+
+  html[data-motion-reduce="true"]
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-entering],
+  html[data-motion-reduce="true"]
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-exiting],
+  [data-sp-motion="reduced"]
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-entering],
+  [data-sp-motion="reduced"]
+    :is(
+      .siteplane-date-time-picker-calendar-popover,
+      .siteplane-date-time-picker-time-popover
+    )[data-exiting] {
+    animation-duration: 1ms;
+  }
+}

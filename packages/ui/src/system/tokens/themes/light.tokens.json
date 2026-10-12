@@ -1,0 +1,46 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "semantic": {
+    "color": {
+      "$type": "color",
+      "background": { "$value": "{primitive.color.background-light}" },
+      "foreground": { "$value": "{primitive.color.neutral-800}" },
+      "surface": { "$value": "{primitive.color.white}" },
+      "card": { "$value": "{primitive.color.white}" },
+      "card-foreground": { "$value": "{primitive.color.neutral-800}" },
+      "surface-muted": { "$value": "{primitive.color.black-alpha-4}" },
+      "surface-subtle": { "$value": "{primitive.color.black-alpha-4}" },
+      "popover-foreground": { "$value": "{primitive.color.neutral-800}" },
+      "muted": { "$value": "{primitive.color.black-alpha-4}" },
+      "muted-foreground": {
+        "$value": "{primitive.color.muted-foreground-light}"
+      },
+      "border": { "$value": "{primitive.color.black-alpha-8}" },
+      "border-strong": { "$value": "{primitive.color.neutral-400}" },
+      "primary": { "$value": "{primitive.color.brand}" },
+      "primary-hover": { "$value": "{primitive.color.blue-500}" },
+      "primary-foreground": { "$value": "{primitive.color.neutral-50}" },
+      "destructive": { "$value": "{primitive.color.red-500}" },
+      "destructive-hover": { "$value": "{primitive.color.red-500}" },
+      "destructive-foreground": { "$value": "{primitive.color.red-700}" },
+      "info": { "$value": "{primitive.color.blue-500}" },
+      "info-foreground": { "$value": "{primitive.color.blue-700}" },
+      "success": { "$value": "{primitive.color.green-500}" },
+      "success-foreground": { "$value": "{primitive.color.green-700}" },
+      "warning": { "$value": "{primitive.color.amber-500}" },
+      "warning-foreground": { "$value": "{primitive.color.amber-700}" },
+      "focus": { "$value": "{primitive.color.blue-500}" },
+      "ring": { "$value": "{primitive.color.neutral-400}" },
+      "input": { "$value": "{primitive.color.black-alpha-10}" },
+      "control": { "$value": "{primitive.color.white}" },
+      "control-hover": { "$value": "{primitive.color.neutral-100}" },
+      "control-disabled": { "$value": "{primitive.color.neutral-100}" },
+      "control-disabled-foreground": {
+        "$value": "{primitive.color.neutral-500}"
+      },
+      "invalid": { "$value": "{primitive.color.red-500}" },
+      "invalid-muted": { "$value": "{primitive.color.red-100}" },
+      "overlay-backdrop": { "$value": "{primitive.color.black-alpha-40}" }
+    }
+  }
+}

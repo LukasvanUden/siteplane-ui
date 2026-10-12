@@ -1,0 +1,37 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The scrollbar fades in at once while hovered or scrolled. When the pointer
+   * leaves or scrolling stops, it stays for three micro steps (300 ms) and
+   * fades out like a state change. The fade sits at zero specificity, so the
+   * reduced-motion rules below switch it off (M5). */
+  :where(.siteplane-scroll-area-scrollbar-motion) {
+    transition-property: opacity;
+    transition-timing-function: var(--motion-ease-state);
+    transition-duration: var(--motion-duration-fast);
+    transition-delay: calc(var(--motion-duration-micro) * 3);
+  }
+
+  :where(
+    .siteplane-scroll-area-scrollbar-motion:is(
+      [data-hovering],
+      [data-scrolling]
+    )
+  ) {
+    transition-duration: var(--motion-duration-micro);
+    transition-delay: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.siteplane-scroll-area-scrollbar-motion) {
+      transition-property: none;
+      transition-delay: 0ms;
+    }
+  }
+
+  html[data-motion-reduce="true"] .siteplane-scroll-area-scrollbar-motion,
+  [data-sp-motion="reduced"] .siteplane-scroll-area-scrollbar-motion {
+    transition: none;
+    transition-delay: 0s;
+  }
+}

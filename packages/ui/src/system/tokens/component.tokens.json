@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "component": {
+    "control": {
+      "height-sm": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-8}"
+      },
+      "height-md": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-10}"
+      },
+      "height-lg": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-12}"
+      },
+      "padding-inline-sm": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-2-5}"
+      },
+      "padding-inline-md": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-3}"
+      },
+      "padding-inline-lg": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-4}"
+      },
+      "gap": { "$type": "dimension", "$value": "{primitive.dimension.space-2}" }
+    },
+    "field": {
+      "gap": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-1-5}"
+      },
+      "message-gap": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-1}"
+      }
+    },
+    "overlay": {
+      "padding": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-4}"
+      },
+      "offset": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-2}"
+      }
+    },
+    "collection-item": {
+      "min-height": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-8}"
+      },
+      "padding-inline": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space-2}"
+      }
+    }
+  }
+}

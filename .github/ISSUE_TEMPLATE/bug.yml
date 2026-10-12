@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in a Siteplane UI component does not work as documented.
+labels: [bug]
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: Date Range Picker
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Siteplane UI version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

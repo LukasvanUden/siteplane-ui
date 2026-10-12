@@ -1,0 +1,117 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A toast and a Notification read the kit's theme and motion tokens, so a
+   * re-theme reaches them. Their surface publishes its colour like every
+   * floating surface: the fill darkens from it per stack position, and the
+   * status ring of an avatar takes it. */
+  .siteplane-toast-replay-motion {
+    --sp-rw-surface-color: var(--sp-rw-bg-secondary);
+  }
+
+  /* The content of every toast, the default one and that of notify(), fades
+   * in and out as the toast steps behind the front one and back. */
+  :where(.siteplane-toast-content-motion) {
+    transition-property: opacity;
+    transition-duration: var(--motion-duration-moderate);
+    transition-timing-function: var(--motion-ease-standard);
+  }
+
+  /* A toast that is updated in place replays its type: a success pulses over
+   * the slow step, and an error shakes a little quicker, in seven eighths of
+   * it. */
+  .animate-toast-success-odd,
+  .animate-toast-success-even {
+    animation: toast-success var(--motion-duration-slow)
+      var(--motion-ease-toast-replay);
+  }
+
+  .animate-toast-error-odd,
+  .animate-toast-error-even {
+    animation: toast-error calc(var(--motion-duration-slow) * 0.875)
+      var(--motion-ease-toast-replay);
+  }
+
+  @keyframes toast-success {
+    0% {
+      scale: 1;
+    }
+
+    30% {
+      scale: 1.025;
+    }
+
+    60% {
+      scale: 0.99;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @keyframes toast-error {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+
+    25%,
+    75% {
+      translate: -3px 0;
+    }
+
+    50% {
+      translate: 3px 0;
+    }
+  }
+
+  /* Reduced motion is instant (M5): the replay and the spinner stop, the
+   * content no longer fades, and the stack no longer glides when a toast comes,
+   * goes or another stack makes way. */
+  @media (prefers-reduced-motion: reduce) {
+    .siteplane-toast-replay-motion {
+      animation: none;
+      transition: none;
+    }
+
+    [data-slot="toast-viewport"] {
+      transition: none;
+    }
+
+    .siteplane-toast-replay-motion .siteplane-spinner-motion {
+      animation: none;
+    }
+
+    :root .siteplane-toast-content-motion {
+      transition: none;
+    }
+  }
+
+  html[data-motion-reduce="true"] .siteplane-toast-replay-motion,
+  [data-sp-motion="reduced"] .siteplane-toast-replay-motion {
+    animation: none;
+    transition: none;
+  }
+
+  /* The viewport portals out of a SiteplaneMotionProvider and carries its preset. */
+  html[data-motion-reduce="true"] [data-slot="toast-viewport"],
+  [data-sp-motion="reduced"] [data-slot="toast-viewport"],
+  [data-slot="toast-viewport"][data-sp-motion="reduced"] {
+    transition: none;
+  }
+
+  html[data-motion-reduce="true"]
+    .siteplane-toast-replay-motion
+    .siteplane-spinner-motion,
+  [data-sp-motion="reduced"]
+    .siteplane-toast-replay-motion
+    .siteplane-spinner-motion {
+    animation: none;
+  }
+
+  html[data-motion-reduce="true"] .siteplane-toast-content-motion,
+  [data-sp-motion="reduced"] .siteplane-toast-content-motion {
+    transition: none;
+  }
+}

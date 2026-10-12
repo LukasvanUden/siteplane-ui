@@ -1,0 +1,269 @@
+:root {
+  color: var(--sp-semantic-color-foreground);
+  background: var(--sp-semantic-color-background);
+  font-family: var(--sp-semantic-font-family);
+  font-synthesis: none;
+  /* --radius and every radius derived from it: design-rework.css. */
+  --badge-sm-font-size: 0.625rem;
+  --code-inline-font-size: 0.85em;
+  --code-block-sm-font-size: 0.6875rem;
+  /* Motion (rulebook M1). Every duration and easing of the kit comes from
+   * this set, and the Motion settings page documents it. Components read the
+   * tokens in their CSS; the Motion parts and the charts read them when a run
+   * starts.
+   *
+   * The duration scale: the steps that most motion takes. */
+  --motion-duration-micro: 100ms;
+  --motion-duration-fast: 150ms;
+  --motion-duration-base: 180ms;
+  --motion-duration-moderate: 240ms;
+  --motion-duration-slow: 320ms;
+  --motion-duration-linger: 380ms;
+  /* A backdrop fades, and a popover or tooltip cross-fades between its
+   * panes. */
+  --motion-duration-overlay: 160ms;
+  /* A panel expands or collapses, and an item enters or leaves a list. */
+  --motion-duration-expand: 200ms;
+  /* A dialog opens and closes. */
+  --motion-duration-modal: 210ms;
+  /* What follows a pointer glides to its next place without overshooting:
+   * the crosshair, the dots and the pill of a chart over the follow duration,
+   * and the tooltip card, which trails them, over the trail duration. */
+  --motion-duration-follow: 280ms;
+  --motion-duration-follow-trail: 520ms;
+  /* A NavigationMenu's popup, and the switch between its groups. */
+  --motion-duration-navigation: 300ms;
+  /* A figure that changes in place: digits roll and chart marks glide to the
+   * new data. */
+  --motion-duration-value: var(--motion-duration-linger);
+  /* A Sheet or Drawer panel slides in from its edge, and its backdrop fades
+   * with it. A Drawer that is let go after a swipe settles within the release
+   * time, scaled by the strength of the swipe. */
+  --motion-duration-panel: 450ms;
+  --motion-duration-panel-release: 400ms;
+  /* A carousel page settles like a flicked track: fast start, long calm
+   * finish. */
+  --motion-duration-carousel: 800ms;
+  /* One cycle of a loading loop: a turn of the Spinner and the base of its
+   * other variants, and half a sweep of the Skeleton shimmer. */
+  --motion-duration-loop: 1000ms;
+  /* One loop of a featured icon's ring pulse. A ring travels from the glyph to
+   * where it has faded during the first 80% of the loop (3.2 s) and rests,
+   * faded, for the last 20% (0.8 s). The second ring runs half a loop behind,
+   * so a new ring leaves the glyph every half loop (2.0 s). */
+  --motion-duration-ring-pulse: 4000ms;
+  /* One turn of the Badge light: both lights run once around the badge. */
+  --motion-duration-badge-light: 5000ms;
+  /* The standard curve: a quick start that settles softly. What appears,
+   * moves, draws or changes takes it unless its motion names another curve. */
+  --motion-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  /* State changes: hover, press, focus and selection on fields, choice
+   * controls, tabs and accordions, and a scrollbar that fades. */
+  --motion-ease-state: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Even in and out: a shape that morphs, a fill that sweeps, a series that
+   * dims, and content that fades out of a swap. */
+  --motion-ease-soft-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* A Collapsible's panel and chevron. */
+  --motion-ease-expand: cubic-bezier(0.7, 0.1, 0.5, 0.9);
+  /* A Sheet or Drawer panel and its backdrop. */
+  --motion-ease-panel: cubic-bezier(0.32, 0.72, 0, 1);
+  /* The browser's default ease: a NavigationMenu, the Icon Morphs, calendar
+   * days, the fades of the toast stack and a menu row's Switch thumb. */
+  --motion-ease-navigation: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* A carousel page that settles (rulebook M3). */
+  --motion-ease-carousel: cubic-bezier(0.25, 1, 0.5, 1);
+  /* A Switch thumb on its way to the other end. */
+  --motion-ease-switch: cubic-bezier(0, 0.55, 0.45, 1);
+  /* The toast replay: a quick start that eases into place. */
+  --motion-ease-toast-replay: cubic-bezier(0.5, 1, 0.89, 1);
+  /* A loading loop that swells and settles: the Spinner's comet, dots and
+   * bars. */
+  --motion-ease-loop: ease-in-out;
+  /* A ping that leaves fast and slows as it fades: the Spinner's pulse. */
+  --motion-ease-ping: cubic-bezier(0, 0, 0.2, 1);
+  /* An even pace: a value that streams in, a loop that turns, a stroke that
+   * draws, the Sidebar's width and slide, so that the rail, the labels and
+   * the content stay in step, and a featured icon's traveling rings, so
+   * that the two stay evenly spaced. */
+  --motion-ease-linear: linear;
+  /* How far a NavigationMenu popup or a popover that flips sides travels as
+   * it settles, and the scale the flipping popover starts from. */
+  --motion-overlay-y: 4px;
+  --motion-overlay-scale: 0.985;
+  /* How far the content of a NavigationMenu travels when its group changes. */
+  --motion-navigation-distance: 0.75rem;
+  /* How far a floating panel travels, and the scale it grows from, as it
+   * opens. */
+  --motion-floating-panel-offset: 7px;
+  --motion-floating-panel-scale: 0.955;
+  /* Items of a flow list scale slightly as they enter and leave. */
+  --motion-presence-scale: 0.96;
+  /* A checked indicator pops in from this scale as its check draws in and
+   * shrinks back to it as the check draws out: the Checkbox and Radio
+   * indicators and the check glyph of a menu row, a list item or a swatch. */
+  --motion-check-pop-scale: 0.82;
+  /* How far a featured icon's ring travels on its way out, as a scale of its
+   * 28 px circle: from 21 px (0.75), just outside the glyph, to about
+   * 43 px. */
+  --motion-ring-pulse-scale: 1.55;
+  /* The opacity a featured icon's traveling ring reaches a tenth of the way
+   * out, just after it leaves the glyph; it fades from there. */
+  --motion-ring-pulse-opacity: 0.24;
+  /* How many loops of --motion-duration-ring-pulse a featured icon's rings
+   * travel: by default for as long as the icon is shown. A number stops them
+   * after that many waves, and the glyph then stands alone, without rings. */
+  --motion-ring-pulse-count: infinite;
+  --state-hover: rgb(0 0 0 / 4%);
+  --state-pressed: rgb(0 0 0 / 8%);
+  --state-selected: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  --background: var(--sp-semantic-color-background);
+  --foreground: var(--sp-semantic-color-foreground);
+  --card: var(--sp-semantic-color-card);
+  --primary: var(--sp-semantic-color-primary);
+  --primary-foreground: var(--sp-semantic-color-primary-foreground);
+  --secondary: var(--sp-semantic-color-secondary);
+  --secondary-foreground: var(--sp-semantic-color-secondary-foreground);
+  --accent: var(--sp-semantic-color-accent);
+  --destructive: var(--sp-semantic-color-destructive);
+  --input: var(--sp-semantic-color-input);
+  --ring: var(--sp-semantic-color-ring);
+  --info: var(--sp-semantic-color-info);
+  --success: var(--sp-semantic-color-success);
+  --warning: var(--sp-semantic-color-warning);
+  --button-text: oklch(0.466 0.027 271.6);
+  /* Categorical chart palette in a fixed order: blue, orange, teal, purple, gold.
+   * Each series keeps its hue in Dark, which is lighter and more saturated. Every
+   * mark is at least 3:1 on the card and page surfaces of its theme. */
+  --chart-1: oklch(57.5% 0.185 265);
+  --chart-2: oklch(63.5% 0.172 48);
+  --chart-3: oklch(63% 0.112 181);
+  --chart-4: oklch(50.5% 0.196 325);
+  --chart-5: oklch(62% 0.122 91);
+  /* The brand colour of a chart, whose shades are its default palette: the
+   * brand itself in Light, and in Dark the lifted brand that progress fills
+   * take, so that a mark and its lighter shades still read on a dark card. The
+   * shades fade into the card in Light; in Dark they fade towards a deeper
+   * brand (`--chart-brand-fade`), so that they stay blue instead of greying
+   * into the dark card, and text on the lightest shade stays legible. */
+  --chart-brand: var(--sp-rw-bg-accent);
+  --sidebar: var(--color-neutral-50);
+  /* 70% keeps 12px group labels at 4.5:1 on the light sidebar surfaces. */
+  --sidebar-foreground: color-mix(
+    in srgb,
+    var(--color-neutral-800) 70%,
+    var(--sidebar)
+  );
+  --sidebar-primary: var(--color-neutral-800);
+  --sidebar-primary-foreground: var(--color-neutral-50);
+  --sidebar-accent: rgb(0 0 0 / 4%);
+  --sidebar-accent-foreground: var(--color-neutral-800);
+  --sidebar-border: rgb(0 0 0 / 6%);
+  --sidebar-ring: var(--color-neutral-400);
+}
+
+/* Same theme scopes as the generated tokens and design-rework.css: the kit is
+ * light until the application sets .dark or data-theme="dark". */
+:is(.dark, [data-theme="dark"]) {
+  --state-hover: rgb(255 255 255 / 4%);
+  --state-pressed: rgb(255 255 255 / 8%);
+  --state-selected: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --button-text: oklch(0.879 0.016 270);
+  --chart-1: oklch(64% 0.19 265);
+  --chart-2: oklch(66.5% 0.18 48);
+  --chart-3: oklch(66.5% 0.116 181);
+  --chart-4: oklch(61% 0.21 325);
+  --chart-5: oklch(66.5% 0.126 91);
+  --chart-brand: var(--sp-rw-progress-fill);
+  --chart-brand-fade: color-mix(in oklab, var(--chart-brand) 50%, black);
+  --sidebar: color-mix(
+    in srgb,
+    var(--color-neutral-950) 97%,
+    var(--color-white)
+  );
+  --sidebar-foreground: color-mix(
+    in srgb,
+    var(--color-neutral-100) 64%,
+    var(--sidebar)
+  );
+  --sidebar-primary: var(--color-neutral-100);
+  --sidebar-primary-foreground: var(--color-neutral-800);
+  --sidebar-accent: rgb(255 255 255 / 4%);
+  --sidebar-accent-foreground: var(--color-neutral-100);
+  --sidebar-border: rgb(255 255 255 / 5%);
+  --sidebar-ring: var(--color-neutral-400);
+}
+
+/* Reduced motion is instant (rulebook M5). Under each of the kit's three
+ * signals, the system setting, html[data-motion-reduce="true"] and the
+ * provider preset data-sp-motion="reduced", every duration token but the loops
+ * is 1 ms on every element in scope, so transitions and animations end at once
+ * and still settle: their end events fire and getAnimations() empties. The
+ * declarations are important, so a token an app overrides does not bring
+ * motion back. The loop, ring pulse and Badge light durations keep their
+ * values: the Spinner, Skeleton, indeterminate Progress, the Badge light and a
+ * featured icon's rings stop under reduced motion instead. */
+@media (prefers-reduced-motion: reduce) {
+  :where(:root, :root *) {
+    --motion-duration-micro: 1ms !important;
+    --motion-duration-fast: 1ms !important;
+    --motion-duration-base: 1ms !important;
+    --motion-duration-moderate: 1ms !important;
+    --motion-duration-slow: 1ms !important;
+    --motion-duration-linger: 1ms !important;
+    --motion-duration-overlay: 1ms !important;
+    --motion-duration-expand: 1ms !important;
+    --motion-duration-modal: 1ms !important;
+    --motion-duration-follow: 1ms !important;
+    --motion-duration-follow-trail: 1ms !important;
+    --motion-duration-navigation: 1ms !important;
+    --motion-duration-value: 1ms !important;
+    --motion-duration-panel: 1ms !important;
+    --motion-duration-panel-release: 1ms !important;
+    --motion-duration-carousel: 1ms !important;
+  }
+}
+
+:where(
+  :root[data-motion-reduce="true"],
+  :root[data-motion-reduce="true"] *,
+  [data-sp-motion="reduced"],
+  [data-sp-motion="reduced"] *
+) {
+  --motion-duration-micro: 1ms !important;
+  --motion-duration-fast: 1ms !important;
+  --motion-duration-base: 1ms !important;
+  --motion-duration-moderate: 1ms !important;
+  --motion-duration-slow: 1ms !important;
+  --motion-duration-linger: 1ms !important;
+  --motion-duration-overlay: 1ms !important;
+  --motion-duration-expand: 1ms !important;
+  --motion-duration-modal: 1ms !important;
+  --motion-duration-follow: 1ms !important;
+  --motion-duration-follow-trail: 1ms !important;
+  --motion-duration-navigation: 1ms !important;
+  --motion-duration-value: 1ms !important;
+  --motion-duration-panel: 1ms !important;
+  --motion-duration-panel-release: 1ms !important;
+  --motion-duration-carousel: 1ms !important;
+}
+
+.animate-skeleton {
+  animation: skeleton calc(var(--motion-duration-loop) * 2)
+    calc(var(--motion-duration-loop) * -1) infinite var(--motion-ease-linear);
+}
+
+@keyframes skeleton {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+:where(*, *::before, *::after) {
+  box-sizing: border-box;
+  border-color: var(--color-border);
+  outline-color: color-mix(in oklab, var(--color-ring) 50%, transparent);
+}
+
+:where(button, input, textarea, select) {
+  font: inherit;
+}

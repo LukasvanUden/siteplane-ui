@@ -1,0 +1,129 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The heights are the Input scale (28, 32, 36 and 48 px), so a date field is as
+   * tall as the Input, Select and Button of the same size. The width is the
+   * segments' own, like the Date Time Picker and the Number Field; a width utility
+   * in className (w-full in a form column) replaces it. */
+  .siteplane-date-field-control {
+    --date-field-control-height: var(--sp-rw-control-md);
+    --date-field-segment-start: calc(
+      var(--sp-rw-space-3) - var(--input-segment-padding-inline)
+    );
+    max-width: 100%;
+    height: var(--date-field-control-height);
+  }
+
+  .siteplane-date-field-control[data-icon-mode="action-end"] {
+    padding-inline-end: var(--date-field-control-height);
+  }
+
+  .siteplane-date-field-control[data-size="sm"] {
+    --date-field-control-height: var(--sp-rw-control-sm);
+    --date-field-segment-start: calc(
+      var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
+    );
+  }
+
+  .siteplane-date-field-control[data-size="lg"] {
+    --date-field-control-height: var(--sp-rw-control-lg);
+  }
+
+  .siteplane-date-field-control[data-size="xl"] {
+    --date-field-control-height: var(--sp-rw-control-xl);
+    --date-field-segment-start: calc(
+      var(--sp-rw-space-4) - var(--input-segment-padding-inline)
+    );
+  }
+
+  .siteplane-date-field-input {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    outline: none;
+  }
+
+  .siteplane-date-field-control > .siteplane-date-field-input {
+    margin-inline-start: var(--date-field-segment-start);
+  }
+
+  /* The picker button's room ends the field; without it the segments keep the
+   * inset of the start, so a field as wide as its segments is balanced. */
+  .siteplane-date-field-control:not([data-icon-mode="action-end"])
+    > .siteplane-date-field-input {
+    margin-inline-end: var(--date-field-segment-start);
+  }
+
+  /* The leading icon is a regular InputGroup addon; the first segment's text
+   * starts where an InputGroup input's text starts after the same icon. */
+  .siteplane-date-field-control:has(> .siteplane-date-field-decorative-icon)
+    > .siteplane-date-field-input {
+    margin-inline-start: calc(
+      var(--siteplane-composite-control-padding-inline-start) -
+        var(--input-segment-padding-inline)
+    );
+  }
+
+  .siteplane-date-field-segment {
+    outline: none;
+  }
+
+  .siteplane-date-field-segment:not([data-type="literal"]) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(var(--radius-md) + var(--input-segment-padding-block));
+    background-clip: content-box;
+    caret-color: var(--color-primary);
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+    padding-block: var(--input-segment-padding-block);
+    padding-inline: var(--input-segment-padding-inline);
+    text-align: center;
+  }
+
+  /* Minimum widths keep digits steady; wider placeholders such as "mm" or
+   * larger text grow the segment instead of running into its neighbours. */
+  .siteplane-date-field-segment:is([data-type="day"], [data-type="month"]) {
+    min-width: calc(var(--spacing) * 7);
+  }
+
+  .siteplane-date-field-segment[data-type="year"] {
+    min-width: calc(var(--spacing) * 11);
+  }
+
+  .siteplane-date-field-segment[data-literal-kind="separator"] {
+    margin-inline: calc(var(--spacing) * -1);
+  }
+
+  .siteplane-date-field-segment[data-focused]:not([data-type="literal"]) {
+    background-color: var(--input-segment-background);
+  }
+
+  .siteplane-date-field-segment[data-placeholder]:not([data-type="literal"]) {
+    color: var(--color-muted-foreground);
+  }
+
+  .siteplane-date-field-segment::selection {
+    background-color: transparent;
+  }
+
+  [data-foundation="date-field"][data-profile="input-group"][data-inset-start="true"]
+    .siteplane-date-field-segment[data-type="day"] {
+    margin-inline-start: calc(var(--spacing) * 2);
+  }
+
+  .siteplane-date-field-control
+    > [data-slot="input-group-addon"][data-align="inline-end"] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: var(--date-field-control-height);
+    padding-inline: 0 !important;
+  }
+
+  .siteplane-date-field-popover {
+    --popup-width: auto;
+  }
+}
