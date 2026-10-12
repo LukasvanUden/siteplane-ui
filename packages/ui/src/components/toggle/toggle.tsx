@@ -2,6 +2,7 @@
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 import {
   siteplaneUIDefaults,
@@ -47,12 +48,22 @@ const toggleGroupProfileClassName =
 
 export function Toggle(
   toggleProps: WithStringClassName<TogglePrimitive.Props> &
-    VariantProps<typeof toggleVariants>,
+    VariantProps<typeof toggleVariants> & {
+      /**
+       * Lifts the icon once each time the toggle turns on: up and back with a
+       * slight tilt, for a reaction such as a like. The icon is the toggle's
+       * first child; reduced motion keeps it still.
+       */
+      lift?: boolean;
+    },
 ) {
   // ToggleGroup and the theme toggles pass their internal profiles through
   // KitToggle (toggle-internal.ts), the same function.
   const {
     className,
+    lift = false,
+    onAnimationEnd,
+    onPressedChange,
     padding = "default",
     profile = "default",
     variant,
@@ -60,6 +71,10 @@ export function Toggle(
     ...props
   } = toggleProps as KitToggleProps;
   const resolvedSize = useResolvedControlSize(size);
+  // The lift plays when the toggle turns on, not when it renders pressed, and
+  // the attribute clears when it ends, so the next press plays it again
+  // (motion.css).
+  const [lifting, setLifting] = React.useState(false);
   return (
     <TogglePrimitive
       className={cn(
@@ -69,11 +84,20 @@ export function Toggle(
         className,
       )}
       data-foundation="toggle"
+      data-lift={lift ? (lifting ? "on" : "") : undefined}
       data-padding={padding}
       data-profile={profile}
       data-size={resolvedSize}
       data-slot="toggle"
       data-variant={variant ?? "default"}
+      onAnimationEnd={(event) => {
+        if (event.animationName === "siteplane-toggle-lift") setLifting(false);
+        onAnimationEnd?.(event);
+      }}
+      onPressedChange={(pressed, eventDetails) => {
+        if (lift && pressed) setLifting(true);
+        onPressedChange?.(pressed, eventDetails);
+      }}
       {...props}
     />
   );

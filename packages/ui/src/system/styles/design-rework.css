@@ -2009,6 +2009,13 @@ html[data-motion-reduce="true"] [data-slot="pagination-content"]::before {
   color: var(--sp-semantic-color-popover-foreground);
 }
 
+/* A raised Notification is set into content like a Card: the Card's one edge
+ * in place of the floating shadow (B7; Lukas, 12 October 2026). Fill, radius
+ * and text colour stay the toast surface's. */
+:root [data-slot="notification"][data-surface="raised"] {
+  box-shadow: var(--sp-rw-surface-xs-shadow);
+}
+
 /* ColorPicker and the date and time pickers use React Aria-owned popovers, and
  * DateField names its Popover popup with a slot of its own, so the rule above
  * misses it. All of them share the canonical borderless floating-md surface

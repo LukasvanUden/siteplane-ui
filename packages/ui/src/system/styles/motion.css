@@ -226,6 +226,40 @@ html[data-motion-reduce="true"] .siteplane-carousel-caption,
   }
 }
 
+/* A Toggle with `lift` lifts its icon once as it turns on: up and back with a
+ * slight tilt, a small reaction such as a like (Lukas, 12 October 2026).
+ * toggle.tsx sets data-lift="on" for one play and clears it when it ends. A
+ * soft curve on the way up and the way down, from the icon's base, on its own
+ * layer so the small move does not snap to whole pixels (Lukas, 12 October
+ * 2026: smoother and subtler). */
+[data-foundation="toggle"][data-lift="on"] > svg:first-child {
+  animation: siteplane-toggle-lift var(--motion-duration-slow)
+    var(--motion-ease-soft-in-out);
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+@keyframes siteplane-toggle-lift {
+  45% {
+    transform: translateY(-1.5px) rotate(-6deg);
+  }
+}
+
+html[data-motion-reduce="true"]
+  [data-foundation="toggle"][data-lift="on"]
+  > svg:first-child,
+[data-sp-motion="reduced"]
+  [data-foundation="toggle"][data-lift="on"]
+  > svg:first-child {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-foundation="toggle"][data-lift="on"] > svg:first-child {
+    animation: none;
+  }
+}
+
 @keyframes siteplane-icon-pop {
   from {
     opacity: 0;
