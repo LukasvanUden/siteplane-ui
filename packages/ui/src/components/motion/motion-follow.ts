@@ -73,10 +73,11 @@ function naturalHeight(element: HTMLElement): number {
  * where it is until that element has been laid out once, one frame on: content
  * that builds a frame later (a collection, an editor) is then in place, and the
  * height heads for what it really is instead of dipping towards an empty pane.
- * Everything the container is given while it follows (height, clip, position)
- * is handed back when the swap is over, so later changes flow naturally. A
- * container that scrolls keeps its own height, and so does one that had no box
- * before (`from` is `null`).
+ * Everything the container is given while it follows (height, clip) is handed
+ * back when the swap is over, so later changes flow naturally. A container that
+ * scrolls keeps its own height, and so does one that had no box before (`from`
+ * is `null`). A pane that leaves is positioned by `holdPanePlace`, which lasts
+ * as long as the pane and not as long as the height.
  */
 export function followHeight(
   container: HTMLElement,
@@ -91,10 +92,7 @@ export function followHeight(
   const kept = {
     height: container.style.height,
     overflowY: container.style.overflowY,
-    position: container.style.position,
   };
-  // A pane that leaves is positioned against the container.
-  if (styles.position === "static") container.style.position = "relative";
 
   const total = ((timing as { duration?: number }).duration ?? 0) * 1000;
   const startedAt = performance.now();
@@ -119,7 +117,6 @@ export function followHeight(
     observer?.disconnect();
     clearTimeout(timer);
     release();
-    container.style.position = kept.position;
     if (follows.get(container) === follow) follows.delete(container);
   };
   const follow: HeightFollow = {
@@ -257,6 +254,44 @@ export function panePin(place: PanePlace): React.CSSProperties {
   };
 }
 
+/** The containers panes are pinned in: how many, and the position they had. */
+const placeHolders = new WeakMap<
+  HTMLElement,
+  { panes: number; position: string }
+>();
+
+/**
+ * Makes the container the box a leaving pane is pinned against (`panePin`): a
+ * container that is not positioned becomes `relative`. Returns the release, to
+ * call when the pane is gone; the container gets its own position back when the
+ * last pane pinned in it is gone. The hold lasts as long as the pane, which can
+ * fade out after its container's height has settled (the Tabs panel dissolve).
+ */
+export function holdPanePlace(container: HTMLElement): () => void {
+  const held = placeHolders.get(container);
+  if (held) {
+    held.panes += 1;
+  } else {
+    placeHolders.set(container, {
+      panes: 1,
+      position: container.style.position,
+    });
+    if (getComputedStyle(container).position === "static") {
+      container.style.position = "relative";
+    }
+  }
+  let released = false;
+  return () => {
+    const entry = placeHolders.get(container);
+    if (released || !entry) return;
+    released = true;
+    entry.panes -= 1;
+    if (entry.panes > 0) return;
+    placeHolders.delete(container);
+    container.style.position = entry.position;
+  };
+}
+
 /** The pane's place against the padding box of its container. */
 function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
   const box = pane.getBoundingClientRect();
@@ -279,9 +314,10 @@ function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
  * would remount a pane that is kept mounted, together with the state in it).
  * `open` says the pane is shown, `leaving` that it is on its way out. The
  * returned style, for the pane while it leaves, keeps it where it was, out of
- * the flow, so the pane that takes over has the place and the pane's container
- * follows the new height over the panel dissolve (panelDissolveClassName); with
- * reduced motion it is hidden at once (M5).
+ * the flow and against its container until it is gone (`holdPanePlace`), so the
+ * pane that takes over has the place and the pane's container follows the new
+ * height over the panel dissolve (panelDissolveClassName); with reduced motion
+ * it is hidden at once (M5).
  * `enter` finds the pane that takes over in the container, so late content in it
  * is followed; give it a stable function.
  */
@@ -312,15 +348,18 @@ export function useLeavingPane(
   const latest = React.useRef({ enter, follow });
   latest.current = { enter, follow };
 
-  // The pane leaves: its container follows from the height it had to the new one.
+  // The pane leaves: it is pinned against its container until it is gone, and
+  // the container follows from the height it had to the new one.
   React.useLayoutEffect(() => {
     const element = container.current;
-    if (!leaving || !element || !place.current) return;
+    if (!leaving || reduced || !element || !place.current) return;
+    const release = holdPanePlace(element);
     latest.current.follow({
       enter: latest.current.enter?.(element) ?? null,
       timing: measurePanelDissolveHeight(element),
     });
-  }, [container, leaving]);
+    return release;
+  }, [container, leaving, reduced]);
 
   // At rest: where the pane sits, which is where it is pinned when it leaves.
   React.useLayoutEffect(() => {
