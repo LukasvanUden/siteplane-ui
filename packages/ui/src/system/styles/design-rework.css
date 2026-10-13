@@ -401,7 +401,10 @@
   --sp-rw-bg-secondary: oklch(24.31% 0 0);
   --sp-rw-bg-tertiary: oklch(27.2% 0 0);
   --sp-rw-bg-muted: oklch(56.74% 0.009 106.68 / 8%);
-  --sp-rw-bg-translucent: oklch(56.74% 0.009 106.68 / 16%);
+  /* Translucent, it lightens with the surface below: at 8 % a Select on a Card
+   * or Dialog matches the default Button, as both are the Card's white in
+   * Light (Lukas, 13 October 2026; 16 % put it above the Button). */
+  --sp-rw-bg-translucent: oklch(56.74% 0.009 106.68 / 8%);
   --sp-rw-bg-inverse: oklch(100% 0 0 / 96%);
   --sp-rw-bg-accent-translucent: oklch(55% 0.227 274.2 / 20%);
   --sp-rw-bg-positive-translucent: oklch(54.42% 0.1689 138.23 / 20%);
