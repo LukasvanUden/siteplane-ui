@@ -8,7 +8,7 @@ import {
 import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
-import { measureSwapTiming, retargetHeight } from "./motion-presence";
+import { measurePanelDissolveHeight, retargetHeight } from "./motion-presence";
 
 /**
  * How a container follows the height of what it holds when content comes and
@@ -280,7 +280,8 @@ function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
  * `open` says the pane is shown, `leaving` that it is on its way out. The
  * returned style, for the pane while it leaves, keeps it where it was, out of
  * the flow, so the pane that takes over has the place and the pane's container
- * follows the new height; with reduced motion it is hidden at once (M5).
+ * follows the new height over the panel dissolve (panelDissolveClassName); with
+ * reduced motion it is hidden at once (M5).
  * `enter` finds the pane that takes over in the container, so late content in it
  * is followed; give it a stable function.
  */
@@ -317,7 +318,7 @@ export function useLeavingPane(
     if (!leaving || !element || !place.current) return;
     latest.current.follow({
       enter: latest.current.enter?.(element) ?? null,
-      timing: measureSwapTiming(element).height,
+      timing: measurePanelDissolveHeight(element),
     });
   }, [container, leaving]);
 

@@ -12,7 +12,7 @@ import {
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { KitButton } from "../button/button-internal";
 import { useLeavingPane } from "../motion/motion-follow";
-import { swapFadeClassName } from "../motion/motion-presence";
+import { panelDissolveClassName } from "../motion/motion-presence";
 
 export type TabsVariant = "default" | "pill" | "underline";
 const TabsSizeContext = React.createContext<SiteplaneControlSize | null>(null);
@@ -244,12 +244,12 @@ const enteringPanel = (container: HTMLElement) =>
   );
 
 /**
- * Switching tabs swaps the panels: the old panel fades out, the new one fades
- * in after it and the container follows the new height, the same fade through
- * and height follow as `MotionSwap` (rulebook M8). Nothing to set up; a panel
- * with `keepMounted` keeps its state, which a `MotionSwap` would remount, so
- * Base UI keeps mounting the panels and the motion component pins the one that
- * leaves.
+ * Switching tabs dissolves the panels: the new panel fades in on top of the old
+ * one, which stays below it and fades out at the end, and the container follows
+ * the new height (rulebook M8). No moment shows neither panel, which a fade
+ * through of a whole panel shows as a flicker. Nothing to set up; a panel with
+ * `keepMounted` keeps its state, which a `MotionSwap` would remount, so Base UI
+ * keeps mounting the panels and the motion component pins the one that leaves.
  */
 export function TabsPanel({
   className,
@@ -260,7 +260,7 @@ export function TabsPanel({
     <TabsPrimitive.Panel
       // Base UI makes the shown panel a tab stop; its keyboard focus takes the
       // kit focus outline (design-rework.css).
-      className={cn("flex-1", swapFadeClassName, className)}
+      className={cn("flex-1", panelDissolveClassName, className)}
       data-slot="tabs-content"
       render={(panelProps, state) => (
         <TabsPanelSwap panelProps={panelProps} render={render} state={state} />

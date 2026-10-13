@@ -25,10 +25,10 @@ import {
 } from "./motion-presence";
 
 export type { MotionLayout };
-// Components whose panes stay mounted while they leave (Tabs) take the same
-// fade through, pin and height follow from useLeavingPane (motion-follow) and
-// swapFadeClassName (motion-presence). Both are kit internals, imported by
-// file path, not part of the public Motion API.
+// Components whose panes stay mounted while they leave (Tabs) take their pin
+// and height follow from useLeavingPane (motion-follow) and their dissolve from
+// panelDissolveClassName (motion-presence). Both are kit internals, imported
+// by file path, not part of the public Motion API.
 
 type NativeProps<Tag extends "div" | "li" | "ul"> = Omit<
   React.ComponentPropsWithRef<Tag>,

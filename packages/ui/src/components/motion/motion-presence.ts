@@ -234,6 +234,26 @@ export function measureSwapTiming(element: Element | null): SwapTiming {
  */
 export const swapFadeClassName = "siteplane-swap-fade";
 
+/**
+ * A Tabs panel dissolves instead (Lukas, 13 October 2026: the fade through of a
+ * whole panel flickered): the panel that takes over fades in over
+ * `--motion-duration-expand` on top of the one that leaves, which stays below
+ * and fades out during the last `--motion-duration-micro`. The class is the
+ * kit's panel-dissolve rule in motion.css; reduced motion makes it instant (M5).
+ */
+export const panelDissolveClassName = "siteplane-panel-dissolve";
+
+/** The height follow of a panel that dissolves: over the panel's whole fade in. */
+export function measurePanelDissolveHeight(
+  element: Element | null,
+): Transition {
+  return measureTiming(
+    element,
+    "--motion-duration-expand",
+    "--motion-ease-standard",
+  );
+}
+
 const instantSwap: SwapTiming = {
   enter: instantTransition,
   height: instantTransition,

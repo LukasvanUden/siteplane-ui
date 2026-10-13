@@ -22,7 +22,8 @@
   /* A backdrop fades, and a popover or tooltip cross-fades between its
    * panes. */
   --motion-duration-overlay: 160ms;
-  /* A panel expands or collapses, and an item enters or leaves a list. */
+  /* A panel expands or collapses, an item enters or leaves a list, and a Tabs
+   * panel dissolves in. */
   --motion-duration-expand: 200ms;
   /* A dialog opens and closes. */
   --motion-duration-modal: 210ms;
