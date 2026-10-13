@@ -45,6 +45,46 @@ export function Tabs({
   );
 }
 
+/**
+ * Places a rail's selection on its active tab: the target given, or the
+ * selected tab. Self-contained, because the server HTML also runs it as an
+ * inline script, before the page hydrates.
+ */
+function placeRailIndicator(rail: HTMLElement, active?: HTMLElement | null) {
+  const indicator = rail.querySelector<HTMLElement>(
+    ':scope > div > [data-slot="tab-indicator"]',
+  );
+  const target =
+    active ??
+    rail.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+  if (!indicator || !target) return;
+  const railBox = rail.getBoundingClientRect();
+  const targetBox = target.getBoundingClientRect();
+  indicator.style.setProperty(
+    "--active-tab-left",
+    `${targetBox.left - railBox.left}px`,
+  );
+  indicator.style.setProperty("--active-tab-width", `${targetBox.width}px`);
+  indicator.style.setProperty("--active-tab-height", `${targetBox.height}px`);
+  // Scrolled tabs must not paint their selection under the adjacent action.
+  // The strip that shows the tabs is the list, or the scroll viewport of a
+  // ScrollArea that holds the list inside this rail.
+  const list = target.closest('[role="tablist"]');
+  const viewport = list?.closest<HTMLElement>(
+    '[data-slot="scroll-area-viewport"]',
+  );
+  const strip = viewport && rail.contains(viewport) ? viewport : list;
+  const stripBox = strip?.getBoundingClientRect();
+  indicator.parentElement!.style.clipPath = stripBox
+    ? `inset(0 ${Math.max(0, railBox.right - stripBox.right)}px 0 ${Math.max(0, stripBox.left - railBox.left)}px)`
+    : "inset(0)";
+}
+
+// The script ends the rail, so the tabs it measures are parsed before it runs.
+const railIndicatorScript = `(${placeRailIndicator.toString()})(document.currentScript.parentElement)`;
+
+const subscribeToNothing = () => () => {};
+
 /** Shared rail and selection indicator for tabs composed with an adjacent action. */
 export function TabsRail({
   className,
@@ -60,6 +100,13 @@ export function TabsRail({
   const railRef = React.useRef<HTMLDivElement>(null);
   const indicatorRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => railRef.current as HTMLDivElement);
+  // The server HTML and the hydration pass carry the script; once the page
+  // has hydrated, the layout effect below places the selection.
+  const hydrated = React.useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
 
   React.useLayoutEffect(() => {
     const rail = railRef.current;
@@ -67,36 +114,7 @@ export function TabsRail({
     if (!rail || !indicator) return;
 
     function measure() {
-      const target =
-        activeIndicatorRef?.current ??
-        rail!.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
-      if (!target) return;
-      const railBox = rail!.getBoundingClientRect();
-      const targetBox = target.getBoundingClientRect();
-      indicator!.style.setProperty(
-        "--active-tab-left",
-        `${targetBox.left - railBox.left}px`,
-      );
-      indicator!.style.setProperty(
-        "--active-tab-width",
-        `${targetBox.width}px`,
-      );
-      indicator!.style.setProperty(
-        "--active-tab-height",
-        `${targetBox.height}px`,
-      );
-      // Scrolled tabs must not paint their selection under the adjacent action.
-      // The strip that shows the tabs is the list, or the scroll viewport of a
-      // ScrollArea that holds the list inside this rail.
-      const list = target.closest('[role="tablist"]');
-      const viewport = list?.closest<HTMLElement>(
-        '[data-slot="scroll-area-viewport"]',
-      );
-      const strip = viewport && rail!.contains(viewport) ? viewport : list;
-      const stripBox = strip?.getBoundingClientRect();
-      indicator!.parentElement!.style.clipPath = stripBox
-        ? `inset(0 ${Math.max(0, railBox.right - stripBox.right)}px 0 ${Math.max(0, stripBox.left - railBox.left)}px)`
-        : "inset(0)";
+      placeRailIndicator(rail!, activeIndicatorRef?.current);
     }
 
     measure();
@@ -129,15 +147,27 @@ export function TabsRail({
       data-variant={variant}
       {...props}
     >
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      {/* The script styles both before hydration, so their server HTML differs
+          from the first client render. */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+        suppressHydrationWarning
+      >
         <div
           ref={indicatorRef}
           className="absolute"
           data-slot="tab-indicator"
           data-variant={variant}
+          suppressHydrationWarning
         />
       </div>
       {children}
+      {hydrated ? null : (
+        <script
+          dangerouslySetInnerHTML={{ __html: railIndicatorScript }}
+          suppressHydrationWarning
+        />
+      )}
     </div>
   );
 }
@@ -184,11 +214,14 @@ export function TabsList({
           {...props}
         >
           {children}
+          {/* Base UI's inline script places the selection in the server
+              HTML, so it shows before the page hydrates (13 October 2026). */}
           {!embedded && (
             <TabsPrimitive.Indicator
               className="pointer-events-none absolute z-0"
               data-slot="tab-indicator"
               data-variant={variant}
+              renderBeforeHydration
             />
           )}
         </TabsPrimitive.List>

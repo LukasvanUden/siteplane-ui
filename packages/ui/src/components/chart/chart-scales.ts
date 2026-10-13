@@ -312,10 +312,12 @@ export function readableLabels(
   });
 }
 
-// Measured once in Chromium against the kit font (Wix Madefor Text, 12 px):
-// digits are 7.1 to 7.7 px wide, letters 6.2 to 7.5 px, a space or punctuation
-// about 3.4 px, and m, w and % are wider. The estimate errs on the wide side
-// for numbers, so a label never lands closer to its neighbour than planned.
+// Measured once in Chromium against Wix Madefor Text at 12 px, the kit font
+// before Inter: digits are 7.1 to 7.7 px wide, letters 6.2 to 7.5 px, a space
+// or punctuation about 3.4 px, and m, w and % are wider. Inter, at the kit's
+// weight and tracking, sets the same labels within 5 % of those widths. The
+// estimate still errs on the wide side for numbers, so a label never lands
+// closer to its neighbour than planned.
 const narrowCharacter = /[ .,:;'!|il]/;
 const wideCharacter = /[mwMW%@]/;
 const digitCharacter = /[0-9]/;
