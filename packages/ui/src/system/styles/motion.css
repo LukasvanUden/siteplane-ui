@@ -71,45 +71,15 @@
   transition-delay: 0ms;
 }
 
-/* Dissolve for a Tabs panel (rulebook M8; panelDissolveClassName of the
- * Motion component). The panel that takes over fades in over the expand
- * duration on top of the panel that leaves, which stays opaque below it and
- * fades out during the last micro duration: a large panel never leaves an
- * empty moment, which a fade through shows as a flicker, and a panel without
- * a surface of its own does not end with a cut. Zero specificity, so the
- * reduced-motion rules below and a consumer's utility both win. */
-:where(.siteplane-panel-dissolve) {
-  transition-property: opacity;
-  transition-duration: var(--motion-duration-expand);
-  transition-timing-function: var(--motion-ease-standard);
-}
-
-:where(
-  .siteplane-panel-dissolve:is([data-starting-style], [data-ending-style])
-) {
+/* A Tabs panel switches at once (rulebook M8; panelSwitchClassName of the
+ * Motion component), as tabs do in the WAI-ARIA pattern and most interfaces:
+ * the panel that leaves is hidden the moment the new one shows, and the
+ * indicator and the height of the panels' container carry the motion. A
+ * dissolve showed both panels' text at once wherever a panel has no surface of
+ * its own (Lukas, 13 October 2026). Zero specificity, so a consumer's utility
+ * wins. */
+:where(.siteplane-panel-switch[data-ending-style]) {
   opacity: 0;
-}
-
-:where(.siteplane-panel-dissolve[data-ending-style]) {
-  transition-duration: var(--motion-duration-micro);
-  transition-timing-function: var(--motion-ease-soft-in-out);
-  transition-delay: max(
-    0ms,
-    calc(var(--motion-duration-expand) - var(--motion-duration-micro))
-  );
-}
-
-/* While a panel leaves, the one that takes over lies above it: the leaving
- * panel is pinned out of the flow, and a positioned box would paint on top. */
-:where(
-  .siteplane-panel-dissolve:not([data-ending-style]):has(
-      ~ .siteplane-panel-dissolve[data-ending-style]
-    ),
-  .siteplane-panel-dissolve[data-ending-style]
-    ~ .siteplane-panel-dissolve:not([data-ending-style])
-) {
-  position: relative;
-  z-index: 1;
 }
 
 .siteplane-calendar-month-motion {
@@ -421,12 +391,6 @@ html[data-motion-reduce="true"] .siteplane-swap-fade,
   transition-delay: 0ms;
 }
 
-html[data-motion-reduce="true"] .siteplane-panel-dissolve,
-:where([data-sp-motion="reduced"]) .siteplane-panel-dissolve {
-  transition-duration: 1ms;
-  transition-delay: 0ms;
-}
-
 html[data-motion-reduce="true"] .siteplane-icon-pop,
 :where([data-sp-motion="reduced"]) .siteplane-icon-pop {
   animation-duration: 1ms;
@@ -509,11 +473,6 @@ html[data-motion-reduce="true"] .siteplane-skeleton-motion,
   }
 
   .siteplane-swap-fade {
-    transition-duration: 1ms;
-    transition-delay: 0ms;
-  }
-
-  .siteplane-panel-dissolve {
     transition-duration: 1ms;
     transition-delay: 0ms;
   }

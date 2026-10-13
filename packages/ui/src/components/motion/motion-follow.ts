@@ -8,7 +8,7 @@ import {
 import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
-import { measurePanelDissolveHeight, retargetHeight } from "./motion-presence";
+import { measurePanelSwitchHeight, retargetHeight } from "./motion-presence";
 
 /**
  * How a container follows the height of what it holds when content comes and
@@ -265,7 +265,7 @@ const placeHolders = new WeakMap<
  * container that is not positioned becomes `relative`. Returns the release, to
  * call when the pane is gone; the container gets its own position back when the
  * last pane pinned in it is gone. The hold lasts as long as the pane, which can
- * fade out after its container's height has settled (the Tabs panel dissolve).
+ * outlast its container's height animation.
  */
 export function holdPanePlace(container: HTMLElement): () => void {
   const held = placeHolders.get(container);
@@ -316,8 +316,9 @@ function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
  * returned style, for the pane while it leaves, keeps it where it was, out of
  * the flow and against its container until it is gone (`holdPanePlace`), so the
  * pane that takes over has the place and the pane's container follows the new
- * height over the panel dissolve (panelDissolveClassName); with reduced motion
- * it is hidden at once (M5).
+ * height over the expand duration (measurePanelSwitchHeight); the panel switch
+ * rule (panelSwitchClassName) hides it at once. With reduced motion the height
+ * changes at once (M5).
  * `enter` finds the pane that takes over in the container, so late content in it
  * is followed; give it a stable function.
  */
@@ -356,7 +357,7 @@ export function useLeavingPane(
     const release = holdPanePlace(element);
     latest.current.follow({
       enter: latest.current.enter?.(element) ?? null,
-      timing: measurePanelDissolveHeight(element),
+      timing: measurePanelSwitchHeight(element),
     });
     return release;
   }, [container, leaving, reduced]);

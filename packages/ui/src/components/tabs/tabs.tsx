@@ -12,7 +12,7 @@ import {
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { KitButton } from "../button/button-internal";
 import { useLeavingPane } from "../motion/motion-follow";
-import { panelDissolveClassName } from "../motion/motion-presence";
+import { panelSwitchClassName } from "../motion/motion-presence";
 
 export type TabsVariant = "default" | "pill" | "underline";
 const TabsSizeContext = React.createContext<SiteplaneControlSize | null>(null);
@@ -33,8 +33,11 @@ export function Tabs({
   return (
     <TabsSizeContext.Provider value={resolvedSize}>
       <TabsPrimitive.Root
+        // The list or rail never shrinks: when the panels sit in the root, it
+        // follows a taller panel's height from below the content, and a list
+        // that could shrink collapsed for a moment (13 October 2026).
         className={cn(
-          "flex min-w-0 max-w-full flex-col gap-2 data-[orientation=vertical]:flex-row",
+          "flex min-w-0 max-w-full flex-col gap-2 data-[orientation=vertical]:flex-row [&>[data-slot=tabs-list]]:shrink-0 [&>[data-slot=tabs-rail]]:shrink-0",
           className,
         )}
         data-size={resolvedSize}
@@ -277,12 +280,12 @@ const enteringPanel = (container: HTMLElement) =>
   );
 
 /**
- * Switching tabs dissolves the panels: the new panel fades in on top of the old
- * one, which stays below it and fades out at the end, and the container follows
- * the new height (rulebook M8). No moment shows neither panel, which a fade
- * through of a whole panel shows as a flicker. Nothing to set up; a panel with
- * `keepMounted` keeps its state, which a `MotionSwap` would remount, so Base UI
- * keeps mounting the panels and the motion component pins the one that leaves.
+ * Switching tabs shows the new panel at once (rulebook M8): the panel that
+ * leaves is hidden the moment the new one shows, and the indicator and the
+ * height of the panels' container carry the motion. No moment shows two panels
+ * or none. Nothing to set up; a panel with `keepMounted` keeps its state, which
+ * a `MotionSwap` would remount, so Base UI keeps mounting the panels and the
+ * motion component pins the one that leaves while the container follows.
  */
 export function TabsPanel({
   className,
@@ -293,7 +296,7 @@ export function TabsPanel({
     <TabsPrimitive.Panel
       // Base UI makes the shown panel a tab stop; its keyboard focus takes the
       // kit focus outline (design-rework.css).
-      className={cn("flex-1", panelDissolveClassName, className)}
+      className={cn("flex-1", panelSwitchClassName, className)}
       data-slot="tabs-content"
       render={(panelProps, state) => (
         <TabsPanelSwap panelProps={panelProps} render={render} state={state} />

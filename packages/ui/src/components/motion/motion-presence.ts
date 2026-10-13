@@ -235,18 +235,18 @@ export function measureSwapTiming(element: Element | null): SwapTiming {
 export const swapFadeClassName = "siteplane-swap-fade";
 
 /**
- * A Tabs panel dissolves instead (Lukas, 13 October 2026: the fade through of a
- * whole panel flickered): the panel that takes over fades in over
- * `--motion-duration-expand` on top of the one that leaves, which stays below
- * and fades out during the last `--motion-duration-micro`. The class is the
- * kit's panel-dissolve rule in motion.css; reduced motion makes it instant (M5).
+ * A Tabs panel switches at once instead (Lukas, 13 October 2026): the panel that
+ * leaves is hidden the moment the new one shows, as tabs do in the WAI-ARIA
+ * pattern and most interfaces. A dissolve showed both panels' text at once
+ * wherever a panel has no surface of its own, and a fade through of a whole
+ * panel leaves a moment with neither. The indicator and the height of the
+ * panels' container carry the motion. The class is the kit's panel-switch rule
+ * in motion.css.
  */
-export const panelDissolveClassName = "siteplane-panel-dissolve";
+export const panelSwitchClassName = "siteplane-panel-switch";
 
-/** The height follow of a panel that dissolves: over the panel's whole fade in. */
-export function measurePanelDissolveHeight(
-  element: Element | null,
-): Transition {
+/** The height follow of a Tabs panel switch: over the expand duration. */
+export function measurePanelSwitchHeight(element: Element | null): Transition {
   return measureTiming(
     element,
     "--motion-duration-expand",

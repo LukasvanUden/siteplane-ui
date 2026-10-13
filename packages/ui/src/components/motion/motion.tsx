@@ -26,8 +26,8 @@ import {
 
 export type { MotionLayout };
 // Components whose panes stay mounted while they leave (Tabs) take their pin
-// and height follow from useLeavingPane (motion-follow) and their dissolve from
-// panelDissolveClassName (motion-presence). Both are kit internals, imported
+// and height follow from useLeavingPane (motion-follow) and their switch rule
+// from panelSwitchClassName (motion-presence). Both are kit internals, imported
 // by file path, not part of the public Motion API.
 
 type NativeProps<Tag extends "div" | "li" | "ul"> = Omit<
