@@ -23,12 +23,12 @@
     display: none;
   }
 
+  /* The resize grip is the kit base of every textarea (design-rework.css). */
   [data-foundation="textarea"][data-profile="input-group"]
     [data-slot="textarea"] {
     min-height: calc(var(--spacing) * 20.5);
     border-radius: 0;
     padding-block: calc(var(--spacing) * 2 - 1px);
-    resize: vertical;
   }
 
   @media (width < 40rem) {

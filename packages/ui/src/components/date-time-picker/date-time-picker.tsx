@@ -41,6 +41,7 @@ import { Calendar } from "../calendar";
 import {
   calendarMonthBounds,
   type CalendarOptions,
+  fromNativeDate,
   isCalendarDayDisabled,
   toNativeDate,
 } from "../calendar/calendar";
@@ -56,7 +57,11 @@ import {
 import { Input } from "../input";
 import { ExternalInputOwner } from "../input/input";
 import { InputGroup, InputGroupAddon, InputGroupText } from "../input-group";
-import { TimeFieldOptionColumn } from "../time-field/time-field";
+import {
+  type TimeFieldHourCycle,
+  TimeFieldOptionColumn,
+  useHourOptionLabels,
+} from "../time-field/time-field";
 
 // The shared date segment styles are owned by DateField.
 import "../date-field/date-field.css";
@@ -80,6 +85,11 @@ export interface DateTimePickerProps {
   defaultValue?: DateTimePickerValue;
   disabled?: boolean;
   form?: string;
+  /**
+   * The clock the time segments and the time selector show: `24` (00 to 23),
+   * or `12` with the locale's AM and PM. The value stays in 24-hour time.
+   */
+  hourCycle?: TimeFieldHourCycle;
   locale?: string;
   minuteStep?: number;
   name?: string;
@@ -164,20 +174,43 @@ function dateTimeBounds(calendarProps: CalendarOptions | undefined): {
   };
 }
 
+type DateTimeSegmentValue = React.ComponentProps<
+  typeof DateTimeSegmentPrimitive
+>["segment"];
+
+function isTimeSegment(segment: DateTimeSegmentValue | undefined): boolean {
+  return (
+    segment?.type === "hour" ||
+    segment?.type === "minute" ||
+    segment?.type === "second" ||
+    segment?.type === "dayPeriod" ||
+    segment?.type === "timeZoneName"
+  );
+}
+
 function getSegmentPart(
-  segment: React.ComponentProps<typeof DateTimeSegmentPrimitive>["segment"],
+  segment: DateTimeSegmentValue,
+  segments: readonly DateTimeSegmentValue[],
 ): "date" | "hidden" | "time" {
-  if (
-    segment.type === "hour" ||
-    segment.type === "minute" ||
-    segment.type === "second" ||
-    segment.type === "dayPeriod" ||
-    segment.type === "timeZoneName"
-  ) {
-    return "time";
-  }
+  if (isTimeSegment(segment)) return "time";
   if (segment.type !== "literal") return "date";
   if (segment.text.includes(":")) return "time";
+  // The space before AM or PM on a 12-hour clock lies between two time
+  // segments, so it belongs to the time. React Aria isolates the time with
+  // bidi marks, which are literals of their own, so the neighbours are the
+  // nearest segments that are not literals.
+  if (/^\s+$/.test(segment.text)) {
+    const index = segments.indexOf(segment);
+    const previous = segments
+      .slice(0, Math.max(index, 0))
+      .findLast(({ type }) => type !== "literal");
+    const next = segments
+      .slice(index + 1)
+      .find(({ type }) => type !== "literal");
+    if (index >= 0 && isTimeSegment(previous) && isTimeSegment(next)) {
+      return "time";
+    }
+  }
   if (/^[./\-\s]+$/.test(segment.text)) return "date";
   return "hidden";
 }
@@ -189,11 +222,12 @@ function DateTimeSegment({
   segment,
 }: {
   onClearedChange: (cleared: boolean) => void;
-  segment: React.ComponentProps<typeof DateTimeSegmentPrimitive>["segment"];
+  segment: DateTimeSegmentValue;
 }): React.ReactElement {
-  const cleared = hasClearedSegment(React.useContext(DateFieldStateContext));
+  const fieldState = React.useContext(DateFieldStateContext);
+  const cleared = hasClearedSegment(fieldState);
   React.useLayoutEffect(() => onClearedChange(cleared));
-  const part = getSegmentPart(segment);
+  const part = getSegmentPart(segment, fieldState?.segments ?? []);
   return (
     <DateTimeSegmentPrimitive
       className={cn(
@@ -202,8 +236,12 @@ function DateTimeSegment({
         part === "time" && "siteplane-time-field-segment",
       )}
       data-date-time-part={part}
+      // A separator cancels the padding of the segments beside it: the date
+      // separators, the colon and the space before AM or PM.
       data-literal-kind={
-        segment.type === "literal" && /[.:/-]/.test(segment.text)
+        segment.type === "literal" &&
+        (/[.:/-]/.test(segment.text) ||
+          (part === "time" && /^\s+$/.test(segment.text)))
           ? "separator"
           : undefined
       }
@@ -286,16 +324,19 @@ function DateTimeHiddenInput({
 }
 
 function TimeSelector({
+  hourCycle,
   minuteStep,
   onClose,
   open,
   state,
 }: {
+  hourCycle: TimeFieldHourCycle;
   minuteStep: number;
   onClose: () => void;
   open: boolean;
   state: DatePickerState;
 }): React.ReactElement {
+  const hourOptionLabels = useHourOptionLabels(hourCycle);
   const resolvedStep = Math.min(Math.max(Math.trunc(minuteStep) || 5, 1), 60);
   const minuteOptions = React.useMemo(
     () =>
@@ -318,6 +359,7 @@ function TimeSelector({
           state.setTimeValue(new Time(Number(nextHour), minute))
         }
         open={open}
+        optionLabels={hourOptionLabels}
         options={hourOptions}
         slot="time-field-hours"
         value={String(hour).padStart(2, "0")}
@@ -347,6 +389,7 @@ export function DateTimePicker({
   defaultValue,
   disabled,
   form,
+  hourCycle = 24,
   locale,
   minuteStep = 5,
   name,
@@ -411,7 +454,7 @@ export function DateTimePicker({
         ? { value: segmented.ownerValue as CalendarDateTime | null }
         : { defaultValue: toCalendarDateTime(defaultValue) })}
       granularity="minute"
-      hourCycle={24}
+      hourCycle={hourCycle}
       isDateUnavailable={(date) =>
         isCalendarDayDisabled(toNativeDate(date), calendarProps?.disabled)
       }
@@ -422,6 +465,15 @@ export function DateTimePicker({
       {...(readOnly === undefined ? {} : { isReadOnly: readOnly })}
       {...(required === undefined ? {} : { isRequired: required })}
       {...dateTimeBounds(calendarProps)}
+      // Typed segments start from the calendar's today at midnight,
+      // `todayDate` when set.
+      {...(calendarProps?.todayDate === undefined
+        ? {}
+        : {
+            placeholderValue: toCalendarDateTimeAt(
+              fromNativeDate(calendarProps.todayDate),
+            ),
+          })}
       onChange={segmented.onOwnerChange}
       shouldCloseOnSelect
       shouldForceLeadingZeros
@@ -526,6 +578,7 @@ export function DateTimePicker({
                         className="outline-none"
                       >
                         <TimeSelector
+                          hourCycle={hourCycle}
                           minuteStep={minuteStep}
                           onClose={() => setTimeOpen(false)}
                           open={timeOpen}

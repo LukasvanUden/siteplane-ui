@@ -37,6 +37,13 @@ export interface SettingsListItemProps extends Omit<
   title: ReactNode;
 }
 
+/**
+ * The list is a size container: its rows, its card padding and its header
+ * inset switch once the list itself is 36rem wide. A list in a page column
+ * keeps the rows it had at the old viewport `md` switch; beside a sidebar or
+ * in a narrow column it stays stacked. The gaps and the header inset are the
+ * rules in design-rework.css.
+ */
 export function SettingsList({
   children,
   className,
@@ -46,7 +53,7 @@ export function SettingsList({
 }: SettingsListProps): React.ReactElement {
   return (
     <section
-      className={cn("flex w-full flex-col", className)}
+      className={cn("@container/settings-list flex w-full flex-col", className)}
       data-recipe="settings-list"
       data-slot="settings-list"
       {...props}
@@ -58,7 +65,9 @@ export function SettingsList({
         ) : null}
       </header>
       <div className="min-w-0" data-slot="settings-list-surface">
-        <Card className="grid min-w-0 px-4 py-5 md:px-6">{children}</Card>
+        <Card className="grid min-w-0 px-4 py-5 @min-[36rem]/settings-list:px-6">
+          {children}
+        </Card>
       </div>
     </section>
   );
@@ -82,7 +91,7 @@ export function SettingsListItem({
         "group/settings-item flex",
         layout === "inline"
           ? "items-center justify-between"
-          : "flex-col md:flex-row md:items-center md:justify-between",
+          : "flex-col @min-[36rem]/settings-list:flex-row @min-[36rem]/settings-list:items-center @min-[36rem]/settings-list:justify-between",
         className,
       )}
       data-layout={layout}
@@ -116,8 +125,10 @@ export function SettingsListItem({
       </div>
       <div
         className={cn(
-          "flex min-w-0 shrink-0 items-center md:justify-end md:text-right",
-          layout === "inline" ? "justify-end text-right" : "max-md:w-full",
+          "flex min-w-0 shrink-0 items-center @min-[36rem]/settings-list:justify-end @min-[36rem]/settings-list:text-right",
+          layout === "inline"
+            ? "justify-end text-right"
+            : "@max-[36rem]/settings-list:w-full",
         )}
         data-slot="settings-list-item-control"
       >

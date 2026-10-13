@@ -613,7 +613,7 @@
         ],
         "description": "Segmented, locale-aware time entry with an optional compact hour and minute selector.",
         "knownLimitations": [
-          "Supports hour and minute values only, with a fixed 24-hour cycle and HH:mm form serialization; no seconds or 12-hour mode."
+          "Supports hour and minute values only, in 24-hour time with HH:mm form serialization; hourCycle={12} changes the display, not the value. No seconds."
         ],
         "providerNotes": [
           "SiteplaneLocaleProvider supplies the React Aria locale; TimeField has no locale prop and keeps a 24-hour hour/minute contract. Translate hourLabel, minuteLabel, hoursLabel, minutesLabel and openPickerLabel explicitly."
@@ -2069,7 +2069,7 @@
         ],
         "description": "Base UI-backed multi-line text control.",
         "knownLimitations": [
-          "There is no autoGrow prop: the field grows with its content through field-sizing: content, where the browser supports it."
+          "There is no autoGrow prop: the field grows with its content through field-sizing: content, where the browser supports it, and shows no resize grip there; elsewhere it keeps a vertical grip."
         ],
         "providerNotes": [],
         "releaseStatus": "stable",

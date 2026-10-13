@@ -33,6 +33,11 @@ function contentWidth(element: HTMLElement): number {
  * as soon as the element is laid out: before the browser paints, and again
  * whenever the element is resized. It is never 0 or NaN: an element that is
  * hidden keeps the width it had.
+ *
+ * A resize redraws the chart as a transition: while its container keeps
+ * changing width, such as beside a sidebar that slides in or out, React may
+ * skip the widths in between instead of drawing every frame, and the chart
+ * ends at the final width.
  */
 export function useChartWidth(
   ref: React.RefObject<HTMLElement | null>,
@@ -48,7 +53,7 @@ export function useChartWidth(
     if (typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver((entries) => {
       const entry = entries[entries.length - 1];
-      if (entry) measure(entry.contentRect.width);
+      if (entry) React.startTransition(() => measure(entry.contentRect.width));
     });
     observer.observe(element);
     return () => observer.disconnect();

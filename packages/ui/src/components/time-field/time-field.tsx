@@ -14,6 +14,7 @@ import {
   DateSegment as DateSegmentPrimitive,
   TimeField as TimeFieldPrimitive,
   type TimeFieldState,
+  useLocale,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
@@ -53,6 +54,9 @@ export type TimeFieldValue = {
   minute: number;
 };
 
+/** A 12-hour clock with AM and PM, or a 24-hour clock. */
+export type TimeFieldHourCycle = 12 | 24;
+
 export interface TimeFieldProps {
   "aria-describedby"?: string | undefined;
   "aria-invalid"?: React.AriaAttributes["aria-invalid"];
@@ -64,6 +68,11 @@ export interface TimeFieldProps {
   defaultValue?: TimeFieldValue;
   disabled?: boolean;
   form?: string;
+  /**
+   * The clock the segments and the selector show: `24` (00 to 23), or `12`
+   * with the locale's AM and PM. The value stays in 24-hour time either way.
+   */
+  hourCycle?: TimeFieldHourCycle;
   hourLabel?: string;
   hoursLabel?: string;
   iconMode?: "action-end" | "decorative-start" | "none";
@@ -95,6 +104,43 @@ const timeFieldActionSizes = {
 const hourOptions = Array.from({ length: 24 }, (_, hour) =>
   String(hour).padStart(2, "0"),
 );
+
+/**
+ * The names of the hour options on a 12-hour clock, such as "09 PM" for 21,
+ * in the locale's day period and with the leading zero the segments show.
+ * Unset on a 24-hour clock, whose options are the hours themselves. The Time
+ * Field and the Date Time Picker selectors share it.
+ */
+export function useHourOptionLabels(
+  hourCycle: TimeFieldHourCycle,
+): Record<string, string> | undefined {
+  const { locale } = useLocale();
+
+  return React.useMemo(() => {
+    if (hourCycle !== 12) return undefined;
+    // The segments' own rule: React Aria turns a 12-hour cycle into hour12.
+    const format = new Intl.DateTimeFormat(locale, {
+      hour: "2-digit",
+      hour12: true,
+    });
+
+    return Object.fromEntries(
+      hourOptions.map((option) => [
+        option,
+        format.format(new Date(2000, 0, 1, Number(option))),
+      ]),
+    );
+  }, [hourCycle, locale]);
+}
+
+/**
+ * A literal that separates two segments, the colon or the space before AM,
+ * cancels their padding (time-field.css), so it sits as close to them as in
+ * text.
+ */
+function isSeparatorLiteral(text: string): boolean {
+  return text.includes(":") || /^\s+$/.test(text);
+}
 
 function normalizeTimeFieldValue(value: TimeFieldValue): TimeFieldValue {
   return {
@@ -154,6 +200,7 @@ function TimeFieldRoot({
   defaultValue,
   disabled,
   form,
+  hourCycle = 24,
   hourLabel,
   hoursLabel = "Hours",
   iconMode = "action-end",
@@ -237,7 +284,7 @@ function TimeFieldRoot({
         ? { value: segmented.ownerValue }
         : { defaultValue: toTime(normalizedDefaultValue) })}
       granularity="minute"
-      hourCycle={24}
+      hourCycle={hourCycle}
       isDisabled={field.disabled}
       {...(controlledInvalid === undefined
         ? {}
@@ -254,9 +301,11 @@ function TimeFieldRoot({
           className={className}
           controlled={controlled}
           controlledInvalid={controlledInvalid}
+          dayPeriodLabel={namedByLabel ? `${ariaLabel}, AM/PM` : undefined}
           defaultValue={normalizedDefaultValue}
           field={field}
           form={form}
+          hourCycle={hourCycle}
           hourLabel={
             hourLabel ?? (namedByLabel ? `${ariaLabel}, hour` : undefined)
           }
@@ -288,9 +337,11 @@ function TimeFieldContent({
   className,
   controlled,
   controlledInvalid,
+  dayPeriodLabel,
   defaultValue,
   field,
   form,
+  hourCycle,
   hourLabel,
   hoursLabel,
   iconMode,
@@ -312,9 +363,11 @@ function TimeFieldContent({
   className: string | undefined;
   controlled: boolean;
   controlledInvalid: boolean | undefined;
+  dayPeriodLabel: string | undefined;
   defaultValue: TimeFieldValue | undefined;
   field: FieldControlBridge;
   form: string | undefined;
+  hourCycle: TimeFieldHourCycle;
   hourLabel: string | undefined;
   hoursLabel: string;
   iconMode: "action-end" | "decorative-start" | "none";
@@ -333,6 +386,7 @@ function TimeFieldContent({
   variant: FormControlVariant;
 }): React.ReactElement {
   const [open, setOpen] = React.useState(false);
+  const hourOptionLabels = useHourOptionLabels(hourCycle);
   const hoursListBoxRef = React.useRef<HTMLDivElement>(null);
   const segmentsRef = React.useRef<HTMLDivElement>(null);
   const hiddenInputRef = useFormReset<HTMLInputElement>(form, () => {
@@ -414,7 +468,9 @@ function TimeFieldContent({
                 ? hourLabel
                 : segment.type === "minute"
                   ? minuteLabel
-                  : undefined
+                  : segment.type === "dayPeriod"
+                    ? dayPeriodLabel
+                    : undefined
             }
             segment={segment}
           />
@@ -466,6 +522,7 @@ function TimeFieldContent({
                   );
                 }}
                 open={open}
+                optionLabels={hourOptionLabels}
                 options={hourOptions}
                 slot="time-field-hours"
                 value={
@@ -536,7 +593,7 @@ function TimeFieldSegment({
     <DateSegmentPrimitive
       className="siteplane-time-field-segment"
       data-literal-kind={
-        segment.type === "literal" && segment.text.includes(":")
+        segment.type === "literal" && isSeparatorLiteral(segment.text)
           ? "separator"
           : undefined
       }
@@ -552,6 +609,7 @@ export function TimeFieldOptionColumn({
   listBoxRef: providedListBoxRef,
   onValueChange,
   open,
+  optionLabels,
   options,
   slot,
   value,
@@ -560,6 +618,8 @@ export function TimeFieldOptionColumn({
   listBoxRef?: React.RefObject<HTMLDivElement | null>;
   onValueChange: (value: string) => void;
   open: boolean;
+  /** The names the options show, where they differ from their values. */
+  optionLabels?: Record<string, string> | undefined;
   options: string[];
   slot: "time-field-hours" | "time-field-minutes";
   value: string | undefined;
@@ -688,7 +748,7 @@ export function TimeFieldOptionColumn({
               multiline={false}
               value={option}
             >
-              {option}
+              {optionLabels?.[option] ?? option}
             </ListBoxItem>
           ))}
         </ListBox>

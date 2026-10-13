@@ -37,6 +37,14 @@ export interface DashboardShellHeaderProps extends React.ComponentProps<"header"
   divider?: boolean;
 }
 
+export interface DashboardShellMainProps extends React.ComponentProps<"div"> {
+  /**
+   * Runs the content to the edges of the main area, without its padding, for
+   * a view that lays out its own panes, such as a list beside a detail pane.
+   */
+  flush?: boolean;
+}
+
 export function DashboardShell({
   children,
   className,
@@ -156,12 +164,14 @@ export function DashboardShellHeader({
 
 export function DashboardShellMain({
   className,
+  flush = false,
   ...props
-}: React.ComponentProps<"div">): React.ReactElement {
+}: DashboardShellMainProps): React.ReactElement {
   return (
     <div
-      className={cn("min-h-0 flex-1 overflow-auto p-4", className)}
+      className={cn("min-h-0 flex-1 overflow-auto", !flush && "p-4", className)}
       data-dashboard-shell="main"
+      data-flush={flush || undefined}
       {...props}
     />
   );

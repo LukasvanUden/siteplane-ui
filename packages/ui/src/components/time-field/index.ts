@@ -1,2 +1,6 @@
 export { TimeField } from "./time-field";
-export type { TimeFieldProps, TimeFieldValue } from "./time-field";
+export type {
+  TimeFieldHourCycle,
+  TimeFieldProps,
+  TimeFieldValue,
+} from "./time-field";

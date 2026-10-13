@@ -4,6 +4,7 @@ import {
   CalendarDate,
   endOfMonth,
   GregorianCalendar,
+  isSameDay,
   isSameMonth,
   isSameYear,
   startOfMonth,
@@ -20,6 +21,7 @@ import {
   Button as CalendarButtonPrimitive,
   Calendar as CalendarPrimitive,
   CalendarCell as CalendarCellPrimitive,
+  CalendarContext,
   CalendarGrid as CalendarGridPrimitive,
   CalendarGridBody as CalendarGridBodyPrimitive,
   CalendarGridHeader as CalendarGridHeaderPrimitive,
@@ -31,10 +33,12 @@ import {
   CalendarYearPicker as CalendarYearPickerPrimitive,
   type DateValue,
   RangeCalendar as RangeCalendarPrimitive,
+  RangeCalendarContext,
   type RangeCalendarState,
   RangeCalendarStateContext,
   type RangeValue,
   useLocale,
+  useSlottedContext,
 } from "react-aria-components";
 
 import { nativeDayTime, toNativeDay } from "../../system/date/native-day";
@@ -98,6 +102,13 @@ export type CalendarOptions = {
   endMonth?: Date | undefined;
   /** The first month the calendar allows. */
   startMonth?: Date | undefined;
+  /**
+   * The day that counts as today, for an application whose today is not the
+   * device's, such as a demo fixed on one date. The calendar marks it, and
+   * without a selected date it shows its month first. Unset, today is the
+   * device's date.
+   */
+  todayDate?: Date | undefined;
 };
 
 /**
@@ -257,17 +268,23 @@ export function calendarMonthBounds({
  * The React Aria props of the options and states every selection mode shares.
  * Unset options are left out, so a date picker's own calendar settings, which
  * reach the calendar through React Aria's context, still apply.
+ * `hasSelection` tells whether the calendar opens on a selected date, its own
+ * or the one of the date picker around it.
  */
-function useSharedCalendarProps({
-  "aria-invalid": ariaInvalid,
-  defaultMonth,
-  disabled,
-  endMonth,
-  month,
-  onMonthChange,
-  readOnly,
-  startMonth,
-}: CalendarBaseProps) {
+function useSharedCalendarProps(
+  {
+    "aria-invalid": ariaInvalid,
+    defaultMonth,
+    disabled,
+    endMonth,
+    month,
+    onMonthChange,
+    readOnly,
+    startMonth,
+    todayDate,
+  }: CalendarBaseProps,
+  hasSelection: boolean,
+) {
   // The day with keyboard focus, as the Calendar content last rendered it.
   const focusedDateRef = useRef<CalendarDate | null>(null);
   const controlledMonth =
@@ -297,6 +314,10 @@ function useSharedCalendarProps({
     typeof disabled === "boolean" || disabled === undefined
       ? undefined
       : disabled;
+  // The month shown first: `defaultMonth`, else the selected date's, which
+  // React Aria shows by itself, else the month of `todayDate`. Without
+  // `todayDate`, React Aria shows the device's today.
+  const firstMonth = defaultMonth ?? (hasSelection ? undefined : todayDate);
 
   return {
     focusedDateRef,
@@ -314,9 +335,9 @@ function useSharedCalendarProps({
         : { isInvalid: isInvalidAriaValue(ariaInvalid) }),
       ...calendarMonthBounds({ endMonth, startMonth }),
       ...(focusedValue === undefined ? {} : { focusedValue }),
-      ...(defaultMonth === undefined || controlledMonth !== undefined
+      ...(firstMonth === undefined || controlledMonth !== undefined
         ? {}
-        : { defaultFocusedValue: fromNativeDate(defaultMonth) }),
+        : { defaultFocusedValue: fromNativeDate(firstMonth) }),
       ...(controlledMonth === undefined && onMonthChange === undefined
         ? {}
         : { onFocusChange }),
@@ -367,6 +388,7 @@ const calendarOwnProps = new Set<string>([
   "shortcuts",
   "size",
   "startMonth",
+  "todayDate",
   "value",
 ]);
 
@@ -425,9 +447,22 @@ function pointSelectionProps(
   } as PointCalendarPrimitiveProps;
 }
 
+/** The React Aria day of `todayDate`, unset without it. */
+function toTodayDate(todayDate: Date | undefined): CalendarDate | undefined {
+  return todayDate === undefined ? undefined : fromNativeDate(todayDate);
+}
+
 function CalendarRoot(props: CalendarMultipleProps | CalendarSingleProps) {
   const resolvedSize = useResolvedControlSize(props.size);
-  const shared = useSharedCalendarProps(props);
+  // A date picker passes its selection to the calendar through React Aria's
+  // context, not through these props.
+  const pickerValue = useSlottedContext(CalendarContext)?.value;
+  const selection =
+    props.value !== undefined ? props.value : props.defaultValue;
+  const hasSelection =
+    (Array.isArray(selection) ? selection.length > 0 : Boolean(selection)) ||
+    Boolean(pickerValue);
+  const shared = useSharedCalendarProps(props, hasSelection);
 
   return (
     <CalendarPrimitive<CalendarDate, PointCalendarSelectionMode>
@@ -446,6 +481,7 @@ function CalendarRoot(props: CalendarMultipleProps | CalendarSingleProps) {
           isDisabled={isDisabled}
           size={resolvedSize}
           state={state}
+          todayDate={toTodayDate(props.todayDate)}
         />
       )}
     </CalendarPrimitive>
@@ -464,7 +500,12 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
   const { defaultValue, numberOfMonths, onValueChange, shortcuts, value } =
     props;
   const resolvedSize = useResolvedControlSize(props.size);
-  const shared = useSharedCalendarProps(props);
+  // A date range picker passes its range through React Aria's context.
+  const pickerRange = useSlottedContext(RangeCalendarContext)?.value;
+  const hasSelection =
+    toRangeValue(value !== undefined ? value : defaultValue) !== null ||
+    Boolean(pickerRange?.start);
+  const shared = useSharedCalendarProps(props, hasSelection);
   // `numberOfMonths={2}` shows consecutive months side by side in one range
   // calendar: one shared selection, one Previous and Next pair, and a heading
   // with its own month and year picker above each month.
@@ -507,6 +548,7 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
           shortcuts={shortcuts}
           size={resolvedSize}
           state={state}
+          todayDate={toTodayDate(props.todayDate)}
           visibleMonths={visibleMonths}
         />
       )}
@@ -556,6 +598,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   shortcuts,
   size,
   state,
+  todayDate,
   visibleMonths = 1,
 }: {
   focusedDateRef: React.RefObject<CalendarDate | null>;
@@ -563,6 +606,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   shortcuts?: readonly CalendarRangeShortcut[] | undefined;
   size: SiteplaneControlSize;
   state: CalendarState<M> | RangeCalendarState;
+  todayDate?: CalendarDate | undefined;
   visibleMonths?: number;
 }) {
   const { locale } = useLocale();
@@ -718,6 +762,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
                 offset={
                   index + (navigationMotion.direction === "next" ? -1 : 1)
                 }
+                todayDate={todayDate}
               />
             </div>
           ) : null}
@@ -727,7 +772,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
             data-slot="calendar-month-motion"
             key={`grid-enter-${navigationMotion?.key ?? 0}`}
           >
-            <CalendarGrid offset={index} />
+            <CalendarGrid offset={index} todayDate={todayDate} />
           </div>
         </div>
       </>
@@ -915,7 +960,13 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
   );
 }
 
-function CalendarGrid({ offset = 0 }: { offset?: number }) {
+function CalendarGrid({
+  offset = 0,
+  todayDate,
+}: {
+  offset?: number;
+  todayDate?: CalendarDate | undefined;
+}) {
   return (
     <CalendarGridPrimitive
       data-slot="calendar-grid"
@@ -931,7 +982,23 @@ function CalendarGrid({ offset = 0 }: { offset?: number }) {
       </CalendarGridHeaderPrimitive>
       <CalendarGridBodyPrimitive data-slot="calendar-grid-body">
         {(date) => (
-          <CalendarCellPrimitive data-slot="calendar-cell" date={date} />
+          <CalendarCellPrimitive
+            data-slot="calendar-cell"
+            date={date}
+            // React Aria marks the device's today with `data-today`, which
+            // calendar.css draws. With `todayDate` the cell renders its own
+            // element, so the mark moves to that day.
+            {...(todayDate === undefined
+              ? {}
+              : {
+                  render: (cellProps) => (
+                    <div
+                      {...cellProps}
+                      data-today={isSameDay(date, todayDate) || undefined}
+                    />
+                  ),
+                })}
+          />
         )}
       </CalendarGridBodyPrimitive>
     </CalendarGridPrimitive>

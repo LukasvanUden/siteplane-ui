@@ -742,6 +742,16 @@
   resize: vertical;
 }
 
+/* Every kit textarea, plain or in an InputGroup, grows with its content where
+ * the browser sizes a field to its content, so it shows no resize grip there:
+ * a dragged height would only stop the growth. Where the browser cannot, the
+ * textarea keeps its height and the vertical grip above. */
+@supports (field-sizing: content) {
+  :where([data-slot="textarea"]) {
+    resize: none;
+  }
+}
+
 /* An InputGroup with an addon above or below its control grows with it. */
 :where(
   [data-foundation="input-group"]:has(
@@ -7942,13 +7952,15 @@ html[data-motion-reduce="true"] [data-slot="tab-indicator"],
   color: var(--sp-rw-fg-tertiary);
 }
 
-@media (max-width: 47.999rem) {
+/* The list is a size container (settings-list.tsx): the header inset and the
+ * row gaps follow the list's own width, as its rows and card padding do. */
+@container settings-list (width < 36rem) {
   :root [data-slot="settings-list-header"] {
     padding-inline: 0;
   }
 }
 
-@media (min-width: 48rem) {
+@container settings-list (width >= 36rem) {
   :root [data-slot="settings-list-item"][data-layout="responsive"],
   :root [data-slot="settings-list-item"][data-layout="inline"] {
     gap: var(--sp-rw-space-12);

@@ -194,6 +194,10 @@ function DateFieldRoot({
       {...(readOnly === undefined ? {} : { isReadOnly: readOnly })}
       {...(required === undefined ? {} : { isRequired: required })}
       {...calendarMonthBounds(calendarProps ?? {})}
+      // Typed segments start from the calendar's today, `todayDate` when set.
+      {...(calendarProps?.todayDate === undefined
+        ? {}
+        : { placeholderValue: fromNativeDate(calendarProps.todayDate) })}
       onChange={segmented.onOwnerChange}
       shouldForceLeadingZeros
       validate={segmented.validate}

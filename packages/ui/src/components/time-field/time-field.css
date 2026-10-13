@@ -93,8 +93,12 @@
     text-align: center;
   }
 
+  /* A separator, the colon or the space before AM or PM, cancels the padding
+   * of the segments beside it. Each literal is a flex item of its own, whose
+   * lone space would collapse to nothing, so it keeps its white space. */
   .siteplane-time-field-segment[data-literal-kind="separator"] {
     margin-inline: calc(var(--spacing) * -1);
+    white-space: pre;
   }
 
   .siteplane-time-field-segment[data-focused]:not([data-type="literal"]) {

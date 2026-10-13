@@ -11,7 +11,12 @@ import {
   SiteplaneUIPortalScope,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
-import { ChoiceMenuItemCheck } from "../../system/styles/choice-menu-item";
+import {
+  ChoiceMenuItemCheck,
+  choiceMenuItemEndGridClassName,
+  choiceMenuItemEndLabelClassName,
+  menuRowLabel,
+} from "../../system/styles/choice-menu-item";
 import {
   formControlSurfaceClassNames,
   type FormControlSurface,
@@ -322,30 +327,76 @@ export function ComboboxPopup({
 export function ComboboxItem({
   className,
   children,
+  indicatorPosition = "start",
   onPointerCancel,
   onPointerDown,
   onPointerMove,
   onPointerUp,
   ...props
-}: WithStringClassName<ComboboxPrimitive.Item.Props>): React.ReactElement {
+}: WithStringClassName<ComboboxPrimitive.Item.Props> & {
+  /**
+   * Where the item shows its check: in the leading slot (`start`), or at the
+   * end of the row (`end`) for identity rows that lead with an avatar or a
+   * logo, such as the people of an assignee picker.
+   */
+  indicatorPosition?: "start" | "end" | undefined;
+}): React.ReactElement {
   const touchPointerRef = React.useRef<{
     id: number;
     moved: boolean;
     x: number;
     y: number;
   } | null>(null);
+  // An identity row is the end-indicator radio row of the menus (rulebook I8):
+  // it takes their grid and label, so its avatar or logo leads in the check's
+  // slot, a row of text alone keeps that slot, and the label keeps one line.
+  // The check keeps its 8 px inset, now from the end edge.
+  const end = indicatorPosition === "end";
+  const indicator = (
+    <ComboboxPrimitive.ItemIndicator
+      className={cn(
+        end ? "col-start-2" : "col-start-1",
+        "flex min-h-lh items-center",
+      )}
+      data-slot="combobox-item-indicator"
+      keepMounted
+    >
+      <ChoiceMenuItemCheck />
+    </ComboboxPrimitive.ItemIndicator>
+  );
+  const label = end ? (
+    <div
+      className={choiceMenuItemEndLabelClassName}
+      data-slot="combobox-item-label"
+    >
+      {menuRowLabel(children)}
+    </div>
+  ) : (
+    <div
+      className="col-start-2 flex min-w-0 items-center gap-2"
+      data-slot="combobox-item-label"
+    >
+      {children}
+    </div>
+  );
 
   return (
     <ComboboxPrimitive.Item
       className={cn(
-        "grid min-h-(--anchor-height) in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "grid min-h-(--anchor-height) in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer items-center gap-2 rounded-sm py-1 ps-2 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        end
+          ? cn(choiceMenuItemEndGridClassName, "pe-2")
+          : "grid-cols-[1rem_1fr] pe-4",
         // Rulebook I5: the check sits on the first line of a text label that
         // wraps. The row's one track is centred in the min-height, so a
         // one-line label stays centred, and the check's box is one line high.
-        // A label that leads with an avatar or an icon keeps the row centre.
-        "[&:not(:has(>[data-slot=combobox-item-label]>*))]:content-center [&:not(:has(>[data-slot=combobox-item-label]>*))]:items-start",
+        // A label that leads with an avatar or an icon keeps the row centre,
+        // and so does a check at the end of the row.
+        !end &&
+          "[&:not(:has(>[data-slot=combobox-item-label]>*))]:content-center [&:not(:has(>[data-slot=combobox-item-label]>*))]:items-start",
         className,
       )}
+      data-indicator-position={end ? "end" : undefined}
       data-slot="combobox-item"
       onPointerCancel={(event) => {
         touchPointerRef.current = null;
@@ -397,19 +448,8 @@ export function ComboboxItem({
       }}
       {...props}
     >
-      <ComboboxPrimitive.ItemIndicator
-        className="col-start-1 flex min-h-lh items-center"
-        data-slot="combobox-item-indicator"
-        keepMounted
-      >
-        <ChoiceMenuItemCheck />
-      </ComboboxPrimitive.ItemIndicator>
-      <div
-        className="col-start-2 flex min-w-0 items-center gap-2"
-        data-slot="combobox-item-label"
-      >
-        {children}
-      </div>
+      {end ? label : indicator}
+      {end ? indicator : label}
     </ComboboxPrimitive.Item>
   );
 }
