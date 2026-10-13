@@ -83,6 +83,51 @@ export function useResolvedControlSize<T extends string>(
   return resolveControlSize(size, context.controlSize);
 }
 
+/** The control sizes from the smallest; only a part that is xs at lg uses xs. */
+const controlSizeSteps = ["xs", "sm", "md", "lg", "xl"] as const;
+
+/**
+ * The size of a part designed for the default lg, at another control size: it
+ * keeps its steps from lg within the scale. A code field one step above lg is
+ * md at sm and xl at lg; presets two steps below are sm up to lg and md at xl
+ * (Lukas, 13 October 2026). Patterns size their parts this way, so they keep
+ * their proportions at every control size and look as designed at lg.
+ */
+export function resolveRelativeControlSize(
+  sizeAtLg: SiteplaneControlSize,
+  controlSize: SiteplaneControlSize,
+): SiteplaneControlSize;
+export function resolveRelativeControlSize(
+  sizeAtLg: "xs" | SiteplaneControlSize,
+  controlSize: SiteplaneControlSize,
+): "xs" | SiteplaneControlSize;
+export function resolveRelativeControlSize(
+  sizeAtLg: "xs" | SiteplaneControlSize,
+  controlSize: SiteplaneControlSize,
+): "xs" | SiteplaneControlSize {
+  const step =
+    controlSizeSteps.indexOf(controlSize) +
+    controlSizeSteps.indexOf(sizeAtLg) -
+    controlSizeSteps.indexOf("lg");
+  const lowest = sizeAtLg === "xs" ? 0 : 1;
+  return controlSizeSteps[
+    Math.min(controlSizeSteps.length - 1, Math.max(lowest, step))
+  ]!;
+}
+
+/** `resolveRelativeControlSize` at the provider's control size. */
+export function useRelativeControlSize(
+  sizeAtLg: SiteplaneControlSize,
+): SiteplaneControlSize;
+export function useRelativeControlSize(
+  sizeAtLg: "xs" | SiteplaneControlSize,
+): "xs" | SiteplaneControlSize;
+export function useRelativeControlSize(
+  sizeAtLg: "xs" | SiteplaneControlSize,
+): "xs" | SiteplaneControlSize {
+  return resolveRelativeControlSize(sizeAtLg, useSiteplaneUI().controlSize);
+}
+
 export function useResolvedDensity<T extends string>(
   density: T | null | undefined,
 ): T | SiteplaneDensity {

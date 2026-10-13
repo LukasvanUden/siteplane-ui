@@ -109,7 +109,9 @@ export function ComboboxChipsInput({
   return (
     <ComboboxPrimitive.Input
       className={cn(
-        "min-w-12 flex-1 text-base outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5",
+        "min-w-12 flex-1 outline-none [[data-slot=combobox-chip]+&]:ps-0.5",
+        // An xl field writes in 16 px, as an xl Input does.
+        resolvedSize === "xl" ? "text-base" : "text-base sm:text-sm",
         resolvedSize === "sm" ? "ps-1.5" : "ps-2",
         className,
       )}

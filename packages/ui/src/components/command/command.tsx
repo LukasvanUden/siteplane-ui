@@ -9,6 +9,10 @@ import {
 import { KitDialogPopup } from "../dialog/dialog-internal";
 import { Kbd } from "../kbd";
 import { Separator } from "../separator";
+import {
+  type SiteplaneControlSize,
+  useSiteplaneUI,
+} from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import {
   Autocomplete,
@@ -68,21 +72,40 @@ export const Command: typeof Autocomplete = <ItemValue,>({
   );
 };
 
+/**
+ * The search row follows the control size, as the results below it do: 40, 44,
+ * 48 and 60 px from sm to xl, the palette's 48 px at the default lg (Lukas,
+ * 13 October 2026).
+ */
+const commandInputHeights = {
+  sm: "h-10",
+  md: "h-11",
+  lg: "h-12",
+  xl: "h-15",
+} as const satisfies Record<SiteplaneControlSize, string>;
+
 export function CommandInput({
   className,
   placeholder = undefined,
+  size,
   ...props
 }: React.ComponentProps<typeof AutocompleteInput>): React.ReactElement {
+  // The row follows the provider; a size given to the input sizes its text.
+  const { controlSize } = useSiteplaneUI();
   return (
     <div
-      className="relative flex h-12 shrink-0 items-center px-5"
+      className={cn(
+        "relative flex shrink-0 items-center px-5",
+        commandInputHeights[controlSize],
+      )}
+      data-size={controlSize}
       data-slot="command-input"
     >
       <KitAutocompleteInput
         aria-label="Search commands"
         className={className}
         placeholder={placeholder}
-        size="lg"
+        size={size ?? controlSize}
         profile="command"
         unstyled
         {...props}
@@ -173,9 +196,16 @@ export function CommandItem({
   className,
   ...props
 }: React.ComponentProps<typeof AutocompleteItem>): React.ReactElement {
+  // The rows follow the control size (design-rework.css); an xl row writes in
+  // 16 px, so its icon grows to 18 px.
+  const { controlSize } = useSiteplaneUI();
   return (
     <KitAutocompleteItem
-      className={className}
+      className={cn(
+        controlSize === "xl" && "sm:[&_svg:not([class*='size-'])]:size-4.5",
+        className,
+      )}
+      data-size={controlSize}
       profile="command"
       data-slot="command-item"
       {...props}

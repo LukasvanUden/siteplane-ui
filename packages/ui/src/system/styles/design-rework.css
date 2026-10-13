@@ -1751,6 +1751,29 @@ html[data-motion-reduce="true"] [data-slot="pagination-content"]::before {
   line-height: var(--sp-rw-line-21);
 }
 
+/* The rows follow the control size, 37, 41, 45 and 56 px from sm to xl: they
+ * step as the controls do, and lg keeps the palette's 45 px (Lukas,
+ * 13 October 2026). */
+:root
+  [data-foundation="autocomplete-item"][data-profile="command"][data-size="sm"] {
+  min-height: 2.3125rem;
+  padding-block: var(--sp-rw-space-2);
+}
+
+:root
+  [data-foundation="autocomplete-item"][data-profile="command"][data-size="md"] {
+  min-height: 2.5625rem;
+  padding-block: var(--sp-rw-space-2-5);
+}
+
+:root
+  [data-foundation="autocomplete-item"][data-profile="command"][data-size="xl"] {
+  min-height: 3.5rem;
+  padding-block: var(--sp-rw-space-4);
+  font-size: var(--sp-rw-font-16);
+  line-height: var(--sp-rw-line-24);
+}
+
 /* A label that wraps keeps the shortcut on its first line (I5), as the
  * AutocompleteItem keeps a leading icon there. One line fills the content box,
  * so a one-line result looks the same. */
@@ -1759,6 +1782,13 @@ html[data-motion-reduce="true"] [data-slot="pagination-content"]::before {
   > [data-command-shortcut] {
   align-self: flex-start;
   translate: 0 calc((var(--sp-rw-line-21) - 100%) / 2);
+}
+
+/* The shortcut of an xl row sits on its 24 px first line. */
+:root
+  [data-foundation="autocomplete-item"][data-profile="command"][data-size="xl"]
+  > [data-command-shortcut] {
+  translate: 0 calc((var(--sp-rw-line-24) - 100%) / 2);
 }
 
 /* Match the neutral outline Button hover in both themes. */
@@ -4986,11 +5016,11 @@ html[data-motion-reduce="true"] [data-slot="tab-indicator"],
  * values follow the accepted outline Badge grammar instead of the Legacy
  * accent-pill treatment. */
 :root [data-slot="combobox-chips"]:not([data-layout="standalone"]) {
-  min-height: var(--sp-rw-control-md);
+  min-height: var(--combobox-chips-height, var(--sp-rw-control-md));
   gap: var(--sp-rw-space-1);
   border: 0;
   border-radius: var(--sp-rw-radius-control);
-  padding: var(--sp-rw-space-1);
+  padding: var(--combobox-chips-padding, var(--sp-rw-space-1));
   background: linear-gradient(oklch(0% 0 0 / 2%), transparent);
   box-shadow: var(--sp-rw-field-shadow);
   color: var(--sp-rw-fg-primary);
@@ -5021,7 +5051,7 @@ html[data-motion-reduce="true"] [data-slot="tab-indicator"],
 }
 
 :root [data-slot="combobox-chip"] {
-  height: var(--sp-rw-space-6);
+  height: var(--combobox-chip-height, var(--sp-rw-space-6));
   gap: var(--sp-rw-space-0-5);
   border: 0;
   border-radius: var(--sp-rw-radius-xs);
@@ -5039,7 +5069,47 @@ html[data-motion-reduce="true"] [data-slot="tab-indicator"],
  * 16 px mark sits as far from the border as from the top and the bottom. */
 :root
   [data-slot="combobox-chip"]:has(> [data-slot="combobox-chip-start-addon"]) {
-  padding-inline-start: var(--sp-rw-space-1);
+  padding-inline-start: calc(
+    (var(--combobox-chip-height, var(--sp-rw-space-6)) - var(--sp-rw-space-4)) /
+      2
+  );
+}
+
+/* The field is as tall as an Input of its input's size, and the chips grow
+ * with it: 20 px at sm, 24 px at md and lg, 32 px at xl (Lukas, 13 October
+ * 2026; the field was 32 px at every size). */
+:root
+  [data-slot="combobox-chips"]:has(
+    [data-slot="combobox-chips-input"][data-size="sm"]
+  ) {
+  --combobox-chips-height: var(--sp-rw-control-sm);
+  --combobox-chip-height: var(--sp-rw-space-5);
+}
+
+:root
+  [data-slot="combobox-chips"]:has(
+    [data-slot="combobox-chips-input"][data-size="lg"]
+  ) {
+  --combobox-chips-height: var(--sp-rw-control-lg);
+  --combobox-chips-padding: var(--sp-rw-space-1-5);
+}
+
+:root
+  [data-slot="combobox-chips"]:has(
+    [data-slot="combobox-chips-input"][data-size="xl"]
+  ) {
+  --combobox-chips-height: var(--sp-rw-control-xl);
+  --combobox-chips-padding: var(--sp-rw-space-2);
+  --combobox-chip-height: var(--sp-rw-space-8);
+}
+
+:root
+  [data-slot="combobox-chips"]:has(
+    [data-slot="combobox-chips-input"][data-size="xl"]
+  )
+  [data-slot="combobox-chip"] {
+  font-size: var(--sp-rw-font-14);
+  line-height: var(--sp-rw-line-21);
 }
 
 /* Focus ring of a field. A joined OTP Field is an InputGroup too, but its slots
