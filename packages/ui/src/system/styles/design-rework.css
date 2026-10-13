@@ -399,7 +399,7 @@
   --sp-rw-bg-depth: oklch(14.96% 0 0);
   --sp-rw-bg-primary: oklch(21.74% 0 0);
   --sp-rw-bg-secondary: oklch(24.31% 0 0);
-  --sp-rw-bg-tertiary: oklch(33.29% 0 0);
+  --sp-rw-bg-tertiary: oklch(27.2% 0 0);
   --sp-rw-bg-muted: oklch(56.74% 0.009 106.68 / 8%);
   --sp-rw-bg-translucent: oklch(56.74% 0.009 106.68 / 16%);
   --sp-rw-bg-inverse: oklch(100% 0 0 / 96%);
@@ -3790,9 +3790,11 @@ html[data-motion-reduce="true"] [data-slot="pagination-content"]::before {
  * Secondary, shadcn outline, Mantine default): the tertiary surface, white in
  * Light and a slightly raised neutral in Dark, with the control's hairline rim
  * and soft shadow. Nothing behind it shows through, so it reads over an image
- * or a colour as well as on a page, a Card or a Dialog. The Dark fill is
- * lighter than the page, primary and secondary surfaces (23, 24.7 and 27.2 %
- * lightness), so a button never looks darker than the surface it sits on. */
+ * or a colour as well as on a page, a Card or a Dialog. The Dark fill is the
+ * next step of the surface ladder, 27.2 % lightness over the page, primary and
+ * secondary surfaces (19.6, 21.7 and 24.3 %): a button never looks darker than
+ * the surface it sits on, and never the brightest surface either (Lukas,
+ * 13 October 2026; it was 33.3 %). */
 :root [data-chassis][data-variant="default"] {
   --sp-rw-button-fill: var(--sp-rw-bg-tertiary);
   --sp-rw-button-text: var(--sp-rw-fg-primary);
