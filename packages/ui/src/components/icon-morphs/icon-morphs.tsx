@@ -5,6 +5,7 @@ import { type ReactElement, useState } from "react";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
+  useSiteplaneNonce,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import type { ButtonBaseProps } from "../button";
@@ -32,6 +33,7 @@ export function MenuIconMorph({
   type = "button",
   ...props
 }: MenuIconMorphProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   const isControlled = open !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentOpen = isControlled ? open : internalOpen;
@@ -39,7 +41,9 @@ export function MenuIconMorph({
 
   return (
     <span data-size={resolvedSize} data-slot="menu-icon-morph-root">
-      <style>{menuIconMorphStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {menuIconMorphStyles}
+      </style>
       <KitButton
         {...props}
         aria-expanded={currentOpen}

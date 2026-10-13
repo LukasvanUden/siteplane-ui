@@ -1,5 +1,6 @@
 "use client";
 
+import { CSPProvider } from "@base-ui/react/csp-provider";
 import * as React from "react";
 import { useSiteplaneMotionPreset } from "../motion/siteplane-motion-provider";
 
@@ -18,6 +19,14 @@ export interface SiteplaneUIProviderProps extends React.HTMLAttributes<HTMLDivEl
   controlSize?: SiteplaneControlSize;
   "data-theme"?: "dark" | "light";
   density?: SiteplaneDensity;
+  /**
+   * The nonce of a Content Security Policy that allows inline scripts and
+   * styles only with a nonce. The kit puts it on its inline `<script>` and
+   * `<style>` elements, such as the script that shows the Tabs selection before
+   * the page hydrates, and passes it to Base UI's `CSPProvider`. An inner
+   * provider without one keeps the outer provider's.
+   */
+  nonce?: string | undefined;
   /**
    * The corner radius of every kit component inside: the base `--radius` and
    * the role radii derived from it (design-rework.css). `md` is the kit's
@@ -42,6 +51,9 @@ export const siteplaneRadiusValues = {
 } as const satisfies Record<SiteplaneRadius, string>;
 
 const SiteplaneUIContext = React.createContext<SiteplaneUIConfig | null>(null);
+const SiteplaneNonceContext = React.createContext<string | undefined>(
+  undefined,
+);
 const SiteplaneUIThemeContext = React.createContext<
   "dark" | "light" | undefined
 >(undefined);
@@ -128,6 +140,11 @@ export function useRelativeControlSize(
   return resolveRelativeControlSize(sizeAtLg, useSiteplaneUI().controlSize);
 }
 
+/** The provider's CSP nonce, for a kit part that renders inline script or style. */
+export function useSiteplaneNonce(): string | undefined {
+  return React.useContext(SiteplaneNonceContext);
+}
+
 export function useResolvedDensity<T extends string>(
   density: T | null | undefined,
 ): T | SiteplaneDensity {
@@ -170,12 +187,14 @@ export function SiteplaneUIProvider({
   children,
   controlSize,
   density,
+  nonce,
   radius,
   style,
   "data-theme": theme,
   ...props
 }: SiteplaneUIProviderProps): React.ReactElement {
   const parent = useSiteplaneUI();
+  const parentNonce = React.useContext(SiteplaneNonceContext);
   const parentTheme = React.useContext(SiteplaneUIThemeContext);
   const resolvedTheme =
     theme === "dark" || theme === "light" ? theme : parentTheme;
@@ -199,17 +218,25 @@ export function SiteplaneUIProvider({
   return (
     <SiteplaneUIContext.Provider value={value}>
       <SiteplaneUIThemeContext.Provider value={resolvedTheme}>
-        <div
-          {...props}
-          data-control-size={value.controlSize}
-          data-density={value.density}
-          data-radius={value.radius}
-          data-slot="siteplane-ui-provider"
-          data-theme={theme}
-          style={providerStyle}
-        >
-          {children}
-        </div>
+        <SiteplaneNonceContext.Provider value={nonce ?? parentNonce}>
+          <div
+            {...props}
+            data-control-size={value.controlSize}
+            data-density={value.density}
+            data-radius={value.radius}
+            data-slot="siteplane-ui-provider"
+            data-theme={theme}
+            style={providerStyle}
+          >
+            {/* Base UI's inline scripts and styles, such as the Tabs indicator's
+                script before hydration, take the nonce from its own provider. */}
+            {nonce ? (
+              <CSPProvider nonce={nonce}>{children}</CSPProvider>
+            ) : (
+              children
+            )}
+          </div>
+        </SiteplaneNonceContext.Provider>
       </SiteplaneUIThemeContext.Provider>
     </SiteplaneUIContext.Provider>
   );

@@ -8,6 +8,7 @@ import { KitButton } from "../button/button-internal";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
+  useSiteplaneNonce,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 
@@ -26,9 +27,12 @@ export function FillSweepButton({
   variant = "default",
   ...props
 }: FillSweepButtonProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   return (
     <span data-slot="fill-sweep-button-root">
-      <style>{fillSweepStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {fillSweepStyles}
+      </style>
       <KitButton
         {...props}
         className={cn("siteplane-fill-sweep-button", className)}
@@ -64,11 +68,14 @@ export function ExpandingArrowButton({
   variant = "text",
   ...props
 }: ExpandingArrowButtonProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   const resolvedSize = useResolvedControlSize(size);
 
   return (
     <span data-size={resolvedSize} data-slot="expanding-arrow-button-root">
-      <style>{expandingArrowStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {expandingArrowStyles}
+      </style>
       <KitButton
         {...props}
         className={cn("siteplane-expanding-arrow-button", className)}
@@ -103,11 +110,14 @@ export function ExpandingLogoutButton({
   variant = "destructive",
   ...props
 }: ExpandingLogoutButtonProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   const resolvedSize = useResolvedControlSize(size);
 
   return (
     <span data-size={resolvedSize} data-slot="expanding-logout-button-root">
-      <style>{expandingLogoutStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {expandingLogoutStyles}
+      </style>
       <span
         className="siteplane-expanding-logout-slot"
         style={

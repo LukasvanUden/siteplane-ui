@@ -8,6 +8,7 @@ import * as React from "react";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
+  useSiteplaneNonce,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { KitButton } from "../button/button-internal";
@@ -102,6 +103,9 @@ export function TabsRail({
 }): React.ReactElement {
   const railRef = React.useRef<HTMLDivElement>(null);
   const indicatorRef = React.useRef<HTMLDivElement>(null);
+  // A Content Security Policy with nonces lets the script run only with the
+  // provider's nonce.
+  const nonce = useSiteplaneNonce();
   React.useImperativeHandle(ref, () => railRef.current as HTMLDivElement);
   // The server HTML and the hydration pass carry the script; once the page
   // has hydrated, the layout effect below places the selection.
@@ -168,6 +172,7 @@ export function TabsRail({
       {hydrated ? null : (
         <script
           dangerouslySetInnerHTML={{ __html: railIndicatorScript }}
+          nonce={nonce}
           suppressHydrationWarning
         />
       )}

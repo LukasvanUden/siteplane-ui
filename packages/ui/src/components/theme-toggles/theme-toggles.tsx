@@ -6,6 +6,7 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
+  useSiteplaneNonce,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { Toggle } from "../toggle";
@@ -58,6 +59,7 @@ export function SunMoonMorphToggle({
   size,
   ...props
 }: SunMoonMorphToggleProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   const generatedId = useId();
   const id = idProp ?? `siteplane-sun-moon-${generatedId.replaceAll(":", "")}`;
   const maskId = `${id}-mask`;
@@ -69,7 +71,9 @@ export function SunMoonMorphToggle({
       data-size={resolvedSize}
       data-slot="sun-moon-morph-toggle-root"
     >
-      <style>{sunMoonMorphStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {sunMoonMorphStyles}
+      </style>
       <KitToggle
         {...props}
         aria-label={ariaLabel}
@@ -161,6 +165,7 @@ export function LayeredThemeToggle({
   size,
   ...props
 }: LayeredThemeToggleProps): ReactElement {
+  const nonce = useSiteplaneNonce();
   const resolvedSize = useResolvedControlSize(size);
 
   return (
@@ -169,7 +174,9 @@ export function LayeredThemeToggle({
       data-size={resolvedSize}
       data-slot="layered-theme-toggle-root"
     >
-      <style>{layeredThemeToggleStyles}</style>
+      <style nonce={nonce} suppressHydrationWarning>
+        {layeredThemeToggleStyles}
+      </style>
       <KitToggle
         {...props}
         aria-label={ariaLabel}
