@@ -17,14 +17,14 @@
    * outline, and never under the background of a card or page around it. The
    * ring and the halo measure the badge's edge from its border, the kit's
    * hairline width. */
-  :root [data-foundation="badge"][data-light] {
+  :root .sp-base-badge[data-light] {
     --sp-badge-light-edge: var(--sp-rw-border-default);
     isolation: isolate;
   }
 
   /* Each part shows only outside its content box, so the fill stays clean. */
-  .siteplane-badge-light-halo,
-  .siteplane-badge-light-ring {
+  .sp-badge-light-halo,
+  .sp-badge-light-ring {
     --sp-badge-light-brand: oklch(
       from var(--sp-rw-bg-accent) calc(l + 0.05) c h
     );
@@ -53,7 +53,7 @@
       linear-gradient(#000 0 0);
     mask-composite: exclude;
     pointer-events: none;
-    animation: siteplane-badge-light-turn var(--motion-duration-badge-light)
+    animation: sp-badge-light-turn var(--motion-duration-badge-light)
       var(--motion-ease-linear) infinite;
   }
 
@@ -63,7 +63,7 @@
    * content box, which the mask cuts out, is the badge itself. Its radius is
    * the badge's own plus those 28 px, so the cut-out keeps the badge's corners
    * at any radius and the gradient stays concentric with them. */
-  .siteplane-badge-light-halo {
+  .sp-badge-light-halo {
     inset: calc((var(--sp-badge-light-edge) + 28px) * -1);
     z-index: -1;
     border: 26px solid transparent;
@@ -78,22 +78,22 @@
   }
 
   /* The light itself: a 1 px ring on the badge's edge, above its fill. */
-  .siteplane-badge-light-ring {
+  .sp-badge-light-ring {
     inset: calc(var(--sp-badge-light-edge) * -1);
     border-radius: inherit;
     padding: 1px;
   }
 
-  [data-foundation="badge"][data-light]:hover > .siteplane-badge-light-halo {
+  .sp-base-badge[data-light]:hover > .sp-badge-light-halo {
     opacity: 0.55;
   }
 
   /* A lit badge answers hover with the stronger halo, not the grey link tint. */
-  :root :is(a, button)[data-foundation="badge"][data-light]:hover {
+  :root :is(a, button).sp-base-badge[data-light]:hover {
     background-image: none;
   }
 
-  @keyframes siteplane-badge-light-turn {
+  @keyframes sp-badge-light-turn {
     to {
       --sp-badge-light-angle: 360deg;
     }
@@ -101,17 +101,17 @@
 
   /* Reduced motion keeps the lights still and the hover instant (M5): the
    * document mode, the provider preset and the system setting. */
-  html[data-motion-reduce="true"] .siteplane-badge-light-halo,
-  html[data-motion-reduce="true"] .siteplane-badge-light-ring,
-  [data-sp-motion="reduced"] .siteplane-badge-light-halo,
-  [data-sp-motion="reduced"] .siteplane-badge-light-ring {
+  html[data-motion-reduce="true"] .sp-badge-light-halo,
+  html[data-motion-reduce="true"] .sp-badge-light-ring,
+  [data-sp-motion="reduced"] .sp-badge-light-halo,
+  [data-sp-motion="reduced"] .sp-badge-light-ring {
     animation: none;
     transition-duration: 1ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-badge-light-halo,
-    .siteplane-badge-light-ring {
+    .sp-badge-light-halo,
+    .sp-badge-light-ring {
       animation: none;
       transition-duration: 1ms;
     }

@@ -5,7 +5,7 @@
    * tall as the Input, Select and Button of the same size. The width is the
    * segments' own, like the Date Time Picker and the Number Field; a width utility
    * in className (w-full in a form column) replaces it. */
-  .siteplane-date-field-control {
+  .sp-date-field-control {
     --date-field-control-height: var(--sp-rw-control-md);
     --date-field-segment-start: calc(
       var(--sp-rw-space-3) - var(--input-segment-padding-inline)
@@ -14,61 +14,61 @@
     height: var(--date-field-control-height);
   }
 
-  .siteplane-date-field-control[data-icon-mode="action-end"] {
+  .sp-date-field-control[data-icon-mode="action-end"] {
     padding-inline-end: var(--date-field-control-height);
   }
 
-  .siteplane-date-field-control[data-size="sm"] {
+  .sp-date-field-control[data-size="sm"] {
     --date-field-control-height: var(--sp-rw-control-sm);
     --date-field-segment-start: calc(
       var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-date-field-control[data-size="lg"] {
+  .sp-date-field-control[data-size="lg"] {
     --date-field-control-height: var(--sp-rw-control-lg);
   }
 
-  .siteplane-date-field-control[data-size="xl"] {
+  .sp-date-field-control[data-size="xl"] {
     --date-field-control-height: var(--sp-rw-control-xl);
     --date-field-segment-start: calc(
       var(--sp-rw-space-4) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-date-field-input {
+  .sp-date-field-input {
     display: inline-flex;
     align-items: center;
     height: 100%;
     outline: none;
   }
 
-  .siteplane-date-field-control > .siteplane-date-field-input {
+  .sp-date-field-control > .sp-date-field-input {
     margin-inline-start: var(--date-field-segment-start);
   }
 
   /* The picker button's room ends the field; without it the segments keep the
    * inset of the start, so a field as wide as its segments is balanced. */
-  .siteplane-date-field-control:not([data-icon-mode="action-end"])
-    > .siteplane-date-field-input {
+  .sp-date-field-control:not([data-icon-mode="action-end"])
+    > .sp-date-field-input {
     margin-inline-end: var(--date-field-segment-start);
   }
 
   /* The leading icon is a regular InputGroup addon; the first segment's text
    * starts where an InputGroup input's text starts after the same icon. */
-  .siteplane-date-field-control:has(> .siteplane-date-field-decorative-icon)
-    > .siteplane-date-field-input {
+  .sp-date-field-control:has(> .sp-date-field-icon-addon)
+    > .sp-date-field-input {
     margin-inline-start: calc(
-      var(--siteplane-composite-control-padding-inline-start) -
+      var(--sp-composite-control-padding-inline-start) -
         var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-date-field-segment {
+  .sp-date-segment {
     outline: none;
   }
 
-  .siteplane-date-field-segment:not([data-type="literal"]) {
+  .sp-date-segment:not([data-type="literal"]) {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -85,37 +85,36 @@
 
   /* Minimum widths keep digits steady; wider placeholders such as "mm" or
    * larger text grow the segment instead of running into its neighbours. */
-  .siteplane-date-field-segment:is([data-type="day"], [data-type="month"]) {
+  .sp-date-segment:is([data-type="day"], [data-type="month"]) {
     min-width: calc(var(--spacing) * 7);
   }
 
-  .siteplane-date-field-segment[data-type="year"] {
+  .sp-date-segment[data-type="year"] {
     min-width: calc(var(--spacing) * 11);
   }
 
-  .siteplane-date-field-segment[data-literal-kind="separator"] {
+  .sp-date-segment[data-literal-kind="separator"] {
     margin-inline: calc(var(--spacing) * -1);
   }
 
-  .siteplane-date-field-segment[data-focused]:not([data-type="literal"]) {
+  .sp-date-segment[data-focused]:not([data-type="literal"]) {
     background-color: var(--input-segment-background);
   }
 
-  .siteplane-date-field-segment[data-placeholder]:not([data-type="literal"]) {
+  .sp-date-segment[data-placeholder]:not([data-type="literal"]) {
     color: var(--color-muted-foreground);
   }
 
-  .siteplane-date-field-segment::selection {
+  .sp-date-segment::selection {
     background-color: transparent;
   }
 
-  [data-foundation="date-field"][data-profile="input-group"][data-inset-start="true"]
-    .siteplane-date-field-segment[data-type="day"] {
+  .sp-base-date-field[data-profile="input-group"][data-inset-start="true"]
+    .sp-date-segment[data-type="day"] {
     margin-inline-start: calc(var(--spacing) * 2);
   }
 
-  .siteplane-date-field-control
-    > [data-slot="input-group-addon"][data-align="inline-end"] {
+  .sp-date-field-control > .sp-input-group-addon[data-align="inline-end"] {
     position: absolute;
     inset-block: 0;
     inset-inline-end: 0;
@@ -123,7 +122,7 @@
     padding-inline: 0 !important;
   }
 
-  .siteplane-date-field-popover {
+  .sp-date-field-popover {
     --popup-width: auto;
   }
 }

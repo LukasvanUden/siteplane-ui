@@ -4,6 +4,7 @@ import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import type React from "react";
 
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 
 import "./scroll-area.css";
 
@@ -42,13 +43,14 @@ export function ScrollArea({
   // scroll fade's mask cannot clip it.
   return (
     <ScrollAreaPrimitive.Root
-      className={className}
+      className={cn(baseClass("scroll-area", props), className)}
       data-foundation="scroll-area"
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
         {...viewportLabelProps}
         className={cn(
+          "sp-scroll-area-viewport",
           "h-full rounded-[inherit] outline-none data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain",
           scrollFade &&
             "mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] mask-l-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-start)))] mask-r-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-end)))] [--fade-size:1.5rem]",
@@ -58,7 +60,7 @@ export function ScrollArea({
         data-slot="scroll-area-viewport"
       >
         <ScrollAreaPrimitive.Content
-          className={cn(fill && "size-full")}
+          className={cn("sp-scroll-area-content", fill && "size-full")}
           data-slot="scroll-area-content"
           style={clampContentMinWidth ? { minWidth: 0 } : undefined}
         >
@@ -71,7 +73,10 @@ export function ScrollArea({
           <ScrollBar orientation="horizontal" />
         </>
       ) : null}
-      <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />
+      <ScrollAreaPrimitive.Corner
+        className="sp-scroll-area-corner"
+        data-slot="scroll-area-corner"
+      />
     </ScrollAreaPrimitive.Root>
   );
 }
@@ -84,7 +89,8 @@ export function ScrollBar({
   return (
     <ScrollAreaPrimitive.Scrollbar
       className={cn(
-        "siteplane-scroll-area-scrollbar-motion m-1 flex opacity-0 data-[orientation=horizontal]:h-1.5 data-[orientation=vertical]:w-1.5 data-[orientation=horizontal]:flex-col data-hovering:opacity-100 data-scrolling:opacity-100",
+        slotClass("scroll-area-scrollbar", props),
+        "sp-scroll-area-scrollbar-motion m-1 flex opacity-0 data-[orientation=horizontal]:h-1.5 data-[orientation=vertical]:w-1.5 data-[orientation=horizontal]:flex-col data-hovering:opacity-100 data-scrolling:opacity-100",
         className,
       )}
       data-slot="scroll-area-scrollbar"
@@ -92,7 +98,7 @@ export function ScrollBar({
       {...props}
     >
       <ScrollAreaPrimitive.Thumb
-        className="relative flex-1 rounded-full bg-foreground/20"
+        className="sp-scroll-area-thumb relative flex-1 rounded-full bg-foreground/20"
         data-slot="scroll-area-thumb"
       />
     </ScrollAreaPrimitive.Scrollbar>

@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
+import {
+  type RefObject,
+  useCallback,
+  useLayoutEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 // The kit's media utilities (sm:, md:, lg:, ...) use Tailwind's default
 // breakpoints, so the JS table names the same widths: a component that switches
@@ -95,4 +101,46 @@ export function useMediaQuery(
 
 export function useIsMobile(): boolean {
   return useMediaQuery("max-md");
+}
+
+/**
+ * Whether the element in `ref` is narrower than a breakpoint (`max-lg`) or at
+ * least that wide (`lg`): the container query of a component that switches in
+ * JS at its own width, as Header Navigation does, under the names its
+ * container query utilities use. The server and the first render, before the
+ * element is measured, get false. The element is measured before the first
+ * paint and again whenever its width changes; it renders together with the
+ * component that asks, as Header Navigation's row does.
+ */
+export function useContainerQuery(
+  ref: RefObject<Element | null>,
+  query: Breakpoint | `max-${Breakpoint}`,
+): boolean {
+  const [matches, setMatches] = useState(false);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const max = query.startsWith("max-");
+    const px = BREAKPOINTS[(max ? query.slice(4) : query) as Breakpoint];
+    const measure = (width: number) =>
+      setMatches(max ? width < px : width >= px);
+    measure(element.getBoundingClientRect().width);
+    if (typeof ResizeObserver === "undefined") return;
+    // A change of width is applied in the next frame, outside the observer's
+    // callback, so a component that swaps its content never loops it.
+    let frame = 0;
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      const width =
+        entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => measure(width));
+    });
+    observer.observe(element);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [ref, query]);
+  return matches;
 }

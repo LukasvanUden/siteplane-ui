@@ -14,6 +14,7 @@ import {
 } from "../motion";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../tooltip";
 import { useLastValue } from "./chart-cartesian";
+import { CHART_DEFAULT_LABELS } from "./chart-format";
 import type { ChartInteraction } from "./chart-interaction";
 import { ChartSwatch } from "./chart-legend";
 import {
@@ -56,11 +57,92 @@ export type ChartTooltipProps = {
    * consumer names with `aria-describedby`. It is read after `description`.
    */
   describedBy?: string | undefined;
+  /** What screen readers call the plot: its role description. "chart" by default; an empty text leaves it out. */
+  roleDescription?: string | undefined;
+  /**
+   * How to move between the items, read after the descriptions while the plot
+   * is a focus stop. "Use the arrow keys to move between data points." by
+   * default; an empty text leaves it out.
+   */
+  keyboardHint?: string | undefined;
   /** The plot. */
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 };
+
+// The ids of what describes the plot, in the order a screen reader reads them.
+function describedByIds(ids: readonly (string | false | undefined)[]) {
+  return ids.filter(Boolean).join(" ") || undefined;
+}
+
+// The polite live region that reads what the card shows. It is present from
+// the start, empty, so that a screen reader hears it change.
+function ChartAnnouncer({ children }: { children?: React.ReactNode }) {
+  return (
+    <span
+      aria-atomic="true"
+      aria-live="polite"
+      className="sp-chart-announcer sr-only"
+      data-slot="chart-announcer"
+    >
+      {children}
+    </span>
+  );
+}
+
+/**
+ * What a chart that sizes to its container renders until it has measured its
+ * width: the box of its plot at its full height, with nothing drawn in it, so
+ * that the page does not move when the plot is drawn and the server markup
+ * never holds a plot laid out for another width. Screen readers meet it as the
+ * chart, named and described as the drawn chart is, and its live region is
+ * there from the start. It is no focus stop yet: there is nothing to step
+ * through until the plot is drawn.
+ */
+export function ChartPlotPlaceholder({
+  className,
+  description,
+  describedBy,
+  height,
+  label,
+  roleDescription = CHART_DEFAULT_LABELS.roleDescription,
+}: Pick<
+  ChartTooltipProps,
+  "className" | "description" | "describedBy" | "label" | "roleDescription"
+> & {
+  /** The height of the plot in px: the height of its SVG once it is drawn. */
+  height: number;
+}): React.ReactElement {
+  const descriptionId = React.useId();
+  return (
+    <>
+      <div
+        aria-describedby={describedByIds([
+          description && descriptionId,
+          describedBy,
+        ])}
+        aria-label={label}
+        aria-roledescription={roleDescription || undefined}
+        className={cn("sp-chart-placeholder", className)}
+        data-slot="chart-placeholder"
+        role="group"
+      >
+        <svg aria-hidden="true" className="block w-full" height={height} />
+      </div>
+      {description ? (
+        <span
+          className="sp-chart-description sr-only"
+          data-slot="chart-description"
+          id={descriptionId}
+        >
+          {description}
+        </span>
+      ) : null}
+      <ChartAnnouncer />
+    </>
+  );
+}
 
 // What a card guesses its size to be until it is measured: bklit's.
 const guessedCard: ChartCardSize = { height: 80, width: 180 };
@@ -93,10 +175,10 @@ function boundsOf(box: DOMRect, boundary: "chart" | "viewport"): ChartBounds {
  * is active.
  *
  * For assistive technology the focus stop is the chart: a group that announces
- * itself as a chart, named by the chart's label and described by its summary.
- * The plot inside is a picture that the chart hides from it. While the
- * keyboard or a tap moves between the items, a polite live region reads what
- * the card shows.
+ * itself as a chart, named by the chart's label and described by its summary,
+ * then by a hint that the arrow keys move between the items. The plot inside
+ * is a picture that the chart hides from it. While the keyboard or a tap moves
+ * between the items, a polite live region reads what the card shows.
  */
 export function ChartTooltip({
   interaction,
@@ -108,12 +190,15 @@ export function ChartTooltip({
   announcement,
   description,
   describedBy,
+  roleDescription = CHART_DEFAULT_LABELS.roleDescription,
+  keyboardHint = CHART_DEFAULT_LABELS.keyboardHint,
   children,
   className,
   style,
 }: ChartTooltipProps): React.ReactElement {
   const tooltipId = React.useId();
   const descriptionId = React.useId();
+  const hintId = React.useId();
   const reduced = useReducedMotionPreference();
   const trigger = React.useRef<HTMLElement | null>(null);
   // The trigger is a div; the Trigger part types its ref for a button.
@@ -122,6 +207,9 @@ export function ChartTooltip({
   }, []);
   const { activeKey, announce, clear, triggerProps } = interaction;
   const open = activeKey !== null && Boolean(content);
+  // The hint belongs to the focus stop: a chart with no items is none, and
+  // nothing moves between items there.
+  const hint = triggerProps.tabIndex === 0 && keyboardHint ? keyboardHint : "";
 
   // The size of the card as it is measured while it is there: it flips by its
   // width and is centred by its height. Until the first measure it is a guess,
@@ -204,37 +292,42 @@ export function ChartTooltip({
         ref={setTrigger}
         closeOnClick={false}
         role="group"
-        aria-roledescription="chart"
-        aria-describedby={
-          [description ? descriptionId : undefined, describedBy]
-            .filter(Boolean)
-            .join(" ") || undefined
-        }
+        aria-roledescription={roleDescription || undefined}
+        aria-describedby={describedByIds([
+          description && descriptionId,
+          describedBy,
+          hint && hintId,
+        ])}
         aria-label={label}
         className={cn(className, focusRingRecipe())}
         style={style}
         {...triggerProps}
       >
         {children}
+        {/* Inside the focus stop it describes, so that the parts around the
+            chart keep their place whether or not it is one. */}
+        {hint ? (
+          <span
+            className="sp-chart-hint sr-only"
+            data-slot="chart-hint"
+            id={hintId}
+          >
+            {hint}
+          </span>
+        ) : null}
       </TooltipTrigger>
       {description ? (
         <span
-          className="sr-only"
+          className="sp-chart-description sr-only"
           data-slot="chart-description"
           id={descriptionId}
         >
           {description}
         </span>
       ) : null}
-      {/* Present from the start, so that a screen reader hears it change. */}
-      <span
-        aria-atomic="true"
-        aria-live="polite"
-        className="sr-only"
-        data-slot="chart-announcer"
-      >
+      <ChartAnnouncer>
         {open && announce && announcement ? announcement : ""}
-      </span>
+      </ChartAnnouncer>
       <ChartTooltipCard
         content={content}
         dipping={dipping}
@@ -287,16 +380,27 @@ function ChartTooltipCard({
 }): React.ReactElement {
   const [popup, setPopup] = React.useState<HTMLDivElement | null>(null);
   // A number that rolls to more digits makes the card wider while it rolls, so
-  // the card is watched for as long as it is there.
+  // the card is watched for as long as it is there. It is measured when it
+  // mounts, before the browser paints. The observer only notes that its size
+  // changed: the card is measured again, and its place updated, in the next
+  // animation frame, outside the observer's callback, so that no state
+  // changes while the browser delivers its observations.
   React.useLayoutEffect(() => {
     if (!popup) return;
     const measure = () =>
       onMeasure({ height: popup.offsetHeight, width: popup.offsetWidth });
     measure();
     if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    });
     observer.observe(popup);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [onMeasure, popup]);
 
   const follow = useFollowPoint(
@@ -328,6 +432,13 @@ function ChartTooltipCard({
     <TooltipPopup
       align="start"
       anchor={virtual}
+      // The card hands the positioner a new anchor at every frame it moves, so
+      // the positioner need not watch the anchor or the card for changes: it
+      // would set its observers up anew at every frame, and each new observer
+      // reports in the frame it is made, which WebKit takes for a
+      // ResizeObserver loop. A change of the card's size reaches it through
+      // the measure above.
+      disableAnchorTracking
       // Dipping takes the card out and back over the panel's own opacity
       // transition, the one an entrance and an exit run on.
       className="data-dipping:opacity-0"
@@ -375,7 +486,10 @@ export function ChartTooltipContent({
   rows: readonly ChartTooltipRow[];
 }): React.ReactElement {
   return (
-    <div className="grid gap-1" data-slot="chart-tooltip-content">
+    <div
+      className="sp-chart-tooltip-content grid gap-1"
+      data-slot="chart-tooltip-content"
+    >
       {heading ? <div className="font-medium">{heading}</div> : null}
       {rows.map((row) => (
         <div className="flex items-center gap-2" key={row.key}>

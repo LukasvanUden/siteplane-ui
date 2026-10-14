@@ -8,6 +8,7 @@ import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 import { ScrollArea } from "../scroll-area";
 import type { KitSheetPopupProps } from "./sheet-internal";
@@ -25,13 +26,25 @@ export const SheetPortal: React.ForwardRefExoticComponent<
 export function SheetTrigger(
   props: WithStringClassName<SheetPrimitive.Trigger.Props>,
 ): React.ReactElement {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
+  return (
+    <SheetPrimitive.Trigger
+      data-slot="sheet-trigger"
+      {...props}
+      className={cn(slotClass("sheet-trigger", props), props.className)}
+    />
+  );
 }
 
 export function SheetClose(
   props: WithStringClassName<SheetPrimitive.Close.Props>,
 ): React.ReactElement {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
+  return (
+    <SheetPrimitive.Close
+      data-slot="sheet-close"
+      {...props}
+      className={cn(slotClass("sheet-close", props), props.className)}
+    />
+  );
 }
 
 export function SheetBackdrop({
@@ -41,7 +54,8 @@ export function SheetBackdrop({
   return (
     <SheetPrimitive.Backdrop
       className={cn(
-        "siteplane-sheet-backdrop-motion fixed inset-0 z-50",
+        slotClass("sheet-backdrop", props),
+        "sp-sheet-backdrop-motion fixed inset-0 z-50",
         className,
       )}
       data-slot="sheet-backdrop"
@@ -64,6 +78,7 @@ export function SheetViewport({
   return (
     <SheetPrimitive.Viewport
       className={cn(
+        slotClass("sheet-viewport", props),
         "fixed inset-0 z-50",
         !fullscreen && "grid",
         side === "bottom" && ["grid-rows-[1fr_auto]", !fullscreen && "pt-12"],
@@ -109,8 +124,9 @@ export function SheetPopup(popupProps: SheetPopupProps): React.ReactElement {
         <SheetViewport side={side} variant={variant}>
           <SheetPrimitive.Popup
             className={cn(
+              slotClass("sheet-popup", props),
               surfaceClassNames.edgeOverlay,
-              "siteplane-sheet-panel-motion flex max-h-full min-h-0 w-full min-w-0 flex-col outline-none",
+              "sp-sheet-panel-motion flex max-h-full min-h-0 w-full min-w-0 flex-col outline-none",
               side === "bottom" && "row-start-2",
               side === "right" && "col-start-2",
               // A fullscreen sheet takes the whole viewport (sheet.css).
@@ -164,7 +180,11 @@ export function SheetHeader({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex flex-col", className),
+    className: cn(
+      slotClass("sheet-header", props, render),
+      "flex flex-col",
+      className,
+    ),
     "data-slot": "sheet-header",
   };
 
@@ -184,6 +204,7 @@ export function SheetFooter({
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap instead
       // of overflowing a narrow panel.
+      slotClass("sheet-footer", props, render),
       "flex flex-wrap",
       className,
     ),
@@ -203,7 +224,11 @@ export function SheetTitle({
 }: WithStringClassName<SheetPrimitive.Title.Props>): React.ReactElement {
   return (
     <SheetPrimitive.Title
-      className={cn("font-heading wrap-anywhere", className)}
+      className={cn(
+        slotClass("sheet-title", props),
+        "font-heading wrap-anywhere",
+        className,
+      )}
       data-slot="sheet-title"
       {...props}
     />
@@ -216,7 +241,11 @@ export function SheetDescription({
 }: WithStringClassName<SheetPrimitive.Description.Props>): React.ReactElement {
   return (
     <SheetPrimitive.Description
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("sheet-description", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="sheet-description"
       {...props}
     />
@@ -232,7 +261,7 @@ export function SheetPanel({
   scrollFade?: boolean;
 }): React.ReactElement {
   const defaultProps = {
-    className,
+    className: cn(slotClass("sheet-panel", props, render), className),
     "data-slot": "sheet-panel",
   };
 

@@ -284,9 +284,12 @@ function useSharedCalendarProps(
     todayDate,
   }: CalendarBaseProps,
   hasSelection: boolean,
+  visibleMonths = 1,
 ) {
-  // The day with keyboard focus, as the Calendar content last rendered it.
+  // The day with keyboard focus and the months on screen, as the Calendar
+  // content last rendered them.
   const focusedDateRef = useRef<CalendarDate | null>(null);
+  const visibleRangeRef = useRef<VisibleRange | null>(null);
   const controlledMonth =
     month === undefined ? undefined : fromNativeDate(month);
   // While `month` is controlled, the focused day stays the Calendar's own
@@ -295,18 +298,47 @@ function useSharedCalendarProps(
   const [focused, setFocused] = useState<CalendarDate | undefined>(
     controlledMonth,
   );
+  // A `month` the application moves to outside the months on screen shows
+  // first, as the month of a shortcut does. React Aria shows a focused month
+  // before the visible ones last, so the focus takes the steps that realign
+  // the visible months first (planVisibleRangeShift), one per commit, before
+  // it rests in `month`. A `month` already on screen stays where it is, and so
+  // does the month the calendar itself reported as the user moved, which
+  // React Aria shows already.
+  const [steps, setSteps] = useState<readonly CalendarDate[]>([]);
+  const reportedMonthRef = useRef<string | null>(null);
+  const monthKey = controlledMonth && startOfMonth(controlledMonth).toString();
+  const [shownMonthKey, setShownMonthKey] = useState(monthKey);
+  if (monthKey !== shownMonthKey) {
+    setShownMonthKey(monthKey);
+    const visible = visibleRangeRef.current;
+    setSteps(
+      controlledMonth &&
+        visible &&
+        visibleMonths > 1 &&
+        monthKey !== reportedMonthRef.current &&
+        !isMonthInRange(controlledMonth, visible)
+        ? planVisibleRangeShift(visible, visibleMonths, controlledMonth)
+        : [],
+    );
+  }
+  useLayoutEffect(() => {
+    if (steps.length > 0) setSteps((current) => current.slice(1));
+  }, [steps]);
   const focusedValue =
     controlledMonth === undefined
       ? undefined
-      : focused !== undefined && isSameMonth(focused, controlledMonth)
-        ? focused
-        : controlledMonth;
+      : (steps[0] ??
+        (focused !== undefined && isSameMonth(focused, controlledMonth)
+          ? focused
+          : controlledMonth));
   const onFocusChange = (date: CalendarDate) => {
     if (controlledMonth !== undefined) setFocused(date);
 
     const previous = focusedDateRef.current;
 
     if (previous && !isSameMonth(date, previous)) {
+      reportedMonthRef.current = startOfMonth(date).toString();
       onMonthChange?.(toNativeDate(startOfMonth(date)));
     }
   };
@@ -321,6 +353,7 @@ function useSharedCalendarProps(
 
   return {
     focusedDateRef,
+    visibleRangeRef,
     props: {
       ...(disabled === true ? { isDisabled: true } : {}),
       ...(dayMatcher === undefined
@@ -469,7 +502,7 @@ function CalendarRoot(props: CalendarMultipleProps | CalendarSingleProps) {
       {...passThroughProps(props)}
       {...shared.props}
       {...pointSelectionProps(props)}
-      className={cn("siteplane-calendar", props.className)}
+      className={cn("sp-base-calendar", "sp-calendar", props.className)}
       data-foundation="calendar"
       data-size={resolvedSize}
       data-slot="calendar"
@@ -482,6 +515,7 @@ function CalendarRoot(props: CalendarMultipleProps | CalendarSingleProps) {
           size={resolvedSize}
           state={state}
           todayDate={toTodayDate(props.todayDate)}
+          visibleRangeRef={shared.visibleRangeRef}
         />
       )}
     </CalendarPrimitive>
@@ -505,11 +539,11 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
   const hasSelection =
     toRangeValue(value !== undefined ? value : defaultValue) !== null ||
     Boolean(pickerRange?.start);
-  const shared = useSharedCalendarProps(props, hasSelection);
   // `numberOfMonths={2}` shows consecutive months side by side in one range
   // calendar: one shared selection, one Previous and Next pair, and a heading
   // with its own month and year picker above each month.
   const visibleMonths = Math.max(1, Math.trunc(numberOfMonths ?? 1) || 1);
+  const shared = useSharedCalendarProps(props, hasSelection, visibleMonths);
 
   return (
     <RangeCalendarPrimitive<CalendarDate>
@@ -534,7 +568,7 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
             visibleDuration: { months: visibleMonths },
           }
         : {})}
-      className={cn("siteplane-calendar", props.className)}
+      className={cn("sp-base-calendar", "sp-calendar", props.className)}
       data-foundation="calendar"
       data-selection-mode="range"
       data-size={resolvedSize}
@@ -550,6 +584,7 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
           state={state}
           todayDate={toTodayDate(props.todayDate)}
           visibleMonths={visibleMonths}
+          visibleRangeRef={shared.visibleRangeRef}
         />
       )}
     </RangeCalendarPrimitive>
@@ -600,6 +635,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   state,
   todayDate,
   visibleMonths = 1,
+  visibleRangeRef,
 }: {
   focusedDateRef: React.RefObject<CalendarDate | null>;
   isDisabled: boolean;
@@ -608,12 +644,15 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   state: CalendarState<M> | RangeCalendarState;
   todayDate?: CalendarDate | undefined;
   visibleMonths?: number;
+  visibleRangeRef: React.RefObject<VisibleRange | null>;
 }) {
   const { locale } = useLocale();
 
-  // The Calendar tells a change of month by the day that had focus last.
+  // The Calendar tells a change of month by the day that had focus last, and
+  // places a controlled month by the months on screen.
   useLayoutEffect(() => {
     focusedDateRef.current = state.focusedDate;
+    visibleRangeRef.current = state.visibleRange;
   });
 
   const [navigationMotion, setNavigationMotion] =
@@ -671,7 +710,12 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
     !state.isInvalid(date) && !state.isCellUnavailable(date);
 
   const shortcutRow = shortcuts?.length ? (
-    <div aria-label="Shortcuts" data-slot="calendar-shortcuts" role="group">
+    <div
+      aria-label="Shortcuts"
+      className="sp-calendar-shortcuts"
+      data-slot="calendar-shortcuts"
+      role="group"
+    >
       {shortcuts.map((shortcut) => (
         <Button
           disabled={
@@ -707,7 +751,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
 
     return (
       <>
-        <div data-slot="calendar-header">
+        <div className="sp-calendar-header" data-slot="calendar-header">
           {index === 0 ? (
             <Button
               data-slot="calendar-previous"
@@ -739,12 +783,13 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
           ) : null}
         </div>
         {visibleMonths < 2 ? shortcutRow : null}
-        <div data-slot="calendar-grid-frame">
+        <div className="sp-calendar-grid-frame" data-slot="calendar-grid-frame">
           {navigationMotion ? (
             <div
               aria-hidden="true"
               data-direction={navigationMotion.direction}
               data-motion-state="exit"
+              className="sp-calendar-month-motion"
               data-slot="calendar-month-motion"
               inert
               key={`grid-exit-${navigationMotion.key}`}
@@ -769,6 +814,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
           <div
             data-direction={navigationMotion?.direction}
             data-motion-state={navigationMotion ? "enter" : undefined}
+            className="sp-calendar-month-motion"
             data-slot="calendar-month-motion"
             key={`grid-enter-${navigationMotion?.key ?? 0}`}
           >
@@ -789,9 +835,13 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   return (
     <>
       {shortcutRow}
-      <div data-slot="calendar-months">
+      <div className="sp-calendar-months" data-slot="calendar-months">
         {Array.from({ length: visibleMonths }, (_, index) => (
-          <div data-slot="calendar-month" key={index}>
+          <div
+            className="sp-calendar-month"
+            data-slot="calendar-month"
+            key={index}
+          >
             {renderMonth(index)}
           </div>
         ))}
@@ -834,6 +884,19 @@ function useCalendarNavigationMotion<M extends PointCalendarSelectionMode>(
   return [navigationMotion, setNavigationMotion] as const;
 }
 
+/** The months a calendar shows, from the first day to the last. */
+type VisibleRange = { end: CalendarDate; start: CalendarDate };
+
+/** Whether the month of `date` is one of the months on screen. */
+function isMonthInRange(date: CalendarDate, visible: VisibleRange): boolean {
+  const month = startOfMonth(date);
+
+  return (
+    month.compare(startOfMonth(visible.start)) >= 0 &&
+    month.compare(visible.end) <= 0
+  );
+}
+
 /**
  * The dates to focus, one after the other, so that `months` consecutive months
  * start at `target`. React Aria realigns the visible range only when the focused
@@ -842,7 +905,7 @@ function useCalendarNavigationMotion<M extends PointCalendarSelectionMode>(
  * mean the range already starts there.
  */
 export function planVisibleRangeShift(
-  visible: { end: CalendarDate; start: CalendarDate },
+  visible: VisibleRange,
   months: number,
   target: CalendarDate,
 ): CalendarDate[] {
@@ -898,7 +961,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
       }}
       open={isPickerOpen}
     >
-      <h2 data-slot="calendar-heading">
+      <h2 className="sp-calendar-heading" data-slot="calendar-heading">
         <PopoverTrigger
           data-slot="calendar-heading-trigger"
           ref={(trigger) => {
@@ -913,12 +976,16 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
             />
           }
         >
-          <span data-slot="calendar-heading-motion-frame">
+          <span
+            className="sp-calendar-heading-motion-frame"
+            data-slot="calendar-heading-motion-frame"
+          >
             {navigationMotion ? (
               <span
                 aria-hidden="true"
                 data-direction={navigationMotion.direction}
                 data-motion-state="exit"
+                className="sp-calendar-heading-motion"
                 data-slot="calendar-heading-motion"
                 key={`heading-exit-${navigationMotion.key}`}
               >
@@ -932,6 +999,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
             <span
               data-direction={navigationMotion?.direction}
               data-motion-state={navigationMotion ? "enter" : undefined}
+              className="sp-calendar-heading-motion"
               data-slot="calendar-heading-motion"
               key={`heading-enter-${navigationMotion?.key ?? 0}`}
             >
@@ -943,7 +1011,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
       </h2>
       <PopoverPopup
         align="center"
-        className="siteplane-calendar-picker-popup"
+        className="sp-calendar-picker-popup"
         data-calendar-size={size}
         portalProps={{ container: pickerPortalContainerRef }}
         viewportPadding="compact"
@@ -969,20 +1037,31 @@ function CalendarGrid({
 }) {
   return (
     <CalendarGridPrimitive
+      className="sp-calendar-grid"
       data-slot="calendar-grid"
       {...(offset === 0 ? {} : { offset: { months: offset } })}
       weekdayStyle="short"
     >
-      <CalendarGridHeaderPrimitive data-slot="calendar-grid-header">
+      <CalendarGridHeaderPrimitive
+        className="sp-calendar-grid-header"
+        data-slot="calendar-grid-header"
+      >
         {(day) => (
-          <CalendarHeaderCellPrimitive data-slot="calendar-header-cell">
+          <CalendarHeaderCellPrimitive
+            className="sp-calendar-header-cell"
+            data-slot="calendar-header-cell"
+          >
             {day}
           </CalendarHeaderCellPrimitive>
         )}
       </CalendarGridHeaderPrimitive>
-      <CalendarGridBodyPrimitive data-slot="calendar-grid-body">
+      <CalendarGridBodyPrimitive
+        className="sp-calendar-grid-body"
+        data-slot="calendar-grid-body"
+      >
         {(date) => (
           <CalendarCellPrimitive
+            className="sp-calendar-cell"
             data-slot="calendar-cell"
             date={date}
             // React Aria marks the device's today with `data-today`, which
@@ -1067,6 +1146,7 @@ function CalendarPicker<M extends PointCalendarSelectionMode>({
       <div
         data-direction={pageMotion?.direction}
         data-motion-state={pageMotion ? "enter" : undefined}
+        className="sp-calendar-picker-page"
         data-slot="calendar-picker-page"
       >
         <CalendarPickerPageContent
@@ -1087,6 +1167,7 @@ function CalendarPicker<M extends PointCalendarSelectionMode>({
     <div
       aria-label="Choose month and year"
       data-motion-active={isMoving || undefined}
+      className="sp-calendar-picker"
       data-slot="calendar-picker"
       data-view={view}
       role="group"
@@ -1096,6 +1177,7 @@ function CalendarPicker<M extends PointCalendarSelectionMode>({
           aria-hidden="true"
           data-direction={pageMotion.direction}
           data-motion-state="exit"
+          className="sp-calendar-picker-page"
           data-slot="calendar-picker-page"
           inert
           onAnimationEnd={(event) => {
@@ -1207,11 +1289,15 @@ function CalendarPickerPageContent({
   page: CalendarPickerPage;
 }) {
   const heading = headingMotion ? (
-    <span data-slot="calendar-picker-heading-motion-frame">
+    <span
+      className="sp-calendar-picker-heading-motion-frame"
+      data-slot="calendar-picker-heading-motion-frame"
+    >
       <span
         aria-hidden="true"
         data-direction={headingMotion.direction}
         data-motion-state="exit"
+        className="sp-calendar-picker-heading-motion"
         data-slot="calendar-picker-heading-motion"
         onAnimationEnd={(event) => {
           if (event.currentTarget === event.target) onHeadingMotionEnd();
@@ -1222,6 +1308,7 @@ function CalendarPickerPageContent({
       <span
         data-direction={headingMotion.direction}
         data-motion-state="enter"
+        className="sp-calendar-picker-heading-motion"
         data-slot="calendar-picker-heading-motion"
       >
         {page.heading}
@@ -1243,6 +1330,7 @@ function CalendarPickerPageContent({
       />
       <div
         aria-label={page.ariaLabel}
+        className="sp-calendar-picker-grid"
         data-slot="calendar-picker-grid"
         role="group"
       >
@@ -1280,7 +1368,10 @@ function CalendarPickerHeader({
   view: Exclude<PickerView, null>;
 }) {
   return (
-    <div data-slot="calendar-picker-header">
+    <div
+      className="sp-calendar-picker-header"
+      data-slot="calendar-picker-header"
+    >
       <Button
         aria-label={view === "month" ? "Previous year" : "Previous years"}
         data-slot="calendar-picker-previous"

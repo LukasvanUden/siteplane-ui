@@ -10,6 +10,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 const sliderControlVariants = cva(
   "relative flex cursor-pointer touch-none select-none active:cursor-grabbing before:absolute before:content-[''] data-disabled:cursor-not-allowed data-[orientation=horizontal]:w-full data-[orientation=horizontal]:items-center data-[orientation=horizontal]:before:inset-x-0 data-[orientation=vertical]:h-full data-[orientation=vertical]:items-center data-[orientation=vertical]:flex-col data-[orientation=vertical]:before:inset-y-0",
@@ -56,13 +57,15 @@ const sliderThumbVariants = cva(
   },
 );
 
+// The value's type is the kit rule's at every size, with the scale labels
+// (design-rework.css): 12 px on an 18 px line, as the lg slider shows it.
 const sliderValueVariants = cva("flex justify-end", {
   defaultVariants: { size: siteplaneUIDefaults.controlSize },
   variants: {
     size: {
-      md: "text-sm",
+      md: "",
       lg: "",
-      sm: "text-xs",
+      sm: "",
       xl: "",
     },
   },
@@ -153,7 +156,11 @@ export function Slider({
   return (
     <SliderSizeContext.Provider value={resolvedSize}>
       <SliderPrimitive.Root
-        className={cn("data-[orientation=horizontal]:w-full", className)}
+        className={cn(
+          slotClass("slider", props),
+          "data-[orientation=horizontal]:w-full",
+          className,
+        )}
         data-size={resolvedSize}
         data-slot="slider"
         defaultValue={defaultValue}
@@ -168,6 +175,7 @@ export function Slider({
         {children}
         <SliderPrimitive.Control
           className={cn(
+            "sp-slider-control",
             sliderControlVariants({ size: resolvedSize }),
             "data-dragging:cursor-grabbing",
           )}
@@ -177,6 +185,7 @@ export function Slider({
         >
           <SliderPrimitive.Track
             className={cn(
+              "sp-slider-track",
               sliderTrackVariants({ size: resolvedSize }),
               "data-dragging:cursor-grabbing",
             )}
@@ -186,7 +195,7 @@ export function Slider({
             <SliderPrimitive.Indicator
               // Its motion, and the reduced-motion switch, are the kit's
               // Slider rules (design-rework.css).
-              className="select-none data-[orientation=horizontal]:ms-0.5 data-[orientation=vertical]:mb-0.5"
+              className="sp-slider-indicator select-none data-[orientation=horizontal]:ms-0.5 data-[orientation=vertical]:mb-0.5"
               data-slot="slider-indicator"
               key={`indicator-${renderedKey}`}
             />
@@ -194,6 +203,7 @@ export function Slider({
               <SliderPrimitive.Thumb
                 aria-label={ariaLabel}
                 className={cn(
+                  "sp-slider-thumb",
                   sliderThumbVariants({ size: resolvedSize }),
                   "data-dragging:cursor-grabbing",
                 )}
@@ -237,6 +247,7 @@ function SliderLabels({
       render={(_, state) => (
         <div
           className={cn(
+            "sp-slider-labels",
             sliderLabelsVariants({ size }),
             "data-[orientation=vertical]:hidden",
           )}
@@ -292,7 +303,11 @@ export function SliderValue({
 
   return (
     <SliderPrimitive.Value
-      className={cn(sliderValueVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("slider-value", props),
+        sliderValueVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="slider-value"
       {...props}

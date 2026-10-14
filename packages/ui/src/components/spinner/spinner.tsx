@@ -2,6 +2,7 @@ import { Loader2Icon } from "lucide-react";
 import type React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 import "./spinner.css";
 
@@ -39,7 +40,8 @@ export function Spinner<V extends SpinnerVariant = "default">(
         // 16 px like the other variants. Width and height, not a size-*
         // class, so parents that size unsized icons (Button) still apply.
         className={cn(
-          "siteplane-spinner-default siteplane-spinner-motion h-4 w-4",
+          slotClass("spinner", props),
+          "sp-spinner-default sp-spinner-motion h-4 w-4",
           className,
         )}
         data-slot="spinner"
@@ -54,7 +56,11 @@ export function Spinner<V extends SpinnerVariant = "default">(
     return (
       <svg
         aria-label="Loading"
-        className={cn("siteplane-spinner-motion size-4", className)}
+        className={cn(
+          slotClass("spinner", props),
+          "sp-spinner-motion size-4",
+          className,
+        )}
         data-slot="spinner"
         data-variant="comet"
         fill="none"
@@ -87,7 +93,8 @@ export function Spinner<V extends SpinnerVariant = "default">(
     return (
       <div
         className={cn(
-          "siteplane-spinner-motion inline-block size-4 rounded-full border-2 border-current/25 border-t-current",
+          slotClass("spinner", props),
+          "sp-spinner-motion inline-block size-4 rounded-full border-2 border-current/25 border-t-current",
           className,
         )}
         {...shared}
@@ -99,7 +106,8 @@ export function Spinner<V extends SpinnerVariant = "default">(
     return (
       <div
         className={cn(
-          "siteplane-spinner-motion relative inline-grid size-4 place-items-center",
+          slotClass("spinner", props),
+          "sp-spinner-motion relative inline-grid size-4 place-items-center",
           className,
         )}
         {...shared}
@@ -114,19 +122,15 @@ export function Spinner<V extends SpinnerVariant = "default">(
     return (
       <div
         className={cn(
-          "siteplane-spinner-motion inline-flex items-center gap-1",
+          slotClass("spinner", props),
+          "sp-spinner-motion inline-flex items-center gap-1",
           className,
         )}
         {...shared}
       >
+        {/* Their delays are the stylesheet's (spinner.css). */}
         {[0, 1, 2].map((index) => (
-          <span
-            className="size-2 rounded-full bg-current"
-            key={index}
-            style={{
-              animationDelay: `calc(var(--motion-duration-loop) * ${(index * 16) / 100})`,
-            }}
-          />
+          <span className="size-2 rounded-full bg-current" key={index} />
         ))}
       </div>
     );
@@ -136,7 +140,8 @@ export function Spinner<V extends SpinnerVariant = "default">(
     return (
       <div
         className={cn(
-          "siteplane-spinner-motion inline-flex h-4 items-center gap-[3px]",
+          slotClass("spinner", props),
+          "sp-spinner-motion inline-flex h-4 items-center gap-[3px]",
           className,
         )}
         {...shared}
@@ -145,9 +150,6 @@ export function Spinner<V extends SpinnerVariant = "default">(
           <span
             className="h-full w-[3px] origin-center rounded-full bg-current"
             key={index}
-            style={{
-              animationDelay: `calc(var(--motion-duration-loop) * ${(index * 12) / 100})`,
-            }}
           />
         ))}
       </div>
@@ -157,19 +159,17 @@ export function Spinner<V extends SpinnerVariant = "default">(
   return (
     <div
       className={cn(
-        "siteplane-spinner-motion relative inline-block size-4",
+        slotClass("spinner", props),
+        "sp-spinner-motion relative inline-block size-4",
         className,
       )}
       {...shared}
     >
+      {/* Their angles and delays are the stylesheet's (spinner.css). */}
       {Array.from({ length: 8 }, (_, index) => (
         <span
           className="absolute top-0 left-1/2 h-[42%] w-[2px] -translate-x-1/2 rounded-full bg-current [transform-origin:50%_119%]"
           key={index}
-          style={{
-            animationDelay: `calc(var(--motion-duration-loop) * ${(index - 8) / 10})`,
-            rotate: `${index * 45}deg`,
-          }}
         />
       ))}
     </div>

@@ -9,6 +9,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import type { KitToggleProps } from "./toggle-internal";
 
 // The kit stylesheet owns the Toggle's cursor and its disabled fade
@@ -29,7 +30,9 @@ export const toggleVariants = cva(
         xl: "",
       },
       padding: {
-        comfortable: "px-3",
+        // 12 px at the sides: the [data-padding="comfortable"] rule in
+        // design-rework.css.
+        comfortable: "",
         default: null,
         icon: "",
       },
@@ -78,9 +81,11 @@ export function Toggle(
   return (
     <TogglePrimitive
       className={cn(
+        slotClass("toggle", props),
+        baseClass("toggle", props),
         toggleVariants({ padding, size: resolvedSize, variant }),
         profile === "group" && toggleGroupProfileClassName,
-        "siteplane-toggle-motion",
+        "sp-toggle-motion",
         className,
       )}
       data-foundation="toggle"
@@ -91,7 +96,7 @@ export function Toggle(
       data-slot="toggle"
       data-variant={variant ?? "default"}
       onAnimationEnd={(event) => {
-        if (event.animationName === "siteplane-toggle-lift") setLifting(false);
+        if (event.animationName === "sp-toggle-lift") setLifting(false);
         onAnimationEnd?.(event);
       }}
       onPressedChange={(pressed, eventDetails) => {

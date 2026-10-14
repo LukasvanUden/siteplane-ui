@@ -16,6 +16,7 @@ import {
 } from "../../system/styles/choice-menu-item";
 import { CheckboxGlyph } from "../../system/styles/checkbox-glyph";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import type { KitCheckboxProps } from "./checkbox-internal";
 
 import "./checkbox.css";
@@ -23,7 +24,7 @@ import "./checkbox.css";
 // The look and the size come from checkbox.css through the attributes the
 // Checkbox renders (data-size), so the helper takes no size.
 export const checkboxVariants = cva(
-  "siteplane-checkbox-motion relative inline-flex shrink-0 cursor-pointer items-center justify-center before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] data-disabled:cursor-not-allowed",
+  "sp-checkbox-motion relative inline-flex shrink-0 cursor-pointer items-center justify-center before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] data-disabled:cursor-not-allowed",
 );
 
 export const CheckboxSizeContext =
@@ -52,6 +53,8 @@ export function Checkbox(checkboxProps: CheckboxProps): React.ReactElement {
   return (
     <CheckboxPrimitive.Root
       className={cn(
+        slotClass("checkbox", props),
+        baseClass("checkbox", props),
         profile === "menu-item"
           ? cn(choiceMenuItemClassName, choiceMenuItemCheckGridClassName)
           : checkboxVariants(),
@@ -66,7 +69,7 @@ export function Checkbox(checkboxProps: CheckboxProps): React.ReactElement {
       {profile === "menu-item" ? (
         <>
           <CheckboxPrimitive.Indicator
-            className="col-start-1"
+            className="sp-checkbox-indicator col-start-1"
             data-slot="checkbox-indicator"
             keepMounted
           >
@@ -76,7 +79,7 @@ export function Checkbox(checkboxProps: CheckboxProps): React.ReactElement {
         </>
       ) : (
         <CheckboxPrimitive.Indicator
-          className="pointer-events-none absolute flex items-center justify-center"
+          className="sp-checkbox-indicator pointer-events-none absolute flex items-center justify-center"
           data-slot="checkbox-indicator"
           render={(props: React.ComponentProps<"span">) => (
             <span {...props}>

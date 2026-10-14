@@ -7,6 +7,7 @@ import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 export const AlertDialogCreateHandle: typeof AlertDialogPrimitive.createHandle =
   AlertDialogPrimitive.createHandle;
@@ -22,7 +23,11 @@ export function AlertDialogTrigger(
   props: WithStringClassName<AlertDialogPrimitive.Trigger.Props>,
 ): React.ReactElement {
   return (
-    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+    <AlertDialogPrimitive.Trigger
+      data-slot="alert-dialog-trigger"
+      {...props}
+      className={cn(slotClass("alert-dialog-trigger", props), props.className)}
+    />
   );
 }
 export function AlertDialogBackdrop({
@@ -31,7 +36,11 @@ export function AlertDialogBackdrop({
 }: WithStringClassName<AlertDialogPrimitive.Backdrop.Props>): React.ReactElement {
   return (
     <AlertDialogPrimitive.Backdrop
-      className={cn(surfaceClassNames.overlayBackdrop, className)}
+      className={cn(
+        slotClass("alert-dialog-backdrop", props),
+        surfaceClassNames.overlayBackdrop,
+        className,
+      )}
       data-slot="alert-dialog-backdrop"
       {...props}
     />
@@ -43,7 +52,11 @@ export function AlertDialogViewport({
 }: WithStringClassName<AlertDialogPrimitive.Viewport.Props>): React.ReactElement {
   return (
     <AlertDialogPrimitive.Viewport
-      className={cn(surfaceClassNames.dialogOverlayViewport, className)}
+      className={cn(
+        slotClass("alert-dialog-viewport", props),
+        surfaceClassNames.dialogOverlayViewport,
+        className,
+      )}
       data-slot="alert-dialog-viewport"
       {...props}
     />
@@ -78,6 +91,7 @@ export function AlertDialogPopup({
               slides in. */}
           <AlertDialogPrimitive.Popup
             className={cn(
+              slotClass("alert-dialog-popup", props),
               surfaceClassNames.dialogOverlayPopup,
               surfaceClassNames.dialogOverlayPopupMobileStick,
               className,
@@ -97,7 +111,11 @@ export function AlertDialogHeader({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex-col", className),
+    className: cn(
+      slotClass("alert-dialog-header", props, render),
+      "flex-col",
+      className,
+    ),
     "data-slot": "alert-dialog-header",
   };
   return useRender({
@@ -115,6 +133,7 @@ export function AlertDialogFooter({
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap
       // instead of overflowing a narrow popup.
+      slotClass("alert-dialog-footer", props, render),
       "flex flex-wrap",
       // Actions right after the text sit 24 px below it, as in every dialog
       // without content (S12): 8 px here plus the popup's 16 px gap.
@@ -135,7 +154,11 @@ export function AlertDialogTitle({
 }: WithStringClassName<AlertDialogPrimitive.Title.Props>): React.ReactElement {
   return (
     <AlertDialogPrimitive.Title
-      className={cn("font-heading wrap-anywhere", className)}
+      className={cn(
+        slotClass("alert-dialog-title", props),
+        "font-heading wrap-anywhere",
+        className,
+      )}
       data-slot="alert-dialog-title"
       {...props}
     />
@@ -147,7 +170,11 @@ export function AlertDialogDescription({
 }: WithStringClassName<AlertDialogPrimitive.Description.Props>): React.ReactElement {
   return (
     <AlertDialogPrimitive.Description
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("alert-dialog-description", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="alert-dialog-description"
       {...props}
     />
@@ -157,7 +184,11 @@ export function AlertDialogClose(
   props: WithStringClassName<AlertDialogPrimitive.Close.Props>,
 ): React.ReactElement {
   return (
-    <AlertDialogPrimitive.Close data-slot="alert-dialog-close" {...props} />
+    <AlertDialogPrimitive.Close
+      data-slot="alert-dialog-close"
+      {...props}
+      className={cn(slotClass("alert-dialog-close", props), props.className)}
+    />
   );
 }
 

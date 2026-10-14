@@ -2,7 +2,12 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const merged = twMerge(clsx(inputs));
+  // A part's class (`sp-<slot>`, slot-class.ts) can arrive twice: from the
+  // part itself and from the host that renders it through `render`.
+  return merged.includes("sp-")
+    ? Array.from(new Set(merged.split(" "))).join(" ")
+    : merged;
 }
 
 /**

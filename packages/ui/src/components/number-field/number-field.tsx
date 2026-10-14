@@ -16,6 +16,7 @@ import {
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 import { Label } from "../label";
 
@@ -71,6 +72,7 @@ export function NumberField({
         className={cn(
           // Compact by default; number-field.css derives the width from the
           // control size. A width utility in className replaces it.
+          slotClass("number-field", props),
           "flex w-(--number-field-width) max-w-full flex-col items-start gap-2",
           className,
         )}
@@ -94,6 +96,7 @@ export function NumberFieldGroup({
   return (
     <NumberFieldPrimitive.Group
       className={cn(
+        slotClass("number-field-group", props),
         surfaceClassNames.formControl,
         formControlSurfaceClassNames[context?.variant ?? "default"],
         "justify-between [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -114,7 +117,10 @@ export function NumberFieldDecrement({
   const context = React.useContext(NumberFieldContext);
   return (
     <NumberFieldPrimitive.Decrement
-      className={className}
+      className={cn(
+        slotClass("number-field-decrement", props, render),
+        className,
+      )}
       data-profile="joined-start"
       data-slot="number-field-decrement"
       render={
@@ -142,7 +148,10 @@ export function NumberFieldIncrement({
   const context = React.useContext(NumberFieldContext);
   return (
     <NumberFieldPrimitive.Increment
-      className={className}
+      className={cn(
+        slotClass("number-field-increment", props, render),
+        className,
+      )}
       data-profile="joined-end"
       data-slot="number-field-increment"
       render={
@@ -169,6 +178,7 @@ export function NumberFieldInput({
   return (
     <NumberFieldPrimitive.Input
       className={cn(
+        slotClass("number-field-input", props),
         "w-full min-w-0 grow bg-transparent in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] in-data-[size=xl]:px-[calc(--spacing(4)-1px)] px-[calc(--spacing(3)-1px)] text-center tabular-nums leading-7 in-data-[size=sm]:leading-6 outline-none",
         className,
       )}
@@ -193,6 +203,7 @@ export function NumberFieldScrubArea({
   return (
     <NumberFieldPrimitive.ScrubArea
       className={cn(
+        slotClass("number-field-scrub-area", props),
         "flex cursor-ew-resize data-disabled:cursor-not-allowed",
         className,
       )}
@@ -201,9 +212,7 @@ export function NumberFieldScrubArea({
     >
       {/* The label takes the scrub area's cursor and fades with a disabled
           field (design-rework.css, the shared label rules). */}
-      <Label className="cursor-[inherit]" htmlFor={context.fieldId}>
-        {label}
-      </Label>
+      <Label htmlFor={context.fieldId}>{label}</Label>
       <NumberFieldPrimitive.ScrubAreaCursor className="drop-shadow-[0_1px_1px_--theme(--color-black/50%)] filter">
         <CursorGrowIcon />
       </NumberFieldPrimitive.ScrubAreaCursor>

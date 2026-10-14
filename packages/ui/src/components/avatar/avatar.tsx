@@ -4,6 +4,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
 import type React from "react";
 
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 export type AvatarStatus = "online" | "away" | "busy" | "offline";
 
@@ -37,6 +38,7 @@ export function Avatar({
   const root = (
     <AvatarPrimitive.Root
       className={cn(
+        slotClass("avatar", props),
         "inline-flex shrink-0 select-none items-center justify-center overflow-hidden align-middle",
         className,
       )}
@@ -54,13 +56,14 @@ export function Avatar({
   // --avatar-status-ring on a surface that does not publish its colour.
   return (
     <span
-      className="relative inline-flex shrink-0 align-middle"
+      className="sp-avatar-status-root relative inline-flex shrink-0 align-middle"
       data-slot="avatar-status-root"
     >
       {root}
       <span
         aria-label={statusLabel ?? avatarStatusLabels[status]}
         className={cn(
+          "sp-avatar-status",
           "absolute end-0 bottom-0 size-1/4 rounded-full ring-[1.5px] ring-(--avatar-status-ring,var(--sp-rw-surface-color,var(--sp-rw-bg-base)))",
           avatarStatusClassNames[status],
         )}
@@ -78,7 +81,7 @@ export function AvatarImage({
 }: WithStringClassName<AvatarPrimitive.Image.Props>): React.ReactElement {
   return (
     <AvatarPrimitive.Image
-      className={cn("size-full", className)}
+      className={cn(slotClass("avatar-image", props), "size-full", className)}
       data-slot="avatar-image"
       {...props}
     />
@@ -91,7 +94,11 @@ export function AvatarFallback({
 }: WithStringClassName<AvatarPrimitive.Fallback.Props>): React.ReactElement {
   return (
     <AvatarPrimitive.Fallback
-      className={cn("flex size-full items-center justify-center", className)}
+      className={cn(
+        slotClass("avatar-fallback", props),
+        "flex size-full items-center justify-center",
+        className,
+      )}
       data-slot="avatar-fallback"
       {...props}
     />

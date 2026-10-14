@@ -8,6 +8,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { CheckboxSizeContext } from "../checkbox";
 
 export interface CheckboxGroupProps extends Omit<
@@ -28,7 +29,11 @@ export function CheckboxGroup({
     <CheckboxSizeContext.Provider value={resolvedSize}>
       <CheckboxGroupPrimitive
         // The 8 px default is a utility, so a gap in className replaces it.
-        className={cn("flex flex-col items-start gap-2", className)}
+        className={cn(
+          slotClass("checkbox-group", props),
+          "flex flex-col items-start gap-2",
+          className,
+        )}
         data-size={resolvedSize}
         data-slot="checkbox-group"
         {...props}

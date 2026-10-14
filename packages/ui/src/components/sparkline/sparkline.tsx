@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   areaGradientStops,
   naturalPath,
@@ -154,6 +155,7 @@ export function Sparkline({
       height={height}
       color={color}
       className={cn(
+        slotClass("sparkline", props),
         "w-full overflow-visible",
         !reduced &&
           "transition-colors duration-(--motion-duration-value) ease-(--motion-ease-standard)",
@@ -178,6 +180,7 @@ export function Sparkline({
           return (
             <path
               d={`M${x},${y} h0`}
+              className="sp-sparkline-dot"
               data-slot="sparkline-dot"
               fill="none"
               key={index}

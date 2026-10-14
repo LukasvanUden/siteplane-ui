@@ -14,6 +14,7 @@ import {
   useSiteplaneUI,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   Autocomplete,
   type AutocompletePrimitive,
@@ -95,6 +96,7 @@ export function CommandInput({
   return (
     <div
       className={cn(
+        "sp-command-input",
         "relative flex shrink-0 items-center px-5",
         commandInputHeights[controlSize],
       )}
@@ -149,6 +151,7 @@ export function CommandPanel({
   return (
     <div
       className={cn(
+        slotClass("command-panel", props),
         "relative flex min-h-0 flex-1 flex-col overflow-hidden",
         className,
       )}
@@ -247,6 +250,7 @@ export function CommandFooter({
   return (
     <div
       className={cn(
+        slotClass("command-footer", props),
         "relative flex shrink-0 items-center justify-between gap-2 px-5 py-3 text-muted-foreground text-xs",
         className,
       )}

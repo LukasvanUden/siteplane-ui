@@ -237,7 +237,11 @@ export function TagGroup({
           ...props,
           tabIndex,
         } as unknown as React.ComponentProps<typeof TagGroupPrimitive>)}
-        className={cn("relative flex flex-wrap gap-2", className)}
+        className={cn(
+          "sp-tag-group sp-base-tag-group",
+          "relative flex flex-wrap gap-2",
+          className,
+        )}
         data-foundation="tag-group"
         data-size={resolvedSize}
         data-slot="tag-group"
@@ -312,14 +316,14 @@ export function Tag({
     <Badge
       {...(props as unknown as React.ComponentProps<typeof Badge>)}
       className={cn(
-        "siteplane-tag group relative inline-flex",
-        removable && "gap-0.5 pr-1",
+        "sp-tag group",
         // The tag renders a div, so Badge's :disabled styles never match it.
         "data-disabled:opacity-(--sp-rw-disabled-opacity-action)",
         disabled ? "cursor-not-allowed" : selectable && "cursor-pointer",
         className,
       )}
       data-disabled={disabled || undefined}
+      data-removable={removable || undefined}
       data-selected={selected || undefined}
       data-slot="tag"
       render={
@@ -338,7 +342,7 @@ export function Tag({
           aria-label={removeLabel}
           // A disabled tag already dims its remove action; it isn't dimmed
           // again (design-rework.css, "Disabled parts").
-          className="siteplane-tag-remove-action size-3.5 min-w-0 shrink-0"
+          className="sp-tag-remove-action size-3.5 min-w-0 shrink-0"
           disabled={disabled}
           render={<TagButtonPrimitive slot="remove" />}
           size="icon-2xs"

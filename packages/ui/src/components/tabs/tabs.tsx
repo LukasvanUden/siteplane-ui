@@ -8,9 +8,9 @@ import * as React from "react";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
-  useSiteplaneNonce,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 import { useLeavingPane } from "../motion/motion-follow";
 import { panelSwitchClassName } from "../motion/motion-presence";
@@ -38,6 +38,7 @@ export function Tabs({
         // follows a taller panel's height from below the content, and a list
         // that could shrink collapsed for a moment (13 October 2026).
         className={cn(
+          slotClass("tabs", props),
           "flex min-w-0 max-w-full flex-col gap-2 data-[orientation=vertical]:flex-row [&>[data-slot=tabs-list]]:shrink-0 [&>[data-slot=tabs-rail]]:shrink-0",
           className,
         )}
@@ -51,25 +52,19 @@ export function Tabs({
 
 /**
  * Places a rail's selection on its active tab: the target given, or the
- * selected tab. Self-contained, because the server HTML also runs it as an
- * inline script, before the page hydrates.
+ * selected tab. It reads every box before it writes, so a placement forces one
+ * layout. Returns whether the target has a size, as Base UI shows its own
+ * indicator only then.
  */
-function placeRailIndicator(rail: HTMLElement, active?: HTMLElement | null) {
-  const indicator = rail.querySelector<HTMLElement>(
-    ':scope > div > [data-slot="tab-indicator"]',
-  );
+function placeRailIndicator(
+  rail: HTMLElement,
+  indicator: HTMLElement,
+  active?: HTMLElement | null,
+): boolean {
   const target =
     active ??
     rail.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
-  if (!indicator || !target) return;
-  const railBox = rail.getBoundingClientRect();
-  const targetBox = target.getBoundingClientRect();
-  indicator.style.setProperty(
-    "--active-tab-left",
-    `${targetBox.left - railBox.left}px`,
-  );
-  indicator.style.setProperty("--active-tab-width", `${targetBox.width}px`);
-  indicator.style.setProperty("--active-tab-height", `${targetBox.height}px`);
+  if (!target) return false;
   // Scrolled tabs must not paint their selection under the adjacent action.
   // The strip that shows the tabs is the list, or the scroll viewport of a
   // ScrollArea that holds the list inside this rail.
@@ -78,16 +73,21 @@ function placeRailIndicator(rail: HTMLElement, active?: HTMLElement | null) {
     '[data-slot="scroll-area-viewport"]',
   );
   const strip = viewport && rail.contains(viewport) ? viewport : list;
+  const railBox = rail.getBoundingClientRect();
+  const targetBox = target.getBoundingClientRect();
   const stripBox = strip?.getBoundingClientRect();
+
+  indicator.style.setProperty(
+    "--active-tab-left",
+    `${targetBox.left - railBox.left}px`,
+  );
+  indicator.style.setProperty("--active-tab-width", `${targetBox.width}px`);
+  indicator.style.setProperty("--active-tab-height", `${targetBox.height}px`);
   indicator.parentElement!.style.clipPath = stripBox
     ? `inset(0 ${Math.max(0, railBox.right - stripBox.right)}px 0 ${Math.max(0, stripBox.left - railBox.left)}px)`
     : "inset(0)";
+  return targetBox.width > 0 && targetBox.height > 0;
 }
-
-// The script ends the rail, so the tabs it measures are parsed before it runs.
-const railIndicatorScript = `(${placeRailIndicator.toString()})(document.currentScript.parentElement)`;
-
-const subscribeToNothing = () => () => {};
 
 /** Shared rail and selection indicator for tabs composed with an adjacent action. */
 export function TabsRail({
@@ -103,17 +103,14 @@ export function TabsRail({
 }): React.ReactElement {
   const railRef = React.useRef<HTMLDivElement>(null);
   const indicatorRef = React.useRef<HTMLDivElement>(null);
-  // A Content Security Policy with nonces lets the script run only with the
-  // provider's nonce.
-  const nonce = useSiteplaneNonce();
+  // As with Base UI's indicator in a list, the rail's indicator stays hidden
+  // until it has a place, and the active tab paints the same selection until
+  // then (design-rework.css, "pending"). The server HTML shows the selection
+  // that way, with no inline script; the layout effect below hands it to the
+  // indicator before the first paint after hydration, and the indicator
+  // appears in place, without a transition.
+  const [placed, setPlaced] = React.useState(false);
   React.useImperativeHandle(ref, () => railRef.current as HTMLDivElement);
-  // The server HTML and the hydration pass carry the script; once the page
-  // has hydrated, the layout effect below places the selection.
-  const hydrated = React.useSyncExternalStore(
-    subscribeToNothing,
-    () => true,
-    () => false,
-  );
 
   React.useLayoutEffect(() => {
     const rail = railRef.current;
@@ -121,7 +118,9 @@ export function TabsRail({
     if (!rail || !indicator) return;
 
     function measure() {
-      placeRailIndicator(rail!, activeIndicatorRef?.current);
+      setPlaced(
+        placeRailIndicator(rail!, indicator!, activeIndicatorRef?.current),
+      );
     }
 
     measure();
@@ -149,33 +148,26 @@ export function TabsRail({
   return (
     <div
       ref={railRef}
-      className={cn("relative isolate flex min-w-0 items-center", className)}
+      className={cn(
+        slotClass("tabs-rail", props),
+        "relative isolate flex min-w-0 items-center",
+        className,
+      )}
+      data-indicator={placed ? undefined : "pending"}
       data-slot="tabs-rail"
       data-variant={variant}
       {...props}
     >
-      {/* The script styles both before hydration, so their server HTML differs
-          from the first client render. */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-        suppressHydrationWarning
-      >
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div
           ref={indicatorRef}
-          className="absolute"
+          className="sp-tab-indicator absolute"
           data-slot="tab-indicator"
           data-variant={variant}
-          suppressHydrationWarning
+          hidden={!placed}
         />
       </div>
       {children}
-      {hydrated ? null : (
-        <script
-          dangerouslySetInnerHTML={{ __html: railIndicatorScript }}
-          nonce={nonce}
-          suppressHydrationWarning
-        />
-      )}
     </div>
   );
 }
@@ -211,6 +203,7 @@ export function TabsList({
       <TabsVariantContext.Provider value={variant}>
         <TabsPrimitive.List
           className={cn(
+            slotClass("tabs-list", props),
             "scrollbar-none relative isolate flex w-fit max-w-full items-center overflow-x-auto overflow-y-hidden data-[orientation=vertical]:flex-col data-[orientation=vertical]:overflow-visible",
             className,
           )}
@@ -221,17 +214,20 @@ export function TabsList({
           data-variant={variant}
           {...props}
         >
-          {children}
-          {/* Base UI's inline script places the selection in the server
-              HTML, so it shows before the page hydrates (13 October 2026). */}
+          {/* Base UI keeps the indicator hidden until it has measured the
+              active tab. Until then the active tab paints the same selection
+              (design-rework.css), so the selection shows from the first paint
+              without an inline script, and the indicator takes over in place
+              once it shows. The indicator leads the list, so that rule reaches
+              the tabs as its siblings. */}
           {!embedded && (
             <TabsPrimitive.Indicator
-              className="pointer-events-none absolute z-0"
+              className="sp-tab-indicator pointer-events-none absolute z-0"
               data-slot="tab-indicator"
               data-variant={variant}
-              renderBeforeHydration
             />
           )}
+          {children}
         </TabsPrimitive.List>
       </TabsVariantContext.Provider>
     </TabsSizeContext.Provider>
@@ -256,6 +252,7 @@ export function TabsTab({
   return (
     <TabsPrimitive.Tab
       className={cn(
+        slotClass("tabs-tab", props, render),
         "relative z-10 shrink-0 whitespace-nowrap data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
@@ -301,7 +298,12 @@ export function TabsPanel({
     <TabsPrimitive.Panel
       // Base UI makes the shown panel a tab stop; its keyboard focus takes the
       // kit focus outline (design-rework.css).
-      className={cn("flex-1", panelSwitchClassName, className)}
+      className={cn(
+        slotClass("tabs-content", props),
+        "flex-1",
+        panelSwitchClassName,
+        className,
+      )}
       data-slot="tabs-content"
       render={(panelProps, state) => (
         <TabsPanelSwap panelProps={panelProps} render={render} state={state} />

@@ -7,6 +7,7 @@ import * as React from "react";
 
 import { useResolvedControlSize } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Separator } from "../separator";
 import { KitSeparator } from "../separator/separator-internal";
 import { type toggleVariants } from "../toggle";
@@ -48,6 +49,7 @@ export function ToggleGroup({
   return (
     <ToggleGroupPrimitive
       className={cn(
+        slotClass("toggle-group", props),
         "flex",
         width === "full" ? "w-full" : "w-fit",
         wrap && "flex-wrap",

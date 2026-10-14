@@ -1,7 +1,7 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer components {
-  .siteplane-switch-motion {
+  .sp-switch-motion {
     --sp-semantic-color-background: var(--color-white);
     --sp-semantic-color-input: rgb(0 0 0 / 10%);
     --sp-semantic-color-primary: oklch(0.335 0.061 267.9);
@@ -13,7 +13,8 @@
     transition-timing-function: var(--motion-ease-state);
   }
 
-  :is(.dark, [data-theme="dark"]) .siteplane-switch-motion {
+  .dark .sp-switch-motion,
+  [data-theme="dark"] .sp-switch-motion {
     --sp-semantic-color-background: color-mix(
       in srgb,
       var(--color-neutral-950) 95%,
@@ -25,7 +26,7 @@
 
   /* The thumb of a menu row travels over the fast step on the browser's
    * default curve and stretches a micro step after a press. */
-  .siteplane-switch-motion [data-slot="switch-thumb"] {
+  .sp-switch-motion .sp-switch-thumb {
     transition:
       translate var(--motion-duration-fast) var(--motion-ease-navigation),
       scale var(--motion-duration-micro) var(--motion-ease-navigation)
@@ -37,14 +38,14 @@
    * when the text wraps, as the Checkbox does (checkbox.css). The lg and xl
    * switches are taller than the 21 px line, so they start at its top and a
    * one-line label keeps its height. */
-  :where(label, [data-slot="label"], [data-slot="field-label"])
-    > [data-foundation="switch"][data-profile="control"]:first-child,
-  :where(label, [data-slot="label"], [data-slot="field-label"])
+  :where(label, .sp-label, .sp-field-label)
+    > .sp-base-switch[data-profile="control"]:first-child,
+  :where(label, .sp-label, .sp-field-label)
     > :where(span, div)
-    > [data-foundation="switch"][data-profile="control"]:first-child,
-  [data-foundation="switch"][data-profile="control"]:first-child:has(
-      ~ :is([data-slot="label"], [data-slot="field-label"]),
-      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    > .sp-base-switch[data-profile="control"]:first-child,
+  .sp-base-switch[data-profile="control"]:first-child:has(
+      ~ :is(.sp-label, .sp-field-label),
+      ~ * :is(.sp-label, .sp-field-label)
     ) {
     align-self: flex-start;
     margin-block: max(
@@ -56,17 +57,15 @@
   /* Beside its label, the switch does not inherit the label's line but its
    * container's. It takes the 21 px line of a label next to a choice control
    * (S13), so the 1lh above measures the label's first line. */
-  [data-foundation="switch"][data-profile="control"]:first-child:has(
-      ~ :is([data-slot="label"], [data-slot="field-label"]),
-      ~ * :is([data-slot="label"], [data-slot="field-label"])
+  .sp-base-switch[data-profile="control"]:first-child:has(
+      ~ :is(.sp-label, .sp-field-label),
+      ~ * :is(.sp-label, .sp-field-label)
     ) {
     line-height: var(--sp-rw-line-21);
   }
 
-  html[data-motion-reduce="true"] .siteplane-switch-motion,
-  html[data-motion-reduce="true"]
-    .siteplane-switch-motion
-    [data-slot="switch-thumb"] {
+  html[data-motion-reduce="true"] .sp-switch-motion,
+  html[data-motion-reduce="true"] .sp-switch-motion .sp-switch-thumb {
     animation: none;
     transition-delay: 0ms;
     transition-duration: 1ms;
@@ -77,8 +76,8 @@
  * against design-rework.css. */
 @layer siteplane {
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-switch-motion,
-    .siteplane-switch-motion [data-slot="switch-thumb"] {
+    .sp-switch-motion,
+    .sp-switch-motion .sp-switch-thumb {
       animation: none;
       transition-delay: 0ms;
       transition-duration: 1ms;

@@ -5,12 +5,19 @@ import { ChevronDownIcon } from "lucide-react";
 import type React from "react";
 
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 
 export function Accordion(
   props: WithStringClassName<AccordionPrimitive.Root.Props>,
 ): React.ReactElement {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+  return (
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      {...props}
+      className={cn(slotClass("accordion", props), props.className)}
+    />
+  );
 }
 
 export function AccordionItem({
@@ -19,7 +26,7 @@ export function AccordionItem({
 }: WithStringClassName<AccordionPrimitive.Item.Props>): React.ReactElement {
   return (
     <AccordionPrimitive.Item
-      className={className}
+      className={cn(slotClass("accordion-item", props), className)}
       data-slot="accordion-item"
       {...props}
     />
@@ -36,7 +43,8 @@ export function AccordionTrigger({
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         className={cn(
-          "siteplane-accordion-motion group min-w-0 flex-1",
+          slotClass("accordion-trigger", props, render),
+          "sp-accordion-motion group min-w-0 flex-1",
           className,
         )}
         data-profile="accordion-trigger"
@@ -56,7 +64,7 @@ export function AccordionTrigger({
       >
         <span className="min-w-0 flex-1 wrap-anywhere">{children}</span>
         <ChevronDownIcon
-          className="siteplane-accordion-motion pointer-events-none shrink-0"
+          className="sp-accordion-indicator sp-accordion-motion pointer-events-none shrink-0"
           data-slot="accordion-indicator"
         />
       </AccordionPrimitive.Trigger>
@@ -72,7 +80,8 @@ export function AccordionPanel({
   return (
     <AccordionPrimitive.Panel
       className={cn(
-        "siteplane-accordion-motion h-(--accordion-panel-height) overflow-hidden data-ending-style:h-0 data-starting-style:h-0",
+        slotClass("accordion-panel", props),
+        "sp-accordion-motion h-(--accordion-panel-height) overflow-hidden data-ending-style:h-0 data-starting-style:h-0",
         className,
       )}
       data-slot="accordion-panel"

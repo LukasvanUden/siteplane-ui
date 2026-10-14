@@ -14,6 +14,7 @@ import {
   linearIndicatorSizeClassNames,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 const METER_DEFAULT_LOCALE = "en-US";
 
@@ -74,7 +75,11 @@ export function Meter({
   return (
     <MeterSizeContext.Provider value={resolvedSize}>
       <MeterPrimitive.Root
-        className={cn(meterRootVariants({ size: resolvedSize }), className)}
+        className={cn(
+          slotClass("meter", props),
+          meterRootVariants({ size: resolvedSize }),
+          className,
+        )}
         data-empty={empty || undefined}
         data-size={resolvedSize}
         data-slot="meter"
@@ -108,7 +113,11 @@ export function MeterLabel({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <MeterPrimitive.Label
-      className={cn(meterLabelVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("meter-label", props),
+        meterLabelVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="meter-label"
       {...props}
@@ -130,7 +139,11 @@ export function MeterTrack({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <MeterPrimitive.Track
-      className={cn(meterTrackVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("meter-track", props),
+        meterTrackVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="meter-track"
       {...props}
@@ -144,7 +157,11 @@ export function MeterIndicator({
 }: WithStringClassName<MeterPrimitive.Indicator.Props>): React.ReactElement {
   return (
     <MeterPrimitive.Indicator
-      className={cn(linearIndicatorClassNames.indicator, className)}
+      className={cn(
+        slotClass("meter-indicator", props),
+        linearIndicatorClassNames.indicator,
+        className,
+      )}
       data-slot="meter-indicator"
       {...props}
     />
@@ -165,7 +182,11 @@ export function MeterValue({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <MeterPrimitive.Value
-      className={cn(meterValueVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("meter-value", props),
+        meterValueVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="meter-value"
       {...props}

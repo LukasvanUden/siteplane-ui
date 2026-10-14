@@ -9,6 +9,7 @@ import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 import { ScrollArea } from "../scroll-area";
 import type { KitDialogPopupProps } from "./dialog-internal";
@@ -27,13 +28,25 @@ export const DialogPortal: React.ForwardRefExoticComponent<
 export function DialogTrigger(
   props: WithStringClassName<DialogPrimitive.Trigger.Props>,
 ): React.ReactElement {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+  return (
+    <DialogPrimitive.Trigger
+      data-slot="dialog-trigger"
+      {...props}
+      className={cn(slotClass("dialog-trigger", props), props.className)}
+    />
+  );
 }
 
 export function DialogClose(
   props: WithStringClassName<DialogPrimitive.Close.Props>,
 ): React.ReactElement {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      {...props}
+      className={cn(slotClass("dialog-close", props), props.className)}
+    />
+  );
 }
 
 export function DialogBackdrop({
@@ -42,7 +55,11 @@ export function DialogBackdrop({
 }: WithStringClassName<DialogPrimitive.Backdrop.Props>): React.ReactElement {
   return (
     <DialogPrimitive.Backdrop
-      className={cn(surfaceClassNames.overlayBackdrop, className)}
+      className={cn(
+        slotClass("dialog-backdrop", props),
+        surfaceClassNames.overlayBackdrop,
+        className,
+      )}
       data-slot="dialog-backdrop"
       {...props}
     />
@@ -55,7 +72,11 @@ export function DialogViewport({
 }: WithStringClassName<DialogPrimitive.Viewport.Props>): React.ReactElement {
   return (
     <DialogPrimitive.Viewport
-      className={cn(surfaceClassNames.dialogOverlayViewport, className)}
+      className={cn(
+        slotClass("dialog-viewport", props),
+        surfaceClassNames.dialogOverlayViewport,
+        className,
+      )}
       data-slot="dialog-viewport"
       {...props}
     />
@@ -101,14 +122,16 @@ export function DialogPopup(popupProps: DialogPopupProps): React.ReactElement {
       <SiteplaneUIPortalScope>
         <DialogBackdrop />
         <DialogViewport
-          className={cn(profile === "command" && "siteplane-command-viewport")}
+          className={cn(profile === "command" && "sp-command-viewport")}
         >
           <DialogPrimitive.Popup
             className={cn(
+              slotClass("dialog-popup", props),
+              baseClass("dialog", props),
               profile === "command"
                 ? cn(
                     surfaceClassNames.overlayBorderless,
-                    "siteplane-command-popup relative flex min-h-0 min-w-0 flex-col",
+                    "sp-command-popup relative flex min-h-0 min-w-0 flex-col",
                   )
                 : profile === "composite"
                   ? surfaceClassNames.dialogOverlayCompositePopup
@@ -164,7 +187,11 @@ export function DialogHeader({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex flex-col", className),
+    className: cn(
+      slotClass("dialog-header", props, render),
+      "flex flex-col",
+      className,
+    ),
     "data-slot": "dialog-header",
   };
   return useRender({
@@ -183,6 +210,7 @@ export function DialogFooter({
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap instead
       // of overflowing a narrow popup.
+      slotClass("dialog-footer", props, render),
       "flex flex-wrap",
       // A dialog without content puts 24 px between its text and its actions in
       // every layout (S12): 8 px here plus the footer's own 16 px top padding.
@@ -204,7 +232,11 @@ export function DialogTitle({
 }: WithStringClassName<DialogPrimitive.Title.Props>): React.ReactElement {
   return (
     <DialogPrimitive.Title
-      className={cn("font-heading wrap-anywhere", className)}
+      className={cn(
+        slotClass("dialog-title", props),
+        "font-heading wrap-anywhere",
+        className,
+      )}
       data-slot="dialog-title"
       {...props}
     />
@@ -217,7 +249,11 @@ export function DialogDescription({
 }: WithStringClassName<DialogPrimitive.Description.Props>): React.ReactElement {
   return (
     <DialogPrimitive.Description
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("dialog-description", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="dialog-description"
       {...props}
     />
@@ -233,7 +269,7 @@ export function DialogPanel({
   scrollFade?: boolean;
 }): React.ReactElement {
   const defaultProps = {
-    className,
+    className: cn(slotClass("dialog-panel", props, render), className),
     "data-slot": "dialog-panel",
   };
   return (

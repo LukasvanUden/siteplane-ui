@@ -21,6 +21,7 @@ import {
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   switchMenuTrackClassName,
   switchThumbClassName,
@@ -84,7 +85,7 @@ export function ContextMenuTrigger({
   );
   return (
     <ContextMenuPrimitive.Trigger
-      className={className}
+      className={cn(slotClass("context-menu-trigger", props), className)}
       data-slot="context-menu-trigger"
       ref={triggerRef}
       {...props}
@@ -152,7 +153,7 @@ export function ContextMenuPopup({
           align={align}
           alignOffset={alignOffset}
           anchor={anchor}
-          className="z-50"
+          className="sp-context-menu-positioner z-50"
           data-slot="context-menu-positioner"
           side={side}
           sideOffset={sideOffset}
@@ -166,6 +167,7 @@ export function ContextMenuPopup({
         >
           <ContextMenuPrimitive.Popup
             className={cn(
+              slotClass("context-menu-popup", props),
               menuPopupVariantClassNames[variant],
               measuresTriggerArea
                 ? contextMenuTriggerAreaWidthClassNames[width]
@@ -189,7 +191,11 @@ export function ContextMenuGroup(
   props: WithStringClassName<ContextMenuPrimitive.Group.Props>,
 ) {
   return (
-    <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
+    <ContextMenuPrimitive.Group
+      data-slot="context-menu-group"
+      {...props}
+      className={cn(slotClass("context-menu-group", props), props.className)}
+    />
   );
 }
 export function ContextMenuItem({
@@ -204,7 +210,11 @@ export function ContextMenuItem({
 }) {
   return (
     <ContextMenuPrimitive.Item
-      className={cn(menuItemClassName, className)}
+      className={cn(
+        slotClass("context-menu-item", props),
+        menuItemClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="context-menu-item"
       data-variant={variant}
@@ -227,7 +237,11 @@ export function ContextMenuLinkItem({
 }) {
   return (
     <ContextMenuPrimitive.LinkItem
-      className={cn(menuItemClassName, className)}
+      className={cn(
+        slotClass("context-menu-link-item", props),
+        menuItemClassName,
+        className,
+      )}
       closeOnClick={closeOnClick}
       data-inset={inset || undefined}
       data-slot="context-menu-link-item"
@@ -255,6 +269,7 @@ export function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
+        slotClass("context-menu-checkbox-item", props),
         choiceMenuItemClassName,
         variant === "switch"
           ? choiceMenuItemSwitchGridClassName
@@ -273,13 +288,18 @@ export function ContextMenuCheckboxItem({
           </span>
           <ContextMenuPrimitive.CheckboxItemIndicator
             className={cn(
+              "sp-switch-track sp-base-switch",
               switchVariants({ size: resolvedSize }),
               switchMenuTrackClassName,
             )}
             data-foundation="switch"
+            data-slot="switch-track"
             keepMounted
           >
-            <span className={switchThumbClassName} data-slot="switch-thumb" />
+            <span
+              className={cn("sp-switch-thumb", switchThumbClassName)}
+              data-slot="switch-thumb"
+            />
           </ContextMenuPrimitive.CheckboxItemIndicator>
         </>
       ) : (
@@ -303,6 +323,10 @@ export function ContextMenuRadioGroup(
     <ContextMenuPrimitive.RadioGroup
       data-slot="context-menu-radio-group"
       {...props}
+      className={cn(
+        slotClass("context-menu-radio-group", props),
+        props.className,
+      )}
     />
   );
 }
@@ -323,6 +347,7 @@ export function ContextMenuRadioItem({
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
+        slotClass("context-menu-radio-item", props),
         choiceMenuItemClassName,
         end ? choiceMenuItemEndGridClassName : choiceMenuItemCheckGridClassName,
         className,
@@ -366,7 +391,11 @@ export function ContextMenuGroupLabel({
 }) {
   return (
     <ContextMenuPrimitive.GroupLabel
-      className={cn(menuGroupLabelClassName, className)}
+      className={cn(
+        slotClass("context-menu-label", props),
+        menuGroupLabelClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="context-menu-label"
       {...props}
@@ -379,7 +408,11 @@ export function ContextMenuSeparator({
 }: WithStringClassName<ContextMenuPrimitive.Separator.Props>) {
   return (
     <ContextMenuPrimitive.Separator
-      className={cn(menuSeparatorClassName, className)}
+      className={cn(
+        slotClass("context-menu-separator", props),
+        menuSeparatorClassName,
+        className,
+      )}
       data-slot="context-menu-separator"
       {...props}
     />
@@ -391,7 +424,11 @@ export function ContextMenuShortcut({
 }: React.ComponentProps<"kbd">) {
   return (
     <kbd
-      className={cn(menuShortcutClassName, className)}
+      className={cn(
+        slotClass("context-menu-shortcut", props),
+        menuShortcutClassName,
+        className,
+      )}
       data-slot="context-menu-shortcut"
       {...props}
     />
@@ -412,7 +449,11 @@ export function ContextMenuSubTrigger({
 }) {
   return (
     <ContextMenuPrimitive.SubmenuTrigger
-      className={cn(menuSubTriggerClassName, className)}
+      className={cn(
+        slotClass("context-menu-sub-trigger", props),
+        menuSubTriggerClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="context-menu-sub-trigger"
       {...props}

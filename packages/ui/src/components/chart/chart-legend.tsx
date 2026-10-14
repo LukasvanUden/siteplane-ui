@@ -143,7 +143,7 @@ export function ChartLegend({
   // A div and not the figure's caption: the caption would name the chart's
   // figure after its series, and the chart is named by its label alone.
   return (
-    <div className={className} data-slot="chart-legend">
+    <div className={cn("sp-chart-legend", className)} data-slot="chart-legend">
       <MotionList
         className={cn(
           "text-sm text-muted-foreground",

@@ -1,0 +1,186 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  .sp-menu-icon-morph-root {
+    display: inline-flex;
+  }
+
+  /* The bars sit two thirds of the way from their earlier 2 to 2.75 px toward
+   * the 4/3 px stroke lucide draws at the Button's 16 px icon size, which is
+   * about 1.56 to 1.81 px. Browsers snap each bar to whole device pixels, so
+   * those fractions drew the middle bar thicker than the outer ones. The bars
+   * therefore use the nearest half pixels, 1.5 px up to default and 2 px for
+   * lg and xl; with the half-pixel gaps, every bar and every step between
+   * bars is a whole device pixel on 2x screens, and all three bars draw
+   * equally thick. The open state moves the outer bars by gap plus bar
+   * height, so they still cross on the middle bar. */
+  .sp-menu-icon-morph-root .sp-menu-icon-bars {
+    --sp-menu-icon-gap: 0.28125rem;
+    --sp-menu-icon-bar-height: 0.09375rem;
+    --sp-menu-icon-width: 1.40625rem;
+    --sp-menu-icon-pos-y-bar-one: 0;
+    --sp-menu-icon-pos-y-bar-three: 0;
+    --sp-menu-icon-scale-bar: 1;
+    --sp-menu-icon-rotate-bar-one: 0deg;
+    --sp-menu-icon-rotate-bar-three: 0deg;
+  }
+
+  .sp-menu-icon-morph-root[data-size="sm"] .sp-menu-icon-bars {
+    --sp-menu-icon-gap: 0.25rem;
+    --sp-menu-icon-bar-height: 0.09375rem;
+    --sp-menu-icon-width: 1.25rem;
+  }
+
+  .sp-menu-icon-morph-root[data-size="md"] .sp-menu-icon-bars {
+    --sp-menu-icon-gap: 0.28125rem;
+    --sp-menu-icon-bar-height: 0.09375rem;
+    --sp-menu-icon-width: 1.40625rem;
+  }
+
+  .sp-menu-icon-morph-root[data-size="lg"] .sp-menu-icon-bars {
+    --sp-menu-icon-gap: 0.3125rem;
+    --sp-menu-icon-bar-height: 0.125rem;
+    --sp-menu-icon-width: 1.5625rem;
+  }
+
+  .sp-menu-icon-morph-root[data-size="xl"] .sp-menu-icon-bars {
+    --sp-menu-icon-gap: 0.34375rem;
+    --sp-menu-icon-bar-height: 0.125rem;
+    --sp-menu-icon-width: 1.71875rem;
+  }
+
+  @media (min-width: 640px) {
+    .sp-menu-icon-morph-root .sp-menu-icon-bars {
+      --sp-menu-icon-gap: 0.25rem;
+      --sp-menu-icon-bar-height: 0.09375rem;
+      --sp-menu-icon-width: 1.25rem;
+    }
+
+    .sp-menu-icon-morph-root[data-size="sm"] .sp-menu-icon-bars {
+      --sp-menu-icon-gap: 0.21875rem;
+      --sp-menu-icon-bar-height: 0.09375rem;
+      --sp-menu-icon-width: 1.125rem;
+    }
+
+    .sp-menu-icon-morph-root[data-size="md"] .sp-menu-icon-bars {
+      --sp-menu-icon-gap: 0.25rem;
+      --sp-menu-icon-bar-height: 0.09375rem;
+      --sp-menu-icon-width: 1.25rem;
+    }
+
+    .sp-menu-icon-morph-root[data-size="lg"] .sp-menu-icon-bars {
+      --sp-menu-icon-gap: 0.3125rem;
+      --sp-menu-icon-bar-height: 0.125rem;
+      --sp-menu-icon-width: 1.5rem;
+    }
+
+    .sp-menu-icon-morph-root[data-size="xl"] .sp-menu-icon-bars {
+      --sp-menu-icon-gap: 0.3125rem;
+      --sp-menu-icon-bar-height: 0.125rem;
+      --sp-menu-icon-width: 1.5625rem;
+    }
+  }
+
+  .sp-menu-icon-morph-root .sp-menu-icon-bars {
+    --sp-menu-icon-pitch: calc(
+      var(--sp-menu-icon-gap) + var(--sp-menu-icon-bar-height)
+    );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--sp-menu-icon-pitch) - var(--sp-menu-icon-bar-height));
+  }
+
+  /* The bars start a whole pixel apart, so the browser snaps all three to the
+   * same rows and paints them equally thick at every line weight; at a
+   * fractional distance the middle bar came out thicker or thinner than the
+   * others. */
+  @supports (top: round(1.5px, 1px)) {
+    .sp-menu-icon-morph-root .sp-menu-icon-bars {
+      --sp-menu-icon-pitch: round(
+        calc(var(--sp-menu-icon-gap) + var(--sp-menu-icon-bar-height)),
+        1px
+      );
+    }
+  }
+
+  .sp-menu-icon-morph-root .sp-menu-icon-bar {
+    position: relative;
+    display: block;
+    height: var(--sp-menu-icon-bar-height);
+    width: var(--sp-menu-icon-width);
+    border-radius: var(--radius-4xl);
+    background-color: currentColor;
+  }
+
+  /* The bars move on the navigation easing, the curve of the navigation
+   * motion (M1). */
+  .sp-menu-icon-morph-root .sp-menu-icon-bar-one {
+    top: var(--sp-menu-icon-pos-y-bar-one);
+    transform: rotate(var(--sp-menu-icon-rotate-bar-one));
+    transition:
+      top var(--motion-duration-base) var(--motion-ease-navigation)
+        var(--motion-duration-micro),
+      transform var(--motion-duration-micro) var(--motion-ease-navigation);
+  }
+
+  .sp-menu-icon-morph-root .sp-menu-icon-bar-two {
+    transform: scaleX(var(--sp-menu-icon-scale-bar));
+    transition: transform var(--motion-duration-overlay)
+      var(--motion-ease-navigation) var(--motion-duration-micro);
+  }
+
+  .sp-menu-icon-morph-root .sp-menu-icon-bar-three {
+    bottom: var(--sp-menu-icon-pos-y-bar-three);
+    transform: rotate(var(--sp-menu-icon-rotate-bar-three));
+    transition:
+      bottom var(--motion-duration-base) var(--motion-ease-navigation)
+        var(--motion-duration-micro),
+      transform var(--motion-duration-micro) var(--motion-ease-navigation);
+  }
+
+  .sp-menu-icon-morph-root
+    .sp-menu-icon-morph[data-state="open"]
+    .sp-menu-icon-bars {
+    --sp-menu-icon-pos-y-bar-one: var(--sp-menu-icon-pitch);
+    --sp-menu-icon-pos-y-bar-three: var(--sp-menu-icon-pitch);
+    --sp-menu-icon-scale-bar: 0;
+    --sp-menu-icon-rotate-bar-one: 45deg;
+    --sp-menu-icon-rotate-bar-three: -45deg;
+  }
+
+  .sp-menu-icon-morph-root
+    .sp-menu-icon-morph[data-state="open"]
+    .sp-menu-icon-bar-one {
+    transition:
+      top var(--motion-duration-base) var(--motion-ease-navigation),
+      transform var(--motion-duration-base) var(--motion-ease-navigation)
+        var(--motion-duration-micro);
+  }
+
+  .sp-menu-icon-morph-root
+    .sp-menu-icon-morph[data-state="open"]
+    .sp-menu-icon-bar-three {
+    transition:
+      bottom var(--motion-duration-base) var(--motion-ease-navigation),
+      transform var(--motion-duration-base) var(--motion-ease-navigation)
+        var(--motion-duration-micro);
+  }
+
+  /* The open-state transitions are more specific, so each switch uses !important. */
+  html[data-motion-reduce="true"] .sp-menu-icon-morph-root .sp-menu-icon-bar,
+  :where([data-sp-motion="reduced"])
+    .sp-menu-icon-morph-root
+    .sp-menu-icon-bar {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-menu-icon-morph-root .sp-menu-icon-bar {
+      transition-duration: 0ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+}

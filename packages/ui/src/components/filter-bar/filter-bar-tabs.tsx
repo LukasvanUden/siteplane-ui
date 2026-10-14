@@ -211,6 +211,7 @@ export function FilterBarTabs({
           <div
             aria-hidden={!searching || undefined}
             className={cn(
+              "sp-filter-bar-tabs-field",
               swapFadeClassName,
               "absolute inset-0 flex items-center gap-1 pe-1",
             )}

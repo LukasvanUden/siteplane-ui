@@ -10,6 +10,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import "./badge.css";
 
 export const badgeVariants = cva(
@@ -112,7 +113,9 @@ export function Badge({
   // design-rework.css owns that; icons beside the label keep their size.
   const label = React.Children.map(children, (child) =>
     typeof child === "string" || typeof child === "number" ? (
-      <span data-slot="badge-label">{child}</span>
+      <span className="sp-badge-label" data-slot="badge-label">
+        {child}
+      </span>
     ) : (
       child
     ),
@@ -124,12 +127,12 @@ export function Badge({
       <>
         <span
           aria-hidden="true"
-          className="siteplane-badge-light-halo"
+          className="sp-badge-light-halo"
           data-slot="badge-light-halo"
         />
         <span
           aria-hidden="true"
-          className="siteplane-badge-light-ring"
+          className="sp-badge-light-ring"
           data-slot="badge-light-ring"
         />
         {label}
@@ -138,6 +141,8 @@ export function Badge({
       label
     ),
     className: cn(
+      slotClass("badge", props, render),
+      baseClass("badge", props, render),
       badgeVariants({ size: resolvedSize, variant: resolvedVariant }),
       className,
     ),

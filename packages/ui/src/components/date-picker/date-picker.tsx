@@ -171,7 +171,7 @@ function DatePickerRoot({
       {...(field.labelledBy === undefined
         ? {}
         : { "aria-labelledby": field.labelledBy })}
-      className="contents"
+      className="sp-date-picker sp-base-date-picker contents"
       data-foundation="date-picker"
       data-slot="date-picker"
       {...(controlled
@@ -218,7 +218,10 @@ function DatePickerRoot({
               >
                 <CalendarIcon aria-hidden="true" />
                 <span
-                  className={cn(!nativeValue && "text-muted-foreground")}
+                  className={cn(
+                    "sp-date-picker-value",
+                    !nativeValue && "text-muted-foreground",
+                  )}
                   data-slot="date-picker-value"
                 >
                   {label}
@@ -228,7 +231,7 @@ function DatePickerRoot({
             <DatePickerPopoverPrimitive
               className={cn(
                 surfaceClassNames.floatingOverlay,
-                "siteplane-date-picker-popover",
+                "sp-date-picker-popover",
               )}
               data-slot="date-picker-popover"
               offset={4}
@@ -236,13 +239,12 @@ function DatePickerRoot({
             >
               <SiteplaneUIPortalScope>
                 <DatePickerDialogPrimitive
-                  className="outline-none"
+                  className="sp-date-picker-dialog outline-none"
                   data-slot="date-picker-dialog"
                 >
                   <Calendar
                     {...calendarProps}
                     aria-label={ariaLabel}
-                    className="siteplane-date-picker-calendar"
                     data-slot="date-picker-calendar"
                   />
                 </DatePickerDialogPrimitive>

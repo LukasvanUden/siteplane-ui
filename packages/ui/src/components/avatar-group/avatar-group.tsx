@@ -6,6 +6,8 @@ import type * as React from "react";
 
 import type { BadgeProps } from "../badge";
 import { KitBadge } from "../badge/badge-internal";
+import { slotClass } from "../../system/utils/slot-class";
+import { cn } from "../../system/utils/cn";
 
 export type AvatarGroupSize = "sm" | "md" | "lg" | "xl";
 
@@ -34,7 +36,7 @@ export function AvatarGroup({
   const defaultProps = {
     "data-size": size,
     "data-slot": "avatar-group",
-    className,
+    className: cn(slotClass("avatar-group", props, render), className),
   };
 
   return useRender({

@@ -13,6 +13,7 @@ import {
   useSiteplaneUI,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   type Button,
   type ButtonBaseProps,
@@ -50,7 +51,11 @@ export function Pagination({
     <PaginationContext.Provider value={{ variant }}>
       <nav
         aria-label="pagination"
-        className={cn("mx-auto flex w-full justify-center", className)}
+        className={cn(
+          slotClass("pagination", props),
+          "mx-auto flex w-full justify-center",
+          className,
+        )}
         data-animate={animate ? undefined : "false"}
         data-slot="pagination"
         data-variant={variant}
@@ -69,6 +74,10 @@ export function PaginationContent({
 }: React.ComponentProps<"ul">): React.ReactElement {
   const listRef = React.useRef<HTMLUListElement>(null);
   React.useImperativeHandle(ref, () => listRef.current as HTMLUListElement);
+  // The active fill sits under the current page's link. As Base UI and Radix
+  // place an indicator, it is measured in one effect with observers created
+  // once: when the list mounts, when it resizes, and when the current page or
+  // the links change. Each pass reads both boxes before it writes.
   React.useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
@@ -103,11 +112,25 @@ export function PaginationContent({
     updateIndicator();
     const resizeObserver = new ResizeObserver(updateIndicator);
     resizeObserver.observe(list);
-    return () => resizeObserver.disconnect();
-  });
+    // A page change moves `data-active` to another link; new pages replace the
+    // links or their text.
+    const changeObserver = new MutationObserver(updateIndicator);
+    changeObserver.observe(list, {
+      attributeFilter: ["data-active"],
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+    return () => {
+      resizeObserver.disconnect();
+      changeObserver.disconnect();
+    };
+  }, []);
   return (
     <ul
       className={cn(
+        slotClass("pagination-content", props),
         "relative z-0 flex flex-row items-center gap-1 before:pointer-events-none before:absolute before:top-0 before:left-0 before:-z-1 before:h-(--pagination-active-height) before:w-(--pagination-active-width) before:translate-x-(--pagination-active-left) before:translate-y-(--pagination-active-top) before:opacity-0 data-[active-indicator]:before:opacity-100",
         className,
       )}
@@ -121,7 +144,13 @@ export function PaginationContent({
 export function PaginationItem(
   props: React.ComponentProps<"li">,
 ): React.ReactElement {
-  return <li data-slot="pagination-item" {...props} />;
+  return (
+    <li
+      data-slot="pagination-item"
+      {...props}
+      className={cn(slotClass("pagination-item", props), props.className)}
+    />
+  );
 }
 
 type PaginationActiveProps = {
@@ -228,7 +257,11 @@ export function PaginationEllipsis({
   return (
     <span
       aria-hidden
-      className={cn("flex min-w-7 justify-center", className)}
+      className={cn(
+        slotClass("pagination-ellipsis", props),
+        "flex min-w-7 justify-center",
+        className,
+      )}
       data-slot="pagination-ellipsis"
       {...props}
     >

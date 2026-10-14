@@ -21,6 +21,7 @@ import {
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   menuGroupLabelClassName,
   menuItemClassName,
@@ -54,7 +55,7 @@ export function MenuTrigger({
 }: WithStringClassName<MenuPrimitive.Trigger.Props>) {
   return (
     <MenuPrimitive.Trigger
-      className={className}
+      className={cn(slotClass("menu-trigger", props), className)}
       data-slot="menu-trigger"
       {...props}
     >
@@ -92,13 +93,14 @@ export function MenuPopup({
           align={align}
           alignOffset={alignOffset}
           anchor={anchor}
-          className="z-50"
+          className="sp-menu-positioner z-50"
           data-slot="menu-positioner"
           side={side}
           sideOffset={sideOffset}
         >
           <MenuPrimitive.Popup
             className={cn(
+              slotClass("menu-popup", props),
               menuPopupVariantClassNames[variant],
               menuPopupWidthClassNames[width],
               className,
@@ -120,7 +122,13 @@ export function MenuPopup({
 export function MenuGroup(
   props: WithStringClassName<MenuPrimitive.Group.Props>,
 ) {
-  return <MenuPrimitive.Group data-slot="menu-group" {...props} />;
+  return (
+    <MenuPrimitive.Group
+      data-slot="menu-group"
+      {...props}
+      className={cn(slotClass("menu-group", props), props.className)}
+    />
+  );
 }
 export function MenuItem({
   className,
@@ -134,7 +142,11 @@ export function MenuItem({
 }) {
   return (
     <MenuPrimitive.Item
-      className={cn(menuItemClassName, className)}
+      className={cn(
+        slotClass("menu-item", props),
+        menuItemClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="menu-item"
       data-variant={variant}
@@ -157,7 +169,11 @@ export function MenuLinkItem({
 }) {
   return (
     <MenuPrimitive.LinkItem
-      className={cn(menuItemClassName, className)}
+      className={cn(
+        slotClass("menu-link-item", props),
+        menuItemClassName,
+        className,
+      )}
       closeOnClick={closeOnClick}
       data-inset={inset || undefined}
       data-slot="menu-link-item"
@@ -185,6 +201,7 @@ export function MenuCheckboxItem({
     <MenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
+        slotClass("menu-checkbox-item", props),
         choiceMenuItemClassName,
         variant === "switch"
           ? choiceMenuItemSwitchGridClassName
@@ -203,13 +220,18 @@ export function MenuCheckboxItem({
           </span>
           <MenuPrimitive.CheckboxItemIndicator
             className={cn(
+              "sp-switch-track sp-base-switch",
               switchVariants({ size: resolvedSize }),
               switchMenuTrackClassName,
             )}
             data-foundation="switch"
+            data-slot="switch-track"
             keepMounted
           >
-            <span className={switchThumbClassName} data-slot="switch-thumb" />
+            <span
+              className={cn("sp-switch-thumb", switchThumbClassName)}
+              data-slot="switch-thumb"
+            />
           </MenuPrimitive.CheckboxItemIndicator>
         </>
       ) : (
@@ -229,7 +251,13 @@ export function MenuCheckboxItem({
 export function MenuRadioGroup(
   props: WithStringClassName<MenuPrimitive.RadioGroup.Props>,
 ) {
-  return <MenuPrimitive.RadioGroup data-slot="menu-radio-group" {...props} />;
+  return (
+    <MenuPrimitive.RadioGroup
+      data-slot="menu-radio-group"
+      {...props}
+      className={cn(slotClass("menu-radio-group", props), props.className)}
+    />
+  );
 }
 export function MenuRadioItem({
   className,
@@ -248,6 +276,7 @@ export function MenuRadioItem({
   return (
     <MenuPrimitive.RadioItem
       className={cn(
+        slotClass("menu-radio-item", props),
         choiceMenuItemClassName,
         end ? choiceMenuItemEndGridClassName : choiceMenuItemCheckGridClassName,
         className,
@@ -283,7 +312,11 @@ export function MenuGroupLabel({
 }: WithStringClassName<MenuPrimitive.GroupLabel.Props> & { inset?: boolean }) {
   return (
     <MenuPrimitive.GroupLabel
-      className={cn(menuGroupLabelClassName, className)}
+      className={cn(
+        slotClass("menu-label", props),
+        menuGroupLabelClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="menu-label"
       {...props}
@@ -296,7 +329,11 @@ export function MenuSeparator({
 }: WithStringClassName<MenuPrimitive.Separator.Props>) {
   return (
     <MenuPrimitive.Separator
-      className={cn(menuSeparatorClassName, className)}
+      className={cn(
+        slotClass("menu-separator", props),
+        menuSeparatorClassName,
+        className,
+      )}
       data-slot="menu-separator"
       {...props}
     />
@@ -308,7 +345,11 @@ export function MenuShortcut({
 }: React.ComponentProps<"kbd">) {
   return (
     <kbd
-      className={cn(menuShortcutClassName, className)}
+      className={cn(
+        slotClass("menu-shortcut", props),
+        menuShortcutClassName,
+        className,
+      )}
       data-slot="menu-shortcut"
       {...props}
     />
@@ -327,7 +368,11 @@ export function MenuSubTrigger({
 }) {
   return (
     <MenuPrimitive.SubmenuTrigger
-      className={cn(menuSubTriggerClassName, className)}
+      className={cn(
+        slotClass("menu-sub-trigger", props),
+        menuSubTriggerClassName,
+        className,
+      )}
       data-inset={inset || undefined}
       data-slot="menu-sub-trigger"
       {...props}
@@ -364,6 +409,10 @@ export function MenuSubPopup({
   );
 }
 
+// The DropdownMenu names are the shadcn names of the Menu parts. They differ
+// where shadcn names a part differently: DropdownMenuContent is MenuPopup,
+// DropdownMenuLabel is MenuGroupLabel and DropdownMenuSubContent is
+// MenuSubPopup.
 export {
   MenuPrimitive,
   MenuCreateHandle as DropdownMenuCreateHandle,

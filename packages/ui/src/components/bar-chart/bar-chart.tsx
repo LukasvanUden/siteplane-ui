@@ -18,13 +18,18 @@ import {
 } from "../chart/chart-cartesian";
 import {
   CHART_DEFAULT_LOCALE,
+  chartLabels,
   chartNumberFormatter,
   chartTickLabels,
   chartXFormatter,
 } from "../chart/chart-format";
 import { useChartInteraction } from "../chart/chart-interaction";
 import { ChartLegend, useChartSeriesFocus } from "../chart/chart-legend";
-import { buildCartesianModel, cartesianSummary } from "../chart/chart-model";
+import {
+  buildCartesianModel,
+  cartesianSummary,
+  type CartesianModel,
+} from "../chart/chart-model";
 import { seriesColors } from "../chart/chart-palette";
 import {
   bandScale,
@@ -39,11 +44,16 @@ import {
   useChartDimClassName,
 } from "../chart/chart-dimming";
 import {
+  ChartPlotPlaceholder,
   ChartTooltip,
   ChartTooltipContent,
   chartTooltipText,
 } from "../chart/chart-tooltip";
-import type { CartesianChartProps } from "../chart/chart-types";
+import type {
+  CartesianChartLabels,
+  CartesianChartProps,
+  ChartXValue,
+} from "../chart/chart-types";
 import { useChartWidth } from "../chart/use-chart-width";
 import { useTweenedRows, useTweenedValues } from "../motion";
 import {
@@ -94,10 +104,11 @@ type BarRow = {
  * under the pointer and arrow-key navigation. The chart core draws its axes,
  * grid, tooltip and legend; new data glides in: a new bar grows from the 0
  * line, a bar that is gone shrinks away, and the value axis moves with the
- * bars.
+ * bars. The bars are drawn once the chart has measured its width: until then,
+ * on the server too, it renders the box of the plot at its full height, the
+ * legend and what screen readers read.
  */
 export function BarChart({
-  orientation = "vertical",
   stacked = false,
   data,
   x,
@@ -110,21 +121,19 @@ export function BarChart({
   locale = CHART_DEFAULT_LOCALE,
   palette = "brand",
   legend = series.length > 1,
-  grid = true,
-  xAxis = true,
-  yAxis = true,
   emptyLabel = "No data",
+  labels,
   className,
+  ...plot
 }: BarChartProps): React.ReactElement {
   const root = React.useRef<HTMLElement>(null);
-  const svg = React.useRef<SVGSVGElement>(null);
   const width = useChartWidth(root);
-  const horizontal = orientation === "horizontal";
   const colors = seriesColors(series, palette);
   const showLegend = legend && series.length > 0;
   // The series whose entry the mouse is over in the legend: the chart owns it
   // and hands it to the legend and to its own bars.
   const focus = useChartSeriesFocus(series.map((item) => item.key));
+  const words = chartLabels(labels);
 
   // The rows of the chart and the span of its numbers, read as the Line and
   // the Area Chart read theirs: a row for each category or date (dates in
@@ -133,9 +142,143 @@ export function BarChart({
     () => buildCartesianModel({ data, series, stacked, x }),
     [data, series, stacked, x],
   );
+  const formatHeading = formatX ?? chartXFormatter(locale, "long");
+  const formatNumber = formatValue ?? chartNumberFormatter(locale);
+  const description = cartesianSummary({
+    emptyLabel,
+    formatValue: formatNumber,
+    formatX: formatHeading,
+    labels: words,
+    model,
+    series,
+  });
+
+  return (
+    // The figure holds the plot and the legend. The focus stop inside is the
+    // chart for assistive technology, named by the label alone.
+    <figure
+      className={cn("sp-bar-chart", "flex w-full flex-col", className)}
+      data-slot="bar-chart"
+      ref={root}
+    >
+      {width === null ? (
+        <ChartPlotPlaceholder
+          className={plotClassName}
+          description={description}
+          describedBy={describedBy}
+          height={
+            cartesianLayout({
+              height,
+              legend: showLegend,
+              width: 0,
+              xAxis: true,
+              yAxis: true,
+              yLabels: [],
+            }).height
+          }
+          label={label}
+          roleDescription={words.roleDescription}
+        />
+      ) : (
+        <BarPlot
+          {...plot}
+          colors={colors}
+          describedBy={describedBy}
+          description={description}
+          emptyLabel={emptyLabel}
+          focusedKey={focus.focusedKey}
+          formatHeading={formatHeading}
+          formatNumber={formatNumber}
+          formatValue={formatValue}
+          formatX={formatX}
+          height={height}
+          label={label}
+          locale={locale}
+          model={model}
+          root={root}
+          series={series}
+          showLegend={showLegend}
+          stacked={stacked}
+          width={width}
+          words={words}
+          x={x}
+        />
+      )}
+      {showLegend && (
+        <ChartLegend
+          className="pt-3"
+          focus={focus}
+          items={series.map((item, order) => ({
+            color: colors[order]!,
+            key: item.key,
+            label: item.label,
+          }))}
+          layout="row"
+        />
+      )}
+    </figure>
+  );
+}
+
+// The focus stop that holds the plot, and the box of the plot before it is drawn.
+const plotClassName = "relative block w-full rounded-lg";
+
+/**
+ * The plot of a Bar Chart at its measured width: the bars, the axes, the grid,
+ * the crosshair and the tooltip. It mounts once the chart knows its width, so
+ * every part that glides starts at the place it has at that width.
+ */
+function BarPlot({
+  colors,
+  describedBy,
+  description,
+  emptyLabel,
+  focusedKey,
+  formatHeading,
+  formatNumber,
+  formatValue,
+  formatX,
+  grid = true,
+  height,
+  label,
+  locale,
+  model,
+  orientation = "vertical",
+  root,
+  series,
+  showLegend,
+  stacked,
+  width,
+  words,
+  x,
+  xAxis = true,
+  yAxis = true,
+}: Pick<BarChartProps, "grid" | "orientation" | "xAxis" | "yAxis"> & {
+  colors: readonly string[];
+  describedBy: string | undefined;
+  description: string;
+  emptyLabel: string;
+  focusedKey: string | null;
+  formatHeading: (value: ChartXValue) => string;
+  formatNumber: (value: number) => string;
+  formatValue: ((value: number) => string) | undefined;
+  formatX: ((value: ChartXValue) => string) | undefined;
+  height: number;
+  label: string;
+  locale: string;
+  model: CartesianModel;
+  root: React.RefObject<HTMLElement | null>;
+  series: BarChartProps["series"];
+  showLegend: boolean;
+  stacked: boolean;
+  width: number;
+  words: CartesianChartLabels;
+  x: string;
+}): React.ReactElement {
+  const svg = React.useRef<SVGSVGElement>(null);
+  const horizontal = orientation === "horizontal";
   const { rows } = model;
   const formatText = formatX ?? chartXFormatter(locale, "short");
-  const formatHeading = formatX ?? chartXFormatter(locale, "long");
 
   // A horizontal chart turns the axes: its values run along the bottom and its
   // categories down the left side, and the layout reserves room for the labels
@@ -375,7 +518,6 @@ export function BarChart({
           y: box.y + layout.margin.top * scale,
         };
   };
-  const formatNumber = formatValue ?? chartNumberFormatter(locale);
   const heading = active ? formatHeading(active.x) : undefined;
   const tooltipRows = active
     ? series.flatMap((item, order) => {
@@ -400,151 +542,120 @@ export function BarChart({
   );
 
   return (
-    // The figure holds the plot and the legend. The focus stop inside is the
-    // chart for assistive technology, named by the label alone.
-    <figure
-      className={cn("flex w-full flex-col", className)}
-      data-slot="bar-chart"
-      ref={root}
+    <ChartTooltip
+      align={horizontal ? "center" : "start"}
+      anchorFor={anchorFor}
+      announcement={active ? chartTooltipText(heading, tooltipRows) : undefined}
+      className={plotClassName}
+      content={content}
+      describedBy={describedBy}
+      description={description}
+      interaction={interaction}
+      keyboardHint={words.keyboardHint}
+      label={label}
+      roleDescription={words.roleDescription}
     >
-      <ChartTooltip
-        align={horizontal ? "center" : "start"}
-        anchorFor={anchorFor}
-        announcement={
-          active ? chartTooltipText(heading, tooltipRows) : undefined
-        }
-        className="relative block w-full rounded-lg"
-        content={content}
-        describedBy={describedBy}
-        description={cartesianSummary({
-          emptyLabel,
-          formatValue: formatNumber,
-          formatX: formatHeading,
-          model,
-          series,
-        })}
-        interaction={interaction}
-        label={label}
+      {/* The plot is as tall as the chart and as wide as its box, which the
+          chart kept at that size before it was drawn. It is a picture that
+          the focus stop describes, so it is hidden from assistive
+          technology. */}
+      <svg
+        aria-hidden="true"
+        className="block w-full overflow-visible"
+        height={layout.height}
+        ref={svg}
+        viewBox={`0 0 ${layout.width} ${layout.height}`}
+        width={layout.width}
       >
-        {/* The plot is as tall as the chart from the first paint, on the
-            server too, and as wide as its box: until the chart has measured
-            its width, the drawing scales into that box and the page around it
-            does not move. It is a picture that the focus stop describes, so
-            it is hidden from assistive technology. */}
-        <svg
-          aria-hidden="true"
-          className="block w-full overflow-visible"
-          height={layout.height}
-          ref={svg}
-          viewBox={`0 0 ${layout.width} ${layout.height}`}
-          width={layout.width}
-        >
-          {/* No SVG titles: the browser would show its own tooltip next to the
+        {/* No SVG titles: the browser would show its own tooltip next to the
               chart's. The label names the chart; the tooltip carries the values. */}
-          <g
-            transform={`translate(${layout.margin.left} ${layout.margin.top})`}
-          >
-            {grid && !model.empty && (
-              <ChartGrid
-                direction={horizontal ? "vertical" : "horizontal"}
-                layout={layout}
-                positions={valueMarks.map((tick) => tick.position)}
-                presences={valueMarks.map((tick) => tick.presence)}
-              />
-            )}
-            {yAxis && !model.empty && (
-              <ChartValueAxis
-                layout={layout}
-                side={horizontal ? "bottom" : "left"}
-                ticks={valueMarks}
-              />
-            )}
-            {xAxis && !model.empty && (
-              <ChartCategoryAxis
-                fading={covered.fading}
-                labels={covered.labels}
-                layout={layout}
-                side={horizontal ? "left" : "bottom"}
-                thin={false}
-              />
-            )}
-            {/* The hairline is drawn before the bars, so a bar covers it: only
+        <g transform={`translate(${layout.margin.left} ${layout.margin.top})`}>
+          {grid && !model.empty && (
+            <ChartGrid
+              direction={horizontal ? "vertical" : "horizontal"}
+              layout={layout}
+              positions={valueMarks.map((tick) => tick.position)}
+              presences={valueMarks.map((tick) => tick.presence)}
+            />
+          )}
+          {yAxis && !model.empty && (
+            <ChartValueAxis
+              layout={layout}
+              side={horizontal ? "bottom" : "left"}
+              ticks={valueMarks}
+            />
+          )}
+          {xAxis && !model.empty && (
+            <ChartCategoryAxis
+              fading={covered.fading}
+              labels={covered.labels}
+              layout={layout}
+              side={horizontal ? "left" : "bottom"}
+              thin={false}
+            />
+          )}
+          {/* The hairline is drawn before the bars, so a bar covers it: only
                 what lies between the end of the bar and the edge of the plot
                 shows. The dots stay above the bars. */}
-            {!model.empty && (
-              <ChartCrosshair
-                container={root}
-                direction={horizontal ? "horizontal" : "vertical"}
-                layout={layout}
-                position={active ? centres[activeIndex]! : null}
-              />
-            )}
-            {!model.empty &&
-              bars.map((bar, index) => {
-                const row = entries[index]!.row;
-                return (
-                  <path
-                    d={barPath(bar, orientation)}
-                    data-slot="chart-bar"
-                    fill={
-                      bar.value < 0 && row.negativeColor
-                        ? row.negativeColor
-                        : row.color
-                    }
-                    className={dimClassName}
-                    key={bar.key}
-                    opacity={chartDimOpacity(
-                      "bar",
-                      (active !== undefined && bar.x !== active.id) ||
-                        seriesSteppedBack(focus.focusedKey, bar.series),
-                    )}
-                  />
-                );
-              })}
-            {!model.empty &&
-              !horizontal &&
-              bars.map((bar, index) => {
-                const row = entries[index]!.row;
-                return bar.x === shownKey ? (
-                  <ChartActiveDot
-                    color={
-                      bar.value < 0 && row.negativeColor
-                        ? row.negativeColor
-                        : row.color
-                    }
-                    container={root}
-                    cx={hundredths(bar.x0 + bar.width / 2)}
-                    cy={bar.value < 0 ? bar.y0 + bar.height : bar.y0}
-                    // A dot is a series': it glides on to the next category.
-                    key={bar.series}
-                    visible={active !== undefined && !gliding}
-                  />
-                ) : null;
-              })}
-          </g>
-          {model.empty && (
-            <ChartEmptyState label={emptyLabel} layout={layout} />
+          {!model.empty && (
+            <ChartCrosshair
+              container={root}
+              direction={horizontal ? "horizontal" : "vertical"}
+              layout={layout}
+              position={active ? centres[activeIndex]! : null}
+            />
           )}
-        </svg>
-        <ChartAxisPill
-          container={root}
-          layout={layout}
-          side={horizontal ? "left" : "bottom"}
-          spot={spot}
-        />
-      </ChartTooltip>
-      {showLegend && (
-        <ChartLegend
-          className="pt-3"
-          focus={focus}
-          items={series.map((item, order) => ({
-            color: colors[order]!,
-            key: item.key,
-            label: item.label,
-          }))}
-          layout="row"
-        />
-      )}
-    </figure>
+          {!model.empty &&
+            bars.map((bar, index) => {
+              const row = entries[index]!.row;
+              return (
+                <path
+                  d={barPath(bar, orientation)}
+                  data-slot="chart-bar"
+                  fill={
+                    bar.value < 0 && row.negativeColor
+                      ? row.negativeColor
+                      : row.color
+                  }
+                  className={cn("sp-chart-bar", dimClassName)}
+                  key={bar.key}
+                  opacity={chartDimOpacity(
+                    "bar",
+                    (active !== undefined && bar.x !== active.id) ||
+                      seriesSteppedBack(focusedKey, bar.series),
+                  )}
+                />
+              );
+            })}
+          {!model.empty &&
+            !horizontal &&
+            bars.map((bar, index) => {
+              const row = entries[index]!.row;
+              return bar.x === shownKey ? (
+                <ChartActiveDot
+                  color={
+                    bar.value < 0 && row.negativeColor
+                      ? row.negativeColor
+                      : row.color
+                  }
+                  container={root}
+                  cx={hundredths(bar.x0 + bar.width / 2)}
+                  cy={bar.value < 0 ? bar.y0 + bar.height : bar.y0}
+                  // A dot is a series': it glides on to the next category.
+                  key={bar.series}
+                  visible={active !== undefined && !gliding}
+                />
+              ) : null;
+            })}
+        </g>
+        {model.empty && <ChartEmptyState label={emptyLabel} layout={layout} />}
+      </svg>
+      <ChartAxisPill
+        container={root}
+        layout={layout}
+        side={horizontal ? "left" : "bottom"}
+        spot={spot}
+      />
+    </ChartTooltip>
   );
 }

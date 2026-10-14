@@ -6,6 +6,7 @@ import * as React from "react";
 
 import { useResolvedDensity } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button } from "../button";
 import { SelectionCheckIcon } from "../action-icons";
 import { MotionItem, MotionList, type MotionListProps } from "../motion";
@@ -172,6 +173,7 @@ export function ResourceListItem({
     // the content fills what the other parts leave. An interactive row is a
     // Button, whose spacing and text the kit's resource-list rule sets.
     className: cn(
+      slotClass("resource-list-item", props, render),
       "flex min-w-0 items-center",
       !interactive &&
         "gap-3 px-3 py-2.5 text-left text-sm in-data-[density=compact]:py-2 rounded-lg data-[active=true]:bg-state-selected data-[selected=true]:bg-state-selected data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-(--sp-rw-disabled-opacity-action)",
@@ -242,6 +244,7 @@ export function ResourceListIndicator({
     "data-shape": shape,
     "data-tone": tone,
     className: cn(
+      slotClass("resource-list-indicator", props, render),
       "inline-flex shrink-0 items-center justify-center",
       firstLineMarkClassName,
       icon
@@ -276,7 +279,11 @@ export function ResourceListContent({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
     "data-slot": "resource-list-content",
-    className: cn("grid min-w-0 flex-1 gap-0.5", className),
+    className: cn(
+      slotClass("resource-list-content", props, render),
+      "grid min-w-0 flex-1 gap-0.5",
+      className,
+    ),
   };
 
   return useRender({
@@ -312,7 +319,11 @@ export function ResourceListTitle({
 }: useRender.ComponentProps<"span">): React.ReactElement {
   const defaultProps = {
     "data-slot": "resource-list-title",
-    className: cn("truncate font-medium text-foreground", className),
+    className: cn(
+      slotClass("resource-list-title", props, render),
+      "truncate font-medium text-foreground",
+      className,
+    ),
     title: fullTextTitle(props.children),
   };
 
@@ -330,7 +341,11 @@ export function ResourceListDescription({
 }: useRender.ComponentProps<"span">): React.ReactElement {
   const defaultProps = {
     "data-slot": "resource-list-description",
-    className: cn("truncate text-muted-foreground text-xs", className),
+    className: cn(
+      slotClass("resource-list-description", props, render),
+      "truncate text-muted-foreground text-xs",
+      className,
+    ),
     title: fullTextTitle(props.children),
   };
 
@@ -353,6 +368,7 @@ export function ResourceListMeta({
   const defaultProps = {
     "data-slot": "resource-list-meta",
     className: cn(
+      slotClass("resource-list-meta", props, render),
       "inline-flex shrink-0 items-center whitespace-nowrap text-sm in-data-[density=compact]:text-xs",
       firstLineTextClassName,
       className,
@@ -367,6 +383,7 @@ export function ResourceListMeta({
           <span
             aria-hidden="true"
             data-selected={selected || undefined}
+            className="sp-resource-list-selection"
             data-slot="resource-list-selection"
           >
             <SelectionCheckIcon />

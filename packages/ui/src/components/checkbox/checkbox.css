@@ -1,15 +1,16 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer components {
-  .siteplane-checkbox-motion {
+  .sp-checkbox-motion {
     color: var(--color-neutral-800);
   }
 
-  :is(.dark, [data-theme="dark"]) .siteplane-checkbox-motion {
+  .dark .sp-checkbox-motion,
+  [data-theme="dark"] .sp-checkbox-motion {
     color: rgb(242 242 243);
   }
 
-  .siteplane-checkbox-motion [data-slot="checkbox-indicator"] {
+  .sp-checkbox-motion .sp-checkbox-indicator {
     background-color: transparent;
     opacity: 0;
     transform: scale(var(--motion-check-pop-scale));
@@ -19,26 +20,22 @@
     transition-timing-function: var(--motion-ease-standard);
   }
 
-  .siteplane-checkbox-motion [data-slot="checkbox-indicator"][data-checked],
-  .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"][data-indeterminate] {
+  .sp-checkbox-motion .sp-checkbox-indicator[data-checked],
+  .sp-checkbox-motion .sp-checkbox-indicator[data-indeterminate] {
     background-color: var(--sp-semantic-color-primary);
     opacity: 1;
     transform: scale(1);
   }
 
-  .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"][data-starting-style],
-  .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"][data-ending-style] {
+  .sp-checkbox-motion .sp-checkbox-indicator[data-starting-style],
+  .sp-checkbox-motion .sp-checkbox-indicator[data-ending-style] {
     background-color: transparent;
     opacity: 0;
     transform: scale(var(--motion-check-pop-scale));
   }
 
   /* A checked indicator lingers on its way out, as the Radio's does. */
-  .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"][data-ending-style] {
+  .sp-checkbox-motion .sp-checkbox-indicator[data-ending-style] {
     transition-duration: var(--motion-duration-linger);
   }
 
@@ -48,14 +45,14 @@
    * checkbox taller than the line starts at the line's top, so a one-line label
    * keeps its height. A component rule, so a margin utility on the checkbox
    * still replaces it. */
-  :where(label, [data-slot="label"], [data-slot="field-label"])
-    > [data-foundation="checkbox"][data-profile="control"]:first-child,
-  :where(label, [data-slot="label"], [data-slot="field-label"])
+  :where(label, .sp-label, .sp-field-label)
+    > .sp-base-checkbox[data-profile="control"]:first-child,
+  :where(label, .sp-label, .sp-field-label)
     > :where(span, div)
-    > [data-foundation="checkbox"][data-profile="control"]:first-child,
-  [data-foundation="checkbox"][data-profile="control"]:first-child:has(
-      ~ :is([data-slot="label"], [data-slot="field-label"]),
-      ~ * :is([data-slot="label"], [data-slot="field-label"])
+    > .sp-base-checkbox[data-profile="control"]:first-child,
+  .sp-base-checkbox[data-profile="control"]:first-child:has(
+      ~ :is(.sp-label, .sp-field-label),
+      ~ * :is(.sp-label, .sp-field-label)
     ) {
     align-self: flex-start;
     margin-block: max(0px, calc((1lh - var(--sp-rw-choice-size)) / 2));
@@ -64,9 +61,9 @@
   /* Beside its label, the checkbox does not inherit the label's line but its
    * container's. It takes the 21 px line of a label next to a choice control
    * (S13), so the 1lh above measures the label's first line. */
-  [data-foundation="checkbox"][data-profile="control"]:first-child:has(
-      ~ :is([data-slot="label"], [data-slot="field-label"]),
-      ~ * :is([data-slot="label"], [data-slot="field-label"])
+  .sp-base-checkbox[data-profile="control"]:first-child:has(
+      ~ :is(.sp-label, .sp-field-label),
+      ~ * :is(.sp-label, .sp-field-label)
     ) {
     line-height: var(--sp-rw-line-21);
   }
@@ -78,19 +75,15 @@
    * document mode, the provider preset and the system setting. The system rule
    * leads with :root so the state rules above, which are as specific as the
    * indicator selector plus one attribute, do not outrank it. */
-  html[data-motion-reduce="true"]
-    .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"],
-  [data-sp-motion="reduced"]
-    .siteplane-checkbox-motion
-    [data-slot="checkbox-indicator"] {
+  html[data-motion-reduce="true"] .sp-checkbox-motion .sp-checkbox-indicator,
+  [data-sp-motion="reduced"] .sp-checkbox-motion .sp-checkbox-indicator {
     animation: none;
     transform: none;
     transition-duration: 1ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root .siteplane-checkbox-motion [data-slot="checkbox-indicator"] {
+    :root .sp-checkbox-motion .sp-checkbox-indicator {
       animation: none;
       transform: none;
       transition-duration: 1ms;

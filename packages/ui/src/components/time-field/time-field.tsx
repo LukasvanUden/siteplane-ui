@@ -30,6 +30,7 @@ import {
   type FormControlVariant,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button } from "../button";
 import {
   type FieldControlBridge,
@@ -76,6 +77,11 @@ export interface TimeFieldProps {
   hourLabel?: string;
   hoursLabel?: string;
   iconMode?: "action-end" | "decorative-start" | "none";
+  /**
+   * The error a required field shows while its time is incomplete, such as
+   * after a segment is cleared. Default: "Enter a complete time."
+   */
+  incompleteLabel?: string;
   minuteLabel?: string;
   minutesLabel?: string;
   minuteStep?: number;
@@ -204,6 +210,7 @@ function TimeFieldRoot({
   hourLabel,
   hoursLabel = "Hours",
   iconMode = "action-end",
+  incompleteLabel = "Enter a complete time.",
   minuteLabel,
   minutesLabel = "Minutes",
   minuteStep = 5,
@@ -256,7 +263,7 @@ function TimeFieldRoot({
   const segmented = useSegmentedValue<Time>({
     controlled,
     defaultValue: toTime(normalizedDefaultValue),
-    incompleteMessage: "Enter a complete time.",
+    incompleteMessage: incompleteLabel,
     onValueChange: (nextValue) =>
       onValueChange?.(nextValue ? fromTime(nextValue) : undefined),
     required,
@@ -277,7 +284,7 @@ function TimeFieldRoot({
       {...(field.labelledBy === undefined
         ? {}
         : { "aria-labelledby": field.labelledBy })}
-      className="contents"
+      className="sp-time-field sp-base-time-field contents"
       data-foundation="time-field"
       data-slot="time-field"
       {...(controlled
@@ -433,8 +440,8 @@ function TimeFieldContent({
       // utility in className, such as w-full, replaces it. The default width
       // never shrinks below the segments in a flex row (shrink-0 while w-max).
       className={cn(
-        "siteplane-time-field-control w-max [&.w-max]:shrink-0",
-        align === "center" && "siteplane-time-field-control-center",
+        "sp-time-field-control w-max [&.w-max]:shrink-0",
+        align === "center" && "sp-time-field-control-center",
         className,
       )}
       data-icon-mode={iconMode}
@@ -451,13 +458,16 @@ function TimeFieldContent({
         <InputGroupAddon
           align="inline-start"
           aria-hidden="true"
-          className="siteplane-time-field-decorative-icon pointer-events-none"
+          className="sp-time-field-icon-addon pointer-events-none"
         >
-          <ClockIcon data-slot="time-field-decorative-icon" />
+          <ClockIcon
+            className="sp-time-field-decorative-icon"
+            data-slot="time-field-decorative-icon"
+          />
         </InputGroupAddon>
       ) : null}
       <DateInputPrimitive
-        className="siteplane-time-field-input"
+        className="sp-time-field-input"
         data-slot="time-field-input"
         ref={segmentsRef}
       >
@@ -503,13 +513,13 @@ function TimeFieldContent({
           {control}
           <PopoverPopup
             align="end"
-            className={cn("siteplane-time-field-popover", optionTextClassName)}
+            className={cn("sp-time-field-popover", optionTextClassName)}
             initialFocus={hoursListBoxRef}
             sideOffset={6}
             viewportPadding="compact"
           >
             <div
-              className="siteplane-time-field-selector"
+              className="sp-time-field-selector sp-time-selector"
               data-slot="time-field-selector"
             >
               <TimeFieldOptionColumn
@@ -591,7 +601,7 @@ function TimeFieldSegment({
 
   return (
     <DateSegmentPrimitive
-      className="siteplane-time-field-segment"
+      className="sp-time-field-segment sp-time-segment"
       data-literal-kind={
         segment.type === "literal" && isSeparatorLiteral(segment.text)
           ? "separator"
@@ -723,16 +733,19 @@ export function TimeFieldOptionColumn({
   };
 
   return (
-    <div className="siteplane-time-field-column" data-slot={slot}>
-      <span className="siteplane-time-field-column-label">{label}</span>
+    <div
+      className={cn(slotClass(slot), "sp-time-field-column")}
+      data-slot={slot}
+    >
+      <span className="sp-time-field-column-label">{label}</span>
       <ScrollArea
-        className="siteplane-time-field-scroll-area"
+        className="sp-time-field-scroll-area"
         scrollFade
         scrollbar="hidden"
       >
         <ListBox
           aria-label={label}
-          className="siteplane-time-field-listbox"
+          className="sp-time-field-listbox"
           onPointerDownCapture={captureScrollStart}
           onValueChange={onValueChange}
           ref={listBoxRef}
@@ -742,7 +755,7 @@ export function TimeFieldOptionColumn({
         >
           {options.map((option) => (
             <ListBoxItem
-              className="siteplane-time-field-option justify-center font-normal"
+              className="sp-time-field-option justify-center font-normal"
               data-slot="time-field-option"
               key={option}
               multiline={false}

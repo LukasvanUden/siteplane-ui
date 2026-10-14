@@ -7,6 +7,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button, type ButtonStandardProps } from "../button";
 import { Input, type InputProps } from "../input";
 import { Separator } from "../separator";
@@ -39,6 +40,7 @@ export function Toolbar({
         className={cn(
           // A bare icon takes the icon of the control scale, like the Buttons
           // and Toggles beside it: 16 px, 20 px at xl.
+          slotClass("toolbar", props),
           "relative flex flex-wrap items-center gap-2 data-[orientation=vertical]:w-fit data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch [&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-(--sp-rw-control-icon)",
           resolvedSize === "xl" &&
             "[&>svg:not([class*='size-'])]:size-(--sp-rw-control-icon-xl)",
@@ -62,7 +64,7 @@ export function ToolbarButton({
   const resolvedSize = useToolbarSize(size);
   return (
     <ToolbarPrimitive.Button
-      className={cn(className)}
+      className={cn(slotClass("toolbar-button", props, render), className)}
       data-slot="toolbar-button"
       render={
         render ??
@@ -91,7 +93,7 @@ export function ToolbarLink({
   const resolvedSize = useToolbarSize(size);
   return (
     <ToolbarPrimitive.Link
-      className={cn(className)}
+      className={cn(slotClass("toolbar-link", props), className)}
       data-slot="toolbar-link"
       render={
         typeof render === "function" ? (
@@ -131,7 +133,11 @@ export function ToolbarInput({
   const resolvedSize = useToolbarSize(undefined);
   return (
     <ToolbarPrimitive.Input
-      className={cn("min-w-0 flex-1", className)}
+      className={cn(
+        slotClass("toolbar-input", props),
+        "min-w-0 flex-1",
+        className,
+      )}
       data-slot="toolbar-input"
       render={
         typeof render === "function" ? (
@@ -169,6 +175,7 @@ export function ToolbarGroup({
     <ToolbarSizeContext.Provider value={resolvedSize}>
       <ToolbarPrimitive.Group
         className={cn(
+          slotClass("toolbar-group", props),
           "flex min-w-0 items-center gap-1 [&>svg]:pointer-events-none [&>svg]:shrink-0 [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-(--sp-rw-control-icon)",
           resolvedSize === "xl" &&
             "[&>svg:not([class*='size-'])]:size-(--sp-rw-control-icon-xl)",
@@ -187,7 +194,11 @@ export function ToolbarSeparator({
 }: WithStringClassName<ToolbarPrimitive.Separator.Props>): React.ReactElement {
   return (
     <ToolbarPrimitive.Separator
-      className={cn("data-[orientation=horizontal]:my-0.5", className)}
+      className={cn(
+        slotClass("toolbar-separator", props),
+        "data-[orientation=horizontal]:my-0.5",
+        className,
+      )}
       data-slot="toolbar-separator"
       render={<Separator />}
       {...props}

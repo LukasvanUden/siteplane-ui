@@ -14,6 +14,7 @@ import {
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Spinner } from "../spinner";
 import type {
   KitButtonProfile,
@@ -309,6 +310,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="drop-shadow"
+            className="sp-button-chassis-drop-shadow"
             data-slot="button-chassis-drop-shadow"
           />
         )}
@@ -316,6 +318,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="interaction"
+            className="sp-button-chassis-interaction"
             data-slot="button-chassis-interaction"
           />
         )}
@@ -323,6 +326,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="spotlights"
+            className="sp-button-chassis-spotlights"
             data-slot="button-chassis-spotlights"
           />
         )}
@@ -330,6 +334,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="dome-overlay"
+            className="sp-button-chassis-dome-overlay"
             data-slot="button-chassis-dome-overlay"
           />
         )}
@@ -337,6 +342,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="rim"
+            className="sp-button-chassis-rim"
             data-slot="button-chassis-rim"
           />
         )}
@@ -344,13 +350,14 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           <span
             aria-hidden="true"
             data-fx-layer="secondary-spotlights"
+            className="sp-button-chassis-secondary-spotlights"
             data-slot="button-chassis-secondary-spotlights"
           />
         )}
         {/* An empty, unstyled span (a label left empty) takes no slot, so it
             adds no content gap beside the icon. */}
         <span
-          className="[&>span:empty:not([class],[style],[data-slot])]:hidden"
+          className="sp-button-content [&>span:empty:not([class],[style],[data-slot])]:hidden"
           data-slot="button-content"
         >
           {children}
@@ -364,9 +371,10 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
       </>
     ),
     className: cn(
+      slotClass("button", props, guardedRender),
       buttonVariants({ size: resolvedSize, variant: resolvedVariant }),
       resolvedVariant === "glass" && surfaceClassNames.glass,
-      "siteplane-button-motion",
+      "sp-button-motion",
       // The height follows the lines; design-rework.css keeps one line on the
       // control scale ([data-multiline]).
       multiline && "h-auto",

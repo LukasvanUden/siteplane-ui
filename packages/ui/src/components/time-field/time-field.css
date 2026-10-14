@@ -5,7 +5,7 @@
    * tall as the Input, Select, Button and DateField of the same size. The width is
    * the segments' own, like the Date Time Picker and the Number Field; a width
    * utility in className (w-full in a form column) replaces it. */
-  .siteplane-time-field-control {
+  .sp-time-field-control {
     --time-field-control-height: var(--sp-rw-control-md);
     --time-field-segment-start: calc(
       var(--sp-rw-space-3) - var(--input-segment-padding-inline)
@@ -14,70 +14,70 @@
     height: var(--time-field-control-height);
   }
 
-  .siteplane-time-field-control[data-icon-mode="action-end"] {
+  .sp-time-field-control[data-icon-mode="action-end"] {
     padding-inline-end: var(--time-field-control-height);
   }
 
-  .siteplane-time-field-control[data-size="sm"] {
+  .sp-time-field-control[data-size="sm"] {
     --time-field-control-height: var(--sp-rw-control-sm);
     --time-field-segment-start: calc(
       var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-time-field-control[data-size="lg"] {
+  .sp-time-field-control[data-size="lg"] {
     --time-field-control-height: var(--sp-rw-control-lg);
   }
 
-  .siteplane-time-field-control[data-size="xl"] {
+  .sp-time-field-control[data-size="xl"] {
     --time-field-control-height: var(--sp-rw-control-xl);
     --time-field-segment-start: calc(
       var(--sp-rw-space-4) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-time-field-control-center {
+  .sp-time-field-control-center {
     justify-content: center;
   }
 
-  .siteplane-time-field-input {
+  .sp-time-field-input {
     display: inline-flex;
     align-items: center;
     height: 100%;
     outline: none;
   }
 
-  .siteplane-time-field-control:not(.siteplane-time-field-control-center)
-    .siteplane-time-field-input {
+  .sp-time-field-control:not(.sp-time-field-control-center)
+    .sp-time-field-input {
     margin-inline-start: var(--time-field-segment-start);
   }
 
   /* The selector button's room ends the field; without it the segments keep the
    * inset of the start, so a field as wide as its segments is balanced. */
-  .siteplane-time-field-control:not(.siteplane-time-field-control-center):not(
+  .sp-time-field-control:not(.sp-time-field-control-center):not(
       [data-icon-mode="action-end"]
     )
-    .siteplane-time-field-input {
+    .sp-time-field-input {
     margin-inline-end: var(--time-field-segment-start);
   }
 
   /* The leading icon is a regular InputGroup addon; the first segment's text
    * starts where an InputGroup input's text starts after the same icon. */
-  .siteplane-time-field-control:has(
-      > .siteplane-time-field-decorative-icon
-    ):not(.siteplane-time-field-control-center)
-    .siteplane-time-field-input {
+  .sp-time-field-control:has(> .sp-time-field-icon-addon):not(
+      .sp-time-field-control-center
+    )
+    .sp-time-field-input {
     margin-inline-start: calc(
-      var(--siteplane-composite-control-padding-inline-start) -
+      var(--sp-composite-control-padding-inline-start) -
         var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-time-field-segment {
+  .sp-time-segment {
     outline: none;
   }
 
-  .siteplane-time-field-segment:not([data-type="literal"]) {
+  .sp-time-segment:not([data-type="literal"]) {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -96,25 +96,24 @@
   /* A separator, the colon or the space before AM or PM, cancels the padding
    * of the segments beside it. Each literal is a flex item of its own, whose
    * lone space would collapse to nothing, so it keeps its white space. */
-  .siteplane-time-field-segment[data-literal-kind="separator"] {
+  .sp-time-segment[data-literal-kind="separator"] {
     margin-inline: calc(var(--spacing) * -1);
     white-space: pre;
   }
 
-  .siteplane-time-field-segment[data-focused]:not([data-type="literal"]) {
+  .sp-time-segment[data-focused]:not([data-type="literal"]) {
     background-color: var(--input-segment-background);
   }
 
-  .siteplane-time-field-segment[data-placeholder]:not([data-type="literal"]) {
+  .sp-time-segment[data-placeholder]:not([data-type="literal"]) {
     color: var(--color-muted-foreground);
   }
 
-  .siteplane-time-field-segment::selection {
+  .sp-time-segment::selection {
     background-color: transparent;
   }
 
-  .siteplane-time-field-control
-    > [data-slot="input-group-addon"][data-align="inline-end"] {
+  .sp-time-field-control > .sp-input-group-addon[data-align="inline-end"] {
     position: absolute;
     inset-block: 0;
     inset-inline-end: 0;
@@ -122,34 +121,34 @@
     padding-inline: 0 !important;
   }
 
-  .siteplane-time-field-popover {
+  .sp-time-field-popover {
     width: 10rem;
   }
 
-  .siteplane-time-field-selector {
+  .sp-time-selector {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing);
   }
 
-  .siteplane-time-field-column {
+  .sp-time-field-column {
     display: grid;
     min-width: 0;
     gap: calc(var(--spacing) * 2);
   }
 
-  .siteplane-time-field-column-label {
+  .sp-time-field-column-label {
     color: var(--color-muted-foreground);
     font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
     text-align: center;
   }
 
-  .siteplane-time-field-scroll-area {
+  .sp-time-field-scroll-area {
     height: 10rem;
   }
 
-  .siteplane-time-field-listbox {
+  .sp-time-field-listbox {
     display: flex;
     flex-direction: column;
     gap: calc(var(--spacing) * 0.5);
@@ -157,7 +156,7 @@
     outline: none;
   }
 
-  .siteplane-time-field-option {
+  .sp-time-field-option {
     flex: none;
     padding-inline: calc(var(--spacing) * 2 - 1px);
     scroll-margin-block: 4rem;

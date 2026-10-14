@@ -30,6 +30,36 @@ export type ChartSeries = {
 };
 
 /**
+ * The words that every chart gives screen readers. `labels` replaces them,
+ * merged with the English defaults: pass the translation of each one for an
+ * application in another language. An empty text leaves its part out.
+ */
+export type ChartLabels = {
+  /** What screen readers call the plot: its role description. "chart" by default. */
+  roleDescription: string;
+  /**
+   * The hint read after the description of the plot while it is a focus stop:
+   * how to move between its items. "Use the arrow keys to move between data
+   * points." by default.
+   */
+  keyboardHint: string;
+};
+
+/**
+ * The words of a Bar, Line or Area Chart: those of every chart, and the words of
+ * the summary of its data that screen readers read, such as "Jan to Jun.
+ * Desktop: lowest 73, highest 305."
+ */
+export type CartesianChartLabels = ChartLabels & {
+  /** Joins the first and the last x value: "to" by default. */
+  to: string;
+  /** Comes before the lowest value of a series: "lowest" by default. */
+  lowest: string;
+  /** Comes before the highest value of a series: "highest" by default. */
+  highest: string;
+};
+
+/**
  * How a line or an area connects its points. `smooth` is a natural spline,
  * which bends evenly and can swing a little past the data between two points;
  * `monotone` never does.
@@ -74,5 +104,11 @@ export type CartesianChartProps = {
   yAxis?: boolean;
   /** Shown in place of the marks when there is nothing to draw. */
   emptyLabel?: string;
+  /**
+   * Replaces words that the chart gives screen readers, merged with the
+   * English defaults: its role description, the keyboard hint and the words of
+   * the summary of its data.
+   */
+  labels?: Partial<CartesianChartLabels> | undefined;
   className?: string;
 };

@@ -1,25 +1,25 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  .siteplane-list-box-item[data-chassis][data-size="sm"] {
+  .sp-list-box-item[data-chassis][data-size="sm"] {
     min-height: var(--sp-rw-control-sm);
   }
 
-  .siteplane-list-box-item[data-chassis][data-size="md"] {
+  .sp-list-box-item[data-chassis][data-size="md"] {
     min-height: var(--sp-rw-control-md);
   }
 
-  .siteplane-list-box-item[data-chassis][data-size="lg"] {
+  .sp-list-box-item[data-chassis][data-size="lg"] {
     min-height: var(--sp-rw-control-lg);
   }
 
-  .siteplane-list-box-item[data-chassis][data-size="xl"] {
+  .sp-list-box-item[data-chassis][data-size="xl"] {
     min-height: var(--sp-rw-control-xl);
   }
 
   /* The selected option: the row's own fill and text, set through the
    * Button's fill and text, so a className on the item still restyles it. */
-  :root .siteplane-list-box-item[data-chassis][data-selected] {
+  :root .sp-list-box-item[data-chassis][data-selected] {
     --sp-rw-button-fill: var(--sp-semantic-color-secondary);
     --sp-rw-button-text: var(--sp-semantic-color-secondary-foreground);
   }

@@ -58,6 +58,11 @@ export interface DateFieldProps {
   disabled?: boolean;
   form?: string;
   iconMode?: "action-end" | "decorative-start" | "none";
+  /**
+   * The error a required field shows while its date is incomplete, such as
+   * after a segment is cleared. Default: "Enter a complete date."
+   */
+  incompleteLabel?: string;
   insetStart?: boolean;
   locale?: string;
   name?: string;
@@ -123,6 +128,7 @@ function DateFieldRoot({
   disabled,
   form,
   iconMode = "action-end",
+  incompleteLabel = "Enter a complete date.",
   insetStart = false,
   name,
   onValueChange,
@@ -153,7 +159,7 @@ function DateFieldRoot({
   const segmented = useSegmentedValue<CalendarDate>({
     controlled,
     defaultValue: toCalendarDate(defaultValue),
-    incompleteMessage: "Enter a complete date.",
+    incompleteMessage: incompleteLabel,
     onValueChange: (nextValue) =>
       onValueChange?.(toOptionalNativeDate(nextValue)),
     required,
@@ -174,7 +180,7 @@ function DateFieldRoot({
       {...(field.labelledBy === undefined
         ? {}
         : { "aria-labelledby": field.labelledBy })}
-      className="contents"
+      className="sp-date-field sp-base-date-field contents"
       data-foundation="date-field"
       data-inset-start={insetStart || undefined}
       data-profile={profile}
@@ -302,14 +308,14 @@ function DateFieldContent({
   });
   const input = (
     <DateInputPrimitive
-      className="siteplane-date-field-input"
+      className="sp-date-field-input"
       data-inset-start={insetStart || undefined}
       data-slot="date-field-input"
       ref={segmentsRef}
     >
       {(segment) => (
         <DateSegmentPrimitive
-          className="siteplane-date-field-segment"
+          className="sp-date-field-segment sp-date-segment"
           data-literal-kind={
             segment.type === "literal" && /[./-]/.test(segment.text)
               ? "separator"
@@ -328,7 +334,7 @@ function DateFieldContent({
       // utility in className, such as w-full, replaces it. The default width
       // never shrinks below the segments in a flex row (shrink-0 while w-max).
       className={cn(
-        "siteplane-date-field-control w-max [&.w-max]:shrink-0",
+        "sp-date-field-control w-max [&.w-max]:shrink-0",
         className,
       )}
       data-icon-mode={iconMode}
@@ -345,9 +351,12 @@ function DateFieldContent({
         <InputGroupAddon
           align="inline-start"
           aria-hidden="true"
-          className="siteplane-date-field-decorative-icon pointer-events-none"
+          className="sp-date-field-icon-addon pointer-events-none"
         >
-          <CalendarDaysIcon data-slot="date-field-decorative-icon" />
+          <CalendarDaysIcon
+            className="sp-date-field-decorative-icon"
+            data-slot="date-field-decorative-icon"
+          />
         </InputGroupAddon>
       ) : null}
       {input}
@@ -380,7 +389,7 @@ function DateFieldContent({
           {control}
           <PopoverPopup
             align="end"
-            className="siteplane-date-field-popover"
+            className="sp-date-field-popover"
             data-slot="date-field-popover"
             sideOffset={6}
             viewportPadding="compact"
@@ -388,7 +397,6 @@ function DateFieldContent({
             <Calendar
               {...calendarProps}
               aria-label="Choose date"
-              className="siteplane-date-field-calendar"
               data-slot="date-field-calendar"
               onValueChange={(nextValue) => {
                 dateFieldState.setValue(fromNativeDate(nextValue));

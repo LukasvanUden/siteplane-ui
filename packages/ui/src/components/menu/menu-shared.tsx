@@ -36,9 +36,9 @@ export const menuPopupWidthClassNames: Record<MenuPopupWidth, string> = {
 // keep the default look, and the shared menu-row recipe in design-rework.css
 // sets their height, text and icon.
 export const menuItemClassName =
-  "flex cursor-pointer select-none items-center whitespace-nowrap outline-none data-disabled:pointer-events-none data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&>svg]:pointer-events-none [&>svg]:shrink-0";
+  "flex cursor-pointer select-none items-center whitespace-nowrap outline-none data-disabled:cursor-not-allowed data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&>svg]:pointer-events-none [&>svg]:shrink-0";
 export const menuGroupLabelClassName = "font-medium";
 export const menuSeparatorClassName = "";
 export const menuShortcutClassName = shortcutClassName;
 export const menuSubTriggerClassName =
-  "flex cursor-pointer items-center whitespace-nowrap outline-none data-disabled:pointer-events-none data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none";
+  "flex cursor-pointer items-center whitespace-nowrap outline-none data-disabled:cursor-not-allowed data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none";

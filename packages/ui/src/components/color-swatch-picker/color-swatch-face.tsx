@@ -17,7 +17,7 @@ export type ColorSwatchIndicator = "check" | "ring";
  * indicator. ColorSwatchPicker items and the swatch trigger of ColorPicker
  * both draw it, so a swatch keeps one appearance wherever it appears. The
  * selection ring, hover, focus and disabled states belong to the swatch box
- * around it (`siteplane-color-swatch-item`) and are styled in
+ * around it (`sp-color-swatch-item`) and are styled in
  * `color-swatch-picker.css`.
  */
 export function ColorSwatchFace({
@@ -46,7 +46,7 @@ export function ColorSwatchFace({
           the option, and the picture lies over its (transparent) color. */}
       <ColorSwatchPrimitive
         aria-hidden="true"
-        className="siteplane-color-swatch-picker-swatch"
+        className="sp-color-swatch-picker-swatch"
         {...(label === undefined ? {} : { colorName: label })}
         data-image={image === undefined ? undefined : ""}
         data-slot="color-swatch-picker-swatch"
@@ -68,7 +68,7 @@ export function ColorSwatchFace({
       {indicator === "check" ? (
         <span
           aria-hidden="true"
-          className="siteplane-color-swatch-picker-indicator"
+          className="sp-checkbox-indicator sp-color-swatch-picker-indicator"
           data-selected={selected || undefined}
           data-slot="checkbox-indicator"
           style={{
@@ -76,7 +76,7 @@ export function ColorSwatchFace({
           }}
         >
           <svg
-            className="siteplane-check-glyph-motion"
+            className="sp-check-glyph-motion"
             fill="none"
             stroke="currentColor"
             strokeLinecap="round"
@@ -85,7 +85,7 @@ export function ColorSwatchFace({
             viewBox="0 0 24 24"
           >
             <path
-              className="siteplane-check-path-motion"
+              className="sp-check-path-motion"
               d="M5.252 12.7 10.2 18.63 18.748 5.37"
             />
           </svg>

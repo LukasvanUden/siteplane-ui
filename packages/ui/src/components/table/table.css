@@ -3,14 +3,14 @@
 @layer siteplane {
   /* The table fills its container; cells don't wrap, so columns that need more
    * room scroll horizontally inside the container instead of the page. */
-  [data-slot="table"] {
+  .sp-table {
     background: var(--sp-rw-bg-secondary);
   }
 
   /* The heading row sticks to the top of the scrolling container (the
    * container scrolls on both axes). It stays in view only when the container
    * has a height limit, such as containerClassName="max-h-80". */
-  [data-slot="table-header"] {
+  .sp-table-header {
     position: sticky;
     z-index: 10;
     top: 0;
@@ -23,21 +23,20 @@
 
   /* The hover tint is a layer over the opaque fill, so a sticky heading row
    * never turns see-through while it is hovered. */
-  :where([data-slot="table"][data-hoverable="true"])
-    > [data-slot="table-header"]:hover {
+  :where(.sp-table[data-hoverable="true"]) > .sp-table-header:hover {
     background:
       linear-gradient(var(--sp-rw-glow-hover), var(--sp-rw-glow-hover)),
       var(--sp-rw-bg-secondary);
   }
 
-  [data-slot="table-header"] > tr {
+  .sp-table-header > tr {
     border-bottom: var(--sp-rw-border-default) solid
       var(--sp-rw-border-translucent);
   }
 
   /* The heading row's height and the cells' block padding follow the size: the
    * container sets them (tableContainerSizeClassName, table-shared.ts). */
-  [data-slot="table-head"] {
+  .sp-table-head {
     height: var(--table-head-height, var(--sp-rw-space-10));
     color: var(--sp-rw-fg-tertiary);
     font-weight: 480;
@@ -45,107 +44,105 @@
     outline: none;
   }
 
-  [data-slot="table-head"] {
+  .sp-table-head {
     padding: 0 var(--sp-rw-space-2);
   }
 
   /* lg and xl set a minimum row height on the container (--table-row-height);
    * sm and the default size are as tall as their padding and line. */
-  [data-slot="table-cell"] {
+  .sp-table-cell {
     height: var(--table-row-height, auto);
     padding: var(--table-cell-padding-block, var(--sp-rw-space-2))
       var(--sp-rw-space-2);
   }
 
   /* The kit focus token, as on the rows and the sortable headings. */
-  [data-slot="table-cell"][data-focus-visible] {
+  .sp-table-cell[data-focus-visible] {
     box-shadow: inset 0 0 0 2px var(--sp-rw-border-focus);
   }
 
-  [data-slot="table"] :is([data-slot="table-head"], [data-slot="table-cell"]) {
+  .sp-table .sp-table-head,
+  .sp-table .sp-table-cell {
     line-height: var(--sp-rw-line-21);
   }
 
   /* The outer columns take the inset of the surrounding surface, such as a
    * CardFrameBleed, so a framed table lines up with the frame header and footer. */
-  [data-slot="table"]
-    :is([data-slot="table-head"], [data-slot="table-cell"]):first-child {
+  .sp-table .sp-table-head:first-child,
+  .sp-table .sp-table-cell:first-child {
     padding-inline-start: var(--table-edge-padding, var(--sp-rw-space-2));
   }
 
-  [data-slot="table"]
-    :is([data-slot="table-head"], [data-slot="table-cell"]):last-child {
+  .sp-table .sp-table-head:last-child,
+  .sp-table .sp-table-cell:last-child {
     padding-inline-end: var(--table-edge-padding, var(--sp-rw-space-2));
   }
 
-  [data-slot="table-row"] {
+  .sp-table-row {
     border-color: var(--sp-rw-border-translucent);
   }
 
-  [data-slot="table-body"] [data-slot="table-row"]:not(:last-child) {
+  .sp-table-body .sp-table-row:not(:last-child) {
     border-bottom-width: var(--sp-rw-border-default);
   }
 
-  [data-slot="table-body"] [data-slot="table-row"]:last-child {
+  .sp-table-body .sp-table-row:last-child {
     border-bottom-width: 0;
   }
 
   /* A selected row keeps its pressed fill under the pointer and in focus: the
    * stronger state wins over hover, as it does for pressed and open elsewhere. */
-  :where([data-slot="table"][data-hoverable="true"])
-    > [data-slot="table-body"]
-    > [data-slot="table-row"][data-hoverable="true"]:not(
-      [data-selected]
-    ):hover {
+  :where(.sp-table[data-hoverable="true"])
+    > .sp-table-body
+    > .sp-table-row[data-hoverable="true"]:not([data-selected]):hover {
     background: var(--sp-rw-glow-hover);
   }
 
-  :where([data-slot="table"][data-hoverable="true"])
-    > [data-slot="table-body"]
-    > [data-slot="table-row"][data-interactive="true"]:not([data-selected]):is(
+  :where(.sp-table[data-hoverable="true"])
+    > .sp-table-body
+    > .sp-table-row[data-interactive="true"]:not([data-selected]):is(
       :hover,
       [data-hovered]
     ),
-  [data-slot="table-body"]
-    [data-slot="table-row"][data-interactive="true"]:not([data-selected]):is(
+  .sp-table-body
+    .sp-table-row[data-interactive="true"]:not([data-selected]):is(
       :focus-within,
       [data-focus-visible]
     ) {
     background: var(--sp-rw-bg-base);
   }
 
-  [data-slot="table-row"][data-selected] {
+  .sp-table-row[data-selected] {
     background: var(--sp-rw-glow-pressed);
   }
 
-  [data-slot="table-row"][data-focus-visible] {
+  .sp-table-row[data-focus-visible] {
     box-shadow: inset 0 0 0 2px var(--sp-rw-border-focus);
   }
 
-  [data-slot="table-row"][data-disabled] {
+  .sp-table-row[data-disabled] {
     cursor: not-allowed;
     opacity: 64%;
   }
 
-  [data-slot="table-row"][data-interactive="true"] {
+  .sp-table-row[data-interactive="true"] {
     cursor: pointer;
   }
 
-  [data-slot="table-row"][data-inactive] {
+  .sp-table-row[data-inactive] {
     opacity: 72%;
   }
 
-  [data-slot="table-head"][data-allows-sorting] {
+  .sp-table-head[data-allows-sorting] {
     cursor: default;
     pointer-events: none;
   }
 
-  [data-slot="table-head-content"] {
+  .sp-table-head-content {
     gap: var(--sp-rw-space-1);
   }
 
-  [data-slot="table-head"][data-allows-sorting]
-    [data-slot="table-head-content"] {
+  .sp-table-head[data-allows-sorting] .sp-table-head-content {
     height: var(--sp-rw-space-8);
     border-radius: var(--sp-rw-radius-control);
     padding: var(--sp-rw-space-1-5) var(--sp-rw-space-2-5);
@@ -155,17 +152,16 @@
     pointer-events: auto;
   }
 
-  [data-slot="table-head"][data-focus-visible]
-    [data-slot="table-head-content"] {
+  .sp-table-head[data-focus-visible] .sp-table-head-content {
     outline: 2px solid var(--sp-rw-border-focus);
     outline-offset: 2px;
   }
 
-  [data-slot="table-head"][data-pressed] [data-slot="table-head-content"] {
+  .sp-table-head[data-pressed] .sp-table-head-content {
     opacity: 80%;
   }
 
-  [data-slot="table-head-content"] svg {
+  .sp-table-head-content svg {
     width: var(--sp-rw-space-4);
     height: var(--sp-rw-space-4);
   }
@@ -173,18 +169,18 @@
   /* The selection box is the Checkbox: its box, states, focus ring and size
    * come from the Checkbox rules in design-rework.css. React Aria renders a
    * label here, so the box only needs its layout. */
-  [data-slot="table-selection-checkbox"] {
+  .sp-table-selection-checkbox {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
   }
 
-  [data-slot="table-selection-checkbox"][data-disabled] {
+  .sp-table-selection-checkbox[data-disabled] {
     cursor: not-allowed;
   }
 
-  [data-slot="table-selection-indicator"] {
+  .sp-table-selection-indicator {
     display: flex;
     width: 100%;
     height: 100%;
@@ -192,8 +188,8 @@
     justify-content: center;
   }
 
-  html[data-motion-reduce="true"] [data-slot="table-selection-checkbox"],
-  [data-sp-motion="reduced"] [data-slot="table-selection-checkbox"] {
+  html[data-motion-reduce="true"] .sp-table-selection-checkbox,
+  [data-sp-motion="reduced"] .sp-table-selection-checkbox {
     transition-duration: 1ms;
   }
 }

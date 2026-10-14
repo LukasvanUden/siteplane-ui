@@ -7,24 +7,24 @@
    * wide as its control is tall, so the value field keeps its width at every
    * size. The root reads --number-field-width; a width utility in className
    * replaces it. */
-  [data-slot="number-field"] {
+  .sp-number-field {
     --number-field-control: var(--sp-rw-control-md);
     --number-field-width: calc(var(--number-field-control) * 2 + 7rem);
   }
 
-  [data-slot="number-field"][data-size="sm"] {
+  .sp-number-field[data-size="sm"] {
     --number-field-control: var(--sp-rw-control-sm);
   }
 
-  [data-slot="number-field"][data-size="lg"] {
+  .sp-number-field[data-size="lg"] {
     --number-field-control: var(--sp-rw-control-lg);
   }
 
-  [data-slot="number-field"][data-size="xl"] {
+  .sp-number-field[data-size="xl"] {
     --number-field-control: var(--sp-rw-control-xl);
   }
 
-  .siteplane-number-field-value-window {
+  .sp-number-field-value-window {
     position: absolute;
     inset: 0;
     display: flex;
@@ -37,7 +37,7 @@
     text-align: center;
   }
 
-  .siteplane-number-field-value {
+  .sp-number-field-value {
     position: absolute;
     inset: 0;
     display: flex;
@@ -47,31 +47,31 @@
     will-change: opacity, transform;
   }
 
-  .siteplane-number-field-value[data-roll="in"],
-  .siteplane-number-field-value[data-roll="out"] {
+  .sp-number-field-value[data-roll="in"],
+  .sp-number-field-value[data-roll="out"] {
     animation-duration: var(--motion-duration-base);
     animation-fill-mode: both;
     animation-timing-function: var(--motion-ease-standard);
   }
 
-  .siteplane-number-field-value-window[data-roll-direction="up"]
-    .siteplane-number-field-value[data-roll="in"] {
-    animation-name: siteplane-number-field-roll-in-up;
+  .sp-number-field-value-window[data-roll-direction="up"]
+    .sp-number-field-value[data-roll="in"] {
+    animation-name: sp-number-field-roll-in-up;
   }
-  .siteplane-number-field-value-window[data-roll-direction="up"]
-    .siteplane-number-field-value[data-roll="out"] {
-    animation-name: siteplane-number-field-roll-out-up;
+  .sp-number-field-value-window[data-roll-direction="up"]
+    .sp-number-field-value[data-roll="out"] {
+    animation-name: sp-number-field-roll-out-up;
   }
-  .siteplane-number-field-value-window[data-roll-direction="down"]
-    .siteplane-number-field-value[data-roll="in"] {
-    animation-name: siteplane-number-field-roll-in-down;
+  .sp-number-field-value-window[data-roll-direction="down"]
+    .sp-number-field-value[data-roll="in"] {
+    animation-name: sp-number-field-roll-in-down;
   }
-  .siteplane-number-field-value-window[data-roll-direction="down"]
-    .siteplane-number-field-value[data-roll="out"] {
-    animation-name: siteplane-number-field-roll-out-down;
+  .sp-number-field-value-window[data-roll-direction="down"]
+    .sp-number-field-value[data-roll="out"] {
+    animation-name: sp-number-field-roll-out-down;
   }
 
-  @keyframes siteplane-number-field-roll-in-up {
+  @keyframes sp-number-field-roll-in-up {
     from {
       opacity: 0;
       transform: translateY(100%);
@@ -81,7 +81,7 @@
       transform: translateY(0);
     }
   }
-  @keyframes siteplane-number-field-roll-out-up {
+  @keyframes sp-number-field-roll-out-up {
     from {
       opacity: 1;
       transform: translateY(0);
@@ -91,7 +91,7 @@
       transform: translateY(-100%);
     }
   }
-  @keyframes siteplane-number-field-roll-in-down {
+  @keyframes sp-number-field-roll-in-down {
     from {
       opacity: 0;
       transform: translateY(-100%);
@@ -101,7 +101,7 @@
       transform: translateY(0);
     }
   }
-  @keyframes siteplane-number-field-roll-out-down {
+  @keyframes sp-number-field-roll-out-down {
     from {
       opacity: 1;
       transform: translateY(0);
@@ -112,16 +112,15 @@
     }
   }
 
-  html[data-motion-reduce="true"] .siteplane-number-field-value[data-roll="in"],
-  html[data-motion-reduce="true"]
-    .siteplane-number-field-value[data-roll="out"] {
+  html[data-motion-reduce="true"] .sp-number-field-value[data-roll="in"],
+  html[data-motion-reduce="true"] .sp-number-field-value[data-roll="out"] {
     animation-duration: 1ms;
     animation-delay: 0ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-number-field-value[data-roll="in"],
-    .siteplane-number-field-value[data-roll="out"] {
+    .sp-number-field-value[data-roll="in"],
+    .sp-number-field-value[data-roll="out"] {
       animation-duration: 1ms;
       animation-delay: 0ms;
     }

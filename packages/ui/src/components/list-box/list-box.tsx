@@ -77,7 +77,7 @@ export function ListBox({
     <ListBoxVisualContext.Provider value={visualContext}>
       <ListBoxPrimitive
         {...(props as React.ComponentProps<typeof ListBoxPrimitive>)}
-        className={cn(className)}
+        className={cn("sp-list-box sp-base-list-box", className)}
         data-foundation="list-box"
         data-selection-appearance={selectionAppearance}
         data-size={resolvedSize}
@@ -143,11 +143,11 @@ export function ListBoxItem({
       {...props}
       align="start"
       className={cn(
-        "group siteplane-list-box-item",
+        "group sp-list-box-item",
         // The row owns the selected state (list-box.css); its check draws
         // through the shared check motion (motion.css), which reads that state
         // from the row.
-        context.selectionAppearance === "check" && "siteplane-check-item",
+        context.selectionAppearance === "check" && "sp-check-item",
         className,
       )}
       data-selection-appearance={context.selectionAppearance}
@@ -170,7 +170,7 @@ export function ListBoxItem({
       {context.selectionAppearance === "check" ? (
         <svg
           aria-hidden="true"
-          className="siteplane-check-glyph-motion size-3.5 shrink-0 fill-none stroke-current"
+          className="sp-list-box-check sp-check-glyph-motion size-3.5 shrink-0 fill-none stroke-current"
           data-slot="list-box-check"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -178,7 +178,7 @@ export function ListBoxItem({
           viewBox="0 0 24 24"
         >
           <path
-            className="siteplane-check-path-motion"
+            className="sp-check-path-motion"
             d="M5.252 12.7 10.2 18.63 18.748 5.37"
           />
         </svg>

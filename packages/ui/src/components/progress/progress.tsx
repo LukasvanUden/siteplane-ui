@@ -14,6 +14,7 @@ import {
   linearIndicatorSizeClassNames,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 import "./progress.css";
 
@@ -72,7 +73,11 @@ export function Progress({
   return (
     <ProgressSizeContext.Provider value={resolvedSize}>
       <ProgressPrimitive.Root
-        className={cn(progressRootVariants({ size: resolvedSize }), className)}
+        className={cn(
+          slotClass("progress", props),
+          progressRootVariants({ size: resolvedSize }),
+          className,
+        )}
         data-size={resolvedSize}
         data-slot="progress"
         locale={locale}
@@ -104,7 +109,11 @@ export function ProgressLabel({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <ProgressPrimitive.Label
-      className={cn(progressLabelVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("progress-label", props),
+        progressLabelVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="progress-label"
       {...props}
@@ -126,7 +135,11 @@ export function ProgressTrack({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <ProgressPrimitive.Track
-      className={cn(progressTrackVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("progress-track", props),
+        progressTrackVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="progress-track"
       {...props}
@@ -141,6 +154,7 @@ export function ProgressIndicator({
   return (
     <ProgressPrimitive.Indicator
       className={cn(
+        slotClass("progress-indicator", props),
         linearIndicatorClassNames.fill,
         progressIndicatorMotionClassName,
         className,
@@ -165,7 +179,11 @@ export function ProgressValue({
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
   return (
     <ProgressPrimitive.Value
-      className={cn(progressValueVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("progress-value", props),
+        progressValueVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="progress-value"
       {...props}
@@ -207,7 +225,11 @@ export function ProgressCircle({
 
   return (
     <ProgressPrimitive.Root
-      className={cn(progressCircleVariants({ size: resolvedSize }), className)}
+      className={cn(
+        slotClass("progress-circle", props),
+        progressCircleVariants({ size: resolvedSize }),
+        className,
+      )}
       data-size={resolvedSize}
       data-slot="progress-circle"
       locale={locale}

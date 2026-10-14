@@ -1,7 +1,7 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  [data-slot="textarea-control"] {
+  .sp-textarea-control {
     --sp-semantic-color-background: var(--color-white);
     --sp-semantic-color-border: rgb(0 0 0 / 8%);
     --sp-semantic-color-destructive: var(--color-red-500);
@@ -15,38 +15,36 @@
     --textarea-surface-subtle: rgb(0 0 0 / 4%);
   }
 
-  [data-foundation="textarea"][data-profile="input-group"] {
+  .sp-base-textarea[data-profile="input-group"] {
     display: contents;
   }
 
-  [data-foundation="textarea"][data-profile="input-group"]::before {
+  .sp-base-textarea[data-profile="input-group"]::before {
     display: none;
   }
 
   /* The resize grip is the kit base of every textarea (design-rework.css). */
-  [data-foundation="textarea"][data-profile="input-group"]
-    [data-slot="textarea"] {
+  .sp-base-textarea[data-profile="input-group"] .sp-textarea {
     min-height: calc(var(--spacing) * 20.5);
     border-radius: 0;
     padding-block: calc(var(--spacing) * 2 - 1px);
   }
 
   @media (width < 40rem) {
-    [data-foundation="textarea"][data-profile="input-group"]
-      [data-slot="textarea"] {
+    .sp-base-textarea[data-profile="input-group"] .sp-textarea {
       min-height: calc(var(--spacing) * 23.5);
     }
   }
 
-  [data-slot="textarea-control"]:not([data-unstyled]):has(:disabled) {
+  .sp-textarea-control:not([data-unstyled]):has(:disabled) {
     background-color: var(--textarea-surface-subtle);
   }
 
-  textarea[data-slot="textarea"]:focus-visible {
+  textarea.sp-textarea:focus-visible {
     --textarea-resize-handle-color: var(--textarea-resize-handle-color-focus);
   }
 
-  textarea[data-slot="textarea"]::-webkit-resizer {
+  textarea.sp-textarea::-webkit-resizer {
     border: 0;
     background:
       linear-gradient(
@@ -65,8 +63,8 @@
         right 3px bottom 3px / 4.75px 4.75px no-repeat;
   }
 
-  [data-radius="none"] textarea[data-slot="textarea"]::-webkit-resizer,
-  [data-radius="sm"] textarea[data-slot="textarea"]::-webkit-resizer {
+  [data-radius="none"] textarea.sp-textarea::-webkit-resizer,
+  [data-radius="sm"] textarea.sp-textarea::-webkit-resizer {
     background:
       linear-gradient(
           135deg,
@@ -84,7 +82,7 @@
         right 3px bottom 3px / 4.75px 4.75px no-repeat;
   }
 
-  [data-radius="lg"] textarea[data-slot="textarea"]::-webkit-resizer {
+  [data-radius="lg"] textarea.sp-textarea::-webkit-resizer {
     background:
       linear-gradient(
           135deg,
@@ -102,7 +100,7 @@
         right 5px bottom 5px / 4.75px 4.75px no-repeat;
   }
 
-  [data-radius="xl"] textarea[data-slot="textarea"]::-webkit-resizer {
+  [data-radius="xl"] textarea.sp-textarea::-webkit-resizer {
     background:
       linear-gradient(
           135deg,
@@ -120,7 +118,8 @@
         right 6px bottom 6px / 4.75px 4.75px no-repeat;
   }
 
-  :is(.dark, [data-theme="dark"]) [data-slot="textarea-control"] {
+  .dark .sp-textarea-control,
+  [data-theme="dark"] .sp-textarea-control {
     --sp-semantic-color-background: color-mix(
       in srgb,
       var(--color-neutral-950) 95%,
@@ -141,7 +140,7 @@
   }
 
   :is(.dark, [data-theme="dark"])
-    [data-slot="textarea-control"]:not([data-unstyled]):has(:disabled) {
+    .sp-textarea-control:not([data-unstyled]):has(:disabled) {
     background-color: color-mix(
       in oklab,
       var(--sp-semantic-color-input) 32%,

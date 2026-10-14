@@ -1,12 +1,16 @@
 "use client";
 
 import { Field as FieldPrimitive } from "@base-ui/react/field";
+import { DEFAULT_VALIDITY_STATE } from "@base-ui/react/internals/field-constants";
+import { useFieldRootContext } from "@base-ui/react/internals/field-root-context";
 import { useFormContext } from "@base-ui/react/internals/form-context";
 import { LabelableProvider } from "@base-ui/react/internals/labelable-provider";
 import * as React from "react";
 
+import { useFormReset } from "../../system/form/use-form-reset";
 import { useMediaQuery } from "../../system/hooks/use-media-query";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { MotionReveal } from "../motion";
 import { Tooltip, TooltipPopup } from "../tooltip";
 import {
@@ -65,9 +69,13 @@ function fieldHoldsFocus(field: HTMLElement): boolean {
  * (design-rework.css). It is a choice per form; the control's own `required`
  * stays the one source, so the asterisk shows only while the control is
  * required.
+ *
+ * A native reset of the form around the Field returns it to how it was before
+ * the form's first submit (FieldFormReset).
  */
 export function Field({
   actionsRef,
+  children,
   className,
   labelPlacement = "top",
   onBlur,
@@ -131,13 +139,19 @@ export function Field({
       document.removeEventListener("focusout", settle);
     };
   }, [focused, settle]);
+  // The reset is cleared inside the Field root, where its state lives.
+  const resetField = React.useRef<(() => void) | null>(null);
+  const formResetRef = useFormReset<HTMLDivElement>(undefined, () =>
+    resetField.current?.(),
+  );
   const setFieldRef = React.useCallback(
     (element: HTMLDivElement | null) => {
       fieldRef.current = element;
+      formResetRef.current = element;
       if (typeof ref === "function") ref(element);
       else if (ref) ref.current = element;
     },
-    [ref],
+    [formResetRef, ref],
   );
 
   return (
@@ -148,6 +162,7 @@ export function Field({
           className={cn(
             // min-w-0: in a grid or flex form a Field never grows past its
             // track for a long value, such as a Select's nowrap trigger.
+            slotClass("field", props),
             "flex min-w-0 flex-col items-start gap-(--field-gap) [--field-gap:calc(var(--spacing)*2)]",
             className,
           )}
@@ -166,10 +181,53 @@ export function Field({
           }}
           ref={setFieldRef}
           {...props}
-        />
+        >
+          <FieldFormReset field={fieldRef} handle={resetField} />
+          {children}
+        </FieldPrimitive.Root>
       </FieldFocusContext.Provider>
     </FieldLabelPlacementContext.Provider>
   );
+}
+
+/**
+ * A native reset puts the form's values back to their defaults, and Base UI
+ * keeps the Field's validity, its touched and dirty marks and the Form's
+ * submitted state as they were; it does not follow a reset. The reset clears
+ * them, so the Field is as it was before the form's first submit: its error
+ * collapses as when the value becomes valid, its controls drop a custom
+ * validity message, and the Form validates again on its next submit. Errors
+ * the application passes to Form clear with the same reset (Form). It renders
+ * nothing.
+ */
+function FieldFormReset({
+  field: fieldElement,
+  handle,
+}: {
+  field: React.RefObject<HTMLDivElement | null>;
+  handle: React.RefObject<(() => void) | null>;
+}): null {
+  const field = useFieldRootContext(false);
+  const form = useFormContext();
+  React.useLayoutEffect(() => {
+    handle.current = () => {
+      form.submitAttemptedRef.current = false;
+      for (const control of fieldElement.current?.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >("input, select, textarea") ?? [])
+        control.setCustomValidity("");
+      field.setValidityData((data) => ({
+        ...data,
+        error: "",
+        errors: [],
+        state: DEFAULT_VALIDITY_STATE,
+        value: data.initialValue,
+      }));
+      field.setTouched(false);
+      field.setDirty(false);
+    };
+  });
+  return null;
 }
 
 /**
@@ -187,7 +245,8 @@ export function FieldLabel({
   return (
     <FieldPrimitive.Label
       className={cn(
-        "cursor-pointer items-center gap-2 data-disabled:cursor-not-allowed has-disabled:cursor-not-allowed",
+        slotClass("field-label", props),
+        "items-center gap-2",
         className,
       )}
       data-slot="field-label"
@@ -202,7 +261,7 @@ export function FieldItem({
 }: WithStringClassName<FieldPrimitive.Item.Props>): React.ReactElement {
   return (
     <FieldPrimitive.Item
-      className={cn("flex", className)}
+      className={cn(slotClass("field-item", props), "flex", className)}
       data-slot="field-item"
       {...props}
     />
@@ -217,6 +276,7 @@ export function FieldDescription({
     <FieldPrimitive.Description
       className={cn(
         // Under the label text when the label holds a choice control (S13).
+        slotClass("field-description", props),
         "ps-[var(--field-choice-indent,0px)] text-muted-foreground",
         className,
       )}
@@ -279,6 +339,7 @@ export function FieldError({
         <FieldPrimitive.Error
           className={cn(
             // Under the label text when the label holds a choice control (S13).
+            slotClass("field-error", props),
             "ps-[var(--field-choice-indent,0px)] pt-(--field-gap) text-destructive-foreground text-xs",
             className,
           )}
@@ -359,10 +420,15 @@ function FieldErrorTooltip({
   return (
     <>
       {/* Finds the Field in the document; the bubble itself is portalled. */}
-      <span data-slot="field-error-anchor" hidden ref={anchorRef} />
+      <span
+        className="sp-field-error-anchor"
+        data-slot="field-error-anchor"
+        hidden
+        ref={anchorRef}
+      />
       {shown ? (
         <FieldPrimitive.Error
-          className="sr-only"
+          className={cn(slotClass("field-error-description", props), "sr-only")}
           data-slot="field-error-description"
           match
           {...props}
@@ -383,7 +449,10 @@ function FieldErrorTooltip({
             <LabelableProvider>
               <FieldPrimitive.Error
                 aria-hidden="true"
-                className={className}
+                className={cn(
+                  slotClass("field-error", undefined, bubbleProps.render),
+                  className,
+                )}
                 data-slot="field-error"
                 data-variant="tooltip"
                 match

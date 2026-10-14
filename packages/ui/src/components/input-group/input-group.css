@@ -4,7 +4,7 @@
   /* The field scope. Every InputGroup carries data-variant; the rules below
    * name it, also beside a variant value, so their specificity stays in step
    * with each other. */
-  [data-foundation="input-group"][data-variant] {
+  .sp-base-input-group[data-variant] {
     --input-group-surface-subtle: rgb(0 0 0 / 4%);
     --input-segment-background: color-mix(
       in srgb,
@@ -28,53 +28,69 @@
 
   /* InputGroup exposes only composite context. Public child profiles decide how
    * these signals map onto their own internal control anatomy. */
-  [data-foundation="input-group"] {
-    --siteplane-composite-control-height: initial;
-    --siteplane-composite-control-padding-block-end: initial;
-    --siteplane-composite-control-padding-block-start: initial;
-    --siteplane-composite-control-padding-inline-end: initial;
-    --siteplane-composite-control-padding-inline-start: initial;
+  .sp-base-input-group {
+    --sp-composite-control-height: initial;
+    --sp-composite-control-padding-block-end: initial;
+    --sp-composite-control-padding-block-start: initial;
+    --sp-composite-control-padding-inline-end: initial;
+    --sp-composite-control-padding-inline-start: initial;
   }
 
-  [data-foundation="input-group"]:has(
-    > [data-slot="input-group-addon"][data-align="inline-start"]
+  .sp-base-input-group:has(> .sp-input-group-addon[data-align="inline-start"]) {
+    --sp-composite-control-padding-inline-start: calc(var(--spacing) * 1.5);
+  }
+
+  .sp-base-input-group:has(> .sp-input-group-addon[data-align="inline-end"]) {
+    --sp-composite-control-padding-inline-end: calc(var(--spacing) * 1.5);
+  }
+
+  .sp-base-input-group:has(
+    > .sp-input-group-addon[data-align="block-start"],
+    > .sp-input-group-addon[data-align="block-end"]
   ) {
-    --siteplane-composite-control-padding-inline-start: calc(
-      var(--spacing) * 1.5
+    --sp-composite-control-height: auto;
+  }
+
+  .sp-base-input-group:has(> .sp-input-group-addon[data-align="block-start"]) {
+    --sp-composite-control-padding-block-end: calc(var(--spacing) * 1.5);
+  }
+
+  .sp-base-input-group:has(> .sp-input-group-addon[data-align="block-end"]) {
+    --sp-composite-control-padding-block-start: calc(var(--spacing) * 1.5);
+  }
+
+  /* insetEnd: the end of the control stays clear for an action placed over
+   * it, such as a square Button 8 px inside the top-end corner of a textarea.
+   * The text ends 8 px before that Button, which takes the control size the
+   * attribute names. The end signal carries the room to the Input and
+   * Textarea profiles. */
+  .sp-base-input-group[data-inset-end] {
+    --input-group-inset-end: calc(
+      var(--sp-rw-control-lg) + var(--sp-rw-space-4)
+    );
+    --sp-composite-control-padding-inline-end: var(--input-group-inset-end);
+  }
+
+  .sp-base-input-group[data-inset-end="sm"] {
+    --input-group-inset-end: calc(
+      var(--sp-rw-control-sm) + var(--sp-rw-space-4)
     );
   }
 
-  [data-foundation="input-group"]:has(
-    > [data-slot="input-group-addon"][data-align="inline-end"]
-  ) {
-    --siteplane-composite-control-padding-inline-end: calc(
-      var(--spacing) * 1.5
+  .sp-base-input-group[data-inset-end="md"] {
+    --input-group-inset-end: calc(
+      var(--sp-rw-control-md) + var(--sp-rw-space-4)
     );
   }
 
-  [data-foundation="input-group"]:has(
-    > [data-slot="input-group-addon"][data-align="block-start"],
-    > [data-slot="input-group-addon"][data-align="block-end"]
-  ) {
-    --siteplane-composite-control-height: auto;
-  }
-
-  [data-foundation="input-group"]:has(
-    > [data-slot="input-group-addon"][data-align="block-start"]
-  ) {
-    --siteplane-composite-control-padding-block-end: calc(var(--spacing) * 1.5);
-  }
-
-  [data-foundation="input-group"]:has(
-    > [data-slot="input-group-addon"][data-align="block-end"]
-  ) {
-    --siteplane-composite-control-padding-block-start: calc(
-      var(--spacing) * 1.5
+  .sp-base-input-group[data-inset-end="xl"] {
+    --input-group-inset-end: calc(
+      var(--sp-rw-control-xl) + var(--sp-rw-space-4)
     );
   }
 
-  :is(.dark, [data-theme="dark"])
-    [data-foundation="input-group"][data-variant] {
+  .dark .sp-base-input-group[data-variant],
+  [data-theme="dark"] .sp-base-input-group[data-variant] {
     --input-group-surface-subtle: rgb(255 255 255 / 4%);
     --sp-semantic-color-background: color-mix(
       in srgb,
@@ -97,24 +113,24 @@
     --sp-semantic-color-ring: var(--color-neutral-500);
   }
 
-  [data-foundation="input-group"][data-variant][data-variant="soft"] {
+  .sp-base-input-group[data-variant][data-variant="soft"] {
     background-color: var(--input-group-surface-subtle);
   }
 
-  [data-foundation="input-group"][data-variant][data-variant="soft"]:focus-within {
+  .sp-base-input-group[data-variant][data-variant="soft"]:focus-within {
     background-color: var(--sp-semantic-color-background);
   }
 
   /* Disabled with its own control, not with a disabled action inside it
    * (design-rework.css, the field disabled rule). */
-  [data-foundation="input-group"][data-variant]:has(
+  .sp-base-input-group[data-variant]:has(
       :is(input:not([type="hidden"]), textarea):disabled,
       [role="spinbutton"][aria-disabled="true"]
     ) {
     background-color: var(--input-group-surface-subtle);
   }
 
-  [data-foundation="input-group"][data-variant]:has(:autofill) {
+  .sp-base-input-group[data-variant]:has(:autofill) {
     background-color: color-mix(
       in oklab,
       var(--sp-semantic-color-foreground) 4%,
@@ -123,7 +139,7 @@
   }
 
   :is(.dark, [data-theme="dark"])
-    [data-foundation="input-group"][data-variant]:has(:autofill) {
+    .sp-base-input-group[data-variant]:has(:autofill) {
     background-color: color-mix(
       in oklab,
       var(--sp-semantic-color-foreground) 8%,
@@ -131,14 +147,11 @@
     );
   }
 
-  [data-foundation="input-group"]:has(
-    .siteplane-input-segment,
-    [data-foundation="date-field"]
-  ) {
+  .sp-base-input-group:has(.sp-input-segment, .sp-base-date-field) {
     cursor: text;
   }
 
-  .siteplane-input-segment > input {
+  .sp-input-segment > input {
     background-clip: content-box;
     border-radius: calc(
       var(--radius-md) + var(--input-segment-padding-block)
@@ -150,30 +163,30 @@
     text-align: center;
   }
 
-  .siteplane-input-segment > input:focus {
+  .sp-input-segment > input:focus {
     background-color: var(--input-segment-background);
   }
 
-  .siteplane-input-segment > input[data-segment-width="2-digit"] {
+  .sp-input-segment > input[data-segment-width="2-digit"] {
     flex: none !important;
     width: calc(var(--spacing) * 8) !important;
   }
 
-  .siteplane-input-segment > input[data-segment-width="4-digit"] {
+  .sp-input-segment > input[data-segment-width="4-digit"] {
     flex: none !important;
     width: calc(var(--spacing) * 12) !important;
   }
 
-  .siteplane-input-segment > input[data-segment-width="fill"] {
+  .sp-input-segment > input[data-segment-width="fill"] {
     flex: 1 1 0% !important;
     width: auto !important;
   }
 
-  .siteplane-input-segment > input[data-segment-inset-start="true"] {
+  .sp-input-segment > input[data-segment-inset-start="true"] {
     margin-inline-start: calc(var(--spacing) * 2);
   }
 
-  .siteplane-input-segment > input::selection {
+  .sp-input-segment > input::selection {
     background-color: transparent;
   }
 }

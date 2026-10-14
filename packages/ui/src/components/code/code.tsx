@@ -5,6 +5,7 @@ import { XIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { CopyRedrawIcon, RevealIcon, useCopyIconPhase } from "../action-icons";
 import { Button } from "../button";
 
@@ -22,7 +23,7 @@ const codeBlockSizeClassNames = {
 export function Code({ className, ...props }: ComponentProps<"code">) {
   return (
     <code
-      className={cn(codeInlineClassName, className)}
+      className={cn(slotClass("code", props), codeInlineClassName, className)}
       data-slot="code"
       {...props}
     />
@@ -37,23 +38,52 @@ const codeBlockVariants = cva(codeBlockBaseClassName, {
   variants: { size: codeBlockSizeClassNames },
 });
 
+/** The words a CodeBlock speaks to assistive technology. */
+export type CodeBlockLabels = {
+  /** Read in place of a masked value. */
+  hidden: string;
+  /** The reveal button while the value is masked. */
+  reveal: string;
+  /** The same button while the value shows. */
+  hide: string;
+  /** The copy button. */
+  copy: string;
+  /** The copy button while its check confirms a copy. */
+  copied: string;
+  /** The copy button and its announcement when the clipboard refuses. */
+  copyFailed: string;
+};
+
+const defaultCodeBlockLabels: CodeBlockLabels = {
+  hidden: "Hidden value",
+  reveal: "Reveal value",
+  hide: "Hide value",
+  copy: "Copy to clipboard",
+  copied: "Copied to clipboard",
+  copyFailed: "Copy unavailable",
+};
+
 export interface CodeBlockProps
   extends
     Omit<ComponentProps<"pre">, "children">,
     VariantProps<typeof codeBlockVariants> {
   value: string;
   copyable?: boolean;
+  /** Replaces the English names of the hidden value and the actions. */
+  labels?: Partial<CodeBlockLabels> | undefined;
   mask?: boolean;
 }
 
 export function CodeBlock({
   value,
   copyable = false,
+  labels,
   mask = false,
   size,
   className,
   ...props
 }: CodeBlockProps) {
+  const text = { ...defaultCodeBlockLabels, ...labels };
   const { copyPhase, isShowingCheck, playCopyFeedback } = useCopyIconPhase();
   // The person's reveal, which a change of `mask` takes back: a block that is
   // masked after it loaded is hidden again, not left in clear text.
@@ -94,6 +124,7 @@ export function CodeBlock({
   return (
     <pre
       className={cn(
+        slotClass("code-block", props),
         codeBlockVariants({ size }),
         hasActions && (copyable && mask ? "pe-18" : "pe-11"),
         className,
@@ -112,7 +143,7 @@ export function CodeBlock({
             <span aria-hidden="true">
               {"•".repeat(Math.min(value.length, 44))}
             </span>
-            <span className="sr-only">Hidden value</span>
+            <span className="sr-only">{text.hidden}</span>
           </>
         ) : (
           value
@@ -122,7 +153,7 @@ export function CodeBlock({
         <span className={actionClassName}>
           {mask ? (
             <Button
-              aria-label={revealed ? "Hide value" : "Reveal value"}
+              aria-label={revealed ? text.hide : text.reveal}
               onClick={() => setRevealedByPerson((current) => !current)}
               profile="field-action"
               shape="square"
@@ -135,10 +166,10 @@ export function CodeBlock({
             <Button
               aria-label={
                 copyFailed
-                  ? "Copy unavailable"
+                  ? text.copyFailed
                   : isShowingCheck
-                    ? "Copied to clipboard"
-                    : "Copy to clipboard"
+                    ? text.copied
+                    : text.copy
               }
               onClick={copy}
               profile="field-action"
@@ -148,7 +179,7 @@ export function CodeBlock({
               {copyFailed ? (
                 <XIcon
                   aria-hidden="true"
-                  className="siteplane-icon-pop size-4 text-destructive-foreground"
+                  className="sp-icon-pop size-4 text-destructive-foreground"
                 />
               ) : (
                 <CopyRedrawIcon phase={copyPhase} />
@@ -158,7 +189,7 @@ export function CodeBlock({
           {/* The failure is announced without moving focus. */}
           {copyable ? (
             <span aria-live="polite" className="sr-only">
-              {copyFailed ? "Copy unavailable" : ""}
+              {copyFailed ? text.copyFailed : ""}
             </span>
           ) : null}
         </span>

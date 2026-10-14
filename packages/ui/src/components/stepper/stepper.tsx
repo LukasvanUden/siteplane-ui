@@ -3,6 +3,7 @@ import { Check, Lock } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 import { MotionReveal, MotionSwap } from "../motion";
 
@@ -12,7 +13,7 @@ export function Stepper({
 }: React.ComponentProps<"ol">): React.ReactElement {
   return (
     <ol
-      className={cn("flex flex-col", className)}
+      className={cn(slotClass("stepper", props), "flex flex-col", className)}
       data-slot="stepper"
       {...props}
     />
@@ -88,7 +89,11 @@ export function StepperItem({
   return (
     <li
       aria-current={status === "current" ? "step" : undefined}
-      className={cn(stepItemClassName, className)}
+      className={cn(
+        slotClass("stepper-item", props),
+        stepItemClassName,
+        className,
+      )}
       data-slot="stepper-item"
       data-status={status}
       {...props}
@@ -151,7 +156,7 @@ export function StepperButtonItem({
   const descriptionId = React.useId();
   return (
     <li
-      className={stepItemClassName}
+      className={cn("sp-stepper-item", stepItemClassName)}
       data-slot="stepper-item"
       data-status={status}
     >
@@ -208,7 +213,7 @@ function StepperIndicator({
 
   return (
     <span
-      className={cn(stepIndicatorVariants({ status }))}
+      className={cn("sp-stepper-indicator", stepIndicatorVariants({ status }))}
       data-slot="stepper-indicator"
     >
       <MotionSwap
@@ -256,17 +261,24 @@ function StepperContent({
 
   return (
     <div className="min-w-0 flex-1 pt-0.5">
-      <div className="wrap-anywhere" data-slot="stepper-title" id={titleId}>
+      <div
+        className="sp-stepper-title wrap-anywhere"
+        data-slot="stepper-title"
+        id={titleId}
+      >
         {title}
         {hiddenStatus ? (
-          <span className="sr-only" data-slot="stepper-status">
+          <span
+            className="sp-stepper-status sr-only"
+            data-slot="stepper-status"
+          >
             {` (${hiddenStatus})`}
           </span>
         ) : null}
       </div>
       <MotionReveal open={Boolean(description)}>
         <div
-          className="mt-0.5 wrap-anywhere"
+          className="sp-stepper-description mt-0.5 wrap-anywhere"
           data-slot="stepper-description"
           id={descriptionId}
         >
@@ -286,7 +298,7 @@ function StepperContent({
 function StepperBody({ children }: { children?: React.ReactNode }) {
   return (
     <MotionReveal open={React.Children.toArray(children).length > 0}>
-      <div className="ps-9 pt-3" data-slot="stepper-body">
+      <div className="sp-stepper-body ps-9 pt-3" data-slot="stepper-body">
         {children}
       </div>
     </MotionReveal>

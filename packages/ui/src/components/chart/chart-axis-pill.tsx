@@ -159,11 +159,12 @@ export function ChartAxisPill({
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
+      className="sp-chart-axis-pill-layer pointer-events-none absolute inset-0"
       data-slot="chart-axis-pill-layer"
     >
       <followed.div
         className={cn(
+          "sp-chart-axis-pill",
           "absolute top-0 left-0 whitespace-nowrap -translate-y-1/2",
           bottom ? "-translate-x-1/2" : "-translate-x-full",
           fade,

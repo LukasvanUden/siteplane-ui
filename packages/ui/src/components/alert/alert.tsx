@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 // The action takes a column of its own only from 640 px and only beside a
 // title or description; below 640 px it wraps under the text, so the grid
@@ -40,7 +41,11 @@ export function Alert({
   const resolvedVariant = variant ?? "default";
   return (
     <div
-      className={cn(alertVariants({ variant }), className)}
+      className={cn(
+        slotClass("alert", props),
+        alertVariants({ variant }),
+        className,
+      )}
       data-slot="alert"
       data-variant={resolvedVariant}
       role={assertiveVariants.has(resolvedVariant) ? "alert" : "status"}
@@ -55,7 +60,11 @@ export function AlertTitle({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("wrap-anywhere [svg~&]:col-start-2", className)}
+      className={cn(
+        slotClass("alert-title", props),
+        "wrap-anywhere [svg~&]:col-start-2",
+        className,
+      )}
       data-slot="alert-title"
       {...props}
     />
@@ -69,6 +78,7 @@ export function AlertDescription({
   return (
     <div
       className={cn(
+        slotClass("alert-description", props),
         "flex flex-col gap-2.5 wrap-anywhere [svg~&]:col-start-2",
         className,
       )}
@@ -88,6 +98,7 @@ export function AlertAction({
     // and a description (rulebook S11).
     <div
       className={cn(
+        slotClass("alert-action", props),
         "flex empty:hidden max-sm:mt-2 [svg~&]:col-start-2 sm:row-start-1 sm:self-center sm:[[data-slot=alert-title]~[data-slot=alert-description]~&]:row-end-3 sm:[[data-slot=alert-description]~&]:col-start-2 sm:[[data-slot=alert-title]~&]:col-start-2 sm:[svg~[data-slot=alert-description]~&]:col-start-3 sm:[svg~[data-slot=alert-title]~&]:col-start-3",
         className,
       )}

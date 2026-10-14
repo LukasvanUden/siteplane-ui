@@ -130,7 +130,7 @@ export function LoadingButton({
     <span className="relative inline-grid min-w-0 items-center justify-items-center">
       <span
         aria-hidden={isPending || undefined}
-        className="siteplane-loading-button-idle inline-flex min-w-0 items-center gap-2"
+        className="sp-loading-button-idle inline-flex min-w-0 items-center gap-2"
       >
         {iconPosition === "start" ? icon : null}
         {children}
@@ -139,7 +139,7 @@ export function LoadingButton({
       <span
         aria-hidden={!isPending || undefined}
         aria-live="polite"
-        className="siteplane-loading-button-pending absolute inset-0 inline-flex min-w-0 items-center justify-center gap-1.5"
+        className="sp-loading-button-pending absolute inset-0 inline-flex min-w-0 items-center justify-center gap-1.5"
       >
         <Spinner aria-hidden className="size-4 shrink-0" />
         <span className="truncate">{loadingText}</span>
@@ -149,7 +149,7 @@ export function LoadingButton({
 
   return (
     <span
-      className="siteplane-loading-button-shell"
+      className="sp-loading-button-shell"
       data-loading-button-phase={visualPhase}
     >
       <Button

@@ -6,6 +6,7 @@ import { Card } from "../card";
 import { Separator } from "../separator";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 export interface SettingsListProps extends Omit<
   ComponentPropsWithoutRef<"section">,
@@ -13,6 +14,12 @@ export interface SettingsListProps extends Omit<
 > {
   description?: ReactNode;
   title: ReactNode;
+  /**
+   * The heading level of the title, 1 to 6; `h2` by default, below the page's
+   * `h1`. A list inside a section of a settings page takes the next level. The
+   * look stays the same at every level.
+   */
+  titleLevel?: 1 | 2 | 3 | 4 | 5 | 6 | undefined;
 }
 
 /**
@@ -49,22 +56,44 @@ export function SettingsList({
   className,
   description,
   title,
+  titleLevel = 2,
   ...props
 }: SettingsListProps): React.ReactElement {
+  const Title = `h${titleLevel}` as const;
   return (
     <section
-      className={cn("@container/settings-list flex w-full flex-col", className)}
+      className={cn(
+        slotClass("settings-list", props),
+        "@container/settings-list flex w-full flex-col",
+        className,
+      )}
       data-recipe="settings-list"
       data-slot="settings-list"
       {...props}
     >
-      <header className="grid min-w-0" data-slot="settings-list-header">
-        <h2 data-slot="settings-list-title">{title}</h2>
+      <header
+        className="sp-settings-list-header grid min-w-0"
+        data-slot="settings-list-header"
+      >
+        <Title
+          className="sp-settings-list-title"
+          data-slot="settings-list-title"
+        >
+          {title}
+        </Title>
         {description ? (
-          <p data-slot="settings-list-description">{description}</p>
+          <p
+            className="sp-settings-list-description"
+            data-slot="settings-list-description"
+          >
+            {description}
+          </p>
         ) : null}
       </header>
-      <div className="min-w-0" data-slot="settings-list-surface">
+      <div
+        className="sp-settings-list-surface min-w-0"
+        data-slot="settings-list-surface"
+      >
         <Card className="grid min-w-0 px-4 py-5 @min-[36rem]/settings-list:px-6">
           {children}
         </Card>
@@ -88,6 +117,7 @@ export function SettingsListItem({
   return (
     <div
       className={cn(
+        slotClass("settings-list-item", props),
         "group/settings-item flex",
         layout === "inline"
           ? "items-center justify-between"
@@ -104,7 +134,7 @@ export function SettingsListItem({
         role="presentation"
       />
       <div
-        className="flex min-w-0 flex-auto flex-col"
+        className="sp-settings-list-item-copy flex min-w-0 flex-auto flex-col"
         data-slot="settings-list-item-copy"
       >
         <div className="flex min-w-0 flex-wrap items-center gap-x-1.5">
@@ -115,7 +145,7 @@ export function SettingsListItem({
         </div>
         {description ? (
           <div
-            className="min-w-0 wrap-anywhere"
+            className="sp-settings-list-item-description min-w-0 wrap-anywhere"
             data-slot="settings-list-item-description"
             id={descriptionId}
           >
@@ -125,6 +155,7 @@ export function SettingsListItem({
       </div>
       <div
         className={cn(
+          "sp-settings-list-item-control",
           "flex min-w-0 shrink-0 items-center @min-[36rem]/settings-list:justify-end @min-[36rem]/settings-list:text-right",
           layout === "inline"
             ? "justify-end text-right"

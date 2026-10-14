@@ -1,5 +1,6 @@
 import { Children, type ReactNode } from "react";
 import type React from "react";
+import { cn } from "../utils/cn";
 
 // A menu row keeps one line. Its text sits in a label span that can shrink
 // and ends in an ellipsis when the popup is narrower than the label.
@@ -15,7 +16,7 @@ export function menuRowLabel(children: ReactNode): ReactNode[] {
     if (run.some((text) => String(text).trim() !== "")) {
       parts.push(
         <span
-          className={menuRowLabelClassName}
+          className={cn("sp-menu-row-label", menuRowLabelClassName)}
           data-slot="menu-row-label"
           key={`label-${parts.length}`}
         >
@@ -41,10 +42,10 @@ export function menuRowLabel(children: ReactNode): ReactNode[] {
 
 // The rows keep one size at every control size, like the menu rows (S1): the
 // shared menu-row recipe in design-rework.css sets their height, text and icon.
-// The siteplane-choice-menu-item rule there gives a row the accent fill while
+// The sp-choice-menu-item rule there gives a row the accent fill while
 // it is hovered, focused or highlighted, where no menu-row state rule does.
 export const choiceMenuItemClassName =
-  "siteplane-choice-menu-item grid in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] w-full cursor-pointer items-center whitespace-nowrap outline-none data-disabled:pointer-events-none data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none [&_svg]:shrink-0";
+  "sp-choice-menu-item grid in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] w-full cursor-pointer items-center whitespace-nowrap outline-none data-disabled:cursor-not-allowed data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none [&_svg]:shrink-0";
 
 // A check or radio indicator takes the leading icon slot of an action row
 // (rulebook I8). Its column is as wide as the icon, which the shared menu-row
@@ -86,7 +87,7 @@ export const choiceMenuSwitchSize = "lg";
 // The check of a choice row: the checkbox and radio items of Menu,
 // ContextMenu and DrawerMenu and the items of Select and Combobox. It draws
 // itself in and out like the check of the Checkbox: its path carries the
-// Checkbox's `siteplane-check-path-motion`, and both read the state of the
+// Checkbox's `sp-check-path-motion`, and both read the state of the
 // indicator around the glyph, so the rules live once in motion.css. The glyph
 // adds the Checkbox indicator's pop. An indicator that holds this glyph stays
 // mounted (`keepMounted`): Base UI unmounts one that runs no animation of its
@@ -96,7 +97,7 @@ export function ChoiceMenuItemCheck(): React.ReactElement {
   return (
     <svg
       aria-hidden="true"
-      className="siteplane-check-glyph-motion"
+      className="sp-check-glyph-motion"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -108,7 +109,7 @@ export function ChoiceMenuItemCheck(): React.ReactElement {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        className="siteplane-check-path-motion"
+        className="sp-check-path-motion"
         d="M5.252 12.7 10.2 18.63 18.748 5.37"
       />
     </svg>

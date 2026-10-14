@@ -8,6 +8,7 @@ import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provi
 
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
 
 export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
@@ -22,7 +23,7 @@ export function PopoverTrigger({
 }: WithStringClassName<PopoverPrimitive.Trigger.Props>): React.ReactElement {
   return (
     <PopoverPrimitive.Trigger
-      className={className}
+      className={cn(slotClass("popover-trigger", props), className)}
       data-slot="popover-trigger"
       {...props}
     >
@@ -74,7 +75,7 @@ export function PopoverPopup({
           align={align}
           alignOffset={alignOffset}
           anchor={anchor}
-          className="z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width)"
+          className="sp-popover-positioner z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width)"
           data-slot="popover-positioner"
           ref={positionerRef}
           side={side}
@@ -84,12 +85,14 @@ export function PopoverPopup({
             className={cn(
               // Glass keeps the frame and takes the glass surface in place of
               // the opaque one, whose fill, edge and shadow the glass rule draws.
+              slotClass("popover-popup", props),
+              baseClass("popover", props),
               surfaceClassNames.floatingOverlayFrame,
               variant === "glass"
                 ? surfaceClassNames.glass
                 : surfaceClassNames.floatingOverlaySurface,
               "flex h-(--popup-height,auto) outline-none before:rounded-[inherit] has-data-[slot=calendar]:before:rounded-[inherit]",
-              tooltipStyle && "w-fit text-balance before:rounded-[inherit]",
+              tooltipStyle && "text-balance before:rounded-[inherit]",
               className,
             )}
             data-foundation="popover"
@@ -102,6 +105,7 @@ export function PopoverPopup({
               className={cn(
                 // The cross-fade of the current and the previous content is
                 // the popover viewport rule in design-rework.css.
+                "sp-popover-viewport",
                 "relative size-full max-h-(--available-height) overflow-clip px-(--viewport-inline-padding) data-instant:transition-none",
                 tooltipStyle ? "" : "not-data-transitioning:overflow-y-auto",
                 // The first block sits beside the corner close button and ends
@@ -141,7 +145,13 @@ export function PopoverPopup({
 export function PopoverClose({
   ...props
 }: WithStringClassName<PopoverPrimitive.Close.Props>): React.ReactElement {
-  return <PopoverPrimitive.Close data-slot="popover-close" {...props} />;
+  return (
+    <PopoverPrimitive.Close
+      data-slot="popover-close"
+      {...props}
+      className={cn(slotClass("popover-close", props), props.className)}
+    />
+  );
 }
 
 export function PopoverTitle({
@@ -150,7 +160,7 @@ export function PopoverTitle({
 }: WithStringClassName<PopoverPrimitive.Title.Props>): React.ReactElement {
   return (
     <PopoverPrimitive.Title
-      className={className}
+      className={cn(slotClass("popover-title", props), className)}
       data-slot="popover-title"
       {...props}
     />
@@ -164,6 +174,7 @@ export function PopoverDescription({
   return (
     <PopoverPrimitive.Description
       className={cn(
+        slotClass("popover-description", props),
         "wrap-anywhere [[data-slot=popover-viewport]>[data-current]>[data-slot=popover-title]+&]:mt-1",
         className,
       )}

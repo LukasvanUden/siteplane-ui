@@ -13,6 +13,7 @@ import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   defaultNumberLocales,
   digitGlyphs,
@@ -169,11 +170,13 @@ function Wheel({
     }
   }, [digit, position, reduced, trend]);
 
-  // At rest: how wide the digit is, which is where the next roll starts.
+  // At rest: how wide the digit is, which is where the next roll starts. It is
+  // measured when the place mounts, when its digit or glyphs change and when a
+  // roll ends, not after every render of the number around it.
   React.useLayoutEffect(() => {
     if (!roll)
       restWidth.current = sizer.current?.getBoundingClientRect().width ?? 0;
-  });
+  }, [digit, glyphs, roll]);
 
   // The roll: the position follows its target over the value duration.
   React.useLayoutEffect(() => {
@@ -207,7 +210,7 @@ function Wheel({
       {roll ? (
         <span
           aria-hidden="true"
-          className={wheelWindowClassName}
+          className={cn("sp-motion-number-wheel", wheelWindowClassName)}
           data-slot="motion-number-wheel"
           ref={windowRef}
         >
@@ -264,7 +267,12 @@ function Glyph({
   return (
     <motion.span
       {...presence}
-      className="relative inline-block whitespace-pre"
+      className={cn(
+        cell.kind === "digit"
+          ? "sp-motion-number-digit"
+          : "sp-motion-number-char",
+        "relative inline-block whitespace-pre",
+      )}
       data-slot={
         cell.kind === "digit" ? "motion-number-digit" : "motion-number-char"
       }
@@ -325,7 +333,11 @@ export function MotionNumber({
     children: (
       <>
         <span className="sr-only">{model.text}</span>
-        <span aria-hidden="true" data-slot="motion-number-glyphs">
+        <span
+          aria-hidden="true"
+          className="sp-motion-number-glyphs"
+          data-slot="motion-number-glyphs"
+        >
           {entries.map((entry) => (
             <Glyph
               appear={mounted.current}
@@ -342,6 +354,7 @@ export function MotionNumber({
       </>
     ),
     className: cn(
+      slotClass("motion-number", props, render),
       "relative inline-block whitespace-nowrap tabular-nums",
       className,
     ),

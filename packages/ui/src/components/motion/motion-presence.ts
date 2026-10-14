@@ -6,25 +6,19 @@ import * as React from "react";
 import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
 
 /**
- * What the Motion parts hand to Motion, kept apart from the components so the
- * values can be checked without a DOM. Durations and easings are measured from
- * the `--motion-*` tokens of the element itself when an animation starts
+ * The timing and the moves of the Motion parts, kept apart from the components
+ * so they can be checked without a browser. Durations and easings are measured
+ * from the `--motion-*` tokens of the element itself when an animation starts
  * (rulebook M1), so a token set on any container around it applies; nothing
- * here invents a timing. Reduced motion (M5) makes every value instant.
+ * here invents a timing. Presence and glides run on the Web Animations API from
+ * the frame after a change; MotionSwap's fade and the rolling number hand their
+ * values to Motion. Reduced motion (M5) makes everything instant.
  */
 
 export type MotionLayout = "stack" | "flow";
 
 /** Used whenever motion is reduced (M5) and on the server. */
 export const instantTransition: Transition = { duration: 0 };
-
-/**
- * A stack item is clipped only while it changes height (`useClipWhileAnimating`
- * follows the height). At rest nothing is clipped, so focus rings, shadows and
- * menus at the item's edge stay whole.
- */
-const collapsed = { height: 0, opacity: 0 } as const;
-const expanded = { height: "auto", opacity: 1 } as const;
 
 /**
  * The timing of an animation, measured from the element when it starts, which
@@ -44,6 +38,21 @@ export function measureTiming(
   );
 }
 
+/**
+ * Runs `start` in the frame after the one that renders the current commit and
+ * returns its cancel. That first frame shows where a motion starts. A browser
+ * can take long to present it (in Chrome the first change after an input
+ * waits tens of milliseconds), and a clock started in it is already part-way
+ * by the next frame; started a frame later, the motion begins where the first
+ * frame left it. Base UI's panels start their transitions a frame later too.
+ */
+export function inSecondFrame(start: () => void): () => void {
+  let id = requestAnimationFrame(() => {
+    id = requestAnimationFrame(start);
+  });
+  return () => cancelAnimationFrame(id);
+}
+
 /** A unitless token such as a scale, with the value the kit ships as fallback. */
 export function measureNumber(
   element: Element | null,
@@ -60,20 +69,411 @@ export function measureNumber(
 }
 
 /**
- * A transition whose duration and easing are measured at the moment Motion
- * reads them, which is when a layout animation starts. A plain object would
- * freeze the tokens at the render that created it.
+ * The duration and the curve of a keyframe animation, read from the motion
+ * tokens of the element when it starts (rulebook M1), so a token set on any
+ * container around it applies.
  */
-export function lazyTransition(resolve: () => Transition): Transition {
-  const read = (key: "duration" | "ease") =>
-    (resolve() as Record<string, unknown>)[key];
-  return Object.defineProperties(
-    {},
+export function keyframeTiming(
+  element: Element,
+  durationVariable: `--motion-${string}`,
+  easingVariable: `--motion-${string}`,
+): KeyframeAnimationOptions {
+  const styles = getComputedStyle(element);
+  const duration = styles.getPropertyValue(durationVariable).trim();
+  const easing = styles.getPropertyValue(easingVariable).trim();
+  return {
+    duration:
+      (Number.parseFloat(duration) || 0) * (duration.endsWith("ms") ? 1 : 1000),
+    ...(easing ? { easing } : {}),
+  };
+}
+
+/**
+ * Starts a keyframe animation that shows its first keyframe in the frame the
+ * commit renders and plays from the frame after (`inSecondFrame`). The Web
+ * Animations API runs it: translate, scale and opacity on the compositor,
+ * height on the main thread.
+ */
+export function playFromSecondFrame(
+  element: Element,
+  keyframes: Keyframe[],
+  options: KeyframeAnimationOptions,
+): Animation {
+  const animation = element.animate(keyframes, options);
+  animation.pause();
+  inSecondFrame(() => {
+    // An animation that was cancelled or replaced meanwhile stays so.
+    if (animation.playState === "paused") animation.play();
+  });
+  return animation;
+}
+
+/** The element's own `overflow-y` while a height animation clips it. */
+const clipped = new WeakMap<HTMLElement, string>();
+
+function clip(element: HTMLElement) {
+  if (clipped.has(element)) return;
+  clipped.set(element, element.style.overflowY);
+  element.style.overflowY = "clip";
+}
+
+function unclip(element: HTMLElement) {
+  const own = clipped.get(element);
+  if (own === undefined) return;
+  clipped.delete(element);
+  element.style.overflowY = own;
+}
+
+/** A uniform `scale` as getComputedStyle reports it: "none" is 1. */
+function scaleOf(value: string): number {
+  const scale = Number.parseFloat(value);
+  return Number.isFinite(scale) ? scale : 1;
+}
+
+/**
+ * How an element comes and goes. `height`: a block that opens and closes its
+ * height with a fade, a stack item or a reveal; what is below it moves with its
+ * height, and it clips its content while the height moves (at rest nothing is
+ * clipped, so focus rings, shadows and menus at its edge stay whole). `scale`:
+ * an item of a wrapping or horizontal set, a flow list, which fades in and
+ * grows from `--motion-presence-scale` and fades and shrinks out, without
+ * travel (M2), while its siblings glide (`GlideOnChange`).
+ */
+export type PresenceKind = "height" | "scale";
+
+/**
+ * The keyframe an element shows now: the frame a running motion is at, or,
+ * with nothing running, the element at rest.
+ */
+const presenceNow: Record<PresenceKind, (element: HTMLElement) => Keyframe> = {
+  height: (element) => ({
+    height: `${element.getBoundingClientRect().height}px`,
+    opacity: Number(getComputedStyle(element).opacity),
+  }),
+  scale: (element) => {
+    const styles = getComputedStyle(element);
+    return { opacity: Number(styles.opacity), scale: scaleOf(styles.scale) };
+  },
+};
+
+/** The keyframe of an element that is gone. */
+const presenceGone: Record<PresenceKind, (element: HTMLElement) => Keyframe> = {
+  height: () => ({ height: "0px", opacity: 0 }),
+  scale: (element) => ({
+    opacity: 0,
+    scale: measureNumber(element, "--motion-presence-scale", 0.96),
+  }),
+};
+
+/**
+ * Starts the presence motion of an element over the expand duration: towards
+ * rest when it is present, towards gone when it is not. A motion that still
+ * runs is replaced from what it shows, so a change of course does not jump
+ * back. `then` runs when the motion has finished.
+ */
+export function playPresence(
+  element: HTMLElement,
+  kind: PresenceKind,
+  present: boolean,
+  running: Animation | null,
+  then: () => void,
+): Animation {
+  const from = running
+    ? presenceNow[kind](element)
+    : present
+      ? presenceGone[kind](element)
+      : null;
+  running?.cancel();
+  const atRest = presenceNow[kind](element);
+  if (kind === "height") clip(element);
+  const animation = playFromSecondFrame(
+    element,
+    present ? [from!, atRest] : [from ?? atRest, presenceGone[kind](element)],
     {
-      duration: { enumerable: true, get: () => read("duration") },
-      ease: { enumerable: true, get: () => read("ease") },
+      ...keyframeTiming(
+        element,
+        "--motion-duration-expand",
+        "--motion-ease-standard",
+      ),
+      // A leaving element keeps its last keyframe until it is removed.
+      fill: present ? "none" : "forwards",
     },
-  ) as Transition;
+  );
+  animation.onfinish = () => {
+    if (present) unclip(element);
+    then();
+  };
+  return animation;
+}
+
+/**
+ * Plays the presence of an element (rulebook M6, M7) over the expand duration:
+ * from gone to rest when it appears or comes back, from rest to gone when it
+ * leaves. JavaScript measures and the Web Animations API animates, from the
+ * second frame (`playFromSecondFrame`), so a slow first frame never shows the
+ * motion half done. A change of course starts from what is shown, so nothing
+ * jumps back. `appear` is false for an element that is at rest when it mounts.
+ * `onGone` runs when a leaving element has finished, and at once with reduced
+ * motion, where nothing animates (M5).
+ */
+export function usePresenceMotion(
+  ref: React.RefObject<HTMLElement | null>,
+  kind: PresenceKind,
+  {
+    appear,
+    onGone,
+    present,
+    reduced,
+  }: {
+    appear: boolean;
+    onGone?: (() => void) | undefined;
+    present: boolean;
+    reduced: boolean;
+  },
+): void {
+  const running = React.useRef<Animation | null>(null);
+  const was = React.useRef<boolean | null>(null);
+  const gone = React.useRef(onGone);
+  gone.current = onGone;
+
+  React.useLayoutEffect(() => {
+    const element = ref.current;
+    const first = was.current === null;
+    const wasPresent = was.current;
+    was.current = present;
+    if (!element) return;
+    const current = running.current;
+    if (reduced || typeof element.animate !== "function") {
+      current?.cancel();
+      running.current = null;
+      unclip(element);
+      if (!present) gone.current?.();
+      return;
+    }
+    if (present && (first ? !appear : wasPresent)) return;
+    const animation = playPresence(element, kind, present, current, () => {
+      if (running.current !== animation) return;
+      running.current = null;
+      if (!present) gone.current?.();
+    });
+    running.current = animation;
+  }, [appear, kind, present, reduced, ref]);
+
+  React.useEffect(() => () => running.current?.cancel(), []);
+}
+
+/**
+ * Where an element is seen against the box of `origin`. A glide starts where
+ * the element was seen, also when the commit scrolled a list that scrolls
+ * (scroll anchoring does when items move), so the place is not taken against
+ * the scrolled content.
+ */
+type Place = { height: number; left: number; top: number; width: number };
+
+function placeIn(element: Element, originBox: DOMRect): Place {
+  const box = element.getBoundingClientRect();
+  return {
+    height: box.height,
+    left: box.left - originBox.left,
+    top: box.top - originBox.top,
+    width: box.width,
+  };
+}
+
+/**
+ * Where the parts were before a commit, against the box the origin had then.
+ * The origin can move in the commit itself, such as a centred set that loses
+ * a part, so a glide adds the origin's own move to start where the part was
+ * seen.
+ */
+type Before = { origin: DOMRect; places: Map<HTMLElement, Place> };
+
+/** The glide that runs on a part, to measure where it stands when it changes. */
+const glides = new WeakMap<Element, Animation>();
+
+/** Marks the picture of a part that has left; it is no part itself. */
+export const motionGhostAttribute = "data-motion-ghost";
+
+export type GlideOnChangeProps = {
+  /** What the set is: a new value means it changed. */
+  change: unknown;
+  /** The element the parts are placed against; it has a box of its own. */
+  origin: () => HTMLElement | null;
+  /** The elements that glide. */
+  parts: () => Iterable<HTMLElement>;
+  /**
+   * The set's parts come and go without a presence of their own: a new part
+   * fades in, and a part that has left stays as a picture that fades out
+   * where it was and takes no input.
+   */
+  presence?: boolean | undefined;
+  reduced: boolean;
+};
+
+/**
+ * Glides the parts of a set to their new place when the set changes (rulebook
+ * M7), as a FLIP: Vue's TransitionGroup and Svelte's animate:flip move items
+ * the same way. Before the commit it measures where each part is, after it
+ * where each one is now; every part then shows at its old place in the frame
+ * the commit renders and moves home on the compositor from the frame after
+ * (`playFromSecondFrame`), with a translate added to its own. A part that is
+ * still on its way glides on from where it stands. Measured in
+ * getSnapshotBeforeUpdate, as Motion's layout animations measure, so it
+ * renders nothing.
+ */
+export class GlideOnChange extends React.Component<GlideOnChangeProps> {
+  getSnapshotBeforeUpdate(
+    previous: Readonly<GlideOnChangeProps>,
+  ): Before | null {
+    if (previous.change === this.props.change || this.props.reduced) {
+      return null;
+    }
+    const origin = this.props.origin();
+    if (!origin || typeof origin.animate !== "function") return null;
+    const originBox = origin.getBoundingClientRect();
+    const places = new Map<HTMLElement, Place>();
+    for (const part of this.props.parts())
+      places.set(part, placeIn(part, originBox));
+    return { origin: originBox, places };
+  }
+
+  componentDidUpdate(
+    _previous: Readonly<GlideOnChangeProps>,
+    _state: unknown,
+    before: Before | null,
+  ): void {
+    if (before) glideParts(this.props, before);
+  }
+
+  render(): null {
+    return null;
+  }
+}
+
+function glideParts(
+  { origin: originOf, parts: partsOf, presence }: GlideOnChangeProps,
+  { origin: originBefore, places: before }: Before,
+) {
+  const origin = originOf();
+  if (!origin) return;
+  const parts = [...partsOf()];
+  // A part that still glides stood where it was measured; it goes on from
+  // there, measured now without its glide.
+  for (const part of parts) glides.get(part)?.cancel();
+  const originBox = origin.getBoundingClientRect();
+  // How far the origin itself moved in the commit, in the page.
+  const moved = {
+    left: originBefore.left - originBox.left,
+    top: originBefore.top - originBox.top,
+  };
+  const timing = keyframeTiming(
+    origin,
+    "--motion-duration-expand",
+    "--motion-ease-standard",
+  );
+  for (const part of parts) {
+    const was = before.get(part);
+    if (!was) {
+      if (presence) fadeIn(part, timing);
+      continue;
+    }
+    const now = placeIn(part, originBox);
+    const x = was.left + moved.left - now.left;
+    const y = was.top + moved.top - now.top;
+    if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5) continue;
+    // A part that is leaving (Motion pops it out of the flow, against the
+    // origin) fades where it was seen, without travel (M2), also when the
+    // origin moved under it; the others glide home.
+    const leaving = part.hasAttribute("data-motion-pop-id");
+    const glide = playFromSecondFrame(
+      part,
+      [
+        { translate: `${x}px ${y}px` },
+        { translate: leaving ? `${x}px ${y}px` : "0px 0px" },
+      ],
+      {
+        ...timing,
+        composite: "add",
+        ...(leaving ? { fill: "forwards" as const } : {}),
+      },
+    );
+    glides.set(part, glide);
+  }
+  if (!presence) return;
+  for (const [part, was] of before)
+    if (!part.isConnected)
+      leavePicture(
+        part,
+        { ...was, left: was.left + moved.left, top: was.top + moved.top },
+        origin,
+        timing,
+      );
+}
+
+function fadeIn(part: HTMLElement, timing: KeyframeAnimationOptions) {
+  playFromSecondFrame(
+    part,
+    [presenceGone.scale(part), presenceNow.scale(part)],
+    timing,
+  );
+}
+
+/**
+ * A copy of a part that has left, at the place it had, fading out under its
+ * neighbours as they glide over its place; Base UI keeps such a copy of a
+ * popup's previous content for the same reason. The part itself is gone at
+ * once, so focus, keyboard order and assistive technology move on as they
+ * always did.
+ */
+function leavePicture(
+  part: HTMLElement,
+  was: Place,
+  origin: HTMLElement,
+  timing: KeyframeAnimationOptions,
+) {
+  const picture = part.cloneNode(true) as HTMLElement;
+  for (const element of [picture, ...picture.querySelectorAll("[id]")])
+    element.removeAttribute("id");
+  Object.assign(picture.style, {
+    height: `${was.height}px`,
+    left: `${was.left}px`,
+    margin: "0",
+    position: "absolute",
+    top: `${was.top}px`,
+    width: `${was.width}px`,
+  });
+  // The holder comes first in the origin, so the picture paints under the
+  // parts that glide over its place, and it is no part's neighbour: a rule for
+  // what follows a part does not match. It covers the padding box, where an
+  // absolute child sits, from the origin's box: the picture stands where the
+  // part was seen, and scrolls with the content.
+  const holder = origin.ownerDocument.createElement("div");
+  holder.setAttribute(motionGhostAttribute, "");
+  holder.setAttribute("aria-hidden", "true");
+  holder.inert = true;
+  Object.assign(holder.style, {
+    height: `${origin.clientHeight}px`,
+    left: `${origin.scrollLeft - origin.clientLeft}px`,
+    pointerEvents: "none",
+    position: "absolute",
+    top: `${origin.scrollTop - origin.clientTop}px`,
+    width: `${origin.clientWidth}px`,
+  });
+  holder.append(picture);
+  origin.prepend(holder);
+  const fade = playFromSecondFrame(
+    picture,
+    [
+      { opacity: Number(getComputedStyle(picture).opacity) },
+      {
+        opacity: 0,
+        scale: measureNumber(picture, "--motion-presence-scale", 0.96),
+      },
+    ],
+    { ...timing, fill: "forwards" },
+  );
+  fade.onfinish = () => holder.remove();
+  fade.oncancel = () => holder.remove();
 }
 
 type Timed = {
@@ -82,80 +482,6 @@ type Timed = {
   /** The timing of an animation, measured when it starts. */
   resolve: () => Transition;
 };
-
-/**
- * The stack presence of a single block, timed when each animation starts:
- * expand from height 0 with a fade; collapse the same way.
- */
-export function revealPresence({ reduced, resolve }: Timed) {
-  const timing = () => (reduced ? instantTransition : resolve());
-  const variants = {
-    collapsed: () => ({ ...collapsed, transition: timing() }),
-    expanded: () => ({ ...expanded, transition: timing() }),
-  };
-  if (reduced) {
-    return { animate: "expanded", initial: false, variants } as const;
-  }
-  return {
-    animate: "expanded",
-    exit: "collapsed",
-    initial: "collapsed",
-    variants,
-  } as const;
-}
-
-/**
- * An item of a stack list: the same expand and collapse as a reveal. The item
- * is not held by `AnimatePresence`: the list keeps a leaving item in place
- * itself (`nextLeaving`) and plays the collapse with `leaving`, so it sits
- * right after the item it followed. `appear` is false for the items of the
- * first render, which are at rest from the start. A reorder glides with the
- * same timing.
- */
-export function stackPresence({
-  appear,
-  leaving,
-  reduced,
-  resolve,
-}: Timed & { appear: boolean; leaving: boolean }) {
-  const timing = () => (reduced ? instantTransition : resolve());
-  const variants = {
-    collapsed: () => ({ ...collapsed, transition: timing() }),
-    expanded: () => ({ ...expanded, transition: timing() }),
-  };
-  if (reduced) {
-    return { animate: "expanded", initial: false, variants } as const;
-  }
-  return {
-    animate: leaving ? "collapsed" : "expanded",
-    initial: appear ? "collapsed" : false,
-    transition: { layout: lazyTransition(resolve) },
-    variants,
-  } as const;
-}
-
-/** An item of a flow list: fade and scale slightly; the siblings glide by position. */
-export function flowPresence({
-  reduced,
-  resolve,
-  resolveScale,
-}: Timed & { resolveScale: () => number }) {
-  const timing = () => (reduced ? instantTransition : resolve());
-  const variants = {
-    hidden: () => ({ opacity: 0, scale: resolveScale(), transition: timing() }),
-    shown: () => ({ opacity: 1, scale: 1, transition: timing() }),
-  };
-  if (reduced) {
-    return { animate: "shown", initial: false, variants } as const;
-  }
-  return {
-    animate: "shown",
-    exit: "hidden",
-    initial: "hidden",
-    transition: { layout: lazyTransition(resolve) },
-    variants,
-  } as const;
-}
 
 /**
  * A character of a rolling number: it opens its width and fades in when it
@@ -232,7 +558,7 @@ export function measureSwapTiming(element: Element | null): SwapTiming {
  * names the tokens `measureSwapTiming` measures, so a swap looks the same
  * whichever way it is driven, and which is instant with reduced motion (M5).
  */
-export const swapFadeClassName = "siteplane-swap-fade";
+export const swapFadeClassName = "sp-swap-fade";
 
 /**
  * A Tabs panel switches at once instead (Lukas, 13 October 2026): the panel that
@@ -240,19 +566,11 @@ export const swapFadeClassName = "siteplane-swap-fade";
  * pattern and most interfaces. A dissolve showed both panels' text at once
  * wherever a panel has no surface of its own, and a fade through of a whole
  * panel leaves a moment with neither. The indicator and the height of the
- * panels' container carry the motion. The class is the kit's panel-switch rule
- * in motion.css.
+ * panels' container carry the motion; the height follows over the expand
+ * duration (the follow rule in motion.css). The class is the kit's
+ * panel-switch rule in motion.css.
  */
-export const panelSwitchClassName = "siteplane-panel-switch";
-
-/** The height follow of a Tabs panel switch: over the expand duration. */
-export function measurePanelSwitchHeight(element: Element | null): Transition {
-  return measureTiming(
-    element,
-    "--motion-duration-expand",
-    "--motion-ease-standard",
-  );
-}
+export const panelSwitchClassName = "sp-panel-switch";
 
 const instantSwap: SwapTiming = {
   enter: instantTransition,
@@ -445,34 +763,6 @@ export function useLeavingEntries<T extends Keyed>(
     [],
   );
   return { entries: stackEntries(present, next), remove };
-}
-
-/**
- * What to do when the new content of a swap has another height than the one the
- * running height animation heads for (content that builds a frame later, such
- * as a collection or an editor): continue from what is shown now towards the
- * real height, in the time that is left. `null` when nothing changed.
- */
-export function retargetHeight({
-  elapsed,
-  natural,
-  shown,
-  target,
-  total,
-}: {
-  /** Milliseconds since the swap started. */
-  elapsed: number;
-  /** The height the container would have at rest now. */
-  natural: number;
-  /** The height the user sees now. */
-  shown: number;
-  /** The height the animation heads for. */
-  target: number;
-  /** Milliseconds the swap takes in all. */
-  total: number;
-}): { duration: number; from: number; to: number } | null {
-  if (Math.abs(natural - target) < 1) return null;
-  return { duration: Math.max(0, total - elapsed), from: shown, to: natural };
 }
 
 /**

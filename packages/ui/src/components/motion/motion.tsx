@@ -2,24 +2,28 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { AnimatePresence, useIsPresent } from "motion/react";
+import {
+  AnimatePresence,
+  MotionConfig,
+  PresenceContext,
+  useIsPresent,
+  usePresence,
+} from "motion/react";
 import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
+import { useSiteplaneNonce } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { useHeightFollower } from "./motion-follow";
 import {
-  flowPresence,
+  GlideOnChange,
   leavingProps,
-  measureNumber,
   measureSwapTiming,
-  measureTiming,
-  revealPresence,
-  stackPresence,
   swapPresence,
   toMotionElement,
-  useClipWhileAnimating,
   useLeavingEntries,
+  usePresenceMotion,
   type MotionLayout,
   type SwapTiming,
 } from "./motion-presence";
@@ -48,6 +52,31 @@ type MotionEntryValue = {
 };
 
 const MotionEntryContext = React.createContext<MotionEntryValue | null>(null);
+
+/**
+ * Presence that takes a leaving child out of the flow while it plays its exit.
+ * Motion pins that child with a `<style>` element; under a Content Security
+ * Policy with nonces it carries the provider's nonce. MotionConfig merges with
+ * any MotionConfig of the application around it, so its transition and
+ * reduced-motion settings still apply.
+ */
+function PopLayoutPresence({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
+  const nonce = useSiteplaneNonce();
+  const presence = (
+    <AnimatePresence initial={false} mode="popLayout">
+      {children}
+    </AnimatePresence>
+  );
+  return nonce ? (
+    <MotionConfig nonce={nonce}>{presence}</MotionConfig>
+  ) : (
+    presence
+  );
+}
 
 /**
  * What a stack item knows about its place in the list. A leaving item stays in
@@ -92,8 +121,7 @@ function MotionEntry({
 type MotionListContextValue = {
   gap: boolean;
   layout: MotionLayout;
-  layoutDependency: string;
-  /** True once the list has mounted: items that mount later animate in. */
+  /** True from the list's first frame: items that mount later animate in. */
   mounted: React.RefObject<boolean>;
   reduced: boolean;
   separator: React.ReactNode;
@@ -161,11 +189,21 @@ export function MotionList({
   const stack = layout === "stack";
   const present = React.Children.toArray(children).filter(React.isValidElement);
   const { entries, remove } = useLeavingEntries(present, stack && !reduced);
-  // Items measure their position only when the set or the order of keys changes.
+  // Items glide to their new place when the set or the order of keys changes.
   const layoutDependency = present.map((child) => String(child.key)).join("|");
+  // The items of the first frame are at rest; items that come later animate
+  // in. A collection that renders its items one commit after the list, as
+  // React Aria's do, renders them before that frame, so they are at rest too.
   const mounted = React.useRef(false);
   React.useEffect(() => {
-    mounted.current = true;
+    if (typeof requestAnimationFrame === "undefined") {
+      mounted.current = true;
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      mounted.current = true;
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   // A flow list moves its container's height when a row appears or goes. The
@@ -177,52 +215,60 @@ export function MotionList({
     if (settled.current === layoutDependency) return;
     settled.current = layoutDependency;
     if (stack) return;
-    follow({
-      timing: measureTiming(
-        followed.current,
-        "--motion-duration-expand",
-        "--motion-ease-standard",
-      ),
-    });
-  }, [follow, followed, layoutDependency, stack]);
+    follow();
+  }, [follow, layoutDependency, stack]);
   const hasGap = stack && gap !== undefined && gap > 0;
   const context = React.useMemo<MotionListContextValue>(
     () => ({
       gap: hasGap,
       layout,
-      layoutDependency,
       mounted,
       reduced,
       separator,
     }),
-    [hasGap, layout, layoutDependency, reduced, separator],
+    [hasGap, layout, reduced, separator],
   );
 
   const defaultProps = {
-    children: stack ? (
-      entries.map((entry) => (
-        <MotionEntry
-          entryKey={entry.key}
-          key={entry.key}
-          last={entry.last}
-          leaving={entry.leaving}
-          onGone={remove}
-        >
-          {entry.element}
-        </MotionEntry>
-      ))
-    ) : (
-      // A leaving item is taken out of the flow and positioned from the list.
-      <AnimatePresence initial={false} mode="popLayout">
-        {present}
-      </AnimatePresence>
+    children: (
+      <>
+        {stack ? (
+          entries.map((entry) => (
+            <MotionEntry
+              entryKey={entry.key}
+              key={entry.key}
+              last={entry.last}
+              leaving={entry.leaving}
+              onGone={remove}
+            >
+              {entry.element}
+            </MotionEntry>
+          ))
+        ) : (
+          // A leaving item is taken out of the flow and positioned from the
+          // list.
+          <PopLayoutPresence>{present}</PopLayoutPresence>
+        )}
+        {/* After the items, whose presence has started by then: an item that
+            enters a stack takes no height yet, so the others do not move. */}
+        <GlideOnChange
+          change={layoutDependency}
+          origin={() => followed.current}
+          parts={() => listItems(listRef.current)}
+          reduced={reduced}
+        />
+      </>
     ),
-    className: cn(!stack && "relative", className),
+    className: cn(
+      slotClass("motion-list", props, render),
+      !stack && "relative",
+      className,
+    ),
     "data-layout": layout,
     "data-slot": "motion-list",
     style: hasGap
       ? ({
-          "--siteplane-motion-gap": `calc(var(--spacing) * ${gap})`,
+          "--sp-motion-gap": `calc(var(--spacing) * ${gap})`,
         } as React.CSSProperties)
       : undefined,
   };
@@ -240,12 +286,21 @@ export function MotionList({
   );
 }
 
+/** The elements of a list's items: its children in the DOM. */
+function listItems(list: HTMLElement | null): HTMLElement[] {
+  return list
+    ? [...list.children].filter(
+        (child): child is HTMLElement => child instanceof HTMLElement,
+      )
+    : [];
+}
+
 export interface MotionItemProps extends NativeProps<"li"> {
   /**
    * Replaces the element, `li` by default. Pass an element (`<div />`) or a
-   * component element (`<Row />`); it gains the motion behavior. The element
-   * is the clipping box of a `stack` item, so give it no padding or border and
-   * put those on the content inside.
+   * component element (`<Row />`) that forwards its ref; it gains the motion
+   * behavior. The element is the clipping box of a `stack` item, so give it no
+   * padding or border and put those on the content inside.
    */
   render?: React.ReactElement;
 }
@@ -262,40 +317,30 @@ export function MotionItem({
 }: MotionItemProps): React.ReactElement {
   const list = useMotionList("MotionItem");
   const entry = React.useContext(MotionEntryContext);
-  const present = useIsPresent() && !entry?.leaving;
-  const clip = useClipWhileAnimating();
+  const ref = React.useRef<HTMLLIElement>(null);
   const stack = list.layout === "stack";
+  // A stack keeps its leaving items itself (MotionEntry) and collapses them; a
+  // flow list holds them in AnimatePresence, out of the flow, until their exit
+  // has played. A stack item never holds the presence of a swap or a reveal
+  // around it, but it is inert while that presence leaves.
+  const inPresence = useIsPresent();
+  const [inFlow, safeToRemove] = usePresence(!stack);
+  const shown = stack ? !entry?.leaving : inFlow;
+  const present = shown && inPresence;
   // The items of the first render are at rest; later ones animate in.
   const appear = React.useRef(list.mounted.current).current;
   const claim = entry?.claim;
   React.useLayoutEffect(() => {
     claim?.();
   }, [claim]);
-
-  // Measured from the item when an animation starts, so a token on any
-  // container around it applies.
-  const resolve = () =>
-    measureTiming(
-      clip.ref.current,
-      "--motion-duration-expand",
-      "--motion-ease-standard",
-    );
-  const presence = stack
-    ? stackPresence({
-        appear,
-        leaving: Boolean(entry?.leaving),
-        reduced: list.reduced,
-        resolve,
-      })
-    : flowPresence({
-        reduced: list.reduced,
-        resolve,
-        resolveScale: () =>
-          measureNumber(clip.ref.current, "--motion-presence-scale", 0.96),
-      });
+  usePresenceMotion(ref, stack ? "height" : "scale", {
+    appear,
+    onGone: stack ? entry?.remove : (safeToRemove ?? undefined),
+    present: shown,
+    reduced: list.reduced,
+  });
 
   const defaultProps = {
-    ...presence,
     ...leavingProps(present, list.reduced),
     // The space after the item is a block inside it, so it collapses with the
     // item, and it is open only while another item follows.
@@ -304,31 +349,29 @@ export function MotionItem({
         <>
           {children}
           <MotionReveal data-slot="motion-gap" open={!(entry?.last ?? true)}>
-            <div aria-hidden="true" className="h-(--siteplane-motion-gap)" />
+            <div aria-hidden="true" className="h-(--sp-motion-gap)" />
             {list.separator}
           </MotionReveal>
         </>
       ) : (
         children
       ),
-    className: cn(stack && "flow-root", className),
+    // The render element keeps its own props as a motion element, a data-slot
+    // among them.
+    className: cn(
+      slotClass("motion-item", props, render),
+      stack && "flow-root",
+      className,
+    ),
     "data-layout": list.layout,
     "data-slot": "motion-item",
-    layout: list.reduced ? false : "position",
-    layoutDependency: list.layoutDependency,
-    // A stack item has left once its collapse has played.
-    onAnimationComplete: stack
-      ? (definition: unknown) => {
-          if (entry?.leaving && definition === "collapsed") entry.remove();
-        }
-      : undefined,
   };
 
   return useRender({
     defaultTagName: "li",
     props: mergeProps<"li">(defaultProps, props),
-    ref: clip.ref,
-    render: toMotionElement(render, "li"),
+    ref,
+    render,
   });
 }
 
@@ -369,30 +412,33 @@ function MotionRevealPanel({
   render,
   ...props
 }: Omit<MotionRevealProps, "open">): React.ReactElement {
-  const present = useIsPresent();
+  const [present, safeToRemove] = usePresence();
   const reduced = useReducedMotionPreference();
-  const clip = useClipWhileAnimating();
+  const ref = React.useRef<HTMLDivElement>(null);
+  // A reveal that is open when it mounts (initial={false}) is at rest.
+  const appear = React.useContext(PresenceContext)?.initial !== false;
+  usePresenceMotion(ref, "height", {
+    appear,
+    onGone: safeToRemove ?? undefined,
+    present,
+    reduced,
+  });
   const defaultProps = {
-    ...revealPresence({
-      reduced,
-      resolve: () =>
-        measureTiming(
-          clip.ref.current,
-          "--motion-duration-expand",
-          "--motion-ease-standard",
-        ),
-    }),
     ...leavingProps(present, reduced),
     children,
-    className: cn("flow-root", className),
+    className: cn(
+      slotClass("motion-reveal", props, render),
+      "flow-root",
+      className,
+    ),
     "data-slot": "motion-reveal",
   };
 
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
-    ref: clip.ref,
-    render: toMotionElement(render, "div"),
+    ref,
+    render,
   });
 }
 
@@ -434,24 +480,28 @@ export function MotionSwap({
     previousKey.current = swapKey;
     const container = swapRef.current;
     if (!container) return;
+    // The follow rule moves a swap's height over the whole swap, base in all.
     follow({
       enter: container.querySelector(
         ':scope > [data-slot="motion-swap-pane"]:not([inert])',
       ),
-      timing: resolve().height,
     });
-  }, [follow, resolve, swapKey]);
+  }, [follow, swapKey]);
 
   const defaultProps = {
     children: (
-      <AnimatePresence initial={false} mode="popLayout">
+      <PopLayoutPresence>
         <MotionSwapPane key={swapKey} resolve={resolve}>
           {children}
         </MotionSwapPane>
-      </AnimatePresence>
+      </PopLayoutPresence>
     ),
     // The leaving pane is taken out of the flow and positioned from here.
-    className: cn("relative", className),
+    className: cn(
+      slotClass("motion-swap", props, render),
+      "relative",
+      className,
+    ),
     "data-slot": "motion-swap",
   };
 
@@ -476,7 +526,7 @@ function MotionSwapPane({
     ...swapPresence({ reduced, resolve }),
     ...leavingProps(present, reduced),
     children,
-    className: "flow-root",
+    className: cn(slotClass("motion-swap-pane", props), "flow-root"),
     "data-slot": "motion-swap-pane",
   };
 

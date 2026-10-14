@@ -1,6 +1,6 @@
-.siteplane-floating-panel {
-  --siteplane-floating-panel-x: 0px;
-  --siteplane-floating-panel-y: calc(var(--motion-floating-panel-offset) * -1);
+.sp-floating-panel {
+  --sp-floating-panel-x: 0px;
+  --sp-floating-panel-y: calc(var(--motion-floating-panel-offset) * -1);
   transform-origin: var(--transform-origin, top center);
   transition-property: opacity, transform;
   transition-duration: var(--motion-duration-moderate);
@@ -8,41 +8,38 @@
   will-change: opacity, transform;
 }
 
-.siteplane-floating-panel[data-side="top"] {
-  --siteplane-floating-panel-y: var(--motion-floating-panel-offset);
+.sp-floating-panel[data-side="top"] {
+  --sp-floating-panel-y: var(--motion-floating-panel-offset);
 }
 
-.siteplane-floating-panel[data-side="left"],
-.siteplane-floating-panel[data-side="inline-start"] {
-  --siteplane-floating-panel-x: var(--motion-floating-panel-offset);
-  --siteplane-floating-panel-y: 0px;
+.sp-floating-panel[data-side="left"],
+.sp-floating-panel[data-side="inline-start"] {
+  --sp-floating-panel-x: var(--motion-floating-panel-offset);
+  --sp-floating-panel-y: 0px;
 }
 
-.siteplane-floating-panel[data-side="right"],
-.siteplane-floating-panel[data-side="inline-end"] {
-  --siteplane-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
-  --siteplane-floating-panel-y: 0px;
+.sp-floating-panel[data-side="right"],
+.sp-floating-panel[data-side="inline-end"] {
+  --sp-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
+  --sp-floating-panel-y: 0px;
 }
 
-.siteplane-floating-panel:dir(rtl)[data-side="inline-start"] {
-  --siteplane-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
+.sp-floating-panel:dir(rtl)[data-side="inline-start"] {
+  --sp-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
 }
 
-.siteplane-floating-panel:dir(rtl)[data-side="inline-end"] {
-  --siteplane-floating-panel-x: var(--motion-floating-panel-offset);
+.sp-floating-panel:dir(rtl)[data-side="inline-end"] {
+  --sp-floating-panel-x: var(--motion-floating-panel-offset);
 }
 
-.siteplane-floating-panel[data-side="none"] {
-  --siteplane-floating-panel-y: 0px;
+.sp-floating-panel[data-side="none"] {
+  --sp-floating-panel-y: 0px;
 }
 
-.siteplane-floating-panel[data-starting-style],
-.siteplane-floating-panel[data-ending-style] {
+.sp-floating-panel[data-starting-style],
+.sp-floating-panel[data-ending-style] {
   opacity: 0;
-  transform: translate(
-      var(--siteplane-floating-panel-x),
-      var(--siteplane-floating-panel-y)
-    )
+  transform: translate(var(--sp-floating-panel-x), var(--sp-floating-panel-y))
     scale(var(--motion-floating-panel-scale));
 }
 
@@ -52,7 +49,7 @@
  * duration of the base duration; the pane that leaves fades out at once. Zero
  * specificity, so the reduced-motion rules below and a consumer's utility both
  * win. */
-:where(.siteplane-swap-fade) {
+:where(.sp-swap-fade) {
   transition-property: opacity;
   transition-duration: var(--motion-duration-micro);
   transition-timing-function: var(--motion-ease-standard);
@@ -62,11 +59,11 @@
   );
 }
 
-:where(.siteplane-swap-fade:is([data-starting-style], [data-ending-style])) {
+:where(.sp-swap-fade:is([data-starting-style], [data-ending-style])) {
   opacity: 0;
 }
 
-:where(.siteplane-swap-fade[data-ending-style]) {
+:where(.sp-swap-fade[data-ending-style]) {
   transition-timing-function: var(--motion-ease-soft-in-out);
   transition-delay: 0ms;
 }
@@ -78,74 +75,35 @@
  * dissolve showed both panels' text at once wherever a panel has no surface of
  * its own (Lukas, 13 October 2026). Zero specificity, so a consumer's utility
  * wins. */
-:where(.siteplane-panel-switch[data-ending-style]) {
+:where(.sp-panel-switch[data-ending-style]) {
   opacity: 0;
 }
 
-.siteplane-calendar-month-motion {
-  --rdp-animation_duration: var(--motion-duration-slow);
-  --rdp-animation_timing: var(--motion-ease-standard);
-  transition: height var(--motion-duration-slow) var(--motion-ease-standard);
-  will-change: height;
+/* The height follow (followHeight in motion-follow.ts; rulebook M7, M8): a
+ * container whose content changes moves to the height of the new content.
+ * JavaScript measures the height the container shows and the height of its
+ * new content and writes them as its height; this transition animates between
+ * them, as Base UI's Collapsible and Accordion panels animate the height they
+ * measure. It starts with the frame that renders it and retargets from the
+ * height shown when content that builds later changes the height again. A
+ * container carries the class only while it follows. Its rows keep their own
+ * height meanwhile: a container held taller than its content would stretch
+ * the lines of a wrapping row or a grid's rows. Zero specificity, so a
+ * consumer's utility wins (P6); with reduced motion nothing follows (M5). A
+ * swap moves its height over the whole swap, everything else over the expand
+ * duration. */
+:where(.sp-height-follow) {
+  align-content: start;
+  transition-property: height;
+  transition-duration: var(--motion-duration-expand);
+  transition-timing-function: var(--motion-ease-standard);
 }
 
-.siteplane-calendar-month-motion [data-animated-month="true"] {
-  overflow: hidden;
+:where(.sp-height-follow.sp-motion-swap) {
+  transition-duration: var(--motion-duration-base);
 }
 
-.siteplane-calendar-title-motion[data-motion-state="enter"][data-direction="next"] {
-  animation: siteplane-calendar-slide-in-from-right var(--motion-duration-slow)
-    var(--motion-ease-standard) both;
-}
-
-.siteplane-calendar-title-motion[data-motion-state="enter"][data-direction="previous"] {
-  animation: siteplane-calendar-slide-in-from-left var(--motion-duration-slow)
-    var(--motion-ease-standard) both;
-}
-
-.siteplane-calendar-title-motion[data-motion-state="exit"][data-direction="next"] {
-  animation: siteplane-calendar-slide-out-to-left var(--motion-duration-slow)
-    var(--motion-ease-standard) both;
-}
-
-.siteplane-calendar-title-motion[data-motion-state="exit"][data-direction="previous"] {
-  animation: siteplane-calendar-slide-out-to-right var(--motion-duration-slow)
-    var(--motion-ease-standard) both;
-}
-
-.siteplane-calendar-month-motion .rdp-weeks_after_enter {
-  animation: siteplane-calendar-slide-in-from-right
-    var(--rdp-animation_duration) var(--rdp-animation_timing) both;
-}
-
-.siteplane-calendar-month-motion .rdp-weeks_before_exit {
-  animation: siteplane-calendar-slide-out-to-left var(--rdp-animation_duration)
-    var(--rdp-animation_timing) both;
-}
-
-.siteplane-calendar-month-motion .rdp-weeks_before_enter {
-  animation: siteplane-calendar-slide-in-from-left var(--rdp-animation_duration)
-    var(--rdp-animation_timing) both;
-}
-
-.siteplane-calendar-month-motion .rdp-weeks_after_exit {
-  animation: siteplane-calendar-slide-out-to-right var(--rdp-animation_duration)
-    var(--rdp-animation_timing) both;
-}
-
-.siteplane-calendar-month-motion .rdp-caption_after_enter,
-.siteplane-calendar-month-motion .rdp-caption_before_enter {
-  animation: siteplane-calendar-caption-in var(--rdp-animation_duration)
-    var(--rdp-animation_timing) both;
-}
-
-.siteplane-calendar-month-motion .rdp-caption_after_exit,
-.siteplane-calendar-month-motion .rdp-caption_before_exit {
-  animation: siteplane-calendar-caption-out var(--rdp-animation_duration)
-    var(--rdp-animation_timing) both;
-}
-
-@keyframes siteplane-calendar-slide-in-from-right {
+@keyframes sp-calendar-slide-in-from-right {
   from {
     transform: translateX(100%);
   }
@@ -155,7 +113,7 @@
   }
 }
 
-@keyframes siteplane-calendar-slide-out-to-left {
+@keyframes sp-calendar-slide-out-to-left {
   from {
     transform: translateX(0);
   }
@@ -165,7 +123,7 @@
   }
 }
 
-@keyframes siteplane-calendar-slide-in-from-left {
+@keyframes sp-calendar-slide-in-from-left {
   from {
     transform: translateX(-100%);
   }
@@ -175,7 +133,7 @@
   }
 }
 
-@keyframes siteplane-calendar-slide-out-to-right {
+@keyframes sp-calendar-slide-out-to-right {
   from {
     transform: translateX(0);
   }
@@ -185,33 +143,12 @@
   }
 }
 
-@keyframes siteplane-calendar-caption-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes siteplane-calendar-caption-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-.siteplane-icon-pop {
-  animation: siteplane-icon-pop var(--motion-duration-base)
-    var(--motion-ease-standard);
+.sp-icon-pop {
+  animation: sp-icon-pop var(--motion-duration-base) var(--motion-ease-standard);
 }
 
 /* A carousel caption fades in as its page slides in, instead of jumping. */
-@keyframes siteplane-carousel-caption-in {
+@keyframes sp-carousel-caption-in {
   from {
     opacity: 0;
   }
@@ -221,18 +158,18 @@
   }
 }
 
-.siteplane-carousel-caption {
-  animation: siteplane-carousel-caption-in var(--motion-duration-slow)
+.sp-carousel-caption {
+  animation: sp-carousel-caption-in var(--motion-duration-slow)
     var(--motion-ease-soft-in-out);
 }
 
-html[data-motion-reduce="true"] .siteplane-carousel-caption,
-[data-sp-motion="reduced"] .siteplane-carousel-caption {
+html[data-motion-reduce="true"] .sp-carousel-caption,
+[data-sp-motion="reduced"] .sp-carousel-caption {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .siteplane-carousel-caption {
+  .sp-carousel-caption {
     animation: none;
   }
 }
@@ -243,35 +180,33 @@ html[data-motion-reduce="true"] .siteplane-carousel-caption,
  * soft curve on the way up and the way down, from the icon's base, on its own
  * layer so the small move does not snap to whole pixels (Lukas, 12 October
  * 2026: smoother and subtler). */
-[data-foundation="toggle"][data-lift="on"] > svg:first-child {
-  animation: siteplane-toggle-lift var(--motion-duration-slow)
+.sp-base-toggle[data-lift="on"] > svg:first-child {
+  animation: sp-toggle-lift var(--motion-duration-slow)
     var(--motion-ease-soft-in-out);
   transform-origin: 50% 100%;
   will-change: transform;
 }
 
-@keyframes siteplane-toggle-lift {
+@keyframes sp-toggle-lift {
   45% {
     transform: translateY(-1.5px) rotate(-6deg);
   }
 }
 
 html[data-motion-reduce="true"]
-  [data-foundation="toggle"][data-lift="on"]
+  .sp-base-toggle[data-lift="on"]
   > svg:first-child,
-[data-sp-motion="reduced"]
-  [data-foundation="toggle"][data-lift="on"]
-  > svg:first-child {
+[data-sp-motion="reduced"] .sp-base-toggle[data-lift="on"] > svg:first-child {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-foundation="toggle"][data-lift="on"] > svg:first-child {
+  .sp-base-toggle[data-lift="on"] > svg:first-child {
     animation: none;
   }
 }
 
-@keyframes siteplane-icon-pop {
+@keyframes sp-icon-pop {
   from {
     opacity: 0;
     transform: scale(0.5);
@@ -296,12 +231,12 @@ html[data-motion-reduce="true"]
  * selection slot of a ResourceList row, the indicator of a Table box) and,
  * while it enters or leaves, data-starting-style and data-ending-style. A glyph
  * that sits deeper inside the element that owns the state, as the check of a
- * ListBox row does, names that element with `siteplane-check-item`. A glyph
+ * ListBox row does, names that element with `sp-check-item`. A glyph
  * with a geometry of its own, as the mark of a ResourceList row and the Table
  * box have, takes pathLength 24 so that the dash of 24 covers its path exactly
  * and the draw runs along its whole length. */
-.siteplane-check-path-motion,
-.siteplane-checkbox-indeterminate {
+.sp-check-path-motion,
+.sp-checkbox-indeterminate {
   opacity: 0;
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
@@ -310,20 +245,17 @@ html[data-motion-reduce="true"]
   transition-timing-function: var(--motion-ease-standard);
 }
 
-:is([data-checked], [data-selected]) > svg > .siteplane-check-path-motion,
-.siteplane-check-item:is([data-checked], [data-selected])
-  .siteplane-check-path-motion,
-[data-indeterminate] > svg > .siteplane-checkbox-indeterminate {
+:is([data-checked], [data-selected]) > svg > .sp-check-path-motion,
+.sp-check-item:is([data-checked], [data-selected]) .sp-check-path-motion,
+[data-indeterminate] > svg > .sp-checkbox-indeterminate {
   opacity: 1;
   stroke-dashoffset: 0;
 }
 
-[data-starting-style]
-  > svg
-  > :is(.siteplane-check-path-motion, .siteplane-checkbox-indeterminate),
-[data-ending-style]
-  > svg
-  > :is(.siteplane-check-path-motion, .siteplane-checkbox-indeterminate) {
+[data-starting-style] > svg > .sp-check-path-motion,
+[data-starting-style] > svg > .sp-checkbox-indeterminate,
+[data-ending-style] > svg > .sp-check-path-motion,
+[data-ending-style] > svg > .sp-checkbox-indeterminate {
   opacity: 0;
   stroke-dashoffset: 24;
 }
@@ -332,7 +264,7 @@ html[data-motion-reduce="true"]
  * Checkbox does: it grows from --motion-check-pop-scale as the check draws in
  * and shrinks back as it draws out. The Checkbox and Radio pop their whole
  * indicator instead (checkbox.css, radio-group.css), with the same token. */
-.siteplane-check-glyph-motion {
+.sp-check-glyph-motion {
   transform: scale(var(--motion-check-pop-scale));
   transform-origin: center;
   transition-duration: var(--motion-duration-slow);
@@ -340,184 +272,93 @@ html[data-motion-reduce="true"]
   transition-timing-function: var(--motion-ease-standard);
 }
 
-:is([data-checked], [data-selected]) > .siteplane-check-glyph-motion,
-.siteplane-check-item:is([data-checked], [data-selected])
-  .siteplane-check-glyph-motion {
+:is([data-checked], [data-selected]) > .sp-check-glyph-motion,
+.sp-check-item:is([data-checked], [data-selected]) .sp-check-glyph-motion {
   transform: none;
 }
 
-[data-starting-style] > .siteplane-check-glyph-motion,
-[data-ending-style] > .siteplane-check-glyph-motion {
+[data-starting-style] > .sp-check-glyph-motion,
+[data-ending-style] > .sp-check-glyph-motion {
   transform: scale(var(--motion-check-pop-scale));
 }
 
-html[data-motion-reduce="true"] .siteplane-check-path-motion,
-html[data-motion-reduce="true"] .siteplane-checkbox-indeterminate,
-[data-sp-motion="reduced"] .siteplane-check-path-motion,
-[data-sp-motion="reduced"] .siteplane-checkbox-indeterminate {
+html[data-motion-reduce="true"] .sp-check-path-motion,
+html[data-motion-reduce="true"] .sp-checkbox-indeterminate,
+[data-sp-motion="reduced"] .sp-check-path-motion,
+[data-sp-motion="reduced"] .sp-checkbox-indeterminate {
   animation: none;
   stroke-dashoffset: 0;
   transition-duration: 1ms;
 }
 
-html[data-motion-reduce="true"] .siteplane-check-glyph-motion,
-[data-sp-motion="reduced"] .siteplane-check-glyph-motion {
+html[data-motion-reduce="true"] .sp-check-glyph-motion,
+[data-sp-motion="reduced"] .sp-check-glyph-motion {
   transform: none;
   transition-duration: 1ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .siteplane-check-path-motion,
-  .siteplane-checkbox-indeterminate {
+  .sp-check-path-motion,
+  .sp-checkbox-indeterminate {
     animation: none;
     stroke-dashoffset: 0;
     transition-duration: 1ms;
   }
 
-  .siteplane-check-glyph-motion {
+  .sp-check-glyph-motion {
     transform: none;
     transition-duration: 1ms;
   }
 }
 
-html[data-motion-reduce="true"] .siteplane-floating-panel,
-:where([data-sp-motion="reduced"]) .siteplane-floating-panel {
+html[data-motion-reduce="true"] .sp-floating-panel,
+:where([data-sp-motion="reduced"]) .sp-floating-panel {
   transition-duration: 1ms;
 }
 
-html[data-motion-reduce="true"] .siteplane-swap-fade,
-:where([data-sp-motion="reduced"]) .siteplane-swap-fade {
+html[data-motion-reduce="true"] .sp-swap-fade,
+:where([data-sp-motion="reduced"]) .sp-swap-fade {
   transition-duration: 1ms;
   transition-delay: 0ms;
 }
 
-html[data-motion-reduce="true"] .siteplane-icon-pop,
-:where([data-sp-motion="reduced"]) .siteplane-icon-pop {
+html[data-motion-reduce="true"] .sp-icon-pop,
+:where([data-sp-motion="reduced"]) .sp-icon-pop {
   animation-duration: 1ms;
 }
 
-html[data-motion-reduce="true"] .siteplane-calendar-month-motion,
-:where([data-sp-motion="reduced"]) .siteplane-calendar-month-motion {
-  --rdp-animation_duration: 1ms;
-  transition-duration: 1ms;
-}
-
-html[data-motion-reduce="true"]
-  .siteplane-calendar-month-motion
-  :is(
-    .rdp-weeks_after_enter,
-    .rdp-weeks_before_exit,
-    .rdp-weeks_before_enter,
-    .rdp-weeks_after_exit
-  ),
-:where([data-sp-motion="reduced"])
-  .siteplane-calendar-month-motion
-  :is(
-    .rdp-weeks_after_enter,
-    .rdp-weeks_before_exit,
-    .rdp-weeks_before_enter,
-    .rdp-weeks_after_exit
-  ) {
+html[data-motion-reduce="true"] .sp-floating-panel[data-starting-style],
+html[data-motion-reduce="true"] .sp-floating-panel[data-ending-style],
+:where([data-sp-motion="reduced"]) .sp-floating-panel[data-starting-style],
+:where([data-sp-motion="reduced"]) .sp-floating-panel[data-ending-style] {
   transform: none;
 }
 
-html[data-motion-reduce="true"]
-  .siteplane-calendar-title-motion[data-motion-state][data-direction],
-html[data-motion-reduce="true"]
-  .siteplane-calendar-month-motion
-  :is(
-    .rdp-caption_after_enter,
-    .rdp-caption_after_exit,
-    .rdp-caption_before_enter,
-    .rdp-caption_before_exit,
-    .rdp-weeks_after_enter,
-    .rdp-weeks_after_exit,
-    .rdp-weeks_before_enter,
-    .rdp-weeks_before_exit
-  ),
-:where([data-sp-motion="reduced"])
-  .siteplane-calendar-title-motion[data-motion-state][data-direction],
-:where([data-sp-motion="reduced"])
-  .siteplane-calendar-month-motion
-  :is(
-    .rdp-caption_after_enter,
-    .rdp-caption_after_exit,
-    .rdp-caption_before_enter,
-    .rdp-caption_before_exit,
-    .rdp-weeks_after_enter,
-    .rdp-weeks_after_exit,
-    .rdp-weeks_before_enter,
-    .rdp-weeks_before_exit
-  ) {
-  animation-duration: 1ms;
-  animation-delay: 0ms;
-}
-
-html[data-motion-reduce="true"] .siteplane-floating-panel[data-starting-style],
-html[data-motion-reduce="true"] .siteplane-floating-panel[data-ending-style],
-:where([data-sp-motion="reduced"])
-  .siteplane-floating-panel[data-starting-style],
-:where([data-sp-motion="reduced"])
-  .siteplane-floating-panel[data-ending-style] {
-  transform: none;
-}
-
-html[data-motion-reduce="true"] .siteplane-skeleton-motion,
-:where([data-sp-motion="reduced"]) .siteplane-skeleton-motion {
+html[data-motion-reduce="true"] .sp-skeleton-motion,
+:where([data-sp-motion="reduced"]) .sp-skeleton-motion {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .siteplane-floating-panel {
+  .sp-floating-panel {
     transition-duration: 1ms;
   }
 
-  .siteplane-swap-fade {
+  .sp-swap-fade {
     transition-duration: 1ms;
     transition-delay: 0ms;
   }
 
-  .siteplane-floating-panel[data-starting-style],
-  .siteplane-floating-panel[data-ending-style] {
+  .sp-floating-panel[data-starting-style],
+  .sp-floating-panel[data-ending-style] {
     transform: none;
   }
 
-  .siteplane-icon-pop {
+  .sp-icon-pop {
     animation-duration: 1ms;
   }
 
-  .siteplane-calendar-month-motion {
-    --rdp-animation_duration: 1ms;
-    transition-duration: 1ms;
-  }
-
-  .siteplane-calendar-month-motion
-    :is(
-      .rdp-weeks_after_enter,
-      .rdp-weeks_before_exit,
-      .rdp-weeks_before_enter,
-      .rdp-weeks_after_exit
-    ) {
-    transform: none;
-  }
-
-  .siteplane-calendar-title-motion[data-motion-state][data-direction],
-  .siteplane-calendar-month-motion
-    :is(
-      .rdp-caption_after_enter,
-      .rdp-caption_after_exit,
-      .rdp-caption_before_enter,
-      .rdp-caption_before_exit,
-      .rdp-weeks_after_enter,
-      .rdp-weeks_after_exit,
-      .rdp-weeks_before_enter,
-      .rdp-weeks_before_exit
-    ) {
-    animation-duration: 1ms;
-    animation-delay: 0ms;
-  }
-
-  .siteplane-skeleton-motion {
+  .sp-skeleton-motion {
     animation: none;
   }
 }

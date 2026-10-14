@@ -128,7 +128,8 @@
   --sp-semantic-state-focus-width: 2px;
 }
 
-:is(.light, [data-theme="light"]) {
+.light,
+[data-theme="light"] {
   --sp-semantic-color-accent: rgb(0 0 0 / 4%);
   --sp-semantic-color-background: oklch(0.9699 0 107);
   --sp-semantic-color-border: rgb(0 0 0 / 8%);
@@ -169,7 +170,8 @@
   --sp-semantic-color-warning-foreground: oklch(0.555 0.163 48.998);
 }
 
-:is(.dark, [data-theme="dark"]) {
+.dark,
+[data-theme="dark"] {
   --sp-semantic-color-accent: rgb(255 255 255 / 4%);
   --sp-semantic-color-background: oklch(0.1957 0 0);
   --sp-semantic-color-border: rgb(255 255 255 / 6%);

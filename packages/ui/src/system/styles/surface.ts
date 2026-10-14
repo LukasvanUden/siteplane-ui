@@ -3,28 +3,28 @@
 // variant. The opaque surface (fill, edge, shadow, text colour and the ::before
 // highlight) belongs to the default variant only: on glass the shared glass
 // rule draws them, and no utility may set them as well (rulebook P6). The
-// surface is the siteplane-floating-surface rule in design-rework.css, at zero
+// surface is the sp-floating-surface rule in design-rework.css, at zero
 // specificity, so the surface rule of a popup and a consumer's utility both
 // win over it.
 const floatingOverlayFrame =
-  "siteplane-floating-panel relative before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit]";
-const floatingOverlaySurface = "siteplane-floating-surface";
+  "sp-floating-panel relative before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit]";
+const floatingOverlaySurface = "sp-floating-surface";
 
 export const surfaceClassNames = {
   iconWell: "sp-icon-well",
   contained: "rounded-lg border bg-background",
   edgeOverlay: `relative ${floatingOverlaySurface} before:pointer-events-none before:absolute before:inset-0`,
-  // The popup of Dialog and AlertDialog. Its motion (siteplane-dialog-motion),
-  // its scale and its slide on small screens (siteplane-dialog-mobile-stick)
+  // The popup of Dialog and AlertDialog. Its motion (sp-dialog-motion),
+  // its scale and its slide on small screens (sp-dialog-mobile-stick)
   // are design-rework.css rules, with the reduced-motion rules beside them (M5).
   // Behind a nested dialog it stays visible and steps back: 10% less opacity
   // per nested dialog here, and 10% smaller there on a wide screen.
   dialogOverlayPopup:
-    "relative row-start-2 min-h-0 min-w-0 origin-center flex-col opacity-[calc(1-0.1*var(--nested-dialogs))] siteplane-dialog-motion will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]",
+    "relative row-start-2 min-h-0 min-w-0 origin-center flex-col opacity-[calc(1-0.1*var(--nested-dialogs))] sp-dialog-motion will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]",
   dialogOverlayCompositePopup:
-    "relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 origin-center flex-col opacity-[calc(1-0.1*var(--nested-dialogs))] siteplane-dialog-motion will-change-transform data-ending-style:opacity-0 data-starting-style:opacity-0",
+    "relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 origin-center flex-col opacity-[calc(1-0.1*var(--nested-dialogs))] sp-dialog-motion will-change-transform data-ending-style:opacity-0 data-starting-style:opacity-0",
   dialogOverlayPopupMobileStick:
-    "siteplane-dialog-mobile-stick max-sm:origin-bottom max-sm:before:rounded-none",
+    "sp-dialog-mobile-stick max-sm:origin-bottom max-sm:before:rounded-none",
   dialogOverlayViewport: "fixed inset-0 z-50 justify-items-center",
   // The disabled state of a field is the shared field rule in
   // design-rework.css.
@@ -38,17 +38,20 @@ export const surfaceClassNames = {
     "relative inline-flex w-full min-w-0 items-center ring-ring/24 has-[input:focus-visible,textarea:focus-visible,[role=spinbutton][data-focus-visible]]:has-[input[aria-invalid],textarea[aria-invalid],[role=spinbutton][aria-invalid=true]]:ring-destructive/16 dark:has-[input[aria-invalid],textarea[aria-invalid],[role=spinbutton][aria-invalid=true]]:ring-destructive/24",
   formControlCompositeSoft:
     "relative inline-flex w-full min-w-0 items-center ring-ring/24 focus-within:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/16 dark:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/24",
-  glass: "siteplane-glass-surface",
+  glass: "sp-glass-surface",
   floatingOverlay: `${floatingOverlayFrame} ${floatingOverlaySurface}`,
   floatingOverlayFrame,
   floatingOverlaySurface,
   overlay: `relative ${floatingOverlaySurface} before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit]`,
+  // The command dialog's popup. Its fill is the command profile's rule
+  // (design-rework.css), which publishes the surface colour, so a glass or
+  // theme override reaches it (rulebook P6).
   overlayBorderless:
-    "relative border-0 bg-[var(--sp-rw-bg-secondary)] text-[var(--sp-rw-fg-primary)] shadow-[var(--sp-rw-floating-lg-shadow)]",
+    "relative border-0 text-[var(--sp-rw-fg-primary)] shadow-[var(--sp-rw-floating-lg-shadow)]",
   // The backdrop of Dialog and AlertDialog. Its fade is the
-  // siteplane-overlay-backdrop-motion rule in design-rework.css, so reduced
+  // sp-overlay-backdrop-motion rule in design-rework.css, so reduced
   // motion can make it instant (M5).
-  overlayBackdrop: "siteplane-overlay-backdrop-motion fixed inset-0 z-50",
+  overlayBackdrop: "sp-overlay-backdrop-motion fixed inset-0 z-50",
   raised:
     "relative before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit]",
 } as const;
@@ -113,6 +116,6 @@ export type FormControlTextSize = "sm" | "base";
 // Markers, not Tailwind utilities: the field text of each size is a kit base
 // rule in design-rework.css, so a field's own text rules refine it.
 export const formControlTextClassNames = {
-  base: "siteplane-field-text-base",
-  sm: "siteplane-field-text-sm",
+  base: "sp-field-text-base",
+  sm: "sp-field-text-sm",
 } as const satisfies Record<FormControlTextSize, string>;

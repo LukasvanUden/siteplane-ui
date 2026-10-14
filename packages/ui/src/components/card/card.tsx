@@ -5,6 +5,7 @@ import { useRender } from "@base-ui/react/use-render";
 import type React from "react";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 
 export function Card({
   className,
@@ -28,6 +29,8 @@ export function Card({
     className: cn(
       // Glass is a surface of its own: the shared glass rule draws its fill,
       // edge, text colour and blur instead of the raised surface.
+      slotClass("card", props, render),
+      baseClass("card", props, render),
       variant === "glass" ? surfaceClassNames.glass : surfaceClassNames.raised,
       "flex flex-col [--card-inset-inline:initial]",
       className,
@@ -56,6 +59,7 @@ export function CardFrame({
     // table's outer columns, so their text starts with the frame header's; the
     // extra pixel offsets the card's negative margin.
     className: cn(
+      slotClass("card-frame", props, render),
       surfaceClassNames.raised,
       "flex flex-col [--card-frame-inset:--spacing(6)] [--clip-bottom:-1rem] [--clip-top:-1rem] before:rounded-[inherit] *:data-[slot=card]:[--card-inset-inline:calc(var(--card-frame-inset)+1px)] *:data-[slot=card]:[--table-edge-padding:calc(var(--card-frame-inset)+1px)] *:data-[slot=card]:-m-px *:data-[slot=card]:before:hidden *:not-first:data-[slot=card]:before:rounded-t-[inherit] *:not-last:data-[slot=card]:before:rounded-b-[inherit] *:data-[slot=card]:[clip-path:inset(var(--clip-top)_1px_var(--clip-bottom)_1px_round_calc(var(--sp-rw-radius-surface)-1px))] *:data-[slot=card]:last:[--clip-bottom:1px] *:data-[slot=card]:first:[--clip-top:1px]",
       className,
@@ -79,6 +83,7 @@ export function CardFrameBleed({
     // Tables inside align their outer columns with the frame header and footer;
     // the extra pixel offsets the negative margin that covers the frame border.
     className: cn(
+      slotClass("card-frame-bleed", props, render),
       "-m-px w-[calc(100%+2px)] [--table-edge-padding:calc(var(--card-frame-inset)+1px)]",
       className,
     ),
@@ -99,6 +104,7 @@ export function CardFrameHeader({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
     className: cn(
+      slotClass("card-frame-header", props, render),
       "relative flex grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] flex-col items-start gap-x-4 px-[var(--card-frame-inset,--spacing(6))] py-4 has-data-[slot=card-frame-action]:grid-cols-[minmax(0,1fr)_auto]",
       className,
     ),
@@ -118,7 +124,11 @@ export function CardFrameTitle({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("self-center font-semibold text-sm wrap-anywhere", className),
+    className: cn(
+      slotClass("card-frame-title", props, render),
+      "self-center font-semibold text-sm wrap-anywhere",
+      className,
+    ),
     "data-slot": "card-frame-title",
   };
 
@@ -136,6 +146,7 @@ export function CardFrameDescription({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
     className: cn(
+      slotClass("card-frame-description", props, render),
       "self-center text-muted-foreground text-sm wrap-anywhere",
       className,
     ),
@@ -156,6 +167,7 @@ export function CardFrameAction({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
     className: cn(
+      slotClass("card-frame-action", props, render),
       "col-start-2 nth-3:row-span-2 nth-3:row-start-1 inline-flex self-center justify-self-end",
       className,
     ),
@@ -175,7 +187,11 @@ export function CardFrameFooter({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("px-[var(--card-frame-inset,--spacing(6))] py-4", className),
+    className: cn(
+      slotClass("card-frame-footer", props, render),
+      "px-[var(--card-frame-inset,--spacing(6))] py-4",
+      className,
+    ),
     "data-slot": "card-frame-footer",
   };
 
@@ -195,6 +211,7 @@ export function CardHeader({
   // row and centre on each other (CardAction).
   const defaultProps = {
     className: cn(
+      slotClass("card-header", props, render),
       "grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] items-start has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto] [&:has(>[data-slot=card-action]):not(:has(>:not([data-slot=card-action])~:not([data-slot=card-action])))]:items-center",
       className,
     ),
@@ -214,7 +231,11 @@ export function CardTitle({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("wrap-anywhere", className),
+    className: cn(
+      slotClass("card-title", props, render),
+      "wrap-anywhere",
+      className,
+    ),
     "data-slot": "card-title",
   };
 
@@ -231,7 +252,11 @@ export function CardDescription({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("wrap-anywhere", className),
+    className: cn(
+      slotClass("card-description", props, render),
+      "wrap-anywhere",
+      className,
+    ),
     "data-slot": "card-description",
   };
 
@@ -252,6 +277,7 @@ export function CardAction({
   // CardFrameAction does, so it adds no second row (rulebook S2, S11).
   const defaultProps = {
     className: cn(
+      slotClass("card-action", props, render),
       "col-start-2 row-start-1 inline-flex self-center justify-self-end in-[[data-slot=card-header]:has(>:not([data-slot=card-action])~:not([data-slot=card-action]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action])~:not([data-slot=card-action]))]:self-start",
       className,
     ),
@@ -271,7 +297,7 @@ export function CardPanel({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex-1", className),
+    className: cn(slotClass("card-panel", props, render), "flex-1", className),
     "data-slot": "card-panel",
   };
 
@@ -288,7 +314,11 @@ export function CardFooter({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex items-center", className),
+    className: cn(
+      slotClass("card-footer", props, render),
+      "flex items-center",
+      className,
+    ),
     "data-slot": "card-footer",
   };
 

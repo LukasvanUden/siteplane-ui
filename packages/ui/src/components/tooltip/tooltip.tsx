@@ -6,6 +6,7 @@ import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 export const TooltipCreateHandle: typeof TooltipPrimitive.createHandle =
   TooltipPrimitive.createHandle;
@@ -28,7 +29,13 @@ const TOOLTIP_ARROW_DEPTH = 4;
 export function TooltipTrigger(
   props: WithStringClassName<TooltipPrimitive.Trigger.Props>,
 ): React.ReactElement {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      {...props}
+      className={cn(slotClass("tooltip-trigger", props), props.className)}
+    />
+  );
 }
 
 export type TooltipTone = "neutral" | "error";
@@ -44,6 +51,7 @@ export function TooltipPopup({
   sideOffset = 4,
   side = "top",
   anchor,
+  disableAnchorTracking,
   arrow = false,
   children,
   interactive = true,
@@ -56,6 +64,13 @@ export function TooltipPopup({
   side?: TooltipPrimitive.Positioner.Props["side"];
   sideOffset?: TooltipPrimitive.Positioner.Props["sideOffset"];
   anchor?: TooltipPrimitive.Positioner.Props["anchor"];
+  /**
+   * Stops the popup from watching its anchor and itself for changes of size
+   * and place. For an anchor that its owner moves and hands over again at
+   * every frame, such as the card of a chart that trails its item, which
+   * would otherwise set the watching up anew at every frame.
+   */
+  disableAnchorTracking?: TooltipPrimitive.Positioner.Props["disableAnchorTracking"];
   /**
    * Points an arrow at the anchor. The arrow reaches into the side offset,
    * so the gap between the arrow's tip and the anchor stays `sideOffset`.
@@ -86,7 +101,9 @@ export function TooltipPopup({
         <TooltipPrimitive.Positioner
           align={align}
           anchor={anchor}
+          disableAnchorTracking={disableAnchorTracking}
           className={cn(
+            "sp-tooltip-positioner",
             "z-50 max-w-(--available-width)",
             // The positioner is as large as the popup was when it opened: Base
             // UI measures it then and sets `--positioner-width` and
@@ -112,7 +129,8 @@ export function TooltipPopup({
         >
           <TooltipPrimitive.Popup
             className={cn(
-              "siteplane-floating-panel relative flex h-(--popup-height,auto) w-(--popup-width,auto) origin-(--transform-origin) text-balance before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] data-instant:duration-0",
+              slotClass("tooltip-popup", props),
+              "sp-floating-panel relative flex h-(--popup-height,auto) w-(--popup-width,auto) origin-(--transform-origin) text-balance before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] data-instant:duration-0",
               // Glass takes the glass surface in place of the opaque one, whose
               // fill, text colour and shadow the glass rule draws.
               variant === "glass" && surfaceClassNames.glass,
@@ -130,12 +148,17 @@ export function TooltipPopup({
             data-variant={variant === "glass" ? variant : undefined}
             {...props}
           >
-            {arrow && <TooltipPrimitive.Arrow data-slot="tooltip-arrow" />}
+            {arrow && (
+              <TooltipPrimitive.Arrow
+                className="sp-tooltip-arrow"
+                data-slot="tooltip-arrow"
+              />
+            )}
             {/* The cross-fade of the current and the previous content, with
                 its width and its reduced-motion rules, is the viewport rule
                 it shares with Popover in design-rework.css. */}
             <TooltipPrimitive.Viewport
-              className="relative size-full overflow-clip [--viewport-inline-padding:--spacing(2)] data-instant:transition-none **:data-previous:truncate"
+              className="sp-tooltip-viewport relative size-full overflow-clip [--viewport-inline-padding:--spacing(2)] data-instant:transition-none **:data-previous:truncate"
               data-slot="tooltip-viewport"
             >
               {children}

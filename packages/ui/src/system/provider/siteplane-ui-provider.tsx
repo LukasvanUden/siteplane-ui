@@ -3,6 +3,7 @@
 import { CSPProvider } from "@base-ui/react/csp-provider";
 import * as React from "react";
 import { useSiteplaneMotionPreset } from "../motion/siteplane-motion-provider";
+import { cn } from "../utils/cn";
 
 export type SiteplaneControlSize = "sm" | "md" | "lg" | "xl";
 export type SiteplaneDensity = "compact" | "default";
@@ -21,10 +22,11 @@ export interface SiteplaneUIProviderProps extends React.HTMLAttributes<HTMLDivEl
   density?: SiteplaneDensity;
   /**
    * The nonce of a Content Security Policy that allows inline scripts and
-   * styles only with a nonce. The kit puts it on its inline `<script>` and
-   * `<style>` elements, such as the script that shows the Tabs selection before
-   * the page hydrates, and passes it to Base UI's `CSPProvider`. An inner
-   * provider without one keeps the outer provider's.
+   * styles only with a nonce. The kit renders no inline script or style; the
+   * provider hands the nonce to React Aria, which adds a style at run time,
+   * through a `<meta property="csp-nonce">` in the head, and to Base UI's
+   * `CSPProvider` for any inline element Base UI renders. An inner provider
+   * without one keeps the outer provider's.
    */
   nonce?: string | undefined;
   /**
@@ -57,11 +59,6 @@ const SiteplaneNonceContext = React.createContext<string | undefined>(
 const SiteplaneUIThemeContext = React.createContext<
   "dark" | "light" | undefined
 >(undefined);
-
-// A provider and its portal scopes add no box of their own. Their radius
-// reaches the kit through data-radius: the stylesheet sets the base for it and
-// derives every corner again on the scope, so a portal follows its provider.
-const scopeStyle: React.CSSProperties = { display: "contents" };
 
 export function resolveControlSize<T extends string>(
   size: T | null | undefined,
@@ -140,7 +137,7 @@ export function useRelativeControlSize(
   return resolveRelativeControlSize(sizeAtLg, useSiteplaneUI().controlSize);
 }
 
-/** The provider's CSP nonce, for a kit part that renders inline script or style. */
+/** The provider's CSP nonce, for a kit part that hands it to a library that adds an inline style. */
 export function useSiteplaneNonce(): string | undefined {
   return React.useContext(SiteplaneNonceContext);
 }
@@ -159,6 +156,11 @@ export function useResolvedRadius<T extends string>(
   return resolveRadius(radius, context.radius);
 }
 
+// A provider and its portal scopes add no box of their own (`display:
+// contents` in design-rework.css, so a policy that blocks style attributes
+// leaves the layout alone). Their radius reaches the kit through data-radius:
+// the stylesheet sets the base for it and derives every corner again on the
+// scope, so a portal follows its provider.
 export function SiteplaneUIPortalScope({
   children,
 }: {
@@ -173,10 +175,10 @@ export function SiteplaneUIPortalScope({
       data-control-size={value.controlSize}
       data-density={value.density}
       data-radius={value.radius}
+      className="sp-siteplane-ui-portal-scope"
       data-slot="siteplane-ui-portal-scope"
       data-sp-motion={motionPreset}
       data-theme={theme}
-      style={scopeStyle}
     >
       {children}
     </div>
@@ -189,7 +191,6 @@ export function SiteplaneUIProvider({
   density,
   nonce,
   radius,
-  style,
   "data-theme": theme,
   ...props
 }: SiteplaneUIProviderProps): React.ReactElement {
@@ -198,6 +199,9 @@ export function SiteplaneUIProvider({
   const parentTheme = React.useContext(SiteplaneUIThemeContext);
   const resolvedTheme =
     theme === "dark" || theme === "light" ? theme : parentTheme;
+  // An empty nonce is none.
+  const ownNonce = nonce || undefined;
+  const resolvedNonce = ownNonce ?? parentNonce;
   const value = React.useMemo<SiteplaneUIConfig>(
     () => ({
       controlSize: controlSize ?? parent.controlSize,
@@ -213,28 +217,38 @@ export function SiteplaneUIProvider({
       parent.radius,
     ],
   );
-  const providerStyle: React.CSSProperties = { ...scopeStyle, ...style };
-
   return (
     <SiteplaneUIContext.Provider value={value}>
       <SiteplaneUIThemeContext.Provider value={resolvedTheme}>
-        <SiteplaneNonceContext.Provider value={nonce ?? parentNonce}>
+        <SiteplaneNonceContext.Provider value={resolvedNonce}>
           <div
             {...props}
+            className={cn("sp-siteplane-ui-provider", props.className)}
             data-control-size={value.controlSize}
             data-density={value.density}
             data-radius={value.radius}
             data-slot="siteplane-ui-provider"
             data-theme={theme}
-            style={providerStyle}
           >
-            {/* Base UI's inline scripts and styles, such as the Tabs indicator's
-                script before hydration, take the nonce from its own provider. */}
-            {nonce ? (
-              <CSPProvider nonce={nonce}>{children}</CSPProvider>
-            ) : (
-              children
-            )}
+            {/* React Aria reads the nonce for the styles it adds at run time
+                from this element, which React moves into the head; Vite's
+                html.cspNonce uses the same convention. Browsers hide a nonce
+                attribute once a policy applies, and React finds a hoisted meta
+                by its other attributes, so hydration keeps it. Only the
+                provider that brings a nonce renders it. */}
+            {ownNonce && ownNonce !== parentNonce ? (
+              <meta
+                nonce={ownNonce}
+                property="csp-nonce"
+                suppressHydrationWarning
+              />
+            ) : null}
+            {/* Base UI renders no <style> of its own: the kit stylesheet holds
+                its scrollbar rules (design-rework.css). Any inline element it
+                still renders takes the nonce. */}
+            <CSPProvider disableStyleElements nonce={resolvedNonce}>
+              {children}
+            </CSPProvider>
           </div>
         </SiteplaneNonceContext.Provider>
       </SiteplaneUIThemeContext.Provider>

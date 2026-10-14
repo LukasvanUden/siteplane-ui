@@ -1,7 +1,7 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  @keyframes siteplane-spinner-bars {
+  @keyframes sp-spinner-bars {
     0%,
     100% {
       transform: scaleY(0.4);
@@ -12,7 +12,7 @@
     }
   }
 
-  @keyframes siteplane-spinner-dot {
+  @keyframes sp-spinner-dot {
     0%,
     80%,
     100% {
@@ -26,7 +26,7 @@
     }
   }
 
-  @keyframes siteplane-spinner-spoke {
+  @keyframes sp-spinner-spoke {
     0% {
       opacity: 1;
     }
@@ -36,13 +36,13 @@
     }
   }
 
-  @keyframes siteplane-spinner-rotate {
+  @keyframes sp-spinner-rotate {
     to {
       transform: rotate(360deg);
     }
   }
 
-  @keyframes siteplane-spinner-dash {
+  @keyframes sp-spinner-dash {
     0% {
       stroke-dasharray: 1, 200;
       stroke-dashoffset: 0;
@@ -59,7 +59,7 @@
     }
   }
 
-  @keyframes siteplane-spinner-ping {
+  @keyframes sp-spinner-ping {
     75%,
     100% {
       opacity: 0;
@@ -69,53 +69,114 @@
 
   /* Each variant's motion, at zero specificity so the reduced-motion rules
    * below and a consumer's animate-* utility both win. */
-  :where(
-    [data-slot="spinner"]:is([data-variant="default"], [data-variant="ring"])
-  ) {
-    animation: siteplane-spinner-rotate var(--motion-duration-loop)
+  :where(.sp-spinner:is([data-variant="default"], [data-variant="ring"])) {
+    animation: sp-spinner-rotate var(--motion-duration-loop)
       var(--motion-ease-linear) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="comet"]) {
-    animation: siteplane-spinner-rotate calc(var(--motion-duration-loop) * 2)
+  :where(.sp-spinner[data-variant="comet"]) {
+    animation: sp-spinner-rotate calc(var(--motion-duration-loop) * 2)
       var(--motion-ease-linear) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="comet"] > circle) {
-    animation: siteplane-spinner-dash calc(var(--motion-duration-loop) * 1.5)
+  :where(.sp-spinner[data-variant="comet"] > circle) {
+    animation: sp-spinner-dash calc(var(--motion-duration-loop) * 1.5)
       var(--motion-ease-loop) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="pulse"] > :first-child) {
-    animation: siteplane-spinner-ping var(--motion-duration-loop)
+  :where(.sp-spinner[data-variant="pulse"] > :first-child) {
+    animation: sp-spinner-ping var(--motion-duration-loop)
       var(--motion-ease-ping) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="dots"] > span) {
-    animation: siteplane-spinner-dot calc(var(--motion-duration-loop) * 1.2)
+  :where(.sp-spinner[data-variant="dots"] > span) {
+    animation: sp-spinner-dot calc(var(--motion-duration-loop) * 1.2)
       var(--motion-ease-loop) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="bars"] > span) {
-    animation: siteplane-spinner-bars var(--motion-duration-loop)
+  :where(.sp-spinner[data-variant="bars"] > span) {
+    animation: sp-spinner-bars var(--motion-duration-loop)
       var(--motion-ease-loop) infinite;
   }
 
-  :where([data-slot="spinner"][data-variant="spokes"] > span) {
-    animation: siteplane-spinner-spoke calc(var(--motion-duration-loop) * 0.8)
+  :where(.sp-spinner[data-variant="spokes"] > span) {
+    animation: sp-spinner-spoke calc(var(--motion-duration-loop) * 0.8)
       var(--motion-ease-linear) infinite;
   }
 
-  html[data-motion-reduce="true"] .siteplane-spinner-motion,
-  html[data-motion-reduce="true"] .siteplane-spinner-motion *,
-  [data-sp-motion="reduced"] .siteplane-spinner-motion,
-  [data-sp-motion="reduced"] .siteplane-spinner-motion * {
+  /* Each dot and bar starts a step after the one before it. The eight spokes
+   * stand 45 degrees apart, each a tenth of the loop later, and start mid-loop
+   * so they never pulse together. These values live here rather than in style
+   * attributes, which a Content Security Policy may block. */
+  :where(.sp-spinner[data-variant="dots"] > span:nth-child(2)) {
+    animation-delay: calc(var(--motion-duration-loop) * 0.16);
+  }
+
+  :where(.sp-spinner[data-variant="dots"] > span:nth-child(3)) {
+    animation-delay: calc(var(--motion-duration-loop) * 0.32);
+  }
+
+  :where(.sp-spinner[data-variant="bars"] > span:nth-child(2)) {
+    animation-delay: calc(var(--motion-duration-loop) * 0.12);
+  }
+
+  :where(.sp-spinner[data-variant="bars"] > span:nth-child(3)) {
+    animation-delay: calc(var(--motion-duration-loop) * 0.24);
+  }
+
+  :where(.sp-spinner[data-variant="bars"] > span:nth-child(4)) {
+    animation-delay: calc(var(--motion-duration-loop) * 0.36);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(1)) {
+    animation-delay: calc(var(--motion-duration-loop) * -0.8);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(2)) {
+    rotate: 45deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.7);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(3)) {
+    rotate: 90deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.6);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(4)) {
+    rotate: 135deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.5);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(5)) {
+    rotate: 180deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.4);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(6)) {
+    rotate: 225deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.3);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(7)) {
+    rotate: 270deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.2);
+  }
+
+  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(8)) {
+    rotate: 315deg;
+    animation-delay: calc(var(--motion-duration-loop) * -0.1);
+  }
+
+  html[data-motion-reduce="true"] .sp-spinner-motion,
+  html[data-motion-reduce="true"] .sp-spinner-motion *,
+  [data-sp-motion="reduced"] .sp-spinner-motion,
+  [data-sp-motion="reduced"] .sp-spinner-motion * {
     animation: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-spinner-motion,
-    .siteplane-spinner-motion * {
+    .sp-spinner-motion,
+    .sp-spinner-motion * {
       animation: none;
     }
   }

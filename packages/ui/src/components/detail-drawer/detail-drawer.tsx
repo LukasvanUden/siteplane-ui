@@ -28,7 +28,12 @@ export function DetailDrawer(
 export const DetailDrawerTrigger: typeof DrawerTrigger = DrawerTrigger;
 export const DetailDrawerClose: typeof DrawerClose = DrawerClose;
 
-export function DetailDrawerContent({
+/**
+ * The popup of the drawer, a straight side panel at most 448 px wide. It is
+ * the Drawer's popup, so its name ends in `Popup` like the popup of every
+ * other overlay.
+ */
+export function DetailDrawerPopup({
   children,
   className,
   ...props
@@ -87,3 +92,9 @@ export function DetailDrawerFooter({
     />
   );
 }
+
+/**
+ * @deprecated `DetailDrawerContent` is the earlier name of `DetailDrawerPopup`,
+ * the same part; it keeps working until 2.0.
+ */
+export const DetailDrawerContent: typeof DetailDrawerPopup = DetailDrawerPopup;

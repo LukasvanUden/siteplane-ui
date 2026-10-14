@@ -9,7 +9,14 @@ import { Textarea, type TextareaProps } from "./textarea";
  */
 export type TextareaProfile = "default" | "input-group";
 
-export type KitTextareaProps = TextareaProps & { profile?: TextareaProfile };
+export type KitTextareaProps = TextareaProps & {
+  profile?: TextareaProfile;
+  /**
+   * In the input-group profile: the group keeps the end of the textarea clear
+   * for an action over its corner (InputGroup `insetEnd`).
+   */
+  insetEnd?: boolean | undefined;
+};
 
 /** Textarea with the kit's composition profile; the same component. */
 export const KitTextarea = Textarea as (

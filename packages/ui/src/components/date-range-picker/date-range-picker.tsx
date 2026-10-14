@@ -75,6 +75,17 @@ export interface DateRangePickerProps {
   endLabel?: string;
   endName?: string;
   form?: string;
+  /**
+   * `action-end` ends the field with the button that opens the calendar;
+   * `none` leaves the range to typing, as DateField's `iconMode="none"` does,
+   * for a range beside a calendar of its own.
+   */
+  iconMode?: "action-end" | "none" | undefined;
+  /**
+   * The error a required picker shows while its range is incomplete, such as
+   * after a segment is cleared. Default: "Enter a complete date range."
+   */
+  incompleteLabel?: string;
   locale?: string;
   onValueChange?: (value: DateRange | undefined) => void;
   openPickerLabel?: string;
@@ -259,7 +270,11 @@ function DateRangeEndpoint({
       }
     >
       <DateRangeInputPrimitive
-        className="contents"
+        className={cn(
+          "sp-base-date-field",
+          `sp-date-range-picker-${slot}`,
+          "contents",
+        )}
         data-foundation="date-field"
         data-profile="input-group"
         data-slot={`date-range-picker-${slot}`}
@@ -290,7 +305,7 @@ function DateRangeSegment({
 
   return (
     <DateRangeSegmentPrimitive
-      className="siteplane-date-field-segment"
+      className="sp-date-field-segment sp-date-segment"
       data-literal-kind={
         segment.type === "literal" && /[./-]/.test(segment.text)
           ? "separator"
@@ -314,6 +329,8 @@ export function DateRangePicker({
   endLabel,
   endName,
   form,
+  iconMode = "action-end",
+  incompleteLabel = "Enter a complete date range.",
   locale,
   onValueChange,
   openPickerLabel = "Open date range calendar",
@@ -356,7 +373,7 @@ export function DateRangePicker({
   const segmented = useSegmentedValue<RangeValue<DateValue>>({
     controlled,
     defaultValue: toInternalRange(defaultValue),
-    incompleteMessage: "Enter a complete date range.",
+    incompleteMessage: incompleteLabel,
     onValueChange: (nextValue) =>
       onValueChange?.(
         nextValue?.start && nextValue.end
@@ -380,7 +397,7 @@ export function DateRangePicker({
       {...(field.labelledBy === undefined
         ? {}
         : { "aria-labelledby": field.labelledBy })}
-      className="contents"
+      className="sp-date-range-picker sp-base-date-range-picker contents"
       data-foundation="date-range-picker"
       data-slot="date-range-picker"
       {...(controlled
@@ -412,7 +429,8 @@ export function DateRangePicker({
           >
             <InputGroup
               aria-label={undefined}
-              className={cn("siteplane-date-range-control w-full", className)}
+              className={cn("sp-date-range-control w-full", className)}
+              data-icon-mode={iconMode}
               data-invalid={
                 (controlledInvalid ?? (isInvalid || field.valid === false)) ||
                 undefined
@@ -444,49 +462,56 @@ export function DateRangePicker({
                 onClearedChange={onClearedChange}
                 slot="end"
               />
-              <InputGroupAddon align="inline-end" className="ms-auto">
-                <Button
-                  aria-label={openPickerLabel}
-                  data-slot="date-range-picker-trigger"
-                  disabled={field.disabled || readOnly}
-                  render={<DateRangeButtonPrimitive />}
-                  profile="field-action"
-                  size={actionSizes[resolvedSize]}
-                >
-                  <CalendarDaysIcon aria-hidden="true" />
-                </Button>
-              </InputGroupAddon>
+              {iconMode === "action-end" ? (
+                <InputGroupAddon align="inline-end" className="ms-auto">
+                  <Button
+                    aria-label={openPickerLabel}
+                    data-slot="date-range-picker-trigger"
+                    disabled={field.disabled || readOnly}
+                    render={<DateRangeButtonPrimitive />}
+                    profile="field-action"
+                    size={actionSizes[resolvedSize]}
+                  >
+                    <CalendarDaysIcon aria-hidden="true" />
+                  </Button>
+                </InputGroupAddon>
+              ) : null}
             </InputGroup>
           </DateRangeGroupPrimitive>
-          <DateRangePopoverPrimitive
-            className={cn(
-              surfaceClassNames.floatingOverlay,
-              "siteplane-date-range-popover",
-            )}
-            data-slot="date-range-picker-popover"
-            offset={4}
-            placement="bottom end"
-          >
-            <SiteplaneUIPortalScope>
-              <DateRangeDialogPrimitive
-                className="outline-none"
-                data-slot="date-range-picker-dialog"
-              >
-                <Calendar
-                  {...calendarProps}
-                  {...(fieldAriaLabel === undefined
-                    ? {}
-                    : { "aria-label": fieldAriaLabel })}
-                  {...(fieldAriaLabel || field.labelledBy === undefined
-                    ? {}
-                    : { "aria-labelledby": field.labelledBy })}
-                  className="siteplane-date-range-calendar"
-                  data-slot="date-range-picker-calendar"
-                  selectionMode="range"
-                />
-              </DateRangeDialogPrimitive>
-            </SiteplaneUIPortalScope>
-          </DateRangePopoverPrimitive>
+          {/* Without its button the range opens no calendar: React Aria's
+              picker works with its date fields alone. */}
+          {iconMode === "action-end" ? (
+            <DateRangePopoverPrimitive
+              className={cn(
+                "sp-date-range-picker-popover",
+                surfaceClassNames.floatingOverlay,
+                "sp-date-range-popover",
+              )}
+              data-slot="date-range-picker-popover"
+              offset={4}
+              placement="bottom end"
+            >
+              <SiteplaneUIPortalScope>
+                <DateRangeDialogPrimitive
+                  className="sp-date-range-picker-dialog outline-none"
+                  data-slot="date-range-picker-dialog"
+                >
+                  <Calendar
+                    {...calendarProps}
+                    {...(fieldAriaLabel === undefined
+                      ? {}
+                      : { "aria-label": fieldAriaLabel })}
+                    {...(fieldAriaLabel || field.labelledBy === undefined
+                      ? {}
+                      : { "aria-labelledby": field.labelledBy })}
+                    className="sp-date-range-calendar"
+                    data-slot="date-range-picker-calendar"
+                    selectionMode="range"
+                  />
+                </DateRangeDialogPrimitive>
+              </SiteplaneUIPortalScope>
+            </DateRangePopoverPrimitive>
+          ) : null}
           <DateRangeHiddenInputs
             cleared={cleared}
             controlled={controlled}

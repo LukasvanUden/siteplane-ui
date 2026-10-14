@@ -115,7 +115,7 @@ export function BarList({
                 the text starts, and its corners are the kit's. */}
             <svg
               aria-hidden="true"
-              className="absolute inset-y-0 start-0 h-full overflow-hidden rounded-md"
+              className="sp-bar-list-bar absolute inset-y-0 start-0 h-full overflow-hidden rounded-md"
               data-slot="bar-list-bar"
               width={`${hundredths(bar.value)}%`}
             >

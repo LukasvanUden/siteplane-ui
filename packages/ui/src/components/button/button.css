@@ -1,7 +1,7 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  .siteplane-button-motion {
+  .sp-button-motion {
     --sp-semantic-color-background: var(--color-white);
     --sp-semantic-color-foreground: var(--color-neutral-800);
     --sp-semantic-color-popover: var(--color-white);
@@ -24,7 +24,8 @@
     --button-text-hover: var(--button-text-hover-base);
   }
 
-  :is(.dark, [data-theme="dark"]) .siteplane-button-motion {
+  .dark .sp-button-motion,
+  [data-theme="dark"] .sp-button-motion {
     --sp-semantic-color-background: color-mix(
       in srgb,
       var(--color-neutral-950) 95%,
@@ -54,70 +55,66 @@
     --button-text-hover-base: oklch(0.977 0.005 275);
   }
 
-  .siteplane-button-motion [data-slot="button-loading-indicator"] {
+  .sp-button-motion .sp-button-loading-indicator {
     position: absolute;
     width: 1rem;
     height: 1rem;
   }
 
-  .siteplane-button-motion[data-loading] > [data-slot="button-content"] {
+  .sp-button-motion[data-loading] > .sp-button-content {
     color: transparent;
   }
 
-  .siteplane-loading-button-shell {
+  .sp-loading-button-shell {
     display: inline-flex;
     max-width: 100%;
   }
 
-  .siteplane-loading-button-idle,
-  .siteplane-loading-button-pending {
+  .sp-loading-button-idle,
+  .sp-loading-button-pending {
     transition-property: opacity;
     transition-duration: var(--motion-duration-micro);
     transition-timing-function: var(--motion-ease-standard);
   }
 
-  .siteplane-loading-button-shell[data-loading-button-phase="loading"]
-    .siteplane-loading-button-idle,
-  .siteplane-loading-button-shell[data-loading-button-phase="idle"]
-    .siteplane-loading-button-pending {
+  .sp-loading-button-shell[data-loading-button-phase="loading"]
+    .sp-loading-button-idle,
+  .sp-loading-button-shell[data-loading-button-phase="idle"]
+    .sp-loading-button-pending {
     pointer-events: none;
     opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-button-motion,
-    .siteplane-loading-button-idle,
-    .siteplane-loading-button-pending,
-    .siteplane-button-motion [data-slot="button-loading-indicator"] {
+    .sp-button-motion,
+    .sp-loading-button-idle,
+    .sp-loading-button-pending,
+    .sp-button-motion .sp-button-loading-indicator {
       transition-duration: 1ms;
     }
 
-    .siteplane-button-motion [data-slot="button-loading-indicator"] {
+    .sp-button-motion .sp-button-loading-indicator {
       animation: none;
     }
   }
 
-  html[data-motion-reduce="true"] .siteplane-button-motion,
-  html[data-motion-reduce="true"] .siteplane-loading-button-idle,
-  html[data-motion-reduce="true"] .siteplane-loading-button-pending,
-  [data-sp-motion="reduced"] .siteplane-button-motion,
-  [data-sp-motion="reduced"] .siteplane-loading-button-idle,
-  [data-sp-motion="reduced"] .siteplane-loading-button-pending,
+  html[data-motion-reduce="true"] .sp-button-motion,
+  html[data-motion-reduce="true"] .sp-loading-button-idle,
+  html[data-motion-reduce="true"] .sp-loading-button-pending,
+  [data-sp-motion="reduced"] .sp-button-motion,
+  [data-sp-motion="reduced"] .sp-loading-button-idle,
+  [data-sp-motion="reduced"] .sp-loading-button-pending,
   html[data-motion-reduce="true"]
-    .siteplane-button-motion
-    [data-slot="button-loading-indicator"],
-  [data-sp-motion="reduced"]
-    .siteplane-button-motion
-    [data-slot="button-loading-indicator"] {
+    .sp-button-motion
+    .sp-button-loading-indicator,
+  [data-sp-motion="reduced"] .sp-button-motion .sp-button-loading-indicator {
     transition-duration: 1ms;
   }
 
   html[data-motion-reduce="true"]
-    .siteplane-button-motion
-    [data-slot="button-loading-indicator"],
-  [data-sp-motion="reduced"]
-    .siteplane-button-motion
-    [data-slot="button-loading-indicator"] {
+    .sp-button-motion
+    .sp-button-loading-indicator,
+  [data-sp-motion="reduced"] .sp-button-motion .sp-button-loading-indicator {
     animation: none;
   }
 
@@ -128,14 +125,14 @@
    * wrapper; every other icon button keeps its content above the chassis layers. */
   :root
     [data-chassis][data-size^="icon"]
-    > [data-slot="button-content"]:has(> [data-foundation="badge"]) {
+    > .sp-button-content:has(> .sp-base-badge) {
     position: static;
   }
 
   :root
     [data-chassis][data-size^="icon"]
-    > [data-slot="button-content"]
-    > [data-foundation="badge"] {
+    > .sp-button-content
+    > .sp-base-badge {
     position: absolute;
     inset-block-start: -0.25rem;
     inset-inline-end: -0.25rem;
@@ -149,7 +146,7 @@
     padding: 0;
   }
 
-  :root [data-chassis][data-profile="avatar"] > [data-slot="button-content"] {
+  :root [data-chassis][data-profile="avatar"] > .sp-button-content {
     height: 100%;
     border-radius: inherit;
   }
@@ -161,16 +158,14 @@
    * variant's own and it stays circular through the control's radius, so a hover,
    * a press and an open menu darken the portrait, also over a photo. Only the
    * stacking order differs: no state of its own is declared for the avatar. */
-  :root
-    [data-chassis][data-profile="avatar"]
-    > [data-slot="button-chassis-interaction"] {
+  :root [data-chassis][data-profile="avatar"] > .sp-button-chassis-interaction {
     z-index: 31;
   }
 
   :root
     [data-chassis][data-profile="avatar"]
-    > [data-slot="button-content"]
-    > [data-slot="avatar"] {
+    > .sp-button-content
+    > .sp-avatar {
     width: 100%;
     height: 100%;
     border-radius: inherit;

@@ -59,6 +59,7 @@ import {
 } from "./chart-curve";
 import {
   CHART_DEFAULT_LOCALE,
+  chartLabels,
   chartNumberFormatter,
   chartTickLabels,
   chartXFormatter,
@@ -90,11 +91,13 @@ import {
 } from "./chart-dimming";
 import { ChartHighlight, highlightBand } from "./chart-highlight";
 import {
+  ChartPlotPlaceholder,
   ChartTooltip,
   ChartTooltipContent,
   chartTooltipText,
 } from "./chart-tooltip";
 import type {
+  CartesianChartLabels,
   CartesianChartProps,
   ChartCurve,
   ChartXValue,
@@ -280,15 +283,15 @@ function areaPath(
 
 /**
  * A line chart or an area chart: the scales, the axes, the marks, the crosshair
- * and the tooltip. It draws its real SVG on the server at a fixed width, lays
- * out at its measured width once it has mounted, and glides to new data.
+ * and the tooltip. It draws its plot once it has measured its width, as a
+ * chart that sizes to its container must: until then, on the server too, it
+ * renders the box of the plot at its full height, the legend and what screen
+ * readers read, so the page does not move and no plot is ever laid out for
+ * another width. It glides to new data.
  */
 export function LineAreaChart({
   mode,
-  curve = "smooth",
-  dots = false,
   stacked = false,
-  fill = "gradient",
   data,
   x,
   series,
@@ -300,15 +303,14 @@ export function LineAreaChart({
   locale = CHART_DEFAULT_LOCALE,
   palette = "brand",
   legend = series.length > 1,
-  grid = true,
   xAxis = true,
   yAxis = true,
   emptyLabel = "No data",
+  labels,
   className,
+  ...plot
 }: LineAreaChartProps): React.ReactElement {
   const root = React.useRef<HTMLElement>(null);
-  const svg = React.useRef<SVGSVGElement>(null);
-  const gradient = React.useId();
   const width = useChartWidth(root);
   const area = mode === "area";
   const stack = area && stacked;
@@ -317,11 +319,158 @@ export function LineAreaChart({
   // The series whose entry the mouse is over in the legend: the chart owns it
   // and hands it to the legend and to its own marks.
   const focus = useChartSeriesFocus(series.map((item) => item.key));
+  const words = chartLabels(labels);
 
   const model = React.useMemo(
     () => buildCartesianModel({ data, series, stacked: stack, x }),
     [data, series, stack, x],
   );
+  const formatHeading = formatX ?? chartXFormatter(locale, "long");
+  const formatNumber = formatValue ?? chartNumberFormatter(locale);
+  const description = cartesianSummary({
+    emptyLabel,
+    formatValue: formatNumber,
+    formatX: formatHeading,
+    labels: words,
+    model,
+    series,
+  });
+
+  return (
+    // The figure holds the plot and the legend. The focus stop inside is the
+    // chart for assistive technology, named by the label alone.
+    <figure
+      className={cn(
+        area ? "sp-area-chart" : "sp-line-chart",
+        "flex w-full flex-col",
+        className,
+      )}
+      data-slot={area ? "area-chart" : "line-chart"}
+      ref={root}
+    >
+      {width === null ? (
+        <ChartPlotPlaceholder
+          className={plotClassName}
+          description={description}
+          describedBy={describedBy}
+          height={
+            cartesianLayout({
+              height,
+              legend: showLegend,
+              width: 0,
+              xAxis,
+              yAxis,
+              yLabels: [],
+            }).height
+          }
+          label={label}
+          roleDescription={words.roleDescription}
+        />
+      ) : (
+        <LineAreaPlot
+          {...plot}
+          area={area}
+          colors={colors}
+          describedBy={describedBy}
+          description={description}
+          emptyLabel={emptyLabel}
+          focusedKey={focus.focusedKey}
+          formatHeading={formatHeading}
+          formatNumber={formatNumber}
+          formatValue={formatValue}
+          formatX={formatX}
+          height={height}
+          label={label}
+          locale={locale}
+          model={model}
+          root={root}
+          series={series}
+          showLegend={showLegend}
+          stack={stack}
+          width={width}
+          words={words}
+          xAxis={xAxis}
+          yAxis={yAxis}
+        />
+      )}
+      {showLegend && (
+        <ChartLegend
+          className="pt-3"
+          focus={focus}
+          items={series.map((item, place) => ({
+            color: colors[place]!,
+            key: item.key,
+            label: item.label,
+          }))}
+          layout="row"
+        />
+      )}
+    </figure>
+  );
+}
+
+// The focus stop that holds the plot, and the box of the plot before it is drawn.
+const plotClassName = "relative block w-full rounded-lg";
+
+/**
+ * The plot of a line chart or an area chart at its measured width: the scales,
+ * the axes, the marks, the crosshair and the tooltip. It mounts once the chart
+ * knows its width, so every part that glides starts at the place it has at
+ * that width.
+ */
+function LineAreaPlot({
+  area,
+  colors,
+  curve = "smooth",
+  describedBy,
+  description,
+  dots = false,
+  emptyLabel,
+  fill = "gradient",
+  focusedKey,
+  formatHeading,
+  formatNumber,
+  formatValue,
+  formatX,
+  grid = true,
+  height,
+  label,
+  locale,
+  model,
+  root,
+  series,
+  showLegend,
+  stack,
+  width,
+  words,
+  xAxis,
+  yAxis,
+}: Pick<LineAreaChartProps, "curve" | "dots" | "fill" | "grid"> & {
+  area: boolean;
+  colors: readonly string[];
+  describedBy: string | undefined;
+  description: string;
+  emptyLabel: string;
+  focusedKey: string | null;
+  formatHeading: (value: ChartXValue) => string;
+  formatNumber: (value: number) => string;
+  formatValue: ((value: number) => string) | undefined;
+  formatX: ((value: ChartXValue) => string) | undefined;
+  height: number;
+  label: string;
+  locale: string;
+  model: CartesianModel;
+  root: React.RefObject<HTMLElement | null>;
+  series: LineAreaChartProps["series"];
+  showLegend: boolean;
+  stack: boolean;
+  width: number;
+  words: CartesianChartLabels;
+  xAxis: boolean;
+  yAxis: boolean;
+}): React.ReactElement {
+  const svg = React.useRef<SVGSVGElement>(null);
+  const gradient = React.useId();
   const { rows } = model;
 
   // The value axis the data asks for: a nice domain with ticks on its ends
@@ -451,7 +600,6 @@ export function LineAreaChart({
   // that go fade where they stood, and the axis leaves out any that would
   // touch another while it moves (`ChartValueAxis`).
   const formatText = formatX ?? chartXFormatter(locale, "short");
-  const formatHeading = formatX ?? chartXFormatter(locale, "long");
   const xLabels = useGlidingLabels({
     container: root,
     labels:
@@ -515,12 +663,12 @@ export function LineAreaChart({
   // holds back stays at that level.
   const dimmed = active !== undefined && !model.empty;
   const steppedBack = (key: string) =>
-    dimmed || seriesSteppedBack(focus.focusedKey, key);
+    dimmed || seriesSteppedBack(focusedKey, key);
   // A dot steps back with its line: outside the highlighted stretch, one point
   // either side of the active one, and wholly while the legend holds its series
   // back, so that no dot stays in full colour on a line that has stepped back.
   const dotSteppedBack = (mark: (typeof marks)[number]) =>
-    seriesSteppedBack(focus.focusedKey, series[mark.place]!.key) ||
+    seriesSteppedBack(focusedKey, series[mark.place]!.key) ||
     (dimmed && Math.abs(mark.row - activeIndex) > 1);
   const dimKind = area ? "area" : "line";
   const dimClassName = useChartDimClassName("series");
@@ -550,7 +698,6 @@ export function LineAreaChart({
       y: box.y + layout.margin.top * scale,
     };
   };
-  const formatNumber = formatValue ?? chartNumberFormatter(locale);
   const heading = active ? formatHeading(active.x) : undefined;
   const tooltipRows = active
     ? series.flatMap((item, place) => {
@@ -572,227 +719,191 @@ export function LineAreaChart({
   );
 
   return (
-    // The figure holds the plot and the legend. The focus stop inside is the
-    // chart for assistive technology, named by the label alone.
-    <figure
-      className={cn("flex w-full flex-col", className)}
-      data-slot={area ? "area-chart" : "line-chart"}
-      ref={root}
+    <ChartTooltip
+      anchorFor={anchorFor}
+      announcement={active ? chartTooltipText(heading, tooltipRows) : undefined}
+      className={plotClassName}
+      content={content}
+      describedBy={describedBy}
+      description={description}
+      interaction={interaction}
+      keyboardHint={words.keyboardHint}
+      label={label}
+      roleDescription={words.roleDescription}
     >
-      <ChartTooltip
-        anchorFor={anchorFor}
-        announcement={
-          active ? chartTooltipText(heading, tooltipRows) : undefined
-        }
-        className="relative block w-full rounded-lg"
-        content={content}
-        describedBy={describedBy}
-        description={cartesianSummary({
-          emptyLabel,
-          formatValue: formatNumber,
-          formatX: formatHeading,
-          model,
-          series,
-        })}
-        interaction={interaction}
-        label={label}
+      {/* The plot is as tall as the chart and as wide as its box, which the
+          chart kept at that size before it was drawn. It is a picture that
+          the focus stop describes, so it is hidden from assistive
+          technology. */}
+      <svg
+        aria-hidden="true"
+        className="block w-full overflow-visible"
+        height={layout.height}
+        ref={svg}
+        viewBox={`0 0 ${layout.width} ${layout.height}`}
+        width={layout.width}
       >
-        {/* The plot is as tall as the chart from the first paint, on the
-            server too, and as wide as its box: until the chart has measured
-            its width, the drawing scales into that box and the page around it
-            does not move. It is a picture that the focus stop describes, so
-            it is hidden from assistive technology. */}
-        <svg
-          aria-hidden="true"
-          className="block w-full overflow-visible"
-          height={layout.height}
-          ref={svg}
-          viewBox={`0 0 ${layout.width} ${layout.height}`}
-          width={layout.width}
-        >
-          {/* No SVG titles: the browser would show its own tooltip next to the
+        {/* No SVG titles: the browser would show its own tooltip next to the
               chart's. The label names the chart; the tooltip carries the values. */}
-          {area && fill === "gradient" && (
-            <defs>
-              {series.map((item, place) => (
-                <linearGradient
-                  id={`${gradient}-${place}`}
-                  key={item.key}
-                  x1="0"
-                  x2="0"
-                  y1="0"
-                  y2="1"
-                >
-                  {areaGradientStops(
-                    drawn[place]!.flatMap((part) =>
-                      [...part.top, ...(part.base ?? [])].map(([, y]) => y),
-                    ).concat(stack ? [] : [yScale(0)]),
-                    yScale(0),
-                  ).map((stop) => (
-                    <stop
-                      key={stop.offset}
-                      offset={stop.offset}
-                      stopColor={colors[place]}
-                      stopOpacity={stop.opacity}
-                    />
-                  ))}
-                </linearGradient>
-              ))}
-            </defs>
-          )}
-          <g
-            transform={`translate(${layout.margin.left} ${layout.margin.top})`}
-          >
-            {grid && !model.empty && (
-              <ChartGrid
-                layout={layout}
-                positions={yTicks.map((tick) => tick.position)}
-                presences={yTicks.map((tick) => tick.presence)}
-              />
-            )}
-            {yAxis && !model.empty && (
-              <ChartValueAxis layout={layout} side="left" ticks={yTicks} />
-            )}
-            {xAxis && !model.empty && (
-              <ChartCategoryAxis
-                fading={covered.fading}
-                labels={covered.labels}
-                layout={layout}
-                side="bottom"
-                thin={false}
-              />
-            )}
-            {area &&
-              series.map((item, place) => {
-                const parts = drawn[place]!.filter(
-                  (part) => part.top.length > 1,
-                );
-                return parts.length > 0 ? (
-                  <path
-                    d={parts
-                      .map((part) => areaPath(part, curve, yScale(0)))
-                      .join(" ")}
-                    data-slot="chart-area"
-                    className={dimClassName}
-                    fill={
-                      fill === "gradient"
-                        ? `url(#${gradient}-${place})`
-                        : colors[place]
-                    }
-                    fillOpacity={fill === "solid" ? 0.18 : undefined}
-                    key={item.key}
-                    opacity={chartDimOpacity(dimKind, steppedBack(item.key))}
-                  />
-                ) : null;
-              })}
-            {series.map((item, place) =>
-              lineDs[place] ? (
-                <path
-                  d={lineDs[place]}
-                  data-slot="chart-line"
-                  className={dimClassName}
-                  fill="none"
-                  key={item.key}
-                  opacity={chartDimOpacity(dimKind, steppedBack(item.key))}
-                  stroke={colors[place]}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={strokeWidth}
-                />
-              ) : null,
-            )}
-            {!model.empty && (
-              <ChartHighlight
-                band={dimmed ? highlightBand(positions, activeIndex) : null}
-                container={root}
-                height={layout.plotHeight}
-                strokes={series.flatMap((item, place) =>
-                  lineDs[place]
-                    ? [
-                        {
-                          color: colors[place]!,
-                          d: lineDs[place],
-                          key: item.key,
-                          steppedBack: seriesSteppedBack(
-                            focus.focusedKey,
-                            item.key,
-                          ),
-                          width: strokeWidth,
-                        },
-                      ]
-                    : [],
-                )}
-              />
-            )}
-            {marks.length > 0 && (
-              <g
-                className={
-                  moving
-                    ? "opacity-0"
-                    : "transition-opacity duration-(--motion-duration-micro) ease-(--motion-ease-state)"
-                }
+        {area && fill === "gradient" && (
+          <defs>
+            {series.map((item, place) => (
+              <linearGradient
+                id={`${gradient}-${place}`}
+                key={item.key}
+                x1="0"
+                x2="0"
+                y1="0"
+                y2="1"
               >
-                {marks.map((mark) => (
-                  <circle
-                    className={dimClassName}
-                    cx={mark.cx}
-                    cy={mark.cy}
-                    data-slot="chart-dot"
-                    fill={colors[mark.place]}
-                    key={mark.key}
-                    opacity={chartDimOpacity(dimKind, dotSteppedBack(mark))}
-                    r={dotRadius}
+                {areaGradientStops(
+                  drawn[place]!.flatMap((part) =>
+                    [...part.top, ...(part.base ?? [])].map(([, y]) => y),
+                  ).concat(stack ? [] : [yScale(0)]),
+                  yScale(0),
+                ).map((stop) => (
+                  <stop
+                    key={stop.offset}
+                    offset={stop.offset}
+                    stopColor={colors[place]}
+                    stopOpacity={stop.opacity}
                   />
                 ))}
-              </g>
-            )}
-            {!model.empty && (
-              <>
-                <ChartCrosshair
-                  container={root}
-                  layout={layout}
-                  position={active ? positions[activeIndex]! : null}
-                />
-                {series.map((item, place) => {
-                  const value = model.tops[place]![shownIndex];
-                  return value === null || value === undefined ? null : (
-                    <ChartActiveDot
-                      color={colors[place]!}
-                      container={root}
-                      cx={positions[shownIndex]!}
-                      trace={traces[place]}
-                      cy={yScale(value)}
-                      key={item.key}
-                      visible={active !== undefined && !moving}
-                    />
-                  );
-                })}
-              </>
-            )}
-          </g>
-          {model.empty && (
-            <ChartEmptyState label={emptyLabel} layout={layout} />
+              </linearGradient>
+            ))}
+          </defs>
+        )}
+        <g transform={`translate(${layout.margin.left} ${layout.margin.top})`}>
+          {grid && !model.empty && (
+            <ChartGrid
+              layout={layout}
+              positions={yTicks.map((tick) => tick.position)}
+              presences={yTicks.map((tick) => tick.presence)}
+            />
           )}
-        </svg>
-        <ChartAxisPill
-          container={root}
-          layout={layout}
-          side="bottom"
-          spot={spot}
-        />
-      </ChartTooltip>
-      {showLegend && (
-        <ChartLegend
-          className="pt-3"
-          focus={focus}
-          items={series.map((item, place) => ({
-            color: colors[place]!,
-            key: item.key,
-            label: item.label,
-          }))}
-          layout="row"
-        />
-      )}
-    </figure>
+          {yAxis && !model.empty && (
+            <ChartValueAxis layout={layout} side="left" ticks={yTicks} />
+          )}
+          {xAxis && !model.empty && (
+            <ChartCategoryAxis
+              fading={covered.fading}
+              labels={covered.labels}
+              layout={layout}
+              side="bottom"
+              thin={false}
+            />
+          )}
+          {area &&
+            series.map((item, place) => {
+              const parts = drawn[place]!.filter((part) => part.top.length > 1);
+              return parts.length > 0 ? (
+                <path
+                  d={parts
+                    .map((part) => areaPath(part, curve, yScale(0)))
+                    .join(" ")}
+                  data-slot="chart-area"
+                  className={cn("sp-chart-area", dimClassName)}
+                  fill={
+                    fill === "gradient"
+                      ? `url(#${gradient}-${place})`
+                      : colors[place]
+                  }
+                  fillOpacity={fill === "solid" ? 0.18 : undefined}
+                  key={item.key}
+                  opacity={chartDimOpacity(dimKind, steppedBack(item.key))}
+                />
+              ) : null;
+            })}
+          {series.map((item, place) =>
+            lineDs[place] ? (
+              <path
+                d={lineDs[place]}
+                data-slot="chart-line"
+                className={cn("sp-chart-line", dimClassName)}
+                fill="none"
+                key={item.key}
+                opacity={chartDimOpacity(dimKind, steppedBack(item.key))}
+                stroke={colors[place]}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={strokeWidth}
+              />
+            ) : null,
+          )}
+          {!model.empty && (
+            <ChartHighlight
+              band={dimmed ? highlightBand(positions, activeIndex) : null}
+              container={root}
+              height={layout.plotHeight}
+              strokes={series.flatMap((item, place) =>
+                lineDs[place]
+                  ? [
+                      {
+                        color: colors[place]!,
+                        d: lineDs[place],
+                        key: item.key,
+                        steppedBack: seriesSteppedBack(focusedKey, item.key),
+                        width: strokeWidth,
+                      },
+                    ]
+                  : [],
+              )}
+            />
+          )}
+          {marks.length > 0 && (
+            <g
+              className={
+                moving
+                  ? "opacity-0"
+                  : "transition-opacity duration-(--motion-duration-micro) ease-(--motion-ease-state)"
+              }
+            >
+              {marks.map((mark) => (
+                <circle
+                  className={cn("sp-chart-dot", dimClassName)}
+                  cx={mark.cx}
+                  cy={mark.cy}
+                  data-slot="chart-dot"
+                  fill={colors[mark.place]}
+                  key={mark.key}
+                  opacity={chartDimOpacity(dimKind, dotSteppedBack(mark))}
+                  r={dotRadius}
+                />
+              ))}
+            </g>
+          )}
+          {!model.empty && (
+            <>
+              <ChartCrosshair
+                container={root}
+                layout={layout}
+                position={active ? positions[activeIndex]! : null}
+              />
+              {series.map((item, place) => {
+                const value = model.tops[place]![shownIndex];
+                return value === null || value === undefined ? null : (
+                  <ChartActiveDot
+                    color={colors[place]!}
+                    container={root}
+                    cx={positions[shownIndex]!}
+                    trace={traces[place]}
+                    cy={yScale(value)}
+                    key={item.key}
+                    visible={active !== undefined && !moving}
+                  />
+                );
+              })}
+            </>
+          )}
+        </g>
+        {model.empty && <ChartEmptyState label={emptyLabel} layout={layout} />}
+      </svg>
+      <ChartAxisPill
+        container={root}
+        layout={layout}
+        side="bottom"
+        spot={spot}
+      />
+    </ChartTooltip>
   );
 }

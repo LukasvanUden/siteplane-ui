@@ -25,92 +25,126 @@ export function isVerticalPopoverSideFlip(
   );
 }
 
+/**
+ * Base UI hides a positioner with an inline `opacity: 0` until it has a
+ * position; a batch that starts from that style places the popover for the
+ * first time, which is no flip.
+ */
+const unplacedStyle = /(?:^|;)\s*opacity:\s*0\s*(?:;|$)/;
+
+/**
+ * Where the positioner sat before a batch of attribute writes: the batch's
+ * first `style` record holds the style it had, which is restored for one
+ * measurement. Without a style record nothing moved.
+ */
+function rectBeforeWrites(
+  element: HTMLElement,
+  moved: MutationRecord | undefined,
+  current: DOMRect,
+): DOMRect {
+  if (!moved) return current;
+  const style = element.getAttribute("style");
+  setStyleAttribute(element, moved.oldValue);
+  const rect = element.getBoundingClientRect();
+  setStyleAttribute(element, style);
+  return rect;
+}
+
+function setStyleAttribute(element: HTMLElement, value: string | null) {
+  if (value === null) element.removeAttribute("style");
+  else element.setAttribute("style", value);
+}
+
 export function usePopoverFlipMotion(): RefCallback<HTMLDivElement> {
   const elementRef = useRef<HTMLDivElement | null>(null);
-  const previousRectRef = useRef<DOMRect | null>(null);
-  const previousSideRef = useRef<PopoverSide | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const cleanupTimeoutRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
 
-  const measurePositioner = useCallback((element: HTMLDivElement) => {
-    if (isAnimatingRef.current) {
-      return;
-    }
+  // Floating UI writes the positioner's style on every position update while
+  // the popover is open (scroll, resize). Those writes are left alone: the
+  // positioner is measured only in the batch that flips its side, and the
+  // place it had comes from the style the batch replaced (RW-11).
+  const measurePositioner = useCallback(
+    (element: HTMLDivElement, records: readonly MutationRecord[]) => {
+      if (isAnimatingRef.current) {
+        return;
+      }
 
-    if (isPrePositioningPopoverPositioner(element)) {
-      return;
-    }
+      const sideChange = records.find(
+        (record) => record.attributeName === "data-side",
+      );
 
-    const currentSide = readPopoverSide(element);
-    const currentRect = element.getBoundingClientRect();
-    const previousRect = previousRectRef.current;
-    const previousSide = previousSideRef.current;
+      if (!sideChange) {
+        return;
+      }
 
-    if (
-      !previousRect ||
-      !isVerticalPopoverSideFlip(previousSide, currentSide) ||
-      // The flip settles at once with reduced motion (M5): the system
-      // setting, the document mode or the provider preset that the popover's
-      // portal scope carries.
-      readReducedMotion(element)
-    ) {
-      previousRectRef.current = currentRect;
-      previousSideRef.current = currentSide;
+      const previousSide = toPopoverSide(sideChange.oldValue);
+      const currentSide = readPopoverSide(element);
+      const moved = records.find((record) => record.attributeName === "style");
 
-      return;
-    }
+      if (
+        !isVerticalPopoverSideFlip(previousSide, currentSide) ||
+        // The flip settles at once with reduced motion (M5): the system
+        // setting, the document mode or the provider preset that the
+        // popover's portal scope carries.
+        readReducedMotion(element) ||
+        unplacedStyle.test(moved?.oldValue ?? "") ||
+        isPrePositioningPopoverPositioner(element)
+      ) {
+        return;
+      }
 
-    const popup = element.querySelector<HTMLElement>(
-      '[data-slot="popover-popup"]',
-    );
+      const popup = element.querySelector<HTMLElement>(
+        '[data-slot="popover-popup"]',
+      );
 
-    if (!popup) {
-      previousRectRef.current = currentRect;
-      previousSideRef.current = currentSide;
+      if (!popup) {
+        return;
+      }
 
-      return;
-    }
+      const currentRect = element.getBoundingClientRect();
+      const previousRect = rectBeforeWrites(element, moved, currentRect);
 
-    cancelPendingPopoverFlipMotion(animationFrameRef, cleanupTimeoutRef);
-    isAnimatingRef.current = true;
+      cancelPendingPopoverFlipMotion(animationFrameRef, cleanupTimeoutRef);
+      isAnimatingRef.current = true;
 
-    const previousInlineTransition = popup.style.transition;
-    const previousInlineTransform = popup.style.transform;
-    const offset = getPopoverFlipOffset(
-      previousRect,
-      currentRect,
-      popup,
-      currentSide,
-    );
+      const previousInlineTransition = popup.style.transition;
+      const previousInlineTransform = popup.style.transform;
+      const offset = getPopoverFlipOffset(
+        previousRect,
+        currentRect,
+        popup,
+        currentSide,
+      );
 
-    popup.style.transition = "none";
-    popup.style.transform = `translate3d(0, ${offset}px, 0) scale(var(--motion-overlay-scale))`;
-    popup.getBoundingClientRect();
+      popup.style.transition = "none";
+      popup.style.transform = `translate3d(0, ${offset}px, 0) scale(var(--motion-overlay-scale))`;
+      popup.getBoundingClientRect();
 
-    animationFrameRef.current = window.requestAnimationFrame(() => {
-      animationFrameRef.current = null;
-      popup.style.transition = popoverFlipSettleTransition;
-      popup.style.transform = previousInlineTransform;
-
-      cleanupTimeoutRef.current = window.setTimeout(() => {
-        cleanupTimeoutRef.current = null;
-
-        if (elementRef.current !== element || !element.contains(popup)) {
-          isAnimatingRef.current = false;
-
-          return;
-        }
-
-        popup.style.transition = previousInlineTransition;
+      animationFrameRef.current = window.requestAnimationFrame(() => {
+        animationFrameRef.current = null;
+        popup.style.transition = popoverFlipSettleTransition;
         popup.style.transform = previousInlineTransform;
-        previousRectRef.current = element.getBoundingClientRect();
-        previousSideRef.current = readPopoverSide(element);
-        isAnimatingRef.current = false;
-      }, getPopoverFlipCleanupDelay(element));
-    });
-  }, []);
+
+        cleanupTimeoutRef.current = window.setTimeout(() => {
+          cleanupTimeoutRef.current = null;
+
+          if (elementRef.current !== element || !element.contains(popup)) {
+            isAnimatingRef.current = false;
+
+            return;
+          }
+
+          popup.style.transition = previousInlineTransition;
+          popup.style.transform = previousInlineTransform;
+          isAnimatingRef.current = false;
+        }, getPopoverFlipCleanupDelay(element));
+      });
+    },
+    [],
+  );
 
   return useCallback(
     (element) => {
@@ -119,26 +153,22 @@ export function usePopoverFlipMotion(): RefCallback<HTMLDivElement> {
       elementRef.current = element;
 
       if (!element) {
-        previousRectRef.current = null;
-        previousSideRef.current = null;
         isAnimatingRef.current = false;
         cancelPendingPopoverFlipMotion(animationFrameRef, cleanupTimeoutRef);
 
         return;
       }
 
-      previousRectRef.current = null;
-      previousSideRef.current = null;
-
       if (typeof MutationObserver === "undefined") {
         return;
       }
 
-      observerRef.current = new MutationObserver(() =>
-        measurePositioner(element),
+      observerRef.current = new MutationObserver((records) =>
+        measurePositioner(element, records),
       );
       observerRef.current.observe(element, {
         attributeFilter: ["data-side", "style"],
+        attributeOldValue: true,
         attributes: true,
       });
     },
@@ -153,8 +183,10 @@ function isPrePositioningPopoverPositioner(element: HTMLElement): boolean {
 }
 
 function readPopoverSide(element: HTMLElement): PopoverSide | null {
-  const side = element.getAttribute("data-side");
+  return toPopoverSide(element.getAttribute("data-side"));
+}
 
+function toPopoverSide(side: string | null): PopoverSide | null {
   if (
     side === "top" ||
     side === "right" ||

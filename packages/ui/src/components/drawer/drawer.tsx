@@ -7,6 +7,7 @@ import { ChevronRightIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { createContext, useContext } from "react";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { KitButton } from "../button/button-internal";
 import {
@@ -74,13 +75,25 @@ export const DrawerPortal: (
 export function DrawerTrigger(
   props: WithStringClassName<DrawerPrimitive.Trigger.Props>,
 ): React.ReactElement {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+  return (
+    <DrawerPrimitive.Trigger
+      data-slot="drawer-trigger"
+      {...props}
+      className={cn(slotClass("drawer-trigger", props), props.className)}
+    />
+  );
 }
 
 export function DrawerClose(
   props: WithStringClassName<DrawerPrimitive.Close.Props>,
 ): React.ReactElement {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
+  return (
+    <DrawerPrimitive.Close
+      data-slot="drawer-close"
+      {...props}
+      className={cn(slotClass("drawer-close", props), props.className)}
+    />
+  );
 }
 
 export function DrawerSwipeArea({
@@ -96,6 +109,7 @@ export function DrawerSwipeArea({
   return (
     <DrawerPrimitive.SwipeArea
       className={cn(
+        slotClass("drawer-swipe-area", props),
         "fixed z-50 touch-none",
         position === "bottom" && "inset-x-0 bottom-0 h-8",
         position === "top" && "inset-x-0 top-0 h-8",
@@ -117,6 +131,7 @@ export function DrawerBackdrop({
     <DrawerPrimitive.Backdrop
       className={cn(
         // The fade is drawer.css's, so reduced motion can make it instant.
+        slotClass("drawer-backdrop", props),
         "fixed inset-0 z-50 opacity-[calc(1-var(--drawer-swipe-progress))] data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute",
         className,
       )}
@@ -138,6 +153,7 @@ export function DrawerViewport({
   return (
     <DrawerPrimitive.Viewport
       className={cn(
+        slotClass("drawer-viewport", props),
         "fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]",
         "touch-none",
         position === "bottom" && "grid grid-rows-[1fr_auto] pt-12",
@@ -195,6 +211,7 @@ export function DrawerPopup({
         <DrawerViewport position={position} variant={variant}>
           <DrawerPrimitive.Popup
             className={cn(
+              slotClass("drawer-popup", props),
               surfaceClassNames.edgeOverlay,
               "flex max-h-full min-h-0 w-full min-w-0 flex-col outline-none will-change-transform [--peek:calc(--spacing(6)-1px)] [--scale-base:calc(max(0,1-(var(--nested-drawers)*var(--stack-step))))] [--scale:clamp(0,calc(var(--scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--shrink:calc(1-var(--scale))] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-step:0.05] after:pointer-events-none after:absolute data-swiping:select-none data-nested-drawer-open:overflow-hidden data-nested-drawer-open:bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(2%*(var(--nested-drawers)-var(--stack-progress))))] data-ending-style:shadow-transparent data-starting-style:shadow-transparent dark:data-nested-drawer-open:bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(6%*(var(--nested-drawers)-var(--stack-progress))))]",
               "touch-none",
@@ -281,6 +298,7 @@ export function DrawerHeader({
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
+      slotClass("drawer-header", props, render),
       "flex flex-col",
       !allowSelection && "cursor-default",
       className,
@@ -307,6 +325,7 @@ export function DrawerFooter({
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap instead
       // of overflowing a narrow panel.
+      slotClass("drawer-footer", props, render),
       "flex flex-wrap",
       !allowSelection && "cursor-default",
       className,
@@ -327,7 +346,11 @@ export function DrawerTitle({
 }: WithStringClassName<DrawerPrimitive.Title.Props>): React.ReactElement {
   return (
     <DrawerPrimitive.Title
-      className={cn("font-heading wrap-anywhere", className)}
+      className={cn(
+        slotClass("drawer-title", props),
+        "font-heading wrap-anywhere",
+        className,
+      )}
       data-slot="drawer-title"
       {...props}
     />
@@ -340,7 +363,11 @@ export function DrawerDescription({
 }: WithStringClassName<DrawerPrimitive.Description.Props>): React.ReactElement {
   return (
     <DrawerPrimitive.Description
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("drawer-description", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="drawer-description"
       {...props}
     />
@@ -360,7 +387,11 @@ export function DrawerPanel({
   allowSelection?: boolean;
 }): React.ReactElement {
   const defaultProps = {
-    className: cn(!allowSelection && "cursor-default", className),
+    className: cn(
+      slotClass("drawer-panel", props, render),
+      !allowSelection && "cursor-default",
+      className,
+    ),
     "data-slot": "drawer-panel",
   };
 
@@ -395,6 +426,7 @@ export function DrawerBar({
   const defaultProps = {
     "aria-hidden": true as const,
     className: cn(
+      slotClass("drawer-bar", props, render),
       "absolute flex cursor-grab touch-none items-center justify-center p-3 active:cursor-grabbing before:rounded-full",
       horizontal
         ? "inset-y-0 before:h-12 before:w-1"
@@ -431,7 +463,11 @@ export function DrawerMenu({
 }): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
   const defaultProps = {
-    className: cn("-m-2 flex flex-col", className),
+    className: cn(
+      slotClass("drawer-menu", props, render),
+      "-m-2 flex flex-col",
+      className,
+    ),
     "data-size": resolvedSize,
     "data-slot": "drawer-menu",
   };
@@ -476,7 +512,11 @@ export function DrawerMenuSeparator({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn(menuSeparatorClassName, className),
+    className: cn(
+      slotClass("drawer-menu-separator", props, render),
+      menuSeparatorClassName,
+      className,
+    ),
     "data-slot": "drawer-menu-separator",
   };
 
@@ -493,7 +533,11 @@ export function DrawerMenuGroup({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("flex flex-col", className),
+    className: cn(
+      slotClass("drawer-menu-group", props, render),
+      "flex flex-col",
+      className,
+    ),
     "data-slot": "drawer-menu-group",
   };
 
@@ -510,7 +554,11 @@ export function DrawerMenuGroupLabel({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn(menuGroupLabelClassName, className),
+    className: cn(
+      slotClass("drawer-menu-group-label", props, render),
+      menuGroupLabelClassName,
+      className,
+    ),
     "data-slot": "drawer-menu-group-label",
   };
 
@@ -590,13 +638,21 @@ export function DrawerMenuRadioGroup({
 }
 
 export function DrawerMenuRadioItem({
+  indicatorPosition = "start",
   ...props
 }: Omit<RadioProps, "profile"> & {
   value: string;
+  /**
+   * Where the row shows its check: in the leading slot (`start`), or at the
+   * end of the row (`end`) for identity rows that lead with a logo or an
+   * avatar, such as the workspaces of a switcher.
+   */
+  indicatorPosition?: "start" | "end" | undefined;
 }): React.ReactElement {
   return (
     <KitRadio
       data-slot="drawer-menu-radio-item"
+      indicatorPosition={indicatorPosition}
       profile="menu-item"
       {...props}
     />

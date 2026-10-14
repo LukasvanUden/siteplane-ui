@@ -35,7 +35,7 @@ const TOAST_ICONS = {
  * no pointer until then.
  */
 const toastContentClassName =
-  "siteplane-toast-content-motion pointer-events-auto data-behind:not-data-expanded:pointer-events-none data-behind:opacity-0 data-expanded:opacity-100";
+  "sp-toast-content-motion pointer-events-auto data-behind:not-data-expanded:pointer-events-none data-behind:opacity-0 data-expanded:opacity-100";
 
 type SwipeDirection = "up" | "down" | "left" | "right";
 
@@ -70,10 +70,12 @@ function upsertReplayClassName(toast: {
 }
 
 function Toasts({
+  dismissLabel,
   manager,
   position,
   portalProps,
 }: {
+  dismissLabel: string;
   manager: object | undefined;
   position: ToastPosition;
   portalProps?:
@@ -95,10 +97,15 @@ function Toasts({
   const motionPreset = useSiteplaneMotionPreset();
 
   return (
-    <Toast.Portal data-slot="toast-portal" {...portalProps}>
+    <Toast.Portal
+      className="sp-toast-portal"
+      data-slot="toast-portal"
+      {...portalProps}
+    >
       <Toast.Viewport
         ref={setViewport}
         className={cn(
+          "sp-toast-viewport",
           "fixed z-60 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]",
           "data-[position*=top]:top-(--toast-inset)",
           "data-[position*=bottom]:bottom-(--toast-inset)",
@@ -132,7 +139,7 @@ function Toasts({
               key={toast.id}
               className={cn(
                 toastSurfaceClassName,
-                "absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none siteplane-toast-motion data-expanded:bg-(--sp-rw-surface-color) dark:data-expanded:bg-(--sp-rw-surface-color)",
+                "absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none sp-toast-motion data-expanded:bg-(--sp-rw-surface-color) dark:data-expanded:bg-(--sp-rw-surface-color)",
                 "data-[position*=right]:right-0 data-[position*=right]:left-auto",
                 "data-[position*=left]:right-auto data-[position*=left]:left-0",
                 "data-[position*=center]:right-0 data-[position*=center]:left-0",
@@ -193,11 +200,11 @@ function Toasts({
                   <div className="flex min-w-0 gap-2">
                     {(Icon || toast.type === "loading") && (
                       <div
-                        className="[&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+                        className="sp-toast-icon [&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
                         data-slot="toast-icon"
                       >
                         {Icon ? (
-                          <Icon className="siteplane-spinner-motion in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning" />
+                          <Icon className="sp-spinner-motion in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning" />
                         ) : (
                           <Spinner aria-hidden="true" className="opacity-80" />
                         )}
@@ -206,17 +213,18 @@ function Toasts({
 
                     <div className="flex min-w-0 flex-col gap-0.5">
                       <Toast.Title
-                        className="font-medium wrap-anywhere"
+                        className="sp-toast-title font-medium wrap-anywhere"
                         data-slot="toast-title"
                       />
                       <Toast.Description
-                        className="text-muted-foreground wrap-anywhere"
+                        className="sp-toast-description text-muted-foreground wrap-anywhere"
                         data-slot="toast-description"
                       />
                     </div>
                   </div>
                   {toast.actionProps && (
                     <Toast.Action
+                      className="sp-toast-action"
                       data-slot="toast-action"
                       render={<Button size="xs" />}
                     >
@@ -225,7 +233,7 @@ function Toasts({
                   )}
                 </Toast.Content>
               )}
-              <ToastCloseButton />
+              <ToastCloseButton label={dismissLabel} />
             </Toast.Root>
           );
         })}
@@ -234,11 +242,11 @@ function Toasts({
   );
 }
 
-function ToastCloseButton(): React.ReactElement {
+function ToastCloseButton({ label }: { label: string }): React.ReactElement {
   return (
     <Toast.Close
-      aria-label="Dismiss toast"
-      className={toastDismissClassName}
+      aria-label={label}
+      className={cn("sp-toast-close", toastDismissClassName)}
       data-slot="toast-close"
       render={
         <KitButton profile="overlay-dismiss" shape="square" variant="ghost" />
@@ -261,12 +269,15 @@ export type ToastPosition =
   | "bottom-right";
 
 export interface ToastProviderProps extends Toast.Provider.Props {
+  /** The accessible name of each toast's dismiss button. Default: "Dismiss toast" */
+  dismissLabel?: string;
   position?: ToastPosition;
   portalProps?: WithStringClassName<React.ComponentProps<typeof Toast.Portal>>;
 }
 
 export function ToastProvider({
   children,
+  dismissLabel = "Dismiss toast",
   position = "bottom-right",
   portalProps,
   ...props
@@ -275,7 +286,12 @@ export function ToastProvider({
   return (
     <Toast.Provider toastManager={toastManager} {...props}>
       {children}
-      <Toasts manager={manager} portalProps={portalProps} position={position} />
+      <Toasts
+        dismissLabel={dismissLabel}
+        manager={manager}
+        portalProps={portalProps}
+        position={position}
+      />
     </Toast.Provider>
   );
 }

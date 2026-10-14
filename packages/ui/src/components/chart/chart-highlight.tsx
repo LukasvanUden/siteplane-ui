@@ -37,6 +37,7 @@ import * as React from "react";
 import { followed, useFollowValue } from "../motion";
 import { useFirstSeen, useLastValue } from "./chart-cartesian";
 import { useChartDimClassName } from "./chart-dimming";
+import { cn } from "../../system/utils/cn";
 
 /** The band around an active point: from the point before it to the point after it, held to the ends, in px along the axis. Null for no such point. */
 export function highlightBand(
@@ -121,7 +122,7 @@ export function ChartHighlight({
   const { released, seen } = useFirstSeen(active);
   if (!seen) return null;
   return (
-    <g data-slot="chart-highlight-clip">
+    <g className="sp-chart-highlight-clip" data-slot="chart-highlight-clip">
       <clipPath id={clipId}>
         <followed.rect
           height={height + slack * 2}
@@ -132,7 +133,7 @@ export function ChartHighlight({
       </clipPath>
       {strokes.map((stroke) => (
         <path
-          className={className}
+          className={cn("sp-chart-highlight", className)}
           clipPath={`url(#${clipId})`}
           d={stroke.d}
           data-slot="chart-highlight"

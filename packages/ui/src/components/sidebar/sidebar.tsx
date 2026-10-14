@@ -7,6 +7,7 @@ import * as React from "react";
 import { useMediaQuery } from "../../system/hooks/use-media-query";
 import { focusRingRecipe } from "../../system/recipes/focus-ring.recipe";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button, type ButtonBaseProps } from "../button";
 import { KitButton } from "../button/button-internal";
 import {
@@ -19,6 +20,7 @@ import { ScrollArea } from "../scroll-area";
 import { Separator } from "../separator";
 import { Sheet, SheetHeader, SheetTitle } from "../sheet";
 import { KitSheetPopup } from "../sheet/sheet-internal";
+import type { KitSidebarProviderProps } from "./sidebar-internal";
 import { Skeleton } from "../skeleton";
 import {
   Tooltip,
@@ -29,14 +31,8 @@ import {
 
 const SIDEBAR_COOKIE_NAME: string = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE: number = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH: string = "16rem";
-const SIDEBAR_WIDTH_MIN: string = "12rem";
-const SIDEBAR_WIDTH_MAX: string = "24rem";
+// The desktop widths are the stylesheet's (design-rework.css, "Sidebar").
 const SIDEBAR_WIDTH_MOBILE: string = "18rem";
-// The icon rail is a row's 8px inset, a 36px square and the 8px inset again, so
-// the toggle, the workspace mark, every icon and the active pill share the
-// rail's centre axis. A narrower rail pushes the squares off that axis.
-const SIDEBAR_WIDTH_ICON: string = "3.25rem";
 const SIDEBAR_KEYBOARD_SHORTCUT: string = "b";
 
 export const sidebarMenuPopupWidthClassName = "w-56";
@@ -188,19 +184,7 @@ function persistSidebarOpenState(open: boolean, name: string): void {
   }
 }
 
-export function SidebarProvider({
-  layout,
-  defaultOpen = true,
-  mobileBreakpoint = "md",
-  keyboardShortcut = true,
-  stateCookie = SIDEBAR_COOKIE_NAME,
-  open: openProp,
-  onOpenChange: setOpenProp,
-  className,
-  style,
-  children,
-  ...props
-}: React.ComponentProps<"div"> & {
+type SidebarProviderProps = React.ComponentProps<"div"> & {
   layout?: SidebarLayout;
   defaultOpen?: boolean;
   mobileBreakpoint?: "md" | "lg";
@@ -213,8 +197,29 @@ export function SidebarProvider({
   stateCookie?: string | false;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-}): React.ReactElement {
-  const isMobile = useMediaQuery(`max-${mobileBreakpoint}`);
+};
+
+export function SidebarProvider(
+  providerProps: SidebarProviderProps,
+): React.ReactElement {
+  // Header Navigation passes the internal forceMobile through
+  // KitSidebarProvider (sidebar-internal.ts), the same function.
+  const {
+    layout,
+    defaultOpen = true,
+    mobileBreakpoint = "md",
+    keyboardShortcut = true,
+    stateCookie = SIDEBAR_COOKIE_NAME,
+    open: openProp,
+    onOpenChange: setOpenProp,
+    className,
+    style,
+    children,
+    forceMobile = false,
+    ...props
+  } = providerProps as KitSidebarProviderProps;
+  const viewportMobile = useMediaQuery(`max-${mobileBreakpoint}`);
+  const isMobile = forceMobile || viewportMobile;
   const [openMobile, setOpenMobile] = React.useState(false);
   const generatedId = React.useId();
   const [sidebarId, setSidebarId] = React.useState<string>();
@@ -314,23 +319,17 @@ export function SidebarProvider({
       <SidebarControlsContext.Provider value={controls}>
         <div
           className={cn(
+            slotClass("sidebar-wrapper", props),
             "group/sidebar-wrapper flex min-h-svh w-full bg-[var(--sp-rw-bg-base)] text-[var(--sp-rw-fg-primary)]",
             className,
           )}
           data-layout={layout}
           data-slot="sidebar-wrapper"
           data-state={state}
-          style={
-            {
-              "--sidebar-width": SIDEBAR_WIDTH,
-              "--sidebar-gap-width":
-                layout === "push" ? "var(--sidebar-width-icon)" : undefined,
-              "--sidebar-width-min": SIDEBAR_WIDTH_MIN,
-              "--sidebar-width-max": SIDEBAR_WIDTH_MAX,
-              "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
-              ...style,
-            } as React.CSSProperties
-          }
+          // The widths are the stylesheet's (design-rework.css, "Sidebar"),
+          // so a policy that blocks style attributes keeps them; an app's style
+          // still overrides them.
+          style={style}
           {...props}
         >
           {children}
@@ -409,6 +408,7 @@ export function Sidebar({
       <div
         aria-label={ariaLabel}
         className={cn(
+          slotClass("sidebar", props),
           "flex h-full w-(--sidebar-width) flex-col bg-[var(--sp-rw-bg-base)] text-[var(--sp-rw-fg-primary)]",
           layoutClassName,
           className,
@@ -471,6 +471,7 @@ export function Sidebar({
     <aside
       aria-label={ariaLabel}
       className={cn(
+        "sp-sidebar",
         "group peer hidden text-[var(--sp-rw-fg-primary)]",
         mobileBreakpoint === "lg" ? "lg:block" : "md:block",
       )}
@@ -484,6 +485,7 @@ export function Sidebar({
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
+          "sp-sidebar-gap",
           "relative w-[var(--sidebar-gap-width,var(--sidebar-width))] bg-transparent transition-[width] duration-(--motion-duration-base) ease-(--motion-ease-linear)",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
@@ -499,6 +501,7 @@ export function Sidebar({
           visible to open it again. */}
       <div
         className={cn(
+          slotClass("sidebar-container", props),
           "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width,visibility] duration-(--motion-duration-base) ease-(--motion-ease-linear)",
           mobileBreakpoint === "lg" ? "lg:flex" : "md:flex",
           side === "left"
@@ -518,7 +521,7 @@ export function Sidebar({
         {...props}
       >
         <div
-          className="flex h-full w-full flex-col bg-transparent group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:bg-[var(--sp-rw-bg-primary)] group-data-[variant=floating]:shadow-[var(--sp-rw-surface-xs-shadow)]"
+          className="sp-sidebar-inner flex h-full w-full flex-col bg-transparent group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:bg-[var(--sp-rw-bg-primary)] group-data-[variant=floating]:shadow-[var(--sp-rw-surface-xs-shadow)]"
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
         >
@@ -772,6 +775,7 @@ export function SidebarInset({
   return (
     <main
       className={cn(
+        slotClass("sidebar-inset", props),
         "relative flex w-full flex-1 flex-col bg-background",
         desktop.variantInset,
         layout &&
@@ -817,6 +821,7 @@ export function SidebarHeader({
   return (
     <div
       className={cn(
+        slotClass("sidebar-header", props),
         "flex flex-col gap-2 p-2",
         sidebarBandRailClassName,
         leadingGutter && "ps-0",
@@ -838,6 +843,7 @@ export function SidebarFooter({
   return (
     <div
       className={cn(
+        slotClass("sidebar-footer", props),
         "flex flex-col gap-4 p-2",
         sidebarBandRailClassName,
         leadingGutter && "ps-0",
@@ -901,7 +907,11 @@ export function SidebarContent({
             apart, like the groups of the footer, without a gap of their
             own. */}
         <div
-          className={cn("flex flex-1 flex-col", className)}
+          className={cn(
+            slotClass("sidebar-content", props),
+            "flex flex-1 flex-col",
+            className,
+          )}
           data-sidebar="content"
           data-slot="sidebar-content"
           {...props}
@@ -920,6 +930,7 @@ export function SidebarGroup({
   return (
     <div
       className={cn(
+        slotClass("sidebar-group", props),
         "relative flex w-full min-w-0 flex-col p-2",
         leadingGutter && "ps-0",
         className,
@@ -939,11 +950,16 @@ export function SidebarGroupLabel({
   // Rendered as a button, the label takes the kit focus outline (T3). On the
   // collapsed icon rail it fades out and keeps its row, so the groups stay
   // apart and every icon keeps the place it has in the expanded sidebar.
+  // Rendered as a disabled button, such as a CollapsibleTrigger whose group
+  // cannot fold, it fades as a disabled label does (T1); Base UI keeps such a
+  // trigger focusable with aria-disabled. The rail's fade-out still wins.
   const defaultProps = {
     className: cn(
+      slotClass("sidebar-group-label", props, render),
       focusRingRecipe(),
       "flex h-8 shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg px-2 font-medium text-sidebar-foreground text-xs transition-opacity duration-(--motion-duration-base) ease-(--motion-ease-linear) [&>svg]:size-4 [&>svg]:shrink-0",
       "group-data-[collapsible=icon]:opacity-0",
+      "not-group-data-[collapsible=icon]:disabled:opacity-(--sp-rw-disabled-opacity-action) not-group-data-[collapsible=icon]:aria-disabled:opacity-(--sp-rw-disabled-opacity-action)",
       className,
     ),
     "data-sidebar": "group-label",
@@ -988,7 +1004,11 @@ export function SidebarGroupContent({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("w-full text-sm", className)}
+      className={cn(
+        slotClass("sidebar-group-content", props),
+        "w-full text-sm",
+        className,
+      )}
       data-sidebar="group-content"
       data-slot="sidebar-group-content"
       {...props}
@@ -1002,7 +1022,11 @@ export function SidebarMenu({
 }: React.ComponentProps<"ul">): React.ReactElement {
   return (
     <ul
-      className={cn("flex w-full min-w-0 flex-col gap-1", className)}
+      className={cn(
+        slotClass("sidebar-menu", props),
+        "flex w-full min-w-0 flex-col gap-1",
+        className,
+      )}
       data-sidebar="menu"
       data-slot="sidebar-menu"
       {...props}
@@ -1057,7 +1081,11 @@ export function SidebarMenuItem({
 
   return (
     <li
-      className={cn("group/menu-item relative", className)}
+      className={cn(
+        slotClass("sidebar-menu-item", props),
+        "group/menu-item relative",
+        className,
+      )}
       data-expand-trigger={expandTrigger ? "" : undefined}
       data-sidebar="menu-item"
       data-slot="sidebar-menu-item"
@@ -1201,6 +1229,7 @@ export function SidebarMenuBadge({
   return (
     <div
       className={cn(
+        slotClass("sidebar-menu-badge", props),
         "pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-lg px-1 font-medium text-sidebar-foreground text-xs tabular-nums",
         "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
         // The 20 px badge centres on rows of 28, 32, 36 and 48 px.
@@ -1241,6 +1270,7 @@ export function SidebarMenuSkeleton({
   return (
     <div
       className={cn(
+        slotClass("sidebar-menu-skeleton", props),
         "flex items-center gap-2 rounded-lg px-2",
         sidebarMenuSkeletonHeightClassNames[resolvedSize],
         className,
@@ -1257,8 +1287,10 @@ export function SidebarMenuSkeleton({
           data-sidebar="menu-skeleton-icon"
         />
       )}
+      {/* The width is the run-time value; where a policy blocks the style
+          attribute, the line keeps the default 72%. */}
       <Skeleton
-        className="h-4 max-w-(--skeleton-width) flex-1"
+        className="h-4 max-w-[var(--skeleton-width,72%)] flex-1"
         data-sidebar="menu-skeleton-text"
         style={
           {
@@ -1278,6 +1310,7 @@ export function SidebarMenuSub({
     <ul
       className={cn(
         // The guide line is the kit's divider colour.
+        slotClass("sidebar-menu-sub", props),
         "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sp-rw-border-translucent)] border-l px-2.5 py-0.5",
         "group-data-[collapsible=icon]:hidden",
         className,
@@ -1295,7 +1328,11 @@ export function SidebarMenuSubItem({
 }: React.ComponentProps<"li">): React.ReactElement {
   return (
     <li
-      className={cn("group/menu-sub-item relative", className)}
+      className={cn(
+        slotClass("sidebar-menu-sub-item", props),
+        "group/menu-sub-item relative",
+        className,
+      )}
       data-sidebar="menu-sub-item"
       data-slot="sidebar-menu-sub-item"
       {...props}

@@ -2,6 +2,7 @@ import type * as React from "react";
 
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 
 // The frame's 4 px gap spaces its panels, and a hidden part leaves none. The
 // header and the footer take it from their own padding, so the space around
@@ -13,6 +14,7 @@ export function Frame({
   return (
     <div
       className={cn(
+        slotClass("frame", props),
         "relative flex flex-col gap-1 rounded-2xl bg-muted/72 p-1",
         className,
       )}
@@ -28,7 +30,12 @@ export function FramePanel({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn(surfaceClassNames.raised, "rounded-xl p-5", className)}
+      className={cn(
+        slotClass("frame-panel", props),
+        surfaceClassNames.raised,
+        "rounded-xl p-5",
+        className,
+      )}
       data-slot="frame-panel"
       {...props}
     />
@@ -43,8 +50,12 @@ export function FrameHeader({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("flex flex-col px-5 pt-4 pb-3", className)}
-      data-slot="frame-panel-header"
+      className={cn(
+        slotClass("frame-header", props),
+        "flex flex-col px-5 pt-4 pb-3",
+        className,
+      )}
+      data-slot="frame-header"
       {...props}
     />
   );
@@ -56,8 +67,12 @@ export function FrameTitle({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("font-semibold text-sm", className)}
-      data-slot="frame-panel-title"
+      className={cn(
+        slotClass("frame-title", props),
+        "font-semibold text-sm",
+        className,
+      )}
+      data-slot="frame-title"
       {...props}
     />
   );
@@ -69,8 +84,12 @@ export function FrameDescription({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="frame-panel-description"
+      className={cn(
+        slotClass("frame-description", props),
+        "text-muted-foreground text-sm",
+        className,
+      )}
+      data-slot="frame-description"
       {...props}
     />
   );
@@ -82,8 +101,12 @@ export function FrameFooter({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("px-5 pt-3 pb-4", className)}
-      data-slot="frame-panel-footer"
+      className={cn(
+        slotClass("frame-footer", props),
+        "px-5 pt-3 pb-4",
+        className,
+      )}
+      data-slot="frame-footer"
       {...props}
     />
   );

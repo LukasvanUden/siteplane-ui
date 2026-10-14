@@ -3,7 +3,7 @@
 @layer siteplane {
   /* An invalid trigger takes the field error contour, like an invalid Select
    * trigger. */
-  :root [data-chassis][data-slot="date-picker-trigger"][data-invalid] {
+  :root [data-chassis].sp-date-picker-trigger[data-invalid] {
     --sp-rw-button-rim: inset 0 0 0 var(--sp-rw-border-default)
       light-dark(
         oklch(67.3% 0.2102 26.56 / 40%),
@@ -14,19 +14,19 @@
   /* The trigger takes the field text scale of the other date and time fields:
    * the Button's 14 px, or 16 px at xl, unless textSize sets one size for every
    * control size. */
-  :root [data-chassis][data-slot="date-picker-trigger"][data-text-size="sm"] {
+  :root [data-chassis].sp-date-picker-trigger[data-text-size="sm"] {
     font-size: var(--sp-rw-font-14);
     line-height: var(--sp-rw-line-21);
   }
 
-  :root [data-chassis][data-slot="date-picker-trigger"][data-text-size="base"] {
+  :root [data-chassis].sp-date-picker-trigger[data-text-size="base"] {
     font-size: var(--sp-rw-font-16);
     line-height: var(--sp-rw-line-24);
   }
 
   /* The surface (border, radius, shadow) is the floating-md recipe that
    * design-rework.css draws for the popover's data-slot. */
-  .siteplane-date-picker-popover {
+  .sp-date-picker-popover {
     z-index: 50;
     width: max-content;
     padding: var(--sp-rw-space-4);
@@ -34,24 +34,24 @@
     transform-origin: var(--trigger-anchor-point);
   }
 
-  .siteplane-date-picker-popover[data-entering] {
-    animation: siteplane-date-picker-enter var(--motion-duration-overlay)
+  .sp-date-picker-popover[data-entering] {
+    animation: sp-date-picker-enter var(--motion-duration-overlay)
       var(--motion-ease-standard) both;
   }
 
-  .siteplane-date-picker-popover[data-exiting] {
-    animation: siteplane-date-picker-exit var(--motion-duration-fast)
+  .sp-date-picker-popover[data-exiting] {
+    animation: sp-date-picker-exit var(--motion-duration-fast)
       var(--motion-ease-soft-in-out) both;
   }
 
-  @keyframes siteplane-date-picker-enter {
+  @keyframes sp-date-picker-enter {
     from {
       opacity: 0;
       transform: scale(0.98);
     }
   }
 
-  @keyframes siteplane-date-picker-exit {
+  @keyframes sp-date-picker-exit {
     to {
       opacity: 0;
       transform: scale(0.98);
@@ -59,16 +59,16 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-date-picker-popover[data-entering],
-    .siteplane-date-picker-popover[data-exiting] {
+    .sp-date-picker-popover[data-entering],
+    .sp-date-picker-popover[data-exiting] {
       animation-duration: 1ms;
     }
   }
 
-  html[data-motion-reduce="true"] .siteplane-date-picker-popover[data-entering],
-  html[data-motion-reduce="true"] .siteplane-date-picker-popover[data-exiting],
-  [data-sp-motion="reduced"] .siteplane-date-picker-popover[data-entering],
-  [data-sp-motion="reduced"] .siteplane-date-picker-popover[data-exiting] {
+  html[data-motion-reduce="true"] .sp-date-picker-popover[data-entering],
+  html[data-motion-reduce="true"] .sp-date-picker-popover[data-exiting],
+  [data-sp-motion="reduced"] .sp-date-picker-popover[data-entering],
+  [data-sp-motion="reduced"] .sp-date-picker-popover[data-exiting] {
     animation-duration: 1ms;
   }
 }

@@ -2,6 +2,7 @@ import { cva } from "class-variance-authority";
 import type * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { MotionItem, MotionList } from "../motion";
 
 /**
@@ -21,7 +22,11 @@ export function Timeline({
       gap={5}
       render={
         <ol
-          className={cn("flex flex-col", className)}
+          className={cn(
+            slotClass("timeline", props),
+            "flex flex-col",
+            className,
+          )}
           data-slot="timeline"
           role="list"
           {...props}
@@ -34,7 +39,7 @@ export function Timeline({
       separator={
         <span
           aria-hidden="true"
-          className="absolute top-4 bottom-0 left-[calc(var(--timeline-lead)/2)] w-px -translate-x-1/2"
+          className="sp-timeline-connector absolute top-4 bottom-0 left-[calc(var(--timeline-lead)/2)] w-px -translate-x-1/2"
           data-slot="timeline-connector"
         />
       }
@@ -129,13 +134,14 @@ export function TimelineItem({
             shape and size on the first line: the title's, or the
             description's when there is no title (rulebook I5). */}
         <span
-          className="-mt-0.5 flex h-(--sp-rw-line-18) w-(--timeline-lead) shrink-0 items-center justify-center group-has-data-[slot=timeline-title]/timeline-item:h-(--sp-rw-line-21)"
+          className="sp-timeline-marker-box -mt-0.5 flex h-(--sp-rw-line-18) w-(--timeline-lead) shrink-0 items-center justify-center group-has-data-[slot=timeline-title]/timeline-item:h-(--sp-rw-line-21)"
           data-slot="timeline-marker-box"
         >
           <span
             aria-hidden={markerLabel ? undefined : true}
             aria-label={markerLabel}
             className={cn(
+              "sp-timeline-marker",
               timelineDotVariants({ tone: resolvedTone }),
               timelineMarkerShapeClassNames[markerShape],
               marker && "grid size-5 place-items-center rounded-full ring-2",
@@ -173,7 +179,11 @@ export function TimelineTitle({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("timeline-title", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="timeline-title"
       {...props}
     />
@@ -186,7 +196,11 @@ export function TimelineDescription({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("wrap-anywhere", className)}
+      className={cn(
+        slotClass("timeline-description", props),
+        "wrap-anywhere",
+        className,
+      )}
       data-slot="timeline-description"
       {...props}
     />

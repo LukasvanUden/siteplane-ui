@@ -29,10 +29,10 @@ export function CheckboxGlyph({ size }: { size: SiteplaneControlSize }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        className="siteplane-check-path-motion"
+        className="sp-check-path-motion"
         d="M5.252 12.7 10.2 18.63 18.748 5.37"
       />
-      <path className="siteplane-checkbox-indeterminate" d="M5.252 12h13.496" />
+      <path className="sp-checkbox-indeterminate" d="M5.252 12h13.496" />
     </svg>
   );
 }

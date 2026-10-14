@@ -15,12 +15,13 @@ import {
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import type { KitSwitchProps } from "./switch-internal";
 
 import "./switch.css";
 
 export const switchVariants = cva(
-  "siteplane-switch-motion inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 cursor-pointer items-center p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input not-data-disabled:data-unchecked:hover:bg-input/80 not-data-disabled:data-unchecked:hover:shadow-sm/10 dark:not-data-disabled:data-unchecked:hover:bg-white/12",
+  "sp-switch-motion inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 cursor-pointer items-center p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input not-data-disabled:data-unchecked:hover:bg-input/80 dark:not-data-disabled:data-unchecked:hover:bg-white/12",
   {
     defaultVariants: { size: siteplaneUIDefaults.controlSize },
     variants: {
@@ -39,10 +40,12 @@ export const switchThumbClassName =
 
 // The standalone control draws its track and thumb, their sizes and the
 // thumb's travel from design-rework.css ([data-slot="switch"]); the utilities
-// above style the menu tracks only. The thumb stretches from its leading edge
-// while pressed.
+// above style the menu tracks only. Both tracks take one edge from that
+// stylesheet, the standalone control's 3:1 edge, which a menu track finds by
+// its switch-track slot. The thumb stretches from its leading edge while
+// pressed.
 const switchControlClassName =
-  "siteplane-switch-motion inline-flex shrink-0 cursor-pointer items-center data-disabled:cursor-not-allowed";
+  "sp-switch-motion inline-flex shrink-0 cursor-pointer items-center data-disabled:cursor-not-allowed";
 
 const switchControlThumbClassName =
   "pointer-events-none block aspect-square origin-left will-change-transform in-[[data-foundation=switch]:active,[data-foundation=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[data-foundation=switch][data-checked]]:origin-right";
@@ -72,6 +75,8 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
       className={cn(
         // A menu row shows the focus once, as a whole, like the check and
         // radio rows (T3); its track takes no ring of its own.
+        slotClass("switch", props),
+        baseClass("switch", props),
         profile === "menu-item"
           ? cn(choiceMenuItemClassName, choiceMenuItemSwitchGridClassName)
           : switchControlClassName,
@@ -91,20 +96,21 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
           <span
             aria-hidden="true"
             className={cn(
+              "sp-switch-track",
               switchVariants({ size: resolvedSize }),
               switchMenuTrackClassName,
             )}
             data-slot="switch-track"
           >
             <SwitchPrimitive.Thumb
-              className={switchThumbClassName}
+              className={cn("sp-switch-thumb", switchThumbClassName)}
               data-slot="switch-thumb"
             />
           </span>
         </>
       ) : (
         <SwitchPrimitive.Thumb
-          className={switchControlThumbClassName}
+          className={cn("sp-switch-thumb", switchControlThumbClassName)}
           data-slot="switch-thumb"
         />
       )}

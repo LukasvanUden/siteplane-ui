@@ -1,7 +1,12 @@
 "use client";
 
-import type * as React from "react";
-import { FileIcon, defaultStyles, type IconType } from "react-file-icon";
+import * as React from "react";
+import {
+  FileIcon,
+  defaultStyles,
+  type FileIconProps,
+  type IconType,
+} from "react-file-icon";
 import { cn } from "../../system/utils/cn";
 
 export type FileTypeIconProps = {
@@ -40,6 +45,31 @@ const labelColors: Record<FileTypeIconTone, string> = {
   neutral: "var(--sp-rw-fg-tertiary)",
 };
 
+/**
+ * react-file-icon 1.6.0 gives the page group of every icon the same
+ * `id="file"`, so a page with two icons repeats an id, in the server HTML as
+ * well. Nothing refers to that id, and the library's other ids are unique per
+ * icon, so the kit renders the library's tree without it.
+ */
+function FileIconWithoutFixedId(props: FileIconProps): React.ReactElement {
+  // The library's component is a plain function: called here, its useId runs
+  // as part of this component, in the same order on every render.
+  const icon = FileIcon(props) as React.ReactElement<{
+    children?: React.ReactNode;
+  }>;
+
+  return React.cloneElement(
+    icon,
+    undefined,
+    React.Children.map(icon.props.children, (child) =>
+      React.isValidElement<{ id?: string | undefined }>(child) &&
+      child.props.id === "file"
+        ? React.cloneElement(child, { id: undefined })
+        : child,
+    ),
+  );
+}
+
 /** Decorative SVG file icon; the complete glyph and label scale together. */
 export function FileTypeIcon({
   name,
@@ -75,11 +105,12 @@ export function FileTypeIcon({
       data-extension={suffix || undefined}
       data-tone={tone}
       className={cn(
+        "sp-file-type-icon",
         "inline-flex h-10 w-[34px] shrink-0 items-center justify-center [&>svg]:block [&>svg]:h-full [&>svg]:w-full [&>svg]:opacity-100",
         className,
       )}
     >
-      <FileIcon
+      <FileIconWithoutFixedId
         type={type}
         extension={
           suffix.length <= 5 && /^[a-z0-9]+$/.test(suffix)

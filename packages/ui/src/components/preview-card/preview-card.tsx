@@ -5,13 +5,18 @@ import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 export const PreviewCard: typeof PreviewCardPrimitive.Root =
   PreviewCardPrimitive.Root;
 export function PreviewCardTrigger(
   props: WithStringClassName<PreviewCardPrimitive.Trigger.Props>,
 ): React.ReactElement {
   return (
-    <PreviewCardPrimitive.Trigger data-slot="preview-card-trigger" {...props} />
+    <PreviewCardPrimitive.Trigger
+      data-slot="preview-card-trigger"
+      {...props}
+      className={cn(slotClass("preview-card-trigger", props), props.className)}
+    />
   );
 }
 export function PreviewCardPopup({
@@ -39,13 +44,14 @@ export function PreviewCardPopup({
           align={align}
           alignOffset={alignOffset}
           anchor={anchor}
-          className="z-50"
+          className="sp-preview-card-positioner z-50"
           data-slot="preview-card-positioner"
           side={side}
           sideOffset={sideOffset}
         >
           <PreviewCardPrimitive.Popup
             className={cn(
+              slotClass("preview-card-popup", props),
               surfaceClassNames.floatingOverlay,
               "flex w-64 origin-(--transform-origin) text-balance rounded-lg p-4 text-sm before:rounded-[inherit]",
               className,

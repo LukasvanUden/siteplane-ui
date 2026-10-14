@@ -5,13 +5,13 @@
    * re-theme reaches them. Their surface publishes its colour like every
    * floating surface: the fill darkens from it per stack position, and the
    * status ring of an avatar takes it. */
-  .siteplane-toast-replay-motion {
+  .sp-toast-replay-motion {
     --sp-rw-surface-color: var(--sp-rw-bg-secondary);
   }
 
   /* The content of every toast, the default one and that of notify(), fades
    * in and out as the toast steps behind the front one and back. */
-  :where(.siteplane-toast-content-motion) {
+  :where(.sp-toast-content-motion) {
     transition-property: opacity;
     transition-duration: var(--motion-duration-moderate);
     transition-timing-function: var(--motion-ease-standard);
@@ -70,48 +70,44 @@
    * content no longer fades, and the stack no longer glides when a toast comes,
    * goes or another stack makes way. */
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-toast-replay-motion {
+    .sp-toast-replay-motion {
       animation: none;
       transition: none;
     }
 
-    [data-slot="toast-viewport"] {
+    .sp-toast-viewport {
       transition: none;
     }
 
-    .siteplane-toast-replay-motion .siteplane-spinner-motion {
+    .sp-toast-replay-motion .sp-spinner-motion {
       animation: none;
     }
 
-    :root .siteplane-toast-content-motion {
+    :root .sp-toast-content-motion {
       transition: none;
     }
   }
 
-  html[data-motion-reduce="true"] .siteplane-toast-replay-motion,
-  [data-sp-motion="reduced"] .siteplane-toast-replay-motion {
+  html[data-motion-reduce="true"] .sp-toast-replay-motion,
+  [data-sp-motion="reduced"] .sp-toast-replay-motion {
     animation: none;
     transition: none;
   }
 
   /* The viewport portals out of a SiteplaneMotionProvider and carries its preset. */
-  html[data-motion-reduce="true"] [data-slot="toast-viewport"],
-  [data-sp-motion="reduced"] [data-slot="toast-viewport"],
-  [data-slot="toast-viewport"][data-sp-motion="reduced"] {
+  html[data-motion-reduce="true"] .sp-toast-viewport,
+  [data-sp-motion="reduced"] .sp-toast-viewport,
+  .sp-toast-viewport[data-sp-motion="reduced"] {
     transition: none;
   }
 
-  html[data-motion-reduce="true"]
-    .siteplane-toast-replay-motion
-    .siteplane-spinner-motion,
-  [data-sp-motion="reduced"]
-    .siteplane-toast-replay-motion
-    .siteplane-spinner-motion {
+  html[data-motion-reduce="true"] .sp-toast-replay-motion .sp-spinner-motion,
+  [data-sp-motion="reduced"] .sp-toast-replay-motion .sp-spinner-motion {
     animation: none;
   }
 
-  html[data-motion-reduce="true"] .siteplane-toast-content-motion,
-  [data-sp-motion="reduced"] .siteplane-toast-content-motion {
+  html[data-motion-reduce="true"] .sp-toast-content-motion,
+  [data-sp-motion="reduced"] .sp-toast-content-motion {
     transition: none;
   }
 }

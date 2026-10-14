@@ -6,11 +6,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Separator } from "../separator";
 import { KitSeparator } from "../separator/separator-internal";
 
 export const groupVariants = cva(
-  "flex w-fit *:focus-visible:z-1 has-[>[data-slot=group]]:gap-2 *:has-focus-visible:z-1 dark:*:[[data-slot=separator]:has(~button:hover):not(:has(~[data-slot=separator]~[data-slot]:hover)),[data-slot=separator]:has(~[data-slot][data-pressed]):not(:has(~[data-slot=separator]~[data-slot][data-pressed]))]:before:bg-input/64 dark:*:[button:hover~[data-slot=separator]:not([data-slot]:hover~[data-slot=separator]~[data-slot=separator]),[data-slot][data-pressed]~[data-slot=separator]:not([data-slot][data-pressed]~[data-slot=separator]~[data-slot=separator])]:before:bg-input/64",
+  "flex w-fit *:focus-visible:z-1 *:has-focus-visible:z-1 dark:*:[[data-slot=separator]:has(~button:hover):not(:has(~[data-slot=separator]~[data-slot]:hover)),[data-slot=separator]:has(~[data-slot][data-pressed]):not(:has(~[data-slot=separator]~[data-slot][data-pressed]))]:before:bg-input/64 dark:*:[button:hover~[data-slot=separator]:not([data-slot]:hover~[data-slot=separator]~[data-slot=separator]),[data-slot][data-pressed]~[data-slot=separator]:not([data-slot][data-pressed]~[data-slot=separator]~[data-slot=separator])]:before:bg-input/64",
   {
     defaultVariants: {
       orientation: "horizontal",
@@ -55,7 +56,11 @@ export function Group({
 } & React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn(groupVariants({ orientation, separator }), className)}
+      className={cn(
+        slotClass("group", props),
+        groupVariants({ orientation, separator }),
+        className,
+      )}
       data-orientation={orientation}
       data-separator={separator}
       data-slot="group"
@@ -76,6 +81,7 @@ export function GroupText({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
     className: cn(
+      slotClass("group-text", props, render),
       "relative inline-flex items-center gap-2 whitespace-nowrap bg-muted not-dark:bg-clip-padding px-[calc(--spacing(3)-1px)] text-base text-muted-foreground outline-none transition-shadow duration-(--motion-duration-fast) ease-(--motion-ease-state) sm:text-sm dark:bg-input/64 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 [&_svg]:shrink-0",
       className,
     ),

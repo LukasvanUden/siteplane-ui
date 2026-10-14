@@ -90,6 +90,12 @@ export interface DateTimePickerProps {
    * or `12` with the locale's AM and PM. The value stays in 24-hour time.
    */
   hourCycle?: TimeFieldHourCycle;
+  /**
+   * The error a required picker shows while its date and time are
+   * incomplete, such as after a segment is cleared. Default: "Enter a
+   * complete date and time."
+   */
+  incompleteLabel?: string;
   locale?: string;
   minuteStep?: number;
   name?: string;
@@ -231,9 +237,9 @@ function DateTimeSegment({
   return (
     <DateTimeSegmentPrimitive
       className={cn(
-        "siteplane-date-time-picker-segment",
-        part === "date" && "siteplane-date-field-segment",
-        part === "time" && "siteplane-time-field-segment",
+        "sp-date-time-picker-segment",
+        part === "date" && "sp-date-segment",
+        part === "time" && "sp-time-segment",
       )}
       data-date-time-part={part}
       // A separator cancels the padding of the segments beside it: the date
@@ -350,7 +356,7 @@ function TimeSelector({
 
   return (
     <div
-      className="siteplane-time-field-selector"
+      className="sp-date-time-picker-time-selector sp-time-selector"
       data-slot="date-time-picker-time-selector"
     >
       <TimeFieldOptionColumn
@@ -390,6 +396,7 @@ export function DateTimePicker({
   disabled,
   form,
   hourCycle = 24,
+  incompleteLabel = "Enter a complete date and time.",
   locale,
   minuteStep = 5,
   name,
@@ -428,7 +435,7 @@ export function DateTimePicker({
   const segmented = useSegmentedValue<DateValue>({
     controlled,
     defaultValue: toCalendarDateTime(defaultValue),
-    incompleteMessage: "Enter a complete date and time.",
+    incompleteMessage: incompleteLabel,
     onValueChange: (nextValue) => onValueChange?.(toNativeValue(nextValue)),
     required,
     serialize: formatValue,
@@ -447,7 +454,7 @@ export function DateTimePicker({
       {...(field.labelledBy === undefined
         ? {}
         : { "aria-labelledby": field.labelledBy })}
-      className="contents"
+      className="sp-date-time-picker sp-base-date-time-picker contents"
       data-foundation="date-time-picker"
       data-slot="date-time-picker"
       {...(controlled
@@ -489,7 +496,7 @@ export function DateTimePicker({
               // The default width never shrinks below the segments in a flex
               // row (shrink-0 while w-max); a width utility replaces both.
               className={cn(
-                "siteplane-date-time-picker-control w-max [&.w-max]:shrink-0",
+                "sp-date-time-picker-control w-max [&.w-max]:shrink-0",
                 className,
               )}
               data-invalid={
@@ -507,7 +514,7 @@ export function DateTimePicker({
               variant={variant}
             >
               <DateTimeInputPrimitive
-                className="contents"
+                className="sp-date-time-picker-input sp-base-date-field contents"
                 data-foundation="date-field"
                 data-profile="input-group"
                 data-slot="date-time-picker-input"
@@ -563,7 +570,7 @@ export function DateTimePicker({
                   <DateTimePopoverPrimitive
                     className={cn(
                       surfaceClassNames.floatingOverlay,
-                      "siteplane-time-field-popover siteplane-date-time-picker-time-popover",
+                      "sp-time-field-popover sp-date-time-picker-time-popover",
                       resolvedTextSize
                         ? formControlTextClassNames[resolvedTextSize]
                         : "text-base sm:text-sm",
@@ -594,7 +601,7 @@ export function DateTimePicker({
           <DateTimePopoverPrimitive
             className={cn(
               surfaceClassNames.floatingOverlay,
-              "siteplane-date-time-picker-calendar-popover",
+              "sp-date-time-picker-calendar-popover",
             )}
             data-slot="date-time-picker-calendar-popover"
             offset={4}
@@ -602,7 +609,7 @@ export function DateTimePicker({
           >
             <SiteplaneUIPortalScope>
               <DateTimeDialogPrimitive
-                className="outline-none"
+                className="sp-date-time-picker-calendar-dialog outline-none"
                 data-slot="date-time-picker-calendar-dialog"
               >
                 <Calendar
@@ -613,7 +620,6 @@ export function DateTimePicker({
                   {...(fieldAriaLabel || field.labelledBy === undefined
                     ? {}
                     : { "aria-labelledby": field.labelledBy })}
-                  className="siteplane-date-time-picker-calendar"
                   data-slot="date-time-picker-calendar"
                 />
               </DateTimeDialogPrimitive>

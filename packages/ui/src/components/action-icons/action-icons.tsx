@@ -48,7 +48,7 @@ function copyStatusRegion(): HTMLElement | null {
   region.setAttribute("aria-live", "polite");
   region.setAttribute("role", "status");
   region.setAttribute("data-slot", "copy-status");
-  region.className = "sr-only";
+  region.className = "sp-copy-status sr-only";
   document.body.append(region);
   copyStatus = region;
   return region;
@@ -117,12 +117,12 @@ export function CopyRedrawIcon({
 }) {
   return (
     <span
-      className={cn("siteplane-copy relative inline-flex size-4", className)}
+      className={cn("sp-copy relative inline-flex size-4", className)}
       data-phase={phase}
     >
       <svg
         aria-hidden="true"
-        className="siteplane-copy-check absolute inset-0 mx-0 size-4 text-success-foreground"
+        className="sp-copy-check absolute inset-0 mx-0 size-4"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
@@ -134,7 +134,7 @@ export function CopyRedrawIcon({
       </svg>
       <svg
         aria-hidden="true"
-        className="siteplane-copy-draw absolute inset-0 mx-0 size-4"
+        className="sp-copy-draw absolute inset-0 mx-0 size-4"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
@@ -172,10 +172,7 @@ export function SelectionCheckIcon({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
-      className={cn(
-        "siteplane-check-glyph-motion mx-0 size-4 shrink-0",
-        className,
-      )}
+      className={cn("sp-check-glyph-motion mx-0 size-4 shrink-0", className)}
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -185,7 +182,7 @@ export function SelectionCheckIcon({ className }: { className?: string }) {
     >
       {/* pathLength 24 is the dash length of the shared draw-in. */}
       <path
-        className="siteplane-check-path-motion"
+        className="sp-check-path-motion"
         d="M20 6 9 17l-5-5"
         pathLength={24}
       />
@@ -201,8 +198,8 @@ export function RevealIcon({
   revealed: boolean;
 }) {
   return revealed ? (
-    <EyeOffIcon className={cn("siteplane-icon-pop size-4", className)} />
+    <EyeOffIcon className={cn("sp-icon-pop size-4", className)} />
   ) : (
-    <EyeIcon className={cn("siteplane-icon-pop size-4", className)} />
+    <EyeIcon className={cn("sp-icon-pop size-4", className)} />
   );
 }

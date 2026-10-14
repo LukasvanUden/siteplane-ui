@@ -1,0 +1,366 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* Fill Sweep */
+  .sp-fill-sweep-button-root {
+    --sp-fill-sweep-radius: var(--radius-lg);
+    --sp-fill-sweep-duration: var(--motion-duration-moderate);
+    --sp-fill-sweep-inset: 0px;
+    --sp-fill-sweep-hover-width: 100%;
+    display: inline-flex;
+  }
+
+  [data-radius="xl"] .sp-fill-sweep-button-root {
+    --sp-fill-sweep-radius: var(--radius-4xl);
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-fill {
+    position: absolute;
+    inset: var(--sp-fill-sweep-inset) auto var(--sp-fill-sweep-inset)
+      var(--sp-fill-sweep-inset);
+    height: auto;
+    width: 0;
+    /* The Button clips the sweep once; a second rounded edge leaks its dark base. */
+    border-radius: 0;
+    background-color: var(--sp-fill-sweep-layer);
+    z-index: 20;
+    transition-property: width;
+    transition-duration: var(--sp-fill-sweep-duration);
+    transition-timing-function: var(--motion-ease-soft-in-out);
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-label {
+    position: relative;
+    z-index: 30;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:not(:disabled, [aria-disabled="true"]):hover
+    .sp-fill-sweep-fill {
+    width: var(--sp-fill-sweep-hover-width);
+  }
+
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-fill-sweep-button-root
+    .sp-fill-sweep-fill {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-fill-sweep-button-root .sp-fill-sweep-fill {
+      transition-duration: 0ms;
+    }
+  }
+
+  /* Expanding Arrow. The circle is the height of the control size at every
+   * viewport, like a Button of that size (S1); the arrow scales with it. */
+  .sp-expanding-arrow-button-root {
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-md);
+    --sp-expanding-arrow-left: 0.4rem;
+    --sp-expanding-arrow-line-width: 0.75rem;
+    --sp-expanding-arrow-line-height: 0.125rem;
+    --sp-expanding-arrow-head-size: 0.4rem;
+    --sp-expanding-arrow-head-right: 0.0625rem;
+    --sp-expanding-arrow-hover-x: 0.625rem;
+    --sp-expanding-arrow-text-size: 0.875rem;
+    --sp-expanding-arrow-radius: var(--radius-lg);
+    display: inline-flex;
+  }
+
+  [data-radius="xl"] .sp-expanding-arrow-button-root {
+    --sp-expanding-arrow-radius: var(--radius-4xl);
+  }
+
+  .sp-expanding-arrow-button-root[data-size="sm"] {
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-sm);
+    --sp-expanding-arrow-left: 0.35rem;
+    --sp-expanding-arrow-line-width: 0.65625rem;
+    --sp-expanding-arrow-head-size: 0.35rem;
+    --sp-expanding-arrow-hover-x: 0.5625rem;
+    --sp-expanding-arrow-text-size: 0.8125rem;
+  }
+
+  .sp-expanding-arrow-button-root[data-size="md"] {
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-md);
+    --sp-expanding-arrow-left: 0.4rem;
+    --sp-expanding-arrow-line-width: 0.75rem;
+    --sp-expanding-arrow-head-size: 0.4rem;
+    --sp-expanding-arrow-hover-x: 0.625rem;
+  }
+
+  .sp-expanding-arrow-button-root[data-size="lg"] {
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-lg);
+    --sp-expanding-arrow-left: 0.45rem;
+    --sp-expanding-arrow-line-width: 0.84375rem;
+    --sp-expanding-arrow-head-size: 0.45rem;
+    --sp-expanding-arrow-hover-x: 0.75rem;
+  }
+
+  .sp-expanding-arrow-button-root[data-size="xl"] {
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-xl);
+    --sp-expanding-arrow-left: 0.6rem;
+    --sp-expanding-arrow-line-width: 1.125rem;
+    --sp-expanding-arrow-head-size: 0.6rem;
+    --sp-expanding-arrow-hover-x: 1rem;
+    --sp-expanding-arrow-text-size: 1rem;
+  }
+
+  /* Over a surface the fill paints above the Button's finish and below its
+   * rim, the label above both (design-rework.css, animated-arrow). */
+  .sp-expanding-arrow-button-root .sp-expanding-arrow-circle {
+    position: absolute;
+    z-index: 20;
+    inset: 0 auto 0 0;
+    display: block;
+    margin: 0;
+    width: var(--sp-expanding-arrow-circle-size);
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--sp-expanding-arrow-radius);
+    background: var(--sp-rw-bg-inverse);
+    transition: width var(--motion-duration-slow) var(--motion-ease-soft-in-out);
+  }
+
+  /* On a surface the fill starts flush in its corner, so it takes the
+   * surface's radius and fits it at rest and filled. */
+  .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-button:not([data-variant="text"])
+    .sp-expanding-arrow-circle {
+    border-radius: inherit;
+  }
+
+  .sp-expanding-arrow-button-root .sp-expanding-arrow-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--sp-expanding-arrow-left);
+    width: var(--sp-expanding-arrow-line-width);
+    height: var(--sp-expanding-arrow-line-height);
+    margin: auto;
+    border-radius: 999px;
+    background: transparent;
+    transition:
+      background-color var(--motion-duration-slow)
+        var(--motion-ease-soft-in-out),
+      transform var(--motion-duration-slow) var(--motion-ease-soft-in-out);
+  }
+
+  .sp-expanding-arrow-button-root .sp-expanding-arrow-icon::before {
+    position: absolute;
+    content: "";
+    top: 50%;
+    right: var(--sp-expanding-arrow-head-right);
+    width: var(--sp-expanding-arrow-head-size);
+    height: var(--sp-expanding-arrow-head-size);
+    border-top: var(--sp-expanding-arrow-line-height) solid
+      var(--sp-rw-fg-inverse);
+    border-right: var(--sp-expanding-arrow-line-height) solid
+      var(--sp-rw-fg-inverse);
+    border-radius: 0 var(--sp-expanding-arrow-line-height) 0 0;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .sp-expanding-arrow-button-root .sp-expanding-arrow-label {
+    position: relative;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    min-height: var(--sp-expanding-arrow-circle-size);
+    padding: 0
+      calc(var(--sp-expanding-arrow-left) + var(--sp-expanding-arrow-hover-x)) 0
+      calc(var(--sp-expanding-arrow-circle-size) + 0.5rem);
+    color: var(--sp-rw-fg-primary);
+    font-size: var(--sp-expanding-arrow-text-size);
+    font-weight: var(--sp-rw-font-weight-default);
+    line-height: 1.6;
+    text-align: center;
+    transition: color var(--motion-duration-slow) var(--motion-ease-soft-in-out);
+  }
+
+  .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-button:not(:disabled, [aria-disabled="true"]):hover
+    .sp-expanding-arrow-circle {
+    width: 100%;
+  }
+
+  .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-button:not(:disabled, [aria-disabled="true"]):hover
+    .sp-expanding-arrow-icon {
+    background: var(--sp-rw-fg-inverse);
+    transform: translateX(var(--sp-expanding-arrow-hover-x));
+  }
+
+  .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-button:not(:disabled, [aria-disabled="true"]):hover
+    .sp-expanding-arrow-label {
+    color: var(--sp-rw-fg-inverse);
+  }
+
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-circle,
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-icon,
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-expanding-arrow-button-root
+    .sp-expanding-arrow-label {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-expanding-arrow-button-root .sp-expanding-arrow-circle,
+    .sp-expanding-arrow-button-root .sp-expanding-arrow-icon,
+    .sp-expanding-arrow-button-root .sp-expanding-arrow-label {
+      transition-duration: 0ms;
+    }
+  }
+
+  /* Expanding Logout. The closed button is the square of the control size at
+   * every viewport, like a Button of that size (S1); the icon and the open
+   * width scale with it. */
+  .sp-expanding-logout-button-root {
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-md);
+    --sp-expanding-logout-min-open-width: 6rem;
+    --sp-expanding-logout-icon-size: 0.875rem;
+    --sp-expanding-logout-duration: var(--motion-duration-slow);
+    --sp-expanding-logout-open-buffer: 1rem;
+    --sp-expanding-logout-sign-hover-width: 30%;
+    --sp-expanding-logout-sign-padding-left: 0.75rem;
+    --sp-expanding-logout-text-hover-width: 70%;
+    --sp-expanding-logout-text-padding-right: 0.375rem;
+    --sp-expanding-logout-text-size: 0.875rem;
+    --sp-expanding-logout-radius: var(--radius-lg);
+    display: inline-flex;
+  }
+
+  [data-radius="xl"] .sp-expanding-logout-button-root {
+    --sp-expanding-logout-radius: var(--radius-4xl);
+  }
+
+  .sp-expanding-logout-button-root[data-size="sm"] {
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-sm);
+    --sp-expanding-logout-min-open-width: 5.5rem;
+    --sp-expanding-logout-icon-size: 0.75rem;
+    --sp-expanding-logout-open-buffer: 0.875rem;
+    --sp-expanding-logout-sign-padding-left: 0.625rem;
+    --sp-expanding-logout-text-padding-right: 0.3125rem;
+    --sp-expanding-logout-text-size: 0.8125rem;
+  }
+
+  .sp-expanding-logout-button-root[data-size="md"] {
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-md);
+    --sp-expanding-logout-min-open-width: 6rem;
+    --sp-expanding-logout-icon-size: 0.875rem;
+    --sp-expanding-logout-open-buffer: 1rem;
+    --sp-expanding-logout-sign-padding-left: 0.75rem;
+    --sp-expanding-logout-text-padding-right: 0.375rem;
+  }
+
+  .sp-expanding-logout-button-root[data-size="lg"] {
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-lg);
+    --sp-expanding-logout-min-open-width: 6.625rem;
+    --sp-expanding-logout-icon-size: 0.9375rem;
+    --sp-expanding-logout-open-buffer: 1.25rem;
+    --sp-expanding-logout-sign-padding-left: 0.875rem;
+    --sp-expanding-logout-text-padding-right: 0.4375rem;
+  }
+
+  .sp-expanding-logout-button-root[data-size="xl"] {
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-xl);
+    --sp-expanding-logout-min-open-width: 8.5rem;
+    --sp-expanding-logout-icon-size: 1.125rem;
+    --sp-expanding-logout-open-buffer: 2rem;
+    --sp-expanding-logout-sign-padding-left: 1.25rem;
+    --sp-expanding-logout-text-padding-right: 0.625rem;
+    --sp-expanding-logout-text-size: 1rem;
+  }
+
+  /* The open width fits the label: its length in characters, which the button
+   * sets as --sp-expanding-logout-label-length, beside the closed
+   * square and a buffer, and never less than the minimum. Where a Content
+   * Security Policy blocks that style attribute, the width fits the 7
+   * characters of the default "Log out". */
+  .sp-expanding-logout-button-root .sp-expanding-logout-slot {
+    --sp-expanding-logout-open-width: max(
+      var(--sp-expanding-logout-min-open-width),
+      calc(
+        var(--sp-expanding-logout-label-length, 7) * 1ch +
+          var(--sp-expanding-logout-closed-size) +
+          var(--sp-expanding-logout-open-buffer)
+      )
+    );
+    display: flex;
+    width: var(--sp-expanding-logout-open-width);
+    justify-content: center;
+  }
+
+  .sp-expanding-logout-button-root .sp-expanding-logout-sign {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    transition-property: width, padding-left;
+    transition-duration: var(--sp-expanding-logout-duration);
+    transition-timing-function: var(--motion-ease-soft-in-out);
+  }
+
+  .sp-expanding-logout-button-root .sp-expanding-logout-sign svg {
+    width: var(--sp-expanding-logout-icon-size);
+    height: var(--sp-expanding-logout-icon-size);
+  }
+
+  .sp-expanding-logout-button-root .sp-expanding-logout-label {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    opacity: 0;
+    color: currentColor;
+    font-size: var(--sp-expanding-logout-text-size);
+    font-weight: 600;
+    transition-property: opacity, width, padding-right;
+    transition-duration: var(--sp-expanding-logout-duration);
+    transition-timing-function: var(--motion-ease-soft-in-out);
+  }
+
+  .sp-expanding-logout-button-root
+    .sp-expanding-logout-button:not(:disabled, [aria-disabled="true"]):is(
+      :hover,
+      :focus-visible
+    )
+    .sp-expanding-logout-sign {
+    width: var(--sp-expanding-logout-sign-hover-width);
+    padding-left: var(--sp-expanding-logout-sign-padding-left);
+  }
+
+  .sp-expanding-logout-button-root
+    .sp-expanding-logout-button:not(:disabled, [aria-disabled="true"]):is(
+      :hover,
+      :focus-visible
+    )
+    .sp-expanding-logout-label {
+    opacity: 1;
+    width: var(--sp-expanding-logout-text-hover-width);
+    padding-right: var(--sp-expanding-logout-text-padding-right);
+  }
+
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-expanding-logout-button-root
+    .sp-expanding-logout-sign,
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-expanding-logout-button-root
+    .sp-expanding-logout-label {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-expanding-logout-button-root .sp-expanding-logout-sign,
+    .sp-expanding-logout-button-root .sp-expanding-logout-label {
+      transition-duration: 0ms;
+    }
+  }
+}

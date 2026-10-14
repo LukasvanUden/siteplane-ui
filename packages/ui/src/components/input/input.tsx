@@ -15,6 +15,7 @@ import {
   type FormControlVariant,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { dropSlotClass, slotClass } from "../../system/utils/slot-class";
 import { useFieldLabelPlacement } from "../field";
 import type { KitInputProps } from "./input-internal";
 
@@ -116,8 +117,8 @@ export function Input(inputProps: InputProps): React.ReactElement {
     "w-full min-w-0 outline-none",
     props.type === "search" &&
       "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none",
-    hidePickerIndicator && "siteplane-input-hide-picker",
-    props.type === "date" && "siteplane-date-input",
+    hidePickerIndicator && "sp-input-hide-picker",
+    props.type === "date" && "sp-date-input",
   );
   const nativeInputProps = props as React.ComponentProps<"input">;
   const nativeInputStyle =
@@ -133,6 +134,7 @@ export function Input(inputProps: InputProps): React.ReactElement {
     <span
       className={
         cn(
+          "sp-input-control sp-base-input",
           !unstyled &&
             (variant === "soft"
               ? surfaceClassNames.formControlSoft
@@ -142,7 +144,9 @@ export function Input(inputProps: InputProps): React.ReactElement {
                 )),
           resolvedTextSize && formControlTextClassNames[resolvedTextSize],
           profile === "sidebar" && "w-full",
-          className,
+          // A host's slot reaches the native input with the other props,
+          // so its class stays off the control.
+          dropSlotClass(className, props),
         ) || undefined
       }
       data-foundation="input"
@@ -164,7 +168,11 @@ export function Input(inputProps: InputProps): React.ReactElement {
         React.cloneElement(renderInput ?? <input />, {
           ...nativeInputProps,
           ...floatingPlaceholder,
-          className: cn(inputClassName, renderInput?.props.className),
+          className: cn(
+            "sp-input",
+            inputClassName,
+            renderInput?.props.className,
+          ),
           "data-slot": "input",
           size: nativeSize,
           ...nativeInputStyle,
@@ -174,7 +182,11 @@ export function Input(inputProps: InputProps): React.ReactElement {
         // default input, so FieldLabel, FieldDescription, FieldError and Field
         // state reach the rendered element.
         <InputPrimitive
-          className={renderInput ? undefined : inputClassName}
+          className={
+            renderInput
+              ? undefined
+              : cn(slotClass("input", props), inputClassName)
+          }
           data-slot="input"
           size={nativeSize}
           style={style}
@@ -183,7 +195,11 @@ export function Input(inputProps: InputProps): React.ReactElement {
           render={
             renderInput
               ? React.cloneElement(renderInput, {
-                  className: cn(inputClassName, renderInput.props.className),
+                  className: cn(
+                    "sp-input",
+                    inputClassName,
+                    renderInput.props.className,
+                  ),
                   "data-slot": "input",
                 })
               : props.render

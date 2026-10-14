@@ -4,7 +4,7 @@
 /**
  * The toast surface: the kit's floating surface, radius and fill. The static
  * Notification renders the same chrome, so a preview and the toast it previews
- * cannot drift apart. The `siteplane-toast-surface` rule in design-rework.css
+ * cannot drift apart. The `sp-toast-surface` rule in design-rework.css
  * draws the borderless floating surface of Popover and Dialog: one edge from
  * the floating shadow, no border (rulebook B7). The fill is the surface colour
  * that toast.css publishes and mixes in black per stack position; outside a
@@ -14,7 +14,7 @@
  * `--radius`, which would make the two differ.
  */
 export const toastSurfaceClassName =
-  "siteplane-toast-surface siteplane-toast-replay-motion relative rounded-(--sp-rw-radius-control) bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(1%*max(0,var(--toast-index,0))))] dark:bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(6%*max(0,var(--toast-index,0))))]";
+  "sp-toast-surface sp-toast-replay-motion relative rounded-(--sp-rw-radius-control) bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(1%*max(0,var(--toast-index,0))))] dark:bg-[color-mix(in_srgb,var(--sp-rw-surface-color),var(--color-black)_calc(6%*max(0,var(--toast-index,0))))]";
 
 /**
  * Where the dismiss control sits on that surface: 8 px inside the top-end

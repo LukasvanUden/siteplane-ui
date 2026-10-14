@@ -16,7 +16,15 @@ export type RadioProfile = "control" | "menu-item";
 
 export type KitRadioGroupProps = RadioGroupProps & { profile?: RadioProfile };
 
-export type KitRadioProps = RadioProps & { profile?: RadioProfile };
+export type KitRadioProps = RadioProps & {
+  profile?: RadioProfile;
+  /**
+   * In the menu-item profile: where the row shows its check, in the leading
+   * slot (`start`) or at the end of an identity row (`end`), as MenuRadioItem
+   * does.
+   */
+  indicatorPosition?: "start" | "end" | undefined;
+};
 
 /** RadioGroup with the kit's composition profile; the same component. */
 export const KitRadioGroup = RadioGroup as (

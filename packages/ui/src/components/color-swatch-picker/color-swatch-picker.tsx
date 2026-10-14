@@ -210,7 +210,7 @@ export function ColorSwatchPicker({
             ? {}
             : { "aria-labelledby": field.labelledBy })}
           className={cn(
-            "siteplane-color-swatch-picker siteplane-color-swatch-scope",
+            "sp-color-swatch-picker sp-color-swatch-scope",
             className,
           )}
           data-disabled={fieldDisabled || undefined}
@@ -237,7 +237,7 @@ export function ColorSwatchPicker({
             <ColorSwatchPickerItemPrimitive
               key={option.value}
               aria-label={option.label}
-              className="siteplane-color-swatch-item"
+              className="sp-color-swatch-picker-item sp-color-swatch-item"
               color={identity}
               data-slot="color-swatch-picker-item"
               {...(fieldDisabled

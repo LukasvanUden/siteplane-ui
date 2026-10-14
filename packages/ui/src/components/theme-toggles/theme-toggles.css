@@ -1,0 +1,258 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* Sun Moon Morph */
+  .sp-sun-moon-morph-toggle-root {
+    --sp-sun-moon-icon-size: 1.5625rem;
+    display: inline-flex;
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-morph-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .sp-sun-moon-morph-toggle-root[data-size="sm"] {
+    --sp-sun-moon-icon-size: 1.375rem;
+  }
+
+  .sp-sun-moon-morph-toggle-root[data-size="md"] {
+    --sp-sun-moon-icon-size: 1.5625rem;
+  }
+
+  .sp-sun-moon-morph-toggle-root[data-size="lg"] {
+    --sp-sun-moon-icon-size: 1.6875rem;
+  }
+
+  .sp-sun-moon-morph-toggle-root[data-size="xl"] {
+    --sp-sun-moon-icon-size: 1.9375rem;
+  }
+
+  @media (min-width: 640px) {
+    .sp-sun-moon-morph-toggle-root {
+      --sp-sun-moon-icon-size: 1.375rem;
+    }
+
+    .sp-sun-moon-morph-toggle-root[data-size="sm"] {
+      --sp-sun-moon-icon-size: 1.25rem;
+    }
+
+    .sp-sun-moon-morph-toggle-root[data-size="md"] {
+      --sp-sun-moon-icon-size: 1.375rem;
+    }
+
+    .sp-sun-moon-morph-toggle-root[data-size="lg"] {
+      --sp-sun-moon-icon-size: 1.5625rem;
+    }
+
+    .sp-sun-moon-morph-toggle-root[data-size="xl"] {
+      --sp-sun-moon-icon-size: 1.6875rem;
+    }
+  }
+
+  /* Unpressed (light mode) shows the sun. */
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-icon {
+    position: absolute;
+    width: var(--sp-sun-moon-icon-size);
+    height: var(--sp-sun-moon-icon-size);
+    pointer-events: none;
+    transform: rotate(90deg);
+    transition: transform var(--motion-duration-linger)
+      var(--motion-ease-soft-in-out);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-shape {
+    transform-origin: center;
+    transform: scale(0.55);
+    transition: transform var(--motion-duration-linger)
+      var(--motion-ease-soft-in-out);
+  }
+
+  .sp-sun-moon-morph-toggle-root mask circle {
+    transform: translate(16px, -3px);
+    transition: transform var(--motion-duration-linger)
+      var(--motion-ease-standard);
+  }
+
+  /* Rays burst out in sequence when the sun returns. Transitions, unlike a
+   * keyframe animation, do not replay when a toggle mounts. */
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray {
+    transform-origin: center;
+    transform: scale(1);
+    transition: transform var(--motion-duration-linger)
+      var(--motion-ease-standard);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray-2 {
+    transition-delay: calc(var(--motion-duration-micro) / 2);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray-3 {
+    transition-delay: var(--motion-duration-micro);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray-4 {
+    transition-delay: var(--motion-duration-fast);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray-5 {
+    transition-delay: var(--motion-duration-base);
+  }
+
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-ray-6 {
+    transition-delay: var(--motion-duration-moderate);
+  }
+
+  /* Pressed (dark mode) shows the moon. */
+  .sp-sun-moon-morph-toggle-root .sp-sun-moon-morph-toggle[data-pressed] svg {
+    color: inherit;
+    transform: rotate(40deg);
+  }
+
+  .sp-sun-moon-morph-toggle-root
+    .sp-sun-moon-morph-toggle[data-pressed]
+    svg
+    mask
+    circle {
+    transform: translate(0, 0);
+  }
+
+  .sp-sun-moon-morph-toggle-root
+    .sp-sun-moon-morph-toggle[data-pressed]
+    svg
+    .sp-sun-moon-shape {
+    transform: scale(1);
+  }
+
+  /* Rays retract together into the growing disc. */
+  .sp-sun-moon-morph-toggle-root
+    .sp-sun-moon-morph-toggle[data-pressed]
+    svg
+    .sp-sun-moon-ray {
+    transform: scale(0);
+    transition-delay: 0ms;
+    transition-duration: var(--motion-duration-base);
+    transition-timing-function: var(--motion-ease-soft-in-out);
+  }
+
+  html[data-motion-reduce="true"]
+    .sp-sun-moon-morph-toggle-root
+    :is(.sp-sun-moon-icon, .sp-sun-moon-shape, .sp-sun-moon-ray, mask circle),
+  :where([data-sp-motion="reduced"])
+    .sp-sun-moon-morph-toggle-root
+    :is(.sp-sun-moon-icon, .sp-sun-moon-shape, .sp-sun-moon-ray, mask circle) {
+    transition-delay: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-sun-moon-morph-toggle-root
+      :is(
+        .sp-sun-moon-icon,
+        .sp-sun-moon-shape,
+        .sp-sun-moon-ray,
+        mask circle
+      ) {
+      transition-delay: 0ms !important;
+      transition-duration: 0ms !important;
+    }
+  }
+
+  /* Layered */
+  .sp-layered-theme-toggle-root {
+    --sp-layered-theme-icon-size: 1.375rem;
+    display: inline-flex;
+  }
+
+  .sp-layered-theme-toggle-root .sp-layered-theme-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+  }
+
+  .sp-layered-theme-toggle-root[data-size="sm"] {
+    --sp-layered-theme-icon-size: 1.25rem;
+  }
+
+  .sp-layered-theme-toggle-root[data-size="md"] {
+    --sp-layered-theme-icon-size: 1.375rem;
+  }
+
+  .sp-layered-theme-toggle-root[data-size="lg"] {
+    --sp-layered-theme-icon-size: 1.5rem;
+  }
+
+  .sp-layered-theme-toggle-root[data-size="xl"] {
+    --sp-layered-theme-icon-size: 1.625rem;
+  }
+
+  @media (min-width: 640px) {
+    .sp-layered-theme-toggle-root {
+      --sp-layered-theme-icon-size: 1.25rem;
+    }
+
+    .sp-layered-theme-toggle-root[data-size="sm"] {
+      --sp-layered-theme-icon-size: 1.125rem;
+    }
+
+    .sp-layered-theme-toggle-root[data-size="md"] {
+      --sp-layered-theme-icon-size: 1.25rem;
+    }
+
+    .sp-layered-theme-toggle-root[data-size="lg"] {
+      --sp-layered-theme-icon-size: 1.375rem;
+    }
+
+    .sp-layered-theme-toggle-root[data-size="xl"] {
+      --sp-layered-theme-icon-size: 1.5rem;
+    }
+  }
+
+  .sp-layered-theme-toggle-root .sp-layered-theme-icon {
+    grid-column: 1;
+    grid-row: 1;
+    line-height: 0.1;
+    transform: rotate(0deg) scale(1);
+    transition: transform var(--motion-duration-moderate)
+      var(--motion-ease-soft-in-out);
+  }
+
+  .sp-layered-theme-toggle-root .sp-layered-theme-icon svg {
+    width: var(--sp-layered-theme-icon-size);
+    height: var(--sp-layered-theme-icon-size);
+  }
+
+  /* The sun while unpressed (light mode), the moon while pressed (dark mode). */
+  .sp-layered-theme-toggle-root .sp-layered-theme-moon {
+    transform: rotate(0deg) scale(0);
+  }
+
+  .sp-layered-theme-toggle-root
+    .sp-layered-theme-toggle[data-pressed]
+    .sp-layered-theme-moon {
+    transform: rotate(360deg) scale(1);
+  }
+
+  .sp-layered-theme-toggle-root
+    .sp-layered-theme-toggle[data-pressed]
+    .sp-layered-theme-sun {
+    transform: rotate(360deg) scale(0);
+  }
+
+  html[data-motion-reduce="true"]
+    .sp-layered-theme-toggle-root
+    .sp-layered-theme-icon,
+  :where([data-sp-motion="reduced"])
+    .sp-layered-theme-toggle-root
+    .sp-layered-theme-icon {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-layered-theme-toggle-root .sp-layered-theme-icon {
+      transition-duration: 0ms;
+    }
+  }
+}

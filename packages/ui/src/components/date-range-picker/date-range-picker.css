@@ -3,7 +3,7 @@
 @layer siteplane {
   /* The heights are the Input scale (28, 32, 36 and 48 px), so the picker is as
    * tall as the Input, Select, Button, DateField and TimeField of the same size. */
-  .siteplane-date-range-control {
+  .sp-date-range-control {
     --date-range-picker-control-height: var(--sp-rw-control-md);
     --date-range-picker-segment-start: calc(
       var(--sp-rw-space-3) - var(--input-segment-padding-inline)
@@ -11,37 +11,46 @@
     height: var(--date-range-picker-control-height);
   }
 
-  .siteplane-date-range-control[data-size="sm"] {
+  .sp-date-range-control[data-size="sm"] {
     --date-range-picker-control-height: var(--sp-rw-control-sm);
     --date-range-picker-segment-start: calc(
       var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-date-range-control[data-size="lg"] {
+  .sp-date-range-control[data-size="lg"] {
     --date-range-picker-control-height: var(--sp-rw-control-lg);
   }
 
-  .siteplane-date-range-control[data-size="xl"] {
+  .sp-date-range-control[data-size="xl"] {
     --date-range-picker-control-height: var(--sp-rw-control-xl);
     --date-range-picker-segment-start: calc(
       var(--sp-rw-space-4) - var(--input-segment-padding-inline)
     );
   }
 
-  .siteplane-date-range-control
-    [data-slot="date-range-picker-start"]
-    > .siteplane-date-field-segment:not([data-type="literal"]):first-child,
-  .siteplane-date-range-control
-    [data-slot="date-range-picker-start"]
-    > .siteplane-date-field-segment[data-type="literal"]:first-child
-    + .siteplane-date-field-segment:not([data-type="literal"]) {
+  .sp-date-range-control
+    .sp-date-range-picker-start
+    > .sp-date-segment:not([data-type="literal"]):first-child,
+  .sp-date-range-control
+    .sp-date-range-picker-start
+    > .sp-date-segment[data-type="literal"]:first-child
+    + .sp-date-segment:not([data-type="literal"]) {
     margin-inline-start: var(--date-range-picker-segment-start);
+  }
+
+  /* Without the calendar button (iconMode="none") the segments keep the inset
+   * of the start at the end too, as a DateField without its button does, so a
+   * range as wide as its segments is balanced. */
+  .sp-date-range-control[data-icon-mode="none"]
+    .sp-date-range-picker-end
+    > .sp-date-segment:last-child {
+    margin-inline-end: var(--date-range-picker-segment-start);
   }
 
   /* The surface (border, radius, shadow) is the floating-md recipe that
    * design-rework.css draws for the popover's data-slot. */
-  .siteplane-date-range-popover {
+  .sp-date-range-popover {
     z-index: 50;
     width: max-content;
     padding: var(--sp-rw-space-4);
@@ -49,24 +58,24 @@
     transform-origin: var(--trigger-anchor-point);
   }
 
-  .siteplane-date-range-popover[data-entering] {
-    animation: siteplane-date-range-popover-enter var(--motion-duration-overlay)
+  .sp-date-range-popover[data-entering] {
+    animation: sp-date-range-popover-enter var(--motion-duration-overlay)
       var(--motion-ease-standard) both;
   }
 
-  .siteplane-date-range-popover[data-exiting] {
-    animation: siteplane-date-range-popover-exit var(--motion-duration-fast)
+  .sp-date-range-popover[data-exiting] {
+    animation: sp-date-range-popover-exit var(--motion-duration-fast)
       var(--motion-ease-soft-in-out) both;
   }
 
-  @keyframes siteplane-date-range-popover-enter {
+  @keyframes sp-date-range-popover-enter {
     from {
       opacity: 0;
       transform: scale(0.98);
     }
   }
 
-  @keyframes siteplane-date-range-popover-exit {
+  @keyframes sp-date-range-popover-exit {
     to {
       opacity: 0;
       transform: scale(0.98);
@@ -74,16 +83,16 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .siteplane-date-range-popover[data-entering],
-    .siteplane-date-range-popover[data-exiting] {
+    .sp-date-range-popover[data-entering],
+    .sp-date-range-popover[data-exiting] {
       animation-duration: 1ms;
     }
   }
 
-  html[data-motion-reduce="true"] .siteplane-date-range-popover[data-entering],
-  html[data-motion-reduce="true"] .siteplane-date-range-popover[data-exiting],
-  [data-sp-motion="reduced"] .siteplane-date-range-popover[data-entering],
-  [data-sp-motion="reduced"] .siteplane-date-range-popover[data-exiting] {
+  html[data-motion-reduce="true"] .sp-date-range-popover[data-entering],
+  html[data-motion-reduce="true"] .sp-date-range-popover[data-exiting],
+  [data-sp-motion="reduced"] .sp-date-range-popover[data-entering],
+  [data-sp-motion="reduced"] .sp-date-range-popover[data-exiting] {
     animation-duration: 1ms;
   }
 }

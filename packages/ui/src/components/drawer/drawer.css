@@ -8,14 +8,14 @@
    * panel at rest also eases its margin and padding as its snap point
    * changes. Zero specificity, so the reduced-motion rules below and a
    * consumer's transition utility both win. */
-  :where([data-slot="drawer-popup"]) {
+  :where(.sp-drawer-popup) {
     transition-property: transform, box-shadow, height, background-color;
     transition-duration: var(--motion-duration-panel);
     transition-timing-function: var(--motion-ease-panel);
   }
 
   :where(
-    [data-slot="drawer-popup"][data-position="bottom"]:not(
+    .sp-drawer-popup[data-position="bottom"]:not(
         [data-starting-style],
         [data-ending-style]
       )
@@ -24,39 +24,34 @@
       transform, box-shadow, height, background-color, margin, padding;
   }
 
-  :where([data-slot="drawer-backdrop"]) {
+  :where(.sp-drawer-backdrop) {
     transition-property: opacity;
     transition-duration: var(--motion-duration-panel);
     transition-timing-function: var(--motion-ease-panel);
   }
 
-  :where(
-    :is(
-      [data-slot="drawer-popup"],
-      [data-slot="drawer-backdrop"]
-    )[data-ending-style]
-  ) {
+  :where(:is(.sp-drawer-popup, .sp-drawer-backdrop)[data-ending-style]) {
     transition-duration: calc(
       var(--drawer-swipe-strength) * var(--motion-duration-panel-release)
     );
   }
 
-  :where([data-slot="drawer-backdrop"][data-swiping]) {
+  :where(.sp-drawer-backdrop[data-swiping]) {
     transition-duration: 0ms;
   }
 
   /* Reduced motion opens and closes the panel and its backdrop at once (M5):
    * the document mode, the provider preset and the system setting. */
-  html[data-motion-reduce="true"] [data-slot="drawer-popup"],
-  html[data-motion-reduce="true"] [data-slot="drawer-backdrop"],
-  [data-sp-motion="reduced"] [data-slot="drawer-popup"],
-  [data-sp-motion="reduced"] [data-slot="drawer-backdrop"] {
+  html[data-motion-reduce="true"] .sp-drawer-popup,
+  html[data-motion-reduce="true"] .sp-drawer-backdrop,
+  [data-sp-motion="reduced"] .sp-drawer-popup,
+  [data-sp-motion="reduced"] .sp-drawer-backdrop {
     transition-duration: 1ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root [data-slot="drawer-popup"],
-    :root [data-slot="drawer-backdrop"] {
+    :root .sp-drawer-popup,
+    :root .sp-drawer-backdrop {
       transition-duration: 1ms;
     }
   }
@@ -78,19 +73,17 @@
    *
    * The extra `[data-slot]` ranks the row rule above the menu-row profile of the
    * Button, so the two files can load in any order. */
-  :root [data-slot="drawer-menu"][data-size="xl"] {
+  :root .sp-drawer-menu[data-size="xl"] {
     --sp-rw-menu-row-icon: var(--sp-rw-control-icon-xl);
     --sp-rw-button-content-gap: var(--sp-rw-space-2-5);
   }
 
+  :root .sp-drawer-menu[data-size="xl"] [data-slot].sp-drawer-menu-item,
   :root
-    [data-slot="drawer-menu"][data-size="xl"]
-    [data-slot]:is(
-      [data-slot="drawer-menu-item"],
-      [data-slot="drawer-menu-checkbox-item"],
-      [data-slot="drawer-menu-radio-item"],
-      [data-slot="drawer-menu-trigger"]
-    ) {
+    .sp-drawer-menu[data-size="xl"]
+    [data-slot].sp-drawer-menu-checkbox-item,
+  :root .sp-drawer-menu[data-size="xl"] [data-slot].sp-drawer-menu-radio-item,
+  :root .sp-drawer-menu[data-size="xl"] [data-slot].sp-drawer-menu-trigger {
     min-height: var(--sp-rw-control-xl);
     border-radius: var(--sp-rw-radius-surface);
     padding-block: var(--sp-rw-space-3);
@@ -98,17 +91,13 @@
     line-height: var(--sp-rw-line-24);
   }
 
-  :root
-    [data-slot="drawer-menu"][data-size="xl"]
-    [data-slot="drawer-menu-group-label"] {
+  :root .sp-drawer-menu[data-size="xl"] .sp-drawer-menu-group-label {
     padding-block: var(--sp-rw-space-2);
     font-size: var(--sp-rw-font-13);
     line-height: var(--sp-rw-line-18);
   }
 
-  :root
-    [data-slot="drawer-menu"][data-size="xl"]
-    [data-slot="drawer-menu-separator"] {
+  :root .sp-drawer-menu[data-size="xl"] .sp-drawer-menu-separator {
     margin-block: var(--sp-rw-space-2);
   }
 
@@ -116,7 +105,7 @@
    * Sidebar gives its active row (the pressed glow) and the full foreground, also
    * under the pointer, so the hover never hides where you are (rulebook T5). */
   :root
-    [data-slot="drawer-menu-item"][data-chassis][data-variant="text"][aria-current="page"]:not(
+    .sp-drawer-menu-item[data-chassis][data-variant="text"][aria-current="page"]:not(
       :disabled,
       [aria-disabled="true"]
     ) {
@@ -125,7 +114,7 @@
   }
 
   :root
-    [data-slot="drawer-menu-item"][aria-current="page"]:not(
+    .sp-drawer-menu-item[aria-current="page"]:not(
       :disabled,
       [aria-disabled="true"]
     )

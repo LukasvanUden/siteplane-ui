@@ -8,6 +8,7 @@ import {
 import {
   Cell as AriaCell,
   Checkbox as AriaCheckbox,
+  CollectionRendererContext,
   Column as AriaColumn,
   composeRenderProps,
   Row as AriaRow,
@@ -18,6 +19,8 @@ import {
   type CellProps as AriaCellProps,
   type CheckboxProps as AriaCheckboxProps,
   type ColumnProps as AriaColumnProps,
+  type Key,
+  type PressEvent,
   type RowProps as AriaRowProps,
   type Selection as AriaSelection,
   type SortDescriptor as AriaSortDescriptor,
@@ -28,14 +31,17 @@ import {
 } from "react-aria-components";
 import {
   Children,
+  type ComponentProps,
   createContext,
   isValidElement,
   type KeyboardEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
+  type SyntheticEvent,
   useContext,
   useId,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -64,6 +70,23 @@ export type TableSelectionTrigger = "checkbox" | "row";
 const TableSizeContext = createContext<SiteplaneControlSize | undefined>(
   undefined,
 );
+
+/**
+ * What a row needs from its table to run its action under
+ * `selectionTrigger="checkbox"`: the root `onRowAction`, and a count of the
+ * row actions React Aria ran, so a row tells whether a press ran one.
+ */
+type TableRowActions = {
+  checkboxTrigger: boolean;
+  onRowAction: ((key: Key) => void) | undefined;
+  ran: { current: number };
+};
+
+const TableRowActionsContext = createContext<TableRowActions>({
+  checkboxTrigger: false,
+  onRowAction: undefined,
+  ran: { current: 0 },
+});
 
 export interface TableProps extends Omit<
   AriaTableProps,
@@ -135,14 +158,22 @@ export function Table({
   containerClassName,
   defaultSelectedKeys,
   hoverable = true,
+  onRowAction,
   onSelectionChange,
   selectedKeys,
+  selectionBehavior,
   selectionTrigger = "row",
   size,
   sortDescriptor,
   ...props
 }: TableProps): ReactElement {
   const resolvedSize = useResolvedControlSize(size);
+  const checkboxTrigger = selectionTrigger === "checkbox";
+  const actionsRan = useRef(0);
+  const rowActions = useMemo<TableRowActions>(
+    () => ({ checkboxTrigger, onRowAction, ran: actionsRan }),
+    [checkboxTrigger, onRowAction],
+  );
   const generatedCaptionId = useId();
   const childArray = Children.toArray(children);
   const caption = childArray.find(isTableCaption);
@@ -178,6 +209,7 @@ export function Table({
   return (
     <div
       className={cn(
+        "sp-table-container",
         "relative w-full overflow-x-auto data-[size=lg]:[--table-row-height:--spacing(10)] data-[size=xl]:[--table-row-height:--spacing(12)]",
         tableContainerSizeClassName,
         containerClassName,
@@ -193,25 +225,47 @@ export function Table({
       }
     >
       <TableSizeContext.Provider value={resolvedSize}>
-        <AriaTable
-          {...props}
-          {...(labelledBy === undefined
-            ? {}
-            : { "aria-labelledby": labelledBy })}
-          className={cn("w-full caption-bottom text-sm", className)}
-          data-hoverable={hoverable}
-          data-selection-trigger={selectionTrigger}
-          data-slot="table"
-          onSelectionChange={handleSelectionChange}
-          selectedKeys={selectedKeys ?? internalSelectedKeys}
-          {...(sortDescriptor === undefined ? {} : { sortDescriptor })}
-        >
-          {tableChildren}
-        </AriaTable>
+        <TableRowActionsContext.Provider value={rowActions}>
+          <AriaTable
+            {...props}
+            {...(labelledBy === undefined
+              ? {}
+              : { "aria-labelledby": labelledBy })}
+            {...(onRowAction === undefined
+              ? {}
+              : {
+                  onRowAction: (key: Key) => {
+                    actionsRan.current += 1;
+                    onRowAction(key);
+                  },
+                })}
+            // Only the checkboxes select, so a press on a row never selects
+            // it and there is no double click that runs the action instead.
+            {...(checkboxTrigger
+              ? { selectionBehavior: "toggle" as const }
+              : selectionBehavior === undefined
+                ? {}
+                : { selectionBehavior })}
+            className={cn(
+              "sp-table",
+              "w-full caption-bottom text-sm",
+              className,
+            )}
+            data-hoverable={hoverable}
+            data-selection-trigger={selectionTrigger}
+            data-slot="table"
+            onSelectionChange={handleSelectionChange}
+            selectedKeys={selectedKeys ?? internalSelectedKeys}
+            {...(sortDescriptor === undefined ? {} : { sortDescriptor })}
+          >
+            {tableChildren}
+          </AriaTable>
+        </TableRowActionsContext.Provider>
       </TableSizeContext.Provider>
       {caption ? (
         <div
           className={cn(
+            "sp-table-caption",
             "mt-4 text-muted-foreground text-sm",
             caption.props.className,
           )}
@@ -237,7 +291,9 @@ export function TableHeader<T>({
   return (
     <AriaTableHeader
       {...props}
-      className={composeRenderProps(className, (value) => cn(value))}
+      className={composeRenderProps(className, (value) =>
+        cn("sp-table-header", value),
+      )}
       data-slot="table-header"
     />
   );
@@ -256,6 +312,7 @@ export function TableHead({
       {...(allowsSorting === undefined ? {} : { allowsSorting })}
       className={composeRenderProps(className, (value) =>
         cn(
+          "sp-table-head",
           "whitespace-nowrap align-middle",
           tableAlignmentClassName(align),
           value,
@@ -267,6 +324,7 @@ export function TableHead({
       {(renderProps) => (
         <span
           className={cn(
+            "sp-table-head-content",
             "inline-flex items-center",
             align === "center" && "justify-center",
             align === "end" && "justify-end",
@@ -296,7 +354,9 @@ export function TableBody<T>({
   return (
     <AriaTableBody
       {...props}
-      className={composeRenderProps(className, (value) => cn(value))}
+      className={composeRenderProps(className, (value) =>
+        cn("sp-table-body", value),
+      )}
       data-slot="table-body"
     />
   );
@@ -309,25 +369,70 @@ export function TableFooter<T>({
   return (
     <AriaTableFooter
       {...props}
-      className={cn(tableFooterClassName, className)}
+      className={cn("sp-table-footer", tableFooterClassName, className)}
       data-slot="table-footer"
     />
   );
 }
 
+/**
+ * A row of the table. Under `selectionTrigger="checkbox"` only the checkboxes
+ * select, so a press on the row runs its action, also while rows are
+ * selected: React Aria still takes such a press as a selection toggle, which
+ * the table drops, and the row then runs the action itself when the press
+ * ends. Space stays the selection key and runs no action; a press that React
+ * Aria already ran an action for runs none again.
+ */
 export function TableRow<T>({
   className,
   hoverable = true,
   inactive = false,
+  onAction,
+  onPress,
+  onPressStart,
   ...props
 }: TableRowProps<T>): ReactElement {
-  const interactive = Boolean(props.href || props.onAction);
+  const interactive = Boolean(props.href || onAction);
+  const actions = useContext(TableRowActionsContext);
+  const actionsAtPressStart = useRef(0);
+  const { id } = props;
+  const runsOwnAction =
+    actions.checkboxTrigger &&
+    (onAction !== undefined || actions.onRowAction !== undefined);
+  const pressProps = runsOwnAction
+    ? {
+        ...(onAction === undefined
+          ? {}
+          : {
+              onAction: () => {
+                actions.ran.current += 1;
+                onAction();
+              },
+            }),
+        onPress: (event: PressEvent) => {
+          onPress?.(event);
+          if (actions.ran.current !== actionsAtPressStart.current) return;
+          if (event.pointerType === "keyboard" && event.key !== "Enter") return;
+          onAction?.();
+          if (id !== undefined) actions.onRowAction?.(id);
+        },
+        onPressStart: (event: PressEvent) => {
+          actionsAtPressStart.current = actions.ran.current;
+          onPressStart?.(event);
+        },
+      }
+    : {
+        ...(onAction === undefined ? {} : { onAction }),
+        ...(onPress === undefined ? {} : { onPress }),
+        ...(onPressStart === undefined ? {} : { onPressStart }),
+      };
 
   return (
     <AriaRow
       {...props}
+      {...pressProps}
       className={composeRenderProps(className, (value) =>
-        cn("relative outline-none", value),
+        cn("sp-table-row", "relative outline-none", value),
       )}
       data-hoverable={hoverable}
       data-inactive={inactive || undefined}
@@ -337,16 +442,85 @@ export function TableRow<T>({
   );
 }
 
+// What a press or a key in a cell can start on besides the cell itself: an
+// element the browser activates or focuses, a label that passes a click on to
+// its control, and an item of another React Aria collection, such as a tag.
+const cellControlSelector = [
+  "a[href]",
+  "area[href]",
+  "audio[controls]",
+  "button",
+  "embed",
+  "iframe",
+  "input",
+  "label",
+  "object",
+  "select",
+  "summary",
+  "textarea",
+  "video[controls]",
+  "[contenteditable]:not([contenteditable='false'])",
+  "[data-collection]",
+  "[tabindex]",
+].join(", ");
+
+/** Whether the event started on a control inside the cell, not the cell. */
+function startsOnCellControl(event: SyntheticEvent): boolean {
+  const cell = event.currentTarget;
+  const control =
+    event.target instanceof Element
+      ? event.target.closest(cellControlSelector)
+      : null;
+
+  return control !== null && control !== cell && cell.contains(control);
+}
+
+/**
+ * React Aria's own controls stop their presses from reaching the row, and the
+ * row ignores a press that starts on an element it can focus. A control that
+ * is not React Aria's, such as a Menu trigger, gets the same: a press or a
+ * click that starts in it, also on its icon, and Enter or Space while it has
+ * focus stay with it, so they neither run the row's action nor change the
+ * selection. Events from a popup of the control reach the cell through
+ * React's tree but not through the document, and pass.
+ */
+function keepPressInControl(event: SyntheticEvent): void {
+  if (startsOnCellControl(event)) event.stopPropagation();
+}
+
+function keepKeyInControl(event: KeyboardEvent): void {
+  if (
+    (event.key === "Enter" || event.key === " ") &&
+    startsOnCellControl(event)
+  )
+    event.stopPropagation();
+}
+
+function chain<E>(
+  own: (event: E) => void,
+  given: ((event: E) => void) | undefined,
+): (event: E) => void {
+  return (event) => {
+    given?.(event);
+    own(event);
+  };
+}
+
 export function TableCell({
   align = "start",
   className,
+  render,
   ...props
 }: TableCellProps): ReactElement {
+  // A virtualized table renders its cells as divs.
+  const { isVirtualized } = useContext(CollectionRendererContext);
+
   return (
     <AriaCell
       {...props}
       className={composeRenderProps(className, (value) =>
         cn(
+          "sp-table-cell",
           "whitespace-nowrap bg-clip-padding align-middle outline-none",
           tableAlignmentClassName(align),
           value,
@@ -354,6 +528,28 @@ export function TableCell({
       )}
       data-align={align}
       data-slot="table-cell"
+      // React Aria takes no key handlers on a cell, so the cell element is
+      // rendered here, with the handlers React Aria gives it kept.
+      render={(elementProps, renderProps) => {
+        const cellProps = elementProps as ComponentProps<"td">;
+        const guarded: ComponentProps<"td"> = {
+          ...cellProps,
+          onClick: chain(keepPressInControl, cellProps.onClick),
+          onDoubleClick: chain(keepPressInControl, cellProps.onDoubleClick),
+          onKeyDown: chain(keepKeyInControl, cellProps.onKeyDown),
+          onMouseDown: chain(keepPressInControl, cellProps.onMouseDown),
+          onPointerDown: chain(keepPressInControl, cellProps.onPointerDown),
+          onPointerUp: chain(keepPressInControl, cellProps.onPointerUp),
+        };
+
+        if (render) return render(guarded, renderProps);
+
+        return isVirtualized ? (
+          <div {...(guarded as ComponentProps<"div">)} />
+        ) : (
+          <td {...guarded} />
+        );
+      }}
     />
   );
 }
@@ -368,7 +564,9 @@ export function TableSelectionCheckbox({
   return (
     <AriaCheckbox
       {...props}
-      className={composeRenderProps(className, (value) => cn(value))}
+      className={composeRenderProps(className, (value) =>
+        cn("sp-table-selection-checkbox", value),
+      )}
       data-size={size}
       data-slot="table-selection-checkbox"
       slot="selection"
@@ -384,6 +582,7 @@ export function TableSelectionCheckbox({
           aria-hidden="true"
           data-indeterminate={isIndeterminate || undefined}
           data-selected={isSelected && !isIndeterminate ? true : undefined}
+          className="sp-table-selection-indicator"
           data-slot="table-selection-indicator"
         >
           <CheckboxGlyph size={size} />

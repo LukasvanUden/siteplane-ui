@@ -14,6 +14,7 @@ import {
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { InputGroup } from "../input-group";
 import { Separator } from "../separator";
 import { Label } from "../label";
@@ -72,7 +73,11 @@ export function OTPField({
       ) : null}
       <OTPFieldPrimitive.Root
         aria-labelledby={ariaLabelledBy}
-        className={cn(!joined && "flex items-center gap-2", className)}
+        className={cn(
+          slotClass("otp-field", props),
+          !joined && "flex items-center gap-2",
+          className,
+        )}
         data-layout={layout}
         data-size={resolvedSize}
         data-slot="otp-field"
@@ -131,7 +136,11 @@ export function OTPFieldInput({
       <>
         <Separator orientation="vertical" role="presentation" />
         <OTPFieldPrimitive.Input
-          className={cn(slotClassName, className)}
+          className={cn(
+            slotClass("otp-field-input", props),
+            slotClassName,
+            className,
+          )}
           data-slot="otp-field-input"
           spellCheck={false}
           {...props}
@@ -143,6 +152,7 @@ export function OTPFieldInput({
   return (
     <OTPFieldPrimitive.Input
       className={cn(
+        slotClass("otp-field-input", props),
         surfaceClassNames.formControlCell,
         formControlSurfaceClassNames[variant],
         slotClassName,

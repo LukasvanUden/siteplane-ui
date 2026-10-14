@@ -2,10 +2,10 @@
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
 import { ChevronsUpDownIcon, XIcon } from "lucide-react";
-import { motion, type Transition } from "motion/react";
 import * as React from "react";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
-import { useLayoutTransitionFromCss } from "../../system/motion/use-layout-transition";
+import { slotClass, withClass } from "../../system/utils/slot-class";
+import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import {
   type SiteplaneControlSize,
   SiteplaneUIPortalScope,
@@ -26,15 +26,8 @@ import { KitInput } from "../input/input-internal";
 import { ExternalInputOwner } from "../input/input";
 import { Button } from "../button";
 import { KitButton } from "../button/button-internal";
+import { GlideOnChange, motionGhostAttribute } from "../motion/motion-presence";
 import { ScrollArea } from "../scroll-area";
-
-const ComboboxChipMotionContext = React.createContext<{
-  transition: Transition;
-  reducedMotion: boolean;
-}>({
-  transition: { layout: { duration: 0 } },
-  reducedMotion: false,
-});
 
 export const ComboboxContext: React.Context<{
   chipsRef: React.RefObject<Element | null> | null;
@@ -109,6 +102,7 @@ export function ComboboxChipsInput({
   return (
     <ComboboxPrimitive.Input
       className={cn(
+        slotClass("combobox-chips-input", props),
         "min-w-12 flex-1 outline-none [[data-slot=combobox-chip]+&]:ps-0.5",
         // An xl field writes in 16 px, as an xl Input does.
         resolvedSize === "xl" ? "text-base" : "text-base sm:text-sm",
@@ -165,13 +159,13 @@ export function ComboboxInput({
 
   return (
     <ComboboxPrimitive.InputGroup
-      className="relative flex h-fit not-has-[>*.w-full]:w-fit w-full text-foreground"
+      className="sp-combobox-input-group relative flex h-fit not-has-[>*.w-full]:w-fit w-full text-foreground"
       data-slot="combobox-input-group"
     >
       {startAddon && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 start-px z-10 flex items-center [&_svg]:-mx-0.5"
+          className="sp-combobox-start-addon pointer-events-none absolute inset-y-0 start-px z-10 flex items-center [&_svg]:-mx-0.5"
           data-slot="combobox-start-addon"
         >
           {startAddon}
@@ -181,7 +175,7 @@ export function ComboboxInput({
       <ExternalInputOwner>
         <ComboboxPrimitive.Input
           {...props}
-          className={className}
+          className={cn("sp-combobox-input", className)}
           data-inset-end={showTrigger || showClear ? "" : undefined}
           data-inset-start={startAddon ? "" : undefined}
           data-profile="combobox"
@@ -223,7 +217,10 @@ export function ComboboxInput({
             )
           }
         >
-          <ComboboxPrimitive.Icon data-slot="combobox-icon">
+          <ComboboxPrimitive.Icon
+            className="sp-combobox-icon"
+            data-slot="combobox-icon"
+          >
             <ChevronsUpDownIcon className="size-4" />
           </ComboboxPrimitive.Icon>
         </ComboboxTrigger>
@@ -262,7 +259,7 @@ export function ComboboxTrigger({
 }: WithStringClassName<ComboboxPrimitive.Trigger.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.Trigger
-      className={className}
+      className={cn(slotClass("combobox-trigger", props, render), className)}
       data-slot="combobox-trigger"
       render={
         render ?? (
@@ -304,13 +301,14 @@ export function ComboboxPopup({
           align={align}
           alignOffset={alignOffset}
           anchor={anchor}
-          className="z-50 select-none"
+          className="sp-combobox-positioner z-50 select-none"
           data-slot="combobox-positioner"
           side={side}
           sideOffset={sideOffset}
         >
           <ComboboxPrimitive.Popup
             className={cn(
+              slotClass("combobox-popup", props),
               surfaceClassNames.floatingOverlay,
               "flex max-h-[min(var(--available-height),23rem)] min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col overflow-hidden rounded-lg text-foreground before:rounded-[inherit]",
               className,
@@ -357,6 +355,7 @@ export function ComboboxItem({
   const indicator = (
     <ComboboxPrimitive.ItemIndicator
       className={cn(
+        "sp-combobox-item-indicator",
         end ? "col-start-2" : "col-start-1",
         "flex min-h-lh items-center",
       )}
@@ -368,14 +367,14 @@ export function ComboboxItem({
   );
   const label = end ? (
     <div
-      className={choiceMenuItemEndLabelClassName}
+      className={cn("sp-combobox-item-label", choiceMenuItemEndLabelClassName)}
       data-slot="combobox-item-label"
     >
       {menuRowLabel(children)}
     </div>
   ) : (
     <div
-      className="col-start-2 flex min-w-0 items-center gap-2"
+      className="sp-combobox-item-label col-start-2 flex min-w-0 items-center gap-2"
       data-slot="combobox-item-label"
     >
       {children}
@@ -385,6 +384,7 @@ export function ComboboxItem({
   return (
     <ComboboxPrimitive.Item
       className={cn(
+        slotClass("combobox-item", props),
         "grid min-h-(--anchor-height) in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer items-center gap-2 rounded-sm py-1 ps-2 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         end
           ? cn(choiceMenuItemEndGridClassName, "pe-2")
@@ -462,7 +462,11 @@ export function ComboboxSeparator({
 }: WithStringClassName<ComboboxPrimitive.Separator.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.Separator
-      className={cn("mx-2 my-1 h-px bg-border last:hidden", className)}
+      className={cn(
+        slotClass("combobox-separator", props),
+        "mx-2 my-1 h-px bg-border last:hidden",
+        className,
+      )}
       data-slot="combobox-separator"
       {...props}
     />
@@ -475,7 +479,11 @@ export function ComboboxGroup({
 }: WithStringClassName<ComboboxPrimitive.Group.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.Group
-      className={cn("[[role=group]+&]:mt-1.5", className)}
+      className={cn(
+        slotClass("combobox-group", props),
+        "[[role=group]+&]:mt-1.5",
+        className,
+      )}
       data-slot="combobox-group"
       {...props}
     />
@@ -489,6 +497,7 @@ export function ComboboxGroupLabel({
   return (
     <ComboboxPrimitive.GroupLabel
       className={cn(
+        slotClass("combobox-group-label", props),
         "px-2 py-1.5 font-medium text-muted-foreground text-xs",
         className,
       )}
@@ -505,6 +514,7 @@ export function ComboboxEmpty({
   return (
     <ComboboxPrimitive.Empty
       className={cn(
+        slotClass("combobox-empty", props),
         "not-empty:p-2 text-center text-base text-muted-foreground sm:text-sm",
         className,
       )}
@@ -520,17 +530,55 @@ export function ComboboxRow({
 }: WithStringClassName<ComboboxPrimitive.Row.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.Row
-      className={className}
+      className={cn(slotClass("combobox-row", props), className)}
       data-slot="combobox-row"
       {...props}
     />
   );
 }
 
+/** The chips, the input and the start addon of a chips field. */
+function chipsParts(chips: Element | null | undefined): HTMLElement[] {
+  return chips
+    ? [...chips.children].filter(
+        (child): child is HTMLElement =>
+          child instanceof HTMLElement &&
+          !child.hasAttribute(motionGhostAttribute),
+      )
+    : [];
+}
+
 export function ComboboxValue({
+  children,
   ...props
 }: ComboboxPrimitive.Value.Props): React.ReactElement {
-  return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />;
+  const { chipsRef, multiple } = React.useContext(ComboboxContext);
+  const reduced = useReducedMotionPreference();
+  // The chips of a multiple selection come and go with the value (rulebook M6,
+  // M7): a chip that is added fades in, a removed one fades out where it was,
+  // and the chips and the input after them glide to their new place. Base UI
+  // drops a removed chip at once, so the keyboard order of the chips stays its
+  // own; what fades is a picture of it.
+  const glide =
+    multiple && typeof children === "function"
+      ? (value: unknown) => (
+          <>
+            {children(value)}
+            <GlideOnChange
+              change={value}
+              origin={() => chipsRef?.current as HTMLElement | null}
+              parts={() => chipsParts(chipsRef?.current)}
+              presence
+              reduced={reduced}
+            />
+          </>
+        )
+      : children;
+  return (
+    <ComboboxPrimitive.Value data-slot="combobox-value" {...props}>
+      {glide}
+    </ComboboxPrimitive.Value>
+  );
 }
 
 export function ComboboxList({
@@ -545,6 +593,7 @@ export function ComboboxList({
     >
       <ComboboxPrimitive.List
         className={cn(
+          slotClass("combobox-list", props),
           "not-empty:scroll-py-1 not-empty:px-1 not-empty:py-1 in-data-has-overflow-y:pe-3",
           className,
         )}
@@ -562,7 +611,7 @@ export function ComboboxClear({
 }: WithStringClassName<ComboboxPrimitive.Clear.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.Clear
-      className={className}
+      className={cn(slotClass("combobox-clear", props, render), className)}
       data-slot="combobox-clear"
       render={
         render ?? (
@@ -581,6 +630,7 @@ export function ComboboxStatus({
   return (
     <ComboboxPrimitive.Status
       className={cn(
+        slotClass("combobox-status", props),
         "px-3 py-2 font-medium text-muted-foreground text-xs empty:m-0 empty:p-0",
         className,
       )}
@@ -607,42 +657,36 @@ export function ComboboxChips({
   ...props
 }: WithStringClassName<ComboboxPrimitive.Chips.Props> & {
   startAddon?: React.ReactNode;
-  variant?: FormControlSurface;
-  layout?: "input" | "standalone";
+  variant?: FormControlSurface | undefined;
+  layout?: "input" | "standalone" | undefined;
 }): React.ReactElement {
   const { chipsRef } = React.useContext(ComboboxContext);
-  const chipMotion = useLayoutTransitionFromCss(
-    chipsRef,
-    "--motion-duration-expand",
-    "--motion-ease-standard",
-  );
 
   return (
-    <ComboboxChipMotionContext.Provider value={chipMotion}>
-      <ComboboxPrimitive.Chips
-        className={cn(
-          layout === "input" && formControlSurfaceClassNames[variant],
-          "relative inline-flex w-full flex-wrap outline-none has-disabled:pointer-events-none",
-          className,
-        )}
-        data-slot="combobox-chips"
-        data-layout={layout}
-        data-variant={variant}
-        ref={chipsRef as React.Ref<HTMLDivElement> | null}
-        {...props}
-      >
-        {startAddon && (
-          <div
-            aria-hidden="true"
-            className="flex shrink-0 items-center ps-2 opacity-80 has-[~[data-size=sm]]:has-[+[data-slot=combobox-chip]]:pe-1.5 has-[~[data-size=sm]]:ps-1.5 has-[+[data-slot=combobox-chip]]:pe-2 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-ms-0.5 [&_svg]:-me-1.5"
-            data-slot="combobox-start-addon"
-          >
-            {startAddon}
-          </div>
-        )}
-        {children}
-      </ComboboxPrimitive.Chips>
-    </ComboboxChipMotionContext.Provider>
+    <ComboboxPrimitive.Chips
+      className={cn(
+        slotClass("combobox-chips", props),
+        layout === "input" && formControlSurfaceClassNames[variant],
+        "relative inline-flex w-full flex-wrap outline-none has-disabled:pointer-events-none",
+        className,
+      )}
+      data-slot="combobox-chips"
+      data-layout={layout}
+      data-variant={variant}
+      ref={chipsRef as React.Ref<HTMLDivElement> | null}
+      {...props}
+    >
+      {startAddon && (
+        <div
+          aria-hidden="true"
+          className="sp-combobox-start-addon flex shrink-0 items-center ps-2 opacity-80 has-[~[data-size=sm]]:has-[+[data-slot=combobox-chip]]:pe-1.5 has-[~[data-size=sm]]:ps-1.5 has-[+[data-slot=combobox-chip]]:pe-2 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-ms-0.5 [&_svg]:-me-1.5"
+          data-slot="combobox-start-addon"
+        >
+          {startAddon}
+        </div>
+      )}
+      {children}
+    </ComboboxPrimitive.Chips>
   );
 }
 
@@ -660,32 +704,28 @@ export function ComboboxChip({
    */
   startAddon?: React.ReactNode;
 }): React.ReactElement {
-  const { transition, reducedMotion } = React.useContext(
-    ComboboxChipMotionContext,
-  );
   // The remove action is named "Remove" and the chip's value, such as
   // "Remove Mara Ellis", so each one in a row of chips is distinct.
   const labelId = React.useId();
   const removeId = React.useId();
 
+  // A chip comes, goes and glides with the value (ComboboxValue).
   return (
     <ComboboxPrimitive.Chip
-      className="flex min-w-0 max-w-full items-center outline-none"
       data-slot="combobox-chip"
-      render={
-        render ?? (
-          <motion.div
-            layout={reducedMotion ? false : "position"}
-            transition={transition}
-          />
-        )
-      }
+      render={render}
       {...props}
+      // A className of the app's replaces the chip's own classes; the slot's
+      // class stays either way.
+      className={withClass(
+        props.className ?? "flex min-w-0 max-w-full items-center outline-none",
+        slotClass("combobox-chip", props, render),
+      )}
     >
       {startAddon && (
         <span
           aria-hidden="true"
-          className="me-1 flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
+          className="sp-combobox-chip-start-addon me-1 flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
           data-slot="combobox-chip-start-addon"
         >
           {startAddon}
@@ -694,7 +734,7 @@ export function ComboboxChip({
       {/* A long value ends in an ellipsis on the chip's one line instead of
           wrapping out of its fixed height (rulebook K5). */}
       <span
-        className="min-w-0 truncate"
+        className="sp-combobox-chip-label min-w-0 truncate"
         data-slot="combobox-chip-label"
         id={labelId}
       >
@@ -716,7 +756,6 @@ export function ComboboxChipRemove({
   return (
     <ComboboxPrimitive.ChipRemove
       aria-label="Remove"
-      className="me-0.5 shrink-0"
       data-slot="combobox-chip-remove"
       render={
         render ?? (
@@ -724,6 +763,12 @@ export function ComboboxChipRemove({
         )
       }
       {...props}
+      // A className of the app's replaces the action's own classes; the
+      // slot's class stays either way.
+      className={withClass(
+        props.className ?? "me-0.5 shrink-0",
+        slotClass("combobox-chip-remove", props, render),
+      )}
     >
       <XIcon className="size-3" />
     </ComboboxPrimitive.ChipRemove>

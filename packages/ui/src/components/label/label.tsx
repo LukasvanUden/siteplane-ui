@@ -5,6 +5,7 @@ import { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 
 export function Label({
   className,
@@ -16,7 +17,9 @@ export function Label({
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
-      "inline-flex cursor-pointer items-center data-disabled:cursor-not-allowed has-disabled:cursor-not-allowed",
+      slotClass("label", props, render),
+      baseClass("label", props, render),
+      "inline-flex items-center",
       // The card contour, radius and checked border are the canonical native
       // recipe shared with Card (design-rework.css), not utilities.
       variant === "card" &&

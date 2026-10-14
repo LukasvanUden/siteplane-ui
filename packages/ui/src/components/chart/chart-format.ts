@@ -1,7 +1,31 @@
-import type { ChartXValue } from "./chart-types";
+import type { CartesianChartLabels, ChartXValue } from "./chart-types";
 
 /** Charts format numbers and dates in this locale unless they are given another, so the server and the client agree. */
 export const CHART_DEFAULT_LOCALE = "en-US";
+
+/** The English words that charts give screen readers, which a chart's `labels` replaces one by one. */
+export const CHART_DEFAULT_LABELS: Readonly<CartesianChartLabels> = {
+  highest: "highest",
+  keyboardHint: "Use the arrow keys to move between data points.",
+  lowest: "lowest",
+  roleDescription: "chart",
+  to: "to",
+};
+
+/**
+ * The words of a chart: the English defaults, with each one that `labels`
+ * gives in its place. A word given as undefined keeps its default.
+ */
+export function chartLabels(
+  labels?: Partial<CartesianChartLabels> | undefined,
+): CartesianChartLabels {
+  const words = { ...CHART_DEFAULT_LABELS };
+  for (const key of Object.keys(words) as (keyof CartesianChartLabels)[]) {
+    const given = labels?.[key];
+    if (typeof given === "string") words[key] = given;
+  }
+  return words;
+}
 
 // Intl formatters are costly to build and charts ask for them on every render.
 const formatters = new Map<string, Intl.NumberFormat | Intl.DateTimeFormat>();

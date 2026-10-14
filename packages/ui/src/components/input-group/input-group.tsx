@@ -4,6 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import {
+  type SiteplaneControlSize,
+  useResolvedControlSize,
+} from "../../system/provider/siteplane-ui-provider";
+import {
   formControlSurfaceClassNames,
   formControlTextClassNames,
   surfaceClassNames,
@@ -11,6 +15,7 @@ import {
   type FormControlVariant,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
+import { baseClass, slotClass } from "../../system/utils/slot-class";
 import type { InputProps } from "../input";
 import { KitInput } from "../input/input-internal";
 import { type TextareaProps } from "../textarea";
@@ -45,6 +50,9 @@ const inputGroupAddonVariants = cva(
 /** Whether the InputGroup opens with an addon (see `opensWithAddon`). */
 const InputGroupInsetStartContext = React.createContext(false);
 
+/** Whether the InputGroup keeps the end of its control clear (`insetEnd`). */
+const InputGroupInsetEndContext = React.createContext(false);
+
 /**
  * Whether an InputGroupAddon at the inline start, its default alignment, is
  * among the group's children, also inside a Fragment: an icon or a text
@@ -76,17 +84,28 @@ function opensWithAddon(children: React.ReactNode): boolean {
 export function InputGroup({
   children,
   className,
+  insetEnd = false,
   onMouseDown,
   textSize,
   variant = "default",
   ...props
 }: React.ComponentProps<"div"> & {
+  /**
+   * Keeps the end of the input or textarea clear for an action placed over
+   * it, such as a square Button 8 px inside the top-end corner of a textarea.
+   * The text ends 8 px before a Button of the control size.
+   */
+  insetEnd?: boolean | undefined;
   textSize?: FormControlTextSize | undefined;
   variant?: FormControlVariant | undefined;
 }): React.ReactElement {
+  // The room follows the control size, which a Button in the group takes too.
+  const controlSize = useResolvedControlSize<SiteplaneControlSize>(undefined);
   return (
     <div
       className={cn(
+        slotClass("input-group", props),
+        baseClass("input-group", props),
         variant === "soft"
           ? surfaceClassNames.formControlCompositeSoft
           : cn(
@@ -98,6 +117,7 @@ export function InputGroup({
         className,
       )}
       data-foundation="input-group"
+      data-inset-end={insetEnd ? controlSize : undefined}
       data-slot="input-group"
       data-text-size={textSize}
       data-variant={variant}
@@ -126,7 +146,7 @@ export function InputGroup({
         control.focus();
         if (
           control instanceof HTMLInputElement &&
-          control.closest(".siteplane-input-segment")
+          control.closest(".sp-input-segment")
         ) {
           control.select();
         }
@@ -135,7 +155,9 @@ export function InputGroup({
       {...props}
     >
       <InputGroupInsetStartContext.Provider value={opensWithAddon(children)}>
-        {children}
+        <InputGroupInsetEndContext.Provider value={insetEnd}>
+          {children}
+        </InputGroupInsetEndContext.Provider>
       </InputGroupInsetStartContext.Provider>
     </div>
   );
@@ -154,7 +176,11 @@ export function InputGroupAddon({
   }): React.ReactElement {
   return (
     <div
-      className={cn(inputGroupAddonVariants({ align }), className)}
+      className={cn(
+        slotClass("input-group-addon", props),
+        inputGroupAddonVariants({ align }),
+        className,
+      )}
       data-align={align}
       data-divider={divider || undefined}
       data-padding={padding}
@@ -173,6 +199,9 @@ export function InputGroupText({
   return (
     <span
       className={cn(
+        // The text takes the slot of its host (a Date Range Picker's
+        // separator), and its class with it.
+        slotClass(undefined, props),
         "flex items-center gap-2 overflow-x-clip whitespace-nowrap text-muted-foreground leading-none in-[[data-foundation=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-foundation=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
         className,
       )}
@@ -213,7 +242,7 @@ export function InputGroupSegment({
   return (
     <KitInput
       {...props}
-      className={cn("siteplane-input-segment", className)}
+      className={cn("sp-input-segment", className)}
       data-segment-inset-start={insetStart || undefined}
       data-segment-width={width}
       onFocus={(event) => {
@@ -230,10 +259,14 @@ export function InputGroupTextarea({
   className,
   ...props
 }: Omit<TextareaProps, "profile" | "unstyled">): React.ReactElement {
+  // A group with insetEnd keeps the end of the textarea clear.
+  const insetEnd = React.useContext(InputGroupInsetEndContext);
+
   return (
     <KitTextarea
       {...props}
       className={className}
+      insetEnd={insetEnd}
       profile="input-group"
       unstyled
     />

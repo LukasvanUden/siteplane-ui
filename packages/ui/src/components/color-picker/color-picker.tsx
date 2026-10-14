@@ -42,6 +42,38 @@ import { ExternalInputOwner, Input } from "../input/input";
 
 import "./color-picker.css";
 
+/** The accessible names of the controls in the picker's popover. */
+export type ColorPickerLabels = {
+  /** The popover's dialog. */
+  controls: string;
+  /** The saturation and brightness area. */
+  saturation: string;
+  /** The hue slider. */
+  hue: string;
+  /** The hex value field. */
+  hex: string;
+  /** The copy button. */
+  copy: string;
+  /** The copy button while its check confirms a copy. */
+  copied: string;
+  /** The red, green and blue channel fields. */
+  red: string;
+  green: string;
+  blue: string;
+};
+
+const defaultColorPickerLabels: ColorPickerLabels = {
+  controls: "Color controls",
+  saturation: "Color saturation and brightness",
+  hue: "Color hue",
+  hex: "Hex color value",
+  copy: "Copy hex value",
+  copied: "Copied hex value",
+  red: "R color channel",
+  green: "G color channel",
+  blue: "B color channel",
+};
+
 /**
  * The props the picker supports. The form value is a hidden input the picker
  * owns, so it takes no other input props.
@@ -57,6 +89,8 @@ export interface ColorPickerProps {
   form?: string | undefined;
   /** The trigger's id. */
   id?: string | undefined;
+  /** Replaces the English names of the controls in the popover. */
+  labels?: Partial<ColorPickerLabels> | undefined;
   /** Submits the hex value under this name; a Field name takes precedence. */
   name?: string | undefined;
   /**
@@ -106,6 +140,7 @@ export function ColorPicker({
   form,
   id,
   indicator = "check",
+  labels,
   name: nameProp,
   onOpenChange,
   onValueChange,
@@ -130,6 +165,7 @@ export function ColorPicker({
   });
   const disabled = field.disabled;
   const name = field.name;
+  const text = { ...defaultColorPickerLabels, ...labels };
   const rootRef = React.useRef<HTMLSpanElement>(null);
   const resolvedSize = useResolvedControlSize(size);
   const radius = useResolvedRadius<SiteplaneRadius>(undefined);
@@ -164,7 +200,11 @@ export function ColorPicker({
 
         return (
           <span
-            className={cn("contents", swatch && "siteplane-color-swatch-scope")}
+            className={cn(
+              "sp-base-color-picker",
+              "contents",
+              swatch && "sp-color-swatch-scope",
+            )}
             data-foundation="color-picker"
             data-indicator={swatch ? indicator : undefined}
             data-radius={swatch ? radius : undefined}
@@ -184,7 +224,11 @@ export function ColorPicker({
                     id,
                     style,
                   })}
-                  className={cn("siteplane-color-swatch-item", className)}
+                  className={cn(
+                    "sp-color-picker",
+                    "sp-color-swatch-item",
+                    className,
+                  )}
                   data-selected={selected || undefined}
                   data-slot="color-picker"
                   data-variant="swatch"
@@ -207,8 +251,8 @@ export function ColorPicker({
                   aria-label={triggerAriaLabel}
                   aria-labelledby={field.labelledBy}
                   className={cn(
-                    "siteplane-color-picker-trigger",
-                    showValue && "siteplane-color-picker-trigger-with-value",
+                    "sp-color-picker-trigger",
+                    showValue && "sp-color-picker-trigger-with-value",
                     className,
                   )}
                   data-show-value={showValue || undefined}
@@ -224,18 +268,23 @@ export function ColorPicker({
                 >
                   <ColorSwatchPrimitive
                     aria-hidden="true"
-                    className="siteplane-color-picker-trigger-swatch"
+                    className="sp-color-picker-trigger-swatch"
                     data-slot="color-picker-trigger-swatch"
                   />
                   {showValue ? (
-                    <span data-slot="color-picker-value">{current}</span>
+                    <span
+                      className="sp-color-picker-value"
+                      data-slot="color-picker-value"
+                    >
+                      {current}
+                    </span>
                   ) : null}
                 </Button>
               )}
               <ColorPopoverPrimitive
                 className={cn(
                   surfaceClassNames.floatingOverlay,
-                  "siteplane-color-picker-popover",
+                  "sp-color-picker-popover",
                 )}
                 data-size={resolvedSize}
                 data-slot="color-picker-popover"
@@ -244,17 +293,17 @@ export function ColorPicker({
               >
                 <SiteplaneUIPortalScope>
                   <ColorDialogPrimitive
-                    aria-label="Color controls"
-                    className="siteplane-color-picker-dialog"
+                    aria-label={text.controls}
+                    className="sp-color-picker-panel sp-color-picker-dialog"
                     data-slot="color-picker-panel"
                   >
                     <div
-                      className="siteplane-color-picker-area-frame"
+                      className="sp-color-picker-saturation-field sp-color-picker-area-frame"
                       data-slot="color-picker-saturation-field"
                     >
                       <ColorAreaPrimitive
-                        aria-label="Color saturation and brightness"
-                        className="siteplane-color-picker-area"
+                        aria-label={text.saturation}
+                        className="sp-color-picker-saturation sp-color-picker-area"
                         colorSpace="hsb"
                         data-slot="color-picker-saturation"
                         isDisabled={disabled || readOnly}
@@ -262,63 +311,66 @@ export function ColorPicker({
                         yChannel="brightness"
                       >
                         <ColorThumbPrimitive
-                          className="siteplane-color-picker-area-thumb"
+                          className="sp-color-picker-saturation-thumb sp-color-picker-area-thumb"
                           data-slot="color-picker-saturation-thumb"
                         />
                       </ColorAreaPrimitive>
                     </div>
 
-                    <div className="siteplane-color-picker-hue-row">
+                    <div className="sp-color-picker-hue-row">
                       <ColorSwatchPrimitive
                         aria-hidden="true"
-                        className="siteplane-color-picker-current-swatch"
+                        className="sp-color-picker-current-swatch"
                         data-slot="color-picker-current-swatch"
                       />
                       <ColorSliderPrimitive
-                        aria-label="Color hue"
+                        aria-label={text.hue}
                         channel="hue"
-                        className="siteplane-color-picker-hue"
+                        className="sp-color-picker-hue"
                         colorSpace="hsb"
                         data-slot="color-picker-hue"
                         isDisabled={disabled || readOnly}
                       >
                         <ColorSliderTrackPrimitive
-                          className="siteplane-color-picker-hue-track"
+                          className="sp-color-picker-hue-track"
                           data-slot="color-picker-hue-track"
                         >
                           <ColorThumbPrimitive
-                            className="siteplane-color-picker-hue-thumb"
+                            className="sp-color-picker-hue-thumb"
                             data-slot="color-picker-hue-thumb"
                           />
                         </ColorSliderTrackPrimitive>
                       </ColorSliderPrimitive>
                     </div>
 
-                    <div className="siteplane-color-picker-hex-row">
+                    <div className="sp-color-picker-hex-row">
                       <ColorFieldPrimitive
-                        aria-label="Hex color value"
+                        aria-label={text.hex}
                         className="contents"
                         isDisabled={disabled}
                         isReadOnly={readOnly}
                       >
                         <ColorTextInput
-                          className="siteplane-color-picker-hex-input"
+                          className="sp-color-picker-hex-input"
                           size={resolvedSize}
                           spellCheck={false}
                         />
                       </ColorFieldPrimitive>
                       <ColorCopyButton
+                        copiedLabel={text.copied}
+                        copyLabel={text.copy}
                         disabled={disabled}
                         size={resolvedSize}
                         value={current}
                       />
                     </div>
 
-                    <div className="siteplane-color-picker-channels">
+                    <div className="sp-color-picker-channels">
                       <ColorChannelField
                         channel="red"
                         disabled={disabled}
                         label="R"
+                        name={text.red}
                         readOnly={readOnly}
                         size={resolvedSize}
                       />
@@ -326,6 +378,7 @@ export function ColorPicker({
                         channel="green"
                         disabled={disabled}
                         label="G"
+                        name={text.green}
                         readOnly={readOnly}
                         size={resolvedSize}
                       />
@@ -333,6 +386,7 @@ export function ColorPicker({
                         channel="blue"
                         disabled={disabled}
                         label="B"
+                        name={text.blue}
                         readOnly={readOnly}
                         size={resolvedSize}
                       />
@@ -423,26 +477,30 @@ function ColorChannelField({
   channel,
   disabled,
   label,
+  name,
   readOnly,
   size,
 }: {
   channel: "blue" | "green" | "red";
   disabled: boolean;
+  /** The letter beside the field, hidden from assistive technology. */
   label: "B" | "G" | "R";
+  /** The field's accessible name. */
+  name: string;
   readOnly: boolean;
   size: SiteplaneControlSize;
 }): React.ReactElement {
   return (
     <ColorFieldPrimitive
-      aria-label={`${label} color channel`}
+      aria-label={name}
       channel={channel}
-      className="siteplane-color-picker-channel"
+      className="sp-color-picker-channel"
       colorSpace="rgb"
       isDisabled={disabled}
       isReadOnly={readOnly}
     >
       <ColorTextInput
-        className="siteplane-color-picker-channel-input"
+        className="sp-color-picker-channel-input"
         inputMode="numeric"
         size={size}
       />
@@ -478,10 +536,14 @@ function ColorTextInput({
 }
 
 function ColorCopyButton({
+  copiedLabel,
+  copyLabel,
   disabled,
   size,
   value,
 }: {
+  copiedLabel: string;
+  copyLabel: string;
   disabled?: boolean;
   size: SiteplaneControlSize;
   value: string;
@@ -494,7 +556,7 @@ function ColorCopyButton({
 
   return (
     <Button
-      aria-label={isShowingCheck ? "Copied hex value" : "Copy hex value"}
+      aria-label={isShowingCheck ? copiedLabel : copyLabel}
       disabled={disabled}
       onClick={copy}
       size={getCopyButtonSize(size)}

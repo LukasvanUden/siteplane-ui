@@ -12,11 +12,6 @@ import {
   SidebarTrigger,
 } from "../sidebar";
 
-type DashboardShellStyle = React.CSSProperties & {
-  "--dashboard-shell-header-height"?: string;
-  "--sidebar-width"?: string;
-};
-
 export type DashboardShellLayout = "inset" | "push";
 
 type DashboardShellContextValue = {
@@ -49,22 +44,17 @@ export function DashboardShell({
   children,
   className,
   layout = "push",
-  style,
   ...props
 }: DashboardShellProps): React.ReactElement {
   return (
     <DashboardShellContext.Provider value={{ layout }}>
       <SidebarProvider
         className={cn("min-h-svh", className)}
+        // The bar height and the sidebar width are the stylesheet's
+        // (design-rework.css, "Dashboard Shell"); an app's style overrides
+        // them.
         data-dashboard-shell="root"
         layout={layout}
-        style={
-          {
-            "--dashboard-shell-header-height": "3rem",
-            "--sidebar-width": "15rem",
-            ...style,
-          } as DashboardShellStyle
-        }
         {...props}
       >
         {children}

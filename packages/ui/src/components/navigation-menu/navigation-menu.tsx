@@ -5,6 +5,7 @@ import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/naviga
 import { ChevronDown } from "lucide-react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button } from "../button";
 import "./navigation-menu.css";
 
@@ -18,7 +19,11 @@ export function NavigationMenu<Value = any>(
   props: WithStringClassName<NavigationMenuPrimitive.Root.Props<Value>>,
 ): React.ReactElement {
   return (
-    <NavigationMenuPrimitive.Root data-slot="navigation-menu" {...props} />
+    <NavigationMenuPrimitive.Root
+      data-slot="navigation-menu"
+      {...props}
+      className={cn(slotClass("navigation-menu", props), props.className)}
+    />
   );
 }
 
@@ -26,7 +31,11 @@ export function NavigationMenuItem(
   props: WithStringClassName<NavigationMenuPrimitive.Item.Props>,
 ): React.ReactElement {
   return (
-    <NavigationMenuPrimitive.Item data-slot="navigation-menu-item" {...props} />
+    <NavigationMenuPrimitive.Item
+      data-slot="navigation-menu-item"
+      {...props}
+      className={cn(slotClass("navigation-menu-item", props), props.className)}
+    />
   );
 }
 
@@ -37,7 +46,11 @@ export function NavigationMenuList({
   return (
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
-      className={cn("flex items-center gap-1", className)}
+      className={cn(
+        slotClass("navigation-menu-list", props),
+        "flex items-center gap-1",
+        className,
+      )}
       {...props}
     />
   );
@@ -45,16 +58,38 @@ export function NavigationMenuList({
 
 export function NavigationMenuTrigger({
   children,
+  render,
   ...props
 }: WithStringClassName<NavigationMenuPrimitive.Trigger.Props>): React.ReactElement {
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
-      render={<Button variant="ghost" profile="navigation-link" />}
+      // The trigger is a Button. A render of the consumer's replaces the
+      // element inside that Button, which keeps its styling and states; a
+      // render function still receives the trigger's state.
+      render={(triggerProps, triggerState) => (
+        <Button
+          {...triggerProps}
+          variant="ghost"
+          profile="navigation-link"
+          render={
+            typeof render === "function"
+              ? (elementProps) => render(elementProps, triggerState)
+              : render
+          }
+        />
+      )}
       {...props}
+      className={cn(
+        slotClass("navigation-menu-trigger", props),
+        props.className,
+      )}
     >
       {children}
-      <NavigationMenuPrimitive.Icon data-slot="navigation-menu-icon">
+      <NavigationMenuPrimitive.Icon
+        className="sp-navigation-menu-icon"
+        data-slot="navigation-menu-icon"
+      >
         <ChevronDown />
       </NavigationMenuPrimitive.Icon>
     </NavigationMenuPrimitive.Trigger>
@@ -65,6 +100,7 @@ export function NavigationMenuLink({
   popup: popupProp,
   description,
   children,
+  render,
   ...props
 }: WithStringClassName<NavigationMenuPrimitive.Link.Props> & {
   /**
@@ -80,21 +116,33 @@ export function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       closeOnClick
       data-slot="navigation-menu-link"
-      render={
+      // The link is a Button-styled anchor. A render of the consumer's, such
+      // as a router link, takes the place of the anchor inside that Button,
+      // which keeps its styling and states; a render function still receives
+      // the link's state.
+      render={(linkProps, linkState) => (
         <Button
+          // The link's props and ref are an anchor's, and the Button renders
+          // that anchor; its props are typed for its default button.
+          {...(linkProps as React.ComponentPropsWithRef<"button">)}
           variant="ghost"
           profile={popup ? "default" : "navigation-link"}
           align={popup ? "start" : "center"}
           width={popup ? "full" : "auto"}
           multiline={Boolean(description)}
-          render={<a />}
+          render={
+            typeof render === "function"
+              ? (elementProps) => render(elementProps, linkState)
+              : (render ?? <a />)
+          }
         />
-      }
+      )}
       {...props}
+      className={cn(slotClass("navigation-menu-link", props), props.className)}
     >
       <span className="min-w-0">
         <span
-          className="flex items-center gap-2"
+          className="sp-navigation-menu-link-title flex items-center gap-2"
           data-slot="navigation-menu-link-title"
         >
           {children}
@@ -104,7 +152,7 @@ export function NavigationMenuLink({
           // (I7): the icon, which the Button pulls 2 px out on each side, and
           // the 8 px gap put that text 4 px past the icon's width.
           <span
-            className="block text-sm font-normal text-muted-foreground [[data-slot=navigation-menu-link-title]:has(>svg:first-child)+&]:ps-[calc(var(--sp-rw-button-icon,var(--sp-rw-control-icon))+--spacing(1))]"
+            className="sp-navigation-menu-link-description block text-sm font-normal text-muted-foreground [[data-slot=navigation-menu-link-title]:has(>svg:first-child)+&]:ps-[calc(var(--sp-rw-button-icon,var(--sp-rw-control-icon))+--spacing(1))]"
             data-slot="navigation-menu-link-description"
           >
             {description}
@@ -123,7 +171,11 @@ export function NavigationMenuContent({
   return (
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
-      className={cn("siteplane-navigation-content", className)}
+      className={cn(
+        slotClass("navigation-menu-content", props),
+        "sp-navigation-content",
+        className,
+      )}
       {...props}
     >
       <NavigationMenuContentContext.Provider value>
@@ -147,12 +199,16 @@ export function NavigationMenuPopup({
           sideOffset={8}
           align="start"
           collisionPadding={16}
-          className="z-50"
+          className="sp-navigation-menu-positioner z-50"
           data-slot="navigation-menu-positioner"
         >
           <NavigationMenuPrimitive.Popup
             data-slot="navigation-menu-popup"
             {...props}
+            className={cn(
+              slotClass("navigation-menu-popup", props),
+              props.className,
+            )}
           >
             <NavigationMenuPrimitive.Viewport className="relative size-full overflow-hidden" />
           </NavigationMenuPrimitive.Popup>

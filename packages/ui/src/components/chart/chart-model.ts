@@ -6,9 +6,15 @@
  */
 
 import { chartValue, chartXKey, isTimeData } from "./chart-data";
+import { CHART_DEFAULT_LABELS } from "./chart-format";
 import { valueExtent } from "./chart-scales";
 import { stackSeries } from "./chart-stack";
-import type { ChartDatum, ChartSeries, ChartXValue } from "./chart-types";
+import type {
+  CartesianChartLabels,
+  ChartDatum,
+  ChartSeries,
+  ChartXValue,
+} from "./chart-types";
 
 /**
  * Where a part of an axis stands when new data replaces it: `entering` comes in
@@ -105,20 +111,23 @@ export function buildCartesianModel({
 /**
  * The data of a chart in words, for the description of its plot: where the axis
  * starts and ends, then the lowest and the highest number of each series that
- * has any, such as "Jan to Jun. Desktop: lowest 73, highest 305". A series
+ * has any, such as "Jan to Jun. Desktop: lowest 73, highest 305." A series
  * with a single number says it alone. A chart with no numbers says its empty
- * label. The chart's own formats write the x values and the numbers.
+ * label. The chart's own formats write the x values and the numbers, and its
+ * `labels` the words, which are English by default.
  */
 export function cartesianSummary({
   emptyLabel,
   formatValue,
   formatX,
+  labels = CHART_DEFAULT_LABELS,
   model,
   series,
 }: {
   emptyLabel: string;
   formatValue: (value: number) => string;
   formatX: (value: ChartXValue) => string;
+  labels?: Pick<CartesianChartLabels, "highest" | "lowest" | "to">;
   model: CartesianModel;
   series: readonly ChartSeries[];
 }): string {
@@ -128,7 +137,9 @@ export function cartesianSummary({
   const span =
     first === last
       ? formatX(first.x)
-      : `${formatX(first.x)} to ${formatX(last.x)}`;
+      : [formatX(first.x), labels.to, formatX(last.x)]
+          .filter(Boolean)
+          .join(" ");
   const ranges = series.flatMap((item, place) => {
     const numbers = (model.values[place] ?? []).filter(
       (value): value is number => value !== null,
@@ -136,13 +147,17 @@ export function cartesianSummary({
     if (numbers.length === 0) return [];
     const lowest = numbers.reduce((low, value) => Math.min(low, value));
     const highest = numbers.reduce((high, value) => Math.max(high, value));
+    const word = (text: string, value: number) =>
+      [text, formatValue(value)].filter(Boolean).join(" ");
     return [
       lowest === highest
         ? `${item.label}: ${formatValue(lowest)}`
-        : `${item.label}: lowest ${formatValue(lowest)}, highest ${formatValue(highest)}`,
+        : `${item.label}: ${word(labels.lowest, lowest)}, ${word(labels.highest, highest)}`,
     ];
   });
-  return [span, ...ranges].join(". ");
+  // A full stop ends the summary, so that what is read after it, such as the
+  // keyboard hint, is heard as a sentence of its own.
+  return `${[span, ...ranges].join(". ")}.`;
 }
 
 /**

@@ -424,7 +424,7 @@ export function ChartGrid({
   return (
     <g
       aria-hidden="true"
-      className="stroke-border"
+      className="sp-chart-grid stroke-border"
       data-slot="chart-grid"
       fill="none"
       shapeRendering="crispEdges"
@@ -486,7 +486,7 @@ export function ChartValueAxis({
   return (
     <g
       aria-hidden="true"
-      className={axisLabelClassName}
+      className={cn("sp-chart-axis", axisLabelClassName)}
       data-slot="chart-axis"
       data-side={side}
     >
@@ -556,7 +556,7 @@ export function ChartCategoryAxis({
   return (
     <g
       aria-hidden="true"
-      className={axisLabelClassName}
+      className={cn("sp-chart-axis", axisLabelClassName)}
       data-slot="chart-axis"
       data-side={side}
     >
@@ -612,7 +612,7 @@ export function ChartCrosshair({
   return (
     <followed.line
       aria-hidden="true"
-      className={cn("stroke-border-strong", fade)}
+      className={cn("sp-chart-crosshair", "stroke-border-strong", fade)}
       data-slot="chart-crosshair"
       data-visible={position !== null ? "" : undefined}
       strokeWidth={1}
@@ -661,6 +661,7 @@ export function ChartActiveDot({
     <followed.circle
       aria-hidden="true"
       className={cn(
+        "sp-chart-active-dot",
         "stroke-(--sp-rw-surface-color,var(--sp-rw-bg-base))",
         fade,
       )}
@@ -698,6 +699,7 @@ export function ChartEmptyState({
       <div
         aria-hidden="true"
         className={cn(
+          "sp-chart-empty",
           "pointer-events-none absolute inset-0 flex items-center justify-center text-center",
           emptyClassName,
         )}
@@ -709,7 +711,7 @@ export function ChartEmptyState({
   return (
     <text
       aria-hidden="true"
-      className={cn("fill-current", emptyClassName)}
+      className={cn("sp-chart-empty", "fill-current", emptyClassName)}
       data-slot="chart-empty"
       dominantBaseline="middle"
       textAnchor="middle"
