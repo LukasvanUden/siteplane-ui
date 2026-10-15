@@ -9,8 +9,11 @@ import { slotClass } from "../../system/utils/slot-class";
 import { CopyRedrawIcon, RevealIcon, useCopyIconPhase } from "../action-icons";
 import { Button } from "../button";
 
+// Inline code wraps a long command or an unbroken value between any two
+// characters with the text around it, so it never widens its line (rulebook
+// K5).
 const codeInlineClassName =
-  "rounded-(--code-inline-radius) bg-muted px-1.5 py-0.5 font-mono [font-size:var(--code-inline-font-size)] text-foreground";
+  "rounded-(--code-inline-radius) bg-muted px-1.5 py-0.5 font-mono [font-size:var(--code-inline-font-size)] text-foreground wrap-anywhere";
 const codeBlockBaseClassName =
   "relative w-full overflow-x-auto rounded-lg bg-muted/50 font-mono text-foreground leading-relaxed";
 // The md size names its line height with its font size: a bare text-xs

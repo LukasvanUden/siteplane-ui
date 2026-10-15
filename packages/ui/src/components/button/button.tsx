@@ -5,6 +5,7 @@ import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
+import { observeTruncation } from "../../system/hooks/use-truncated";
 import {
   siteplaneUIDefaults,
   useResolvedControlSize,
@@ -15,6 +16,7 @@ import {
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
+import { wrapTextRuns } from "../../system/utils/text-runs";
 import { Spinner } from "../spinner";
 import type {
   KitButtonProfile,
@@ -225,6 +227,27 @@ function focusFieldActionOnPress(
   event.currentTarget.focus(fieldActionFocusOptions);
 }
 
+/*
+ * A label that ends with an ellipsis carries its full text as its title, and
+ * a label that fits carries none, so a short label adds no native tooltip. The
+ * kit's one truncation observer, which Truncate shares, reads the label's box
+ * when its size changes, after the first layout too.
+ */
+function syncLabelTitle(cut: boolean, label: Element): void {
+  if (cut) label.setAttribute("title", label.textContent ?? "");
+  else label.removeAttribute("title");
+}
+
+/**
+ * The ref of a Button label: it keeps the label's title in step with its
+ * ellipsis while the label is mounted. It is one stable function, so React
+ * calls it once per label and runs the cleanup it returns on unmount.
+ */
+function labelTitleRef(label: HTMLSpanElement | null): (() => void) | void {
+  if (!label) return;
+  return observeTruncation(label, syncLabelTitle);
+}
+
 // The render element's capture handlers are cleared with explicit `undefined`
 // values when it is cloned; the Button's own handlers call them instead.
 type ButtonRenderCaptureProps = {
@@ -303,6 +326,24 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
   ];
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render ? undefined : "button";
+  // A Button of the default profile keeps its label on one line. Its text is
+  // a label that ends with an ellipsis where the Button meets the edge of its
+  // space, so a long label never makes its container wider (rulebook K5); the
+  // label rule in design-rework.css owns that. Other profiles keep their own
+  // text layout, and a multiline Button wraps.
+  const content =
+    profile === "default" && !multiline
+      ? wrapTextRuns(children, (text, index) => (
+          <span
+            className="sp-button-label"
+            data-slot="button-label"
+            key={`button-label-${index}`}
+            ref={labelTitleRef}
+          >
+            {text}
+          </span>
+        ))
+      : children;
   const defaultProps = {
     children: (
       <>
@@ -360,7 +401,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
           className="sp-button-content [&>span:empty:not([class],[style],[data-slot])]:hidden"
           data-slot="button-content"
         >
-          {children}
+          {content}
         </span>
         {loading && (
           <Spinner

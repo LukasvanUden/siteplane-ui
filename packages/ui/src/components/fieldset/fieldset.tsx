@@ -17,6 +17,10 @@ const FieldsetDescriptionContext =
 /**
  * A group of related fields. Its FieldsetDescription parts describe it: their
  * ids join the fieldset's `aria-describedby`, after one the application gives.
+ * Its rows stay packed at the top: a Fieldset that a grid or flex row
+ * stretches to a taller neighbour's height leaves the extra height below its
+ * last row instead of opening gaps between its legend, description and
+ * fields (`content-start`).
  */
 export function Fieldset({
   "aria-describedby": describedBy,
@@ -38,7 +42,11 @@ export function Fieldset({
     <FieldsetDescriptionContext.Provider value={register}>
       <FieldsetPrimitive.Root
         aria-describedby={ariaDescribedBy}
-        className={cn(slotClass("fieldset", props), "grid gap-3", className)}
+        className={cn(
+          slotClass("fieldset", props),
+          "grid content-start gap-3",
+          className,
+        )}
         data-slot="fieldset"
         {...props}
       />
@@ -54,7 +62,7 @@ export function FieldsetLegend({
     <FieldsetPrimitive.Legend
       className={cn(
         slotClass("fieldset-legend", props),
-        "font-semibold text-foreground",
+        "font-(--sp-rw-font-weight-strong) text-foreground",
         className,
       )}
       data-slot="fieldset-legend"

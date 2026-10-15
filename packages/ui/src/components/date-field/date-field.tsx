@@ -8,10 +8,12 @@ import {
   type DateFieldState,
   DateInput as DateInputPrimitive,
   DateSegment as DateSegmentPrimitive,
+  useLocale,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -306,11 +308,17 @@ function DateFieldContent({
     controlled: controlledInvalid !== undefined,
     ownerInvalid: dateFieldState.isInvalid,
   });
+  // The segments read in the locale's direction, which React Aria's arrow
+  // keys follow, whatever the page's: an en-US date stays 10/14/2026 in a
+  // right-to-left page. The dir attribute also isolates the row from the
+  // text around it.
+  const { direction } = useLocale();
   const input = (
     <DateInputPrimitive
       className="sp-date-field-input"
       data-inset-start={insetStart || undefined}
       data-slot="date-field-input"
+      dir={direction}
       ref={segmentsRef}
     >
       {(segment) => (
@@ -323,7 +331,14 @@ function DateFieldContent({
           }
           data-slot="date-field-segment"
           segment={segment}
-        />
+        >
+          {/* React Aria builds the segments with formatToParts, whose spaces
+              differ between the server's ICU and the browser's (Node writes a
+              narrow no-break space before the "г." of a bg-BG date, Chrome a
+              plain one); the segment shows the text both agree on, or the
+              prerendered field fails hydration (React error #418). */}
+          {({ text }) => normalizeFormattedText(text)}
+        </DateSegmentPrimitive>
       )}
     </DateInputPrimitive>
   );

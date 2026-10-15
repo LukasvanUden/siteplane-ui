@@ -11,11 +11,14 @@ import {
   ChartGrid,
   ChartValueAxis,
   cartesianLayout,
+  chartAxisLabelClassName,
+  chartHighlightedTextClassName,
   useCartesianLayout,
   useGlidingLabels,
   useGlidingTicks,
   useLastValue,
 } from "../chart/chart-cartesian";
+import { chartXKey } from "../chart/chart-data";
 import {
   CHART_DEFAULT_LOCALE,
   chartLabels,
@@ -54,11 +57,12 @@ import type {
   CartesianChartProps,
   ChartXValue,
 } from "../chart/chart-types";
-import { useChartWidth } from "../chart/use-chart-width";
+import { useChartHeight, useChartWidth } from "../chart/use-chart-width";
 import { useTweenedRows, useTweenedValues } from "../motion";
 import {
   barPath,
   barSlots,
+  barValueLabels,
   barsAt,
   categoryAt,
   categoryBand,
@@ -68,11 +72,14 @@ import {
   fittingTicks,
   glidingSlots,
   hundredths,
+  valueLabelRoom,
+  valueLabelTexts,
+  visibleValueLabels,
   type BandFraction,
   type BarSlot,
 } from "./bar-layout";
 
-export type BarChartProps = CartesianChartProps & {
+export type BarChartProps = Omit<CartesianChartProps, "height"> & {
   /**
    * `vertical` draws columns over a category axis along the bottom; `horizontal`
    * puts the categories down the left side and the bars along them, the way a
@@ -87,7 +94,42 @@ export type BarChartProps = CartesianChartProps & {
    * bars stand side by side.
    */
   stacked?: boolean;
+  /**
+   * The height of the chart in px, a legend included, or `fill` to take the
+   * height of its box: the chart is as tall as the room its container gives it,
+   * as a flex item that grows or in a box with a height, and never lower than
+   * `minHeight`. The width always follows the container.
+   */
+  height?: number | "fill";
+  /** With `height="fill"`, the least height of the chart in px, a legend included. */
+  minHeight?: number;
+  /**
+   * Writes the value of each bar at its end: above a column, below one under
+   * 0, beside a horizontal bar. A stack shows the sum of each sign at its outer
+   * end. The labels are muted 12 px text in the format of the tooltip, and a
+   * chart that has no room for all of them shows every k-th category's.
+   */
+  valueLabels?: boolean;
+  /**
+   * The x value of one category to set apart, such as a period that is still
+   * running: its bars take a hatched fill in their colour, and its label on the
+   * axis, and its value labels, the text colour.
+   */
+  highlight?: ChartXValue;
 };
+
+// The stripes of the hatched fill of a highlighted category: a soft stripe of
+// the series' colour every 6 px, 2 px wide, at 45 degrees, over a tint of that
+// colour. The tint is 40 % of the colour, and the stripe, 60 % of the colour
+// drawn over the tint, 76 % in all: half the step between a stripe and its gap
+// that full stripes on a 24 % tint had (Lukas, 15 October 2026), while the bar
+// as a whole stands out from the card as much as before and stays clearly
+// lighter than a plain bar. The tile counts in the units of the plot, so the
+// stripes stay put while a bar grows or shrinks across them.
+const hatchPitch = 6;
+const hatchStripe = 2;
+const hatchTint = 40;
+const hatchStripeStrength = 60;
 
 // A bar as the chart keeps it: its place and number, and the colours it keeps
 // even while it shrinks away after its series has gone.
@@ -106,7 +148,8 @@ type BarRow = {
  * line, a bar that is gone shrinks away, and the value axis moves with the
  * bars. The bars are drawn once the chart has measured its width: until then,
  * on the server too, it renders the box of the plot at its full height, the
- * legend and what screen readers read.
+ * legend and what screen readers read. A chart that fills the height of its
+ * box measures that height too, and keeps `minHeight` until it knows it.
  */
 export function BarChart({
   stacked = false,
@@ -115,7 +158,8 @@ export function BarChart({
   series,
   label,
   "aria-describedby": describedBy,
-  height = 240,
+  height: givenHeight = 240,
+  minHeight = 240,
   formatValue,
   formatX,
   locale = CHART_DEFAULT_LOCALE,
@@ -128,6 +172,14 @@ export function BarChart({
 }: BarChartProps): React.ReactElement {
   const root = React.useRef<HTMLElement>(null);
   const width = useChartWidth(root);
+  // A chart that fills its box takes the height of its box, which takes it from
+  // its container and never from the chart: the box is size-contained, so what
+  // the chart draws cannot make it taller, and the two never chase each other.
+  const fill = givenHeight === "fill";
+  const measuredHeight = useChartHeight(root, fill);
+  const height = fill
+    ? Math.max(minHeight, measuredHeight ?? minHeight)
+    : givenHeight;
   const colors = seriesColors(series, palette);
   const showLegend = legend && series.length > 0;
   // The series whose entry the mouse is over in the legend: the chart owns it
@@ -157,9 +209,16 @@ export function BarChart({
     // The figure holds the plot and the legend. The focus stop inside is the
     // chart for assistive technology, named by the label alone.
     <figure
-      className={cn("sp-bar-chart", "flex w-full flex-col", className)}
+      className={cn(
+        "sp-bar-chart",
+        "flex w-full flex-col",
+        fill && "h-full [contain:size]",
+        className,
+      )}
+      data-height={fill ? "fill" : undefined}
       data-slot="bar-chart"
       ref={root}
+      style={fill ? { minHeight } : undefined}
     >
       {width === null ? (
         <ChartPlotPlaceholder
@@ -240,6 +299,7 @@ function BarPlot({
   formatX,
   grid = true,
   height,
+  highlight,
   label,
   locale,
   model,
@@ -248,12 +308,16 @@ function BarPlot({
   series,
   showLegend,
   stacked,
+  valueLabels = false,
   width,
   words,
   x,
   xAxis = true,
   yAxis = true,
-}: Pick<BarChartProps, "grid" | "orientation" | "xAxis" | "yAxis"> & {
+}: Pick<
+  BarChartProps,
+  "grid" | "highlight" | "orientation" | "valueLabels" | "xAxis" | "yAxis"
+> & {
   colors: readonly string[];
   describedBy: string | undefined;
   description: string;
@@ -289,34 +353,53 @@ function BarPlot({
     width,
     ...(horizontal ? { xAxis: yAxis, yAxis: xAxis } : { xAxis, yAxis }),
   };
+  // The room the value labels need beyond the ends of the bars, at the start of
+  // the value axis (below a column under 0, before a horizontal bar under 0)
+  // and at its end. The value axis keeps it inside the plot, less what the
+  // margin beyond the end of the axis already gives, so that no label runs
+  // into the axis labels or out of the chart.
+  const labelRoom =
+    valueLabels && !model.empty
+      ? valueLabelRoom(
+          valueLabelTexts(model.values, stacked, formatNumber),
+          orientation,
+        )
+      : { end: 0, start: 0 };
   // The value axis the data asks for: a nice domain with ticks on its ends
   // (seven at most). A vertical axis is as long as the plot is tall,
   // whatever its labels are, so it is drawn before the layout; a horizontal one
   // is as long as the plot is wide, which the labels of the categories decide.
-  const axisFor = (length: number) => {
-    const wanted = valueScale(
-      model.extent,
-      horizontal ? [0, length] : [length, 0],
-    );
+  // `margin` is the room beyond the end of the axis: above a vertical one,
+  // after a horizontal one.
+  const axisFor = (length: number, margin: number) => {
+    const start = labelRoom.start;
+    const end = Math.max(0, labelRoom.end - margin);
+    const range: [number, number] = horizontal
+      ? [start, Math.max(start, length - end)]
+      : [Math.max(end, length - start), end];
+    const inner = Math.abs(range[1] - range[0]);
+    const wanted = valueScale(model.extent, range);
     const values = horizontal
-      ? fittingTicks(wanted, length, (ticks) =>
+      ? fittingTicks(wanted, inner, (ticks) =>
           chartTickLabels(ticks, locale, formatValue),
         )
-      : valueTicks(wanted, length);
+      : valueTicks(wanted, inner);
     return {
       labels: chartTickLabels(values, locale, formatValue),
+      range,
       values,
       wanted,
     };
   };
+  const base = cartesianLayout({ ...frame, yLabels: [] });
   const vertical = horizontal
     ? null
-    : axisFor(cartesianLayout({ ...frame, yLabels: [] }).plotHeight);
+    : axisFor(base.plotHeight, base.margin.top);
   const layout = useCartesianLayout({
     ...frame,
     yLabels: vertical ? vertical.labels : rows.map((row) => formatText(row.x)),
   });
-  const axis = vertical ?? axisFor(layout.plotWidth);
+  const axis = vertical ?? axisFor(layout.plotWidth, layout.margin.right);
   const valueLength = horizontal ? layout.plotWidth : layout.plotHeight;
   const categoryLength = horizontal ? layout.plotHeight : layout.plotWidth;
 
@@ -399,7 +482,7 @@ function BarPlot({
     glidingDomain !== domain
       ? [glidingDomain[0]!, glidingDomain[1]!]
       : [low, high],
-    horizontal ? [0, layout.plotWidth] : [layout.plotHeight, 0],
+    axis.range,
   );
   // A number as a position on the value axis, in hundredths of a pixel.
   const at = (value: number) => hundredths(valueAxis(value));
@@ -422,6 +505,16 @@ function BarPlot({
   // categories are all replaced when the categories change; the labels of the
   // value axis stay by their value and glide with the axis, the grid lines with
   // them, and the ones that go fade where they stood.
+  // The category the chart sets apart, such as a period that is still running:
+  // the rows whose x value is the one it is given.
+  const highlightKey = highlight === undefined ? "" : chartXKey(highlight);
+  const highlighted = new Set(
+    highlightKey === ""
+      ? []
+      : rows
+          .filter((row) => chartXKey(row.x) === highlightKey)
+          .map((row) => row.id),
+  );
   const categoryTicks = useGlidingLabels({
     container: root,
     labels:
@@ -431,7 +524,9 @@ function BarPlot({
             format: formatText,
             rows,
             side: horizontal ? "left" : "bottom",
-          })
+          }).map((tick) =>
+            highlighted.has(tick.id) ? { ...tick, highlighted: true } : tick,
+          )
         : [],
     signature: rows.map((row) => row.id).join("|"),
   });
@@ -541,6 +636,32 @@ function BarPlot({
     <ChartTooltipContent heading={heading} rows={tooltipRows} />
   );
 
+  // The colour each bar is drawn in, and the hatched fill of each colour that
+  // a bar of the highlighted category takes: one pattern per colour.
+  const colorOf = (bar: (typeof bars)[number], row: BarRow) =>
+    bar.value < 0 && row.negativeColor ? row.negativeColor : row.color;
+  const hatchId = React.useId();
+  const hatches = new Map<string, string>();
+  bars.forEach((bar, index) => {
+    const color = colorOf(bar, entries[index]!.row);
+    if (highlighted.has(bar.x) && !hatches.has(color))
+      hatches.set(color, `${hatchId}-hatch-${hatches.size}`);
+  });
+
+  // The value labels at the ends of the bars that stay, every k-th category's
+  // when they do not all fit. They wait while the bars glide, as the dots do,
+  // and fade in where the bars have come to rest.
+  const shownLabels =
+    valueLabels && !model.empty
+      ? visibleValueLabels(
+          barValueLabels(
+            bars.filter((_, index) => !entries[index]!.leaving),
+            { format: formatNumber, orientation, stacked },
+          ),
+          orientation,
+        )
+      : [];
+
   return (
     <ChartTooltip
       align={horizontal ? "center" : "start"}
@@ -569,6 +690,33 @@ function BarPlot({
       >
         {/* No SVG titles: the browser would show its own tooltip next to the
               chart's. The label names the chart; the tooltip carries the values. */}
+        {hatches.size > 0 && (
+          <defs>
+            {[...hatches].map(([color, id]) => (
+              <pattern
+                height={hatchPitch}
+                id={id}
+                key={id}
+                patternTransform="rotate(45)"
+                patternUnits="userSpaceOnUse"
+                width={hatchPitch}
+              >
+                <rect
+                  fill={`color-mix(in oklab, ${color} ${hatchTint}%, transparent)`}
+                  height={hatchPitch}
+                  width={hatchPitch}
+                />
+                {/* Drawn over the whole tint rather than beside it, so the
+                    edges of a stripe leave no seam where two shapes meet. */}
+                <rect
+                  fill={`color-mix(in oklab, ${color} ${hatchStripeStrength}%, transparent)`}
+                  height={hatchPitch}
+                  width={hatchStripe}
+                />
+              </pattern>
+            ))}
+          </defs>
+        )}
         <g transform={`translate(${layout.margin.left} ${layout.margin.top})`}>
           {grid && !model.empty && (
             <ChartGrid
@@ -608,15 +756,16 @@ function BarPlot({
           {!model.empty &&
             bars.map((bar, index) => {
               const row = entries[index]!.row;
+              const color = colorOf(bar, row);
+              const hatch = highlighted.has(bar.x)
+                ? hatches.get(color)
+                : undefined;
               return (
                 <path
                   d={barPath(bar, orientation)}
+                  data-highlighted={hatch ? "" : undefined}
                   data-slot="chart-bar"
-                  fill={
-                    bar.value < 0 && row.negativeColor
-                      ? row.negativeColor
-                      : row.color
-                  }
+                  fill={hatch ? `url(#${hatch})` : color}
                   className={cn("sp-chart-bar", dimClassName)}
                   key={bar.key}
                   opacity={chartDimOpacity(
@@ -627,6 +776,48 @@ function BarPlot({
                 />
               );
             })}
+          {shownLabels.length > 0 && (
+            <g
+              aria-hidden="true"
+              className={cn(
+                "sp-chart-value-labels",
+                chartAxisLabelClassName,
+                gliding
+                  ? "opacity-0"
+                  : "transition-opacity duration-(--motion-duration-micro) ease-(--motion-ease-state)",
+              )}
+              data-slot="chart-value-labels"
+            >
+              {shownLabels.map((item) => (
+                <text
+                  className={
+                    highlighted.has(item.category)
+                      ? chartHighlightedTextClassName
+                      : undefined
+                  }
+                  dy={
+                    item.side === "below"
+                      ? "0.71em"
+                      : item.side === "above"
+                        ? undefined
+                        : "0.32em"
+                  }
+                  key={item.key}
+                  textAnchor={
+                    item.side === "after"
+                      ? "start"
+                      : item.side === "before"
+                        ? "end"
+                        : "middle"
+                  }
+                  x={item.x}
+                  y={item.y}
+                >
+                  {item.text}
+                </text>
+              ))}
+            </g>
+          )}
           {!model.empty &&
             !horizontal &&
             bars.map((bar, index) => {

@@ -173,6 +173,45 @@ export function TimelineItem({
   );
 }
 
+export interface TimelineNowProps extends Omit<
+  TimelineItemProps,
+  "children" | "marker" | "markerLabel" | "markerShape" | "tone" | "variant"
+> {
+  /**
+   * The text of the marker, shown beside its dot and read by assistive
+   * technology. Defaults to "Now"; pass the word in the page's language.
+   */
+  label?: string;
+}
+
+/**
+ * Marks the present between two events: the accent dot of an event, its label
+ * and a line in the accent across the rest of the row. It is a row of the
+ * timeline, `aria-current="time"`, so assistive technology reads it in its
+ * place among the events. Give it a stable `key`, as the events have: when the
+ * present moves past an event, the marker glides to its new place.
+ */
+export function TimelineNow({
+  label = "Now",
+  ...props
+}: TimelineNowProps): React.ReactElement {
+  return (
+    <TimelineItem
+      aria-current="time"
+      {...props}
+      data-slot="timeline-now"
+      tone="accent"
+    >
+      <span
+        className={slotClass("timeline-now-label")}
+        data-slot="timeline-now-label"
+      >
+        {label}
+      </span>
+    </TimelineItem>
+  );
+}
+
 export function TimelineTitle({
   className,
   ...props

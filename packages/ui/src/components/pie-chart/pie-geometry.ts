@@ -32,6 +32,8 @@
  * SOFTWARE.
  */
 
+import { estimateLabelWidth } from "../chart/chart-scales";
+
 /** The side of the box the chart is drawn in: the view box of its SVG. */
 export const PIE_BOX = 200;
 const CENTER = PIE_BOX / 2;
@@ -160,6 +162,82 @@ export function shareAnchor(
   return {
     x: 0.5 + reach * Math.cos(angle) + out.x / PIE_BOX,
     y: 0.5 + reach * Math.sin(angle) + out.y / PIE_BOX,
+  };
+}
+
+/**
+ * The text steps of a figure in the hole of a donut, in px, from the largest:
+ * the 30 px of a Metric Card's figure down to the 12 px of a caption.
+ */
+export const PIE_CENTER_STEPS = [30, 24, 20, 16, 14, 12] as const;
+export type PieCenterStep = (typeof PIE_CENTER_STEPS)[number];
+// The steps in which a figure keeps all its digits; below them it is written
+// compact first, so a large total reads as 1.2M in a large step rather than
+// in full in a small one.
+const fullSteps = 3;
+// The caption under a figure: 12 px on a line of its height, 4 px below it.
+const captionSize = 12;
+const captionGap = 4;
+
+/** Where a figure and its caption sit in the hole: the step of the figure, whether it is compact, and how wide the caption may be. */
+export type PieCenterFit = {
+  compact: boolean;
+  size: PieCenterStep;
+  /** The widest the caption may be, in percent of the hole's width: the chord of the hole at the caption's lower edge. */
+  captionWidth: number;
+};
+
+/**
+ * The step a figure in the hole of a donut `chartSize` px across takes, and
+ * whether it is written compact: the first that fits, in the order of
+ * `PIE_CENTER_STEPS`, the full figure in the three largest steps and then the
+ * compact one in every step. A line fits when its corners stay inside the hole,
+ * less a margin of 12 % of its radius from the ring (at least 4 px), with the
+ * figure and the caption centred in the hole as one block. The widths are the
+ * kit's estimate (`estimateLabelWidth`), so that the server and the client
+ * pick the same step; it errs on the wide side. A figure that fits in no step
+ * takes the smallest, compact.
+ */
+export function pieCenterFit({
+  caption,
+  chartSize,
+  compact,
+  full,
+}: {
+  caption?: string | undefined;
+  chartSize: number;
+  /** The figure in compact notation. */
+  compact: string;
+  /** The figure in full. */
+  full: string;
+}): PieCenterFit {
+  const hole = (Math.max(0, chartSize) * DONUT_INNER_RADIUS) / PIE_BOX;
+  const room = Math.max(0, hole - Math.max(4, hole * 0.12));
+  // The width of a line whose corners sit `edge` px above or below the centre.
+  const chord = (edge: number) =>
+    edge >= room ? 0 : 2 * Math.sqrt(room * room - edge * edge);
+  const blockHeight = (size: number) =>
+    size + (caption ? captionGap + captionSize : 0);
+  const width = (text: string, size: number) =>
+    (estimateLabelWidth(text) * size) / 12;
+  const candidates = [
+    ...PIE_CENTER_STEPS.slice(0, fullSteps).map((size) => ({
+      compact: false,
+      size,
+    })),
+    ...PIE_CENTER_STEPS.map((size) => ({ compact: true, size })),
+  ];
+  const chosen =
+    candidates.find(
+      ({ compact: short, size }) =>
+        width(short ? compact : full, size) <= chord(blockHeight(size) / 2),
+    ) ?? candidates[candidates.length - 1]!;
+  const captionWidth =
+    hole > 0 ? (chord(blockHeight(chosen.size) / 2) / (2 * hole)) * 100 : 0;
+  return {
+    captionWidth: Math.round(captionWidth * 100) / 100,
+    compact: chosen.compact,
+    size: chosen.size,
   };
 }
 

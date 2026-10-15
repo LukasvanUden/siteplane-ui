@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { useRender } from "@base-ui/react/use-render";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -11,9 +12,11 @@ import {
 } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
+import { Button } from "../button";
 import { KitButton } from "../button/button-internal";
 import { useLeavingPane } from "../motion/motion-follow";
 import { panelSwitchClassName } from "../motion/motion-presence";
+import { useTabsOverflow } from "./tabs-overflow";
 
 export type TabsVariant = "default" | "pill" | "underline";
 const TabsSizeContext = React.createContext<SiteplaneControlSize | null>(null);
@@ -36,10 +39,11 @@ export function Tabs({
       <TabsPrimitive.Root
         // The list or rail never shrinks: when the panels sit in the root, it
         // follows a taller panel's height from below the content, and a list
-        // that could shrink collapsed for a moment (13 October 2026).
+        // that could shrink collapsed for a moment (13 October 2026). The list
+        // sits in its frame, which adds no box until its tabs overflow.
         className={cn(
           slotClass("tabs", props),
-          "flex min-w-0 max-w-full flex-col gap-2 data-[orientation=vertical]:flex-row [&>[data-slot=tabs-list]]:shrink-0 [&>[data-slot=tabs-rail]]:shrink-0",
+          "flex min-w-0 max-w-full flex-col gap-2 data-[orientation=vertical]:flex-row [&>.sp-tabs-list-frame]:shrink-0 [&>.sp-tabs-list-frame>.sp-tabs-list]:shrink-0 [&>.sp-tabs-rail]:shrink-0",
           className,
         )}
         data-size={resolvedSize}
@@ -187,6 +191,58 @@ export interface TabsListProps extends Omit<
   divider?: boolean;
   size?: SiteplaneControlSize;
 }
+
+/**
+ * The button at one edge of a list whose tabs overflow, shown while more tabs
+ * wait in its direction. It is a pointer control: keyboard users move through
+ * the tabs with the arrow keys, which scroll the list, so the button stays out
+ * of the tab order and of the accessibility tree, and a press keeps the focus
+ * where it was. Its wrapper fades it in and out; the Button keeps its own
+ * states (the muted inline action, rulebook T2). A touch screen hides it, as
+ * the list scrolls by swiping there (design-rework.css).
+ */
+function TabsScrollButton({
+  direction,
+  onScroll,
+  shown,
+  size,
+  visible,
+}: {
+  direction: "end" | "start";
+  onScroll: (direction: "end" | "start") => void;
+  /** The list overflows, so the button holds its place. */
+  shown: boolean;
+  size: SiteplaneControlSize;
+  /** More tabs wait in its direction. */
+  visible: boolean;
+}): React.ReactElement {
+  const Icon = direction === "start" ? ChevronLeftIcon : ChevronRightIcon;
+  return (
+    <span
+      aria-hidden="true"
+      className="sp-tabs-scroll-button"
+      data-direction={direction}
+      data-slot="tabs-scroll-button"
+      data-visible={visible || undefined}
+      hidden={!shown}
+    >
+      <Button
+        onClick={() => onScroll(direction)}
+        onMouseDown={(event) => event.preventDefault()}
+        profile="inline"
+        profileTone="muted"
+        shape="square"
+        size={`icon-${size}`}
+        tabIndex={-1}
+        type="button"
+        variant="text"
+      >
+        <Icon aria-hidden="true" className="rtl:-scale-x-100" />
+      </Button>
+    </span>
+  );
+}
+
 export function TabsList({
   divider = false,
   embedded = false,
@@ -194,41 +250,77 @@ export function TabsList({
   size,
   className,
   children,
+  ref,
   ...props
 }: TabsListProps): React.ReactElement {
   const groupSize = React.useContext(TabsSizeContext);
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+  const { overflow, scrollToward } = useTabsOverflow(listRef);
+  const setListRef = React.useCallback(
+    (element: HTMLDivElement | null) => {
+      listRef.current = element;
+      if (typeof ref === "function") ref(element);
+      else if (ref) ref.current = element;
+    },
+    [ref],
+  );
   return (
     <TabsSizeContext.Provider value={resolvedSize}>
       <TabsVariantContext.Provider value={variant}>
-        <TabsPrimitive.List
-          className={cn(
-            slotClass("tabs-list", props),
-            "scrollbar-none relative isolate flex w-fit max-w-full items-center overflow-x-auto overflow-y-hidden data-[orientation=vertical]:flex-col data-[orientation=vertical]:overflow-visible",
-            className,
-          )}
-          data-size={resolvedSize}
-          data-slot="tabs-list"
-          data-divider={divider || undefined}
-          data-embedded={embedded || undefined}
-          data-variant={variant}
-          {...props}
+        {/* The frame adds no box while the tabs fit. When they overflow, it
+            lays a scroll button on either side of the list, which shows while
+            more tabs wait in its direction; a touch screen swipes the list
+            instead and keeps no room for them (design-rework.css). */}
+        <div
+          className="sp-tabs-list-frame"
+          data-overflow={overflow ? "" : undefined}
+          data-slot="tabs-list-frame"
         >
-          {/* Base UI keeps the indicator hidden until it has measured the
-              active tab. Until then the active tab paints the same selection
-              (design-rework.css), so the selection shows from the first paint
-              without an inline script, and the indicator takes over in place
-              once it shows. The indicator leads the list, so that rule reaches
-              the tabs as its siblings. */}
-          {!embedded && (
-            <TabsPrimitive.Indicator
-              className="sp-tab-indicator pointer-events-none absolute z-0"
-              data-slot="tab-indicator"
-              data-variant={variant}
-            />
-          )}
-          {children}
-        </TabsPrimitive.List>
+          <TabsScrollButton
+            direction="start"
+            onScroll={scrollToward}
+            shown={overflow !== null}
+            size={resolvedSize}
+            visible={overflow?.start ?? false}
+          />
+          <TabsPrimitive.List
+            className={cn(
+              slotClass("tabs-list", props),
+              "scrollbar-none relative isolate flex w-fit max-w-full items-center overflow-x-auto overflow-y-hidden data-[orientation=vertical]:flex-col data-[orientation=vertical]:overflow-visible",
+              className,
+            )}
+            data-size={resolvedSize}
+            data-slot="tabs-list"
+            data-divider={divider || undefined}
+            data-embedded={embedded || undefined}
+            data-variant={variant}
+            ref={setListRef}
+            {...props}
+          >
+            {/* Base UI keeps the indicator hidden until it has measured the
+                active tab. Until then the active tab paints the same selection
+                (design-rework.css), so the selection shows from the first paint
+                without an inline script, and the indicator takes over in place
+                once it shows. The indicator leads the list, so that rule reaches
+                the tabs as its siblings. */}
+            {!embedded && (
+              <TabsPrimitive.Indicator
+                className="sp-tab-indicator pointer-events-none absolute z-0"
+                data-slot="tab-indicator"
+                data-variant={variant}
+              />
+            )}
+            {children}
+          </TabsPrimitive.List>
+          <TabsScrollButton
+            direction="end"
+            onScroll={scrollToward}
+            shown={overflow !== null}
+            size={resolvedSize}
+            visible={overflow?.end ?? false}
+          />
+        </div>
       </TabsVariantContext.Provider>
     </TabsSizeContext.Provider>
   );

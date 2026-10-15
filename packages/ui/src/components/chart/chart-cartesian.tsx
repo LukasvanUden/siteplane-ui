@@ -244,6 +244,8 @@ export type GlidingLabel = {
   text: string;
   /** Set by a chart that shows a pill: the pill sits on the label. */
   covered?: boolean;
+  /** The label of a category that the chart highlights, such as a period that is still running. */
+  highlighted?: boolean;
 };
 
 /**
@@ -263,7 +265,12 @@ export function useGlidingLabels({
   /** The element whose motion tokens set the timing: the chart. */
   container: NonNullable<TweenOptions["container"]>;
   /** The labels the axis has for the data now, none when it draws none. */
-  labels: readonly { id: string; position: number; text: string }[];
+  labels: readonly {
+    id: string;
+    position: number;
+    text: string;
+    highlighted?: boolean;
+  }[];
   signature: string;
 }): GlidingLabel[] {
   const generation = useGeneration(signature);
@@ -276,6 +283,7 @@ export function useGlidingLabels({
     position: item.row.position,
     presence: presenceOf(item),
     text: item.row.text,
+    ...(item.row.highlighted ? { highlighted: true } : {}),
   }));
 }
 
@@ -349,7 +357,11 @@ function useFadeThrough(
   presence: ChartPresence | undefined,
   covered = false,
   fading = false,
-) {
+): {
+  className?: string;
+  "data-ending-style"?: string | undefined;
+  "data-starting-style"?: string | undefined;
+} {
   // A part that comes in is drawn invisible first and released two frames later,
   // so that the browser has a frame to start the fade from. A part that was
   // already there never waits.
@@ -384,6 +396,7 @@ function useFadeThrough(
 }
 
 function FadingText({
+  className,
   covered,
   fading,
   presence,
@@ -396,7 +409,13 @@ function FadingText({
   presence?: ChartPresence | undefined;
 }) {
   const fade = useFadeThrough(presence, covered, fading);
-  return <text {...props} {...fade} />;
+  return (
+    <text
+      {...props}
+      {...fade}
+      className={cn(className, fade.className) || undefined}
+    />
+  );
 }
 
 function FadingLine({
@@ -444,8 +463,17 @@ export function ChartGrid({
   );
 }
 
-// The labels of both axes: 12 px, muted, in tabular figures.
-const axisLabelClassName = "fill-muted-foreground text-xs tabular-nums";
+/** The labels of both axes, and the value labels of a Bar Chart: 12 px, muted, in tabular figures. */
+export const chartAxisLabelClassName =
+  "fill-muted-foreground text-xs tabular-nums";
+const axisLabelClassName = chartAxisLabelClassName;
+
+/**
+ * The text of a category that a chart highlights, on its axis and over its
+ * bars: the text colour and the medium weight, where the other labels are
+ * muted.
+ */
+export const chartHighlightedTextClassName = "fill-foreground font-medium";
 
 /** The room a label of a left axis takes in a column of them: as tall as a line of 12 px text, in px. */
 export const CHART_LABEL_HEIGHT = 14;
@@ -531,6 +559,8 @@ export function ChartCategoryAxis({
     presence?: ChartPresence | undefined;
     /** Whether a pill sits on the label: it fades out until the pill has left (rulebook M8). */
     covered?: boolean | undefined;
+    /** Whether the chart highlights the category: its label takes the text colour and the medium weight. */
+    highlighted?: boolean | undefined;
   }[];
   layout: CartesianLayout;
   side: "bottom" | "left";
@@ -563,6 +593,9 @@ export function ChartCategoryAxis({
       {labels.map((label, index) =>
         index % step === 0 ? (
           <FadingText
+            className={
+              label.highlighted ? chartHighlightedTextClassName : undefined
+            }
             covered={label.covered}
             dy={side === "bottom" ? "0.71em" : "0.32em"}
             fading={fading}

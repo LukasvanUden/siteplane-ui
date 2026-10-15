@@ -31,6 +31,23 @@
     );
   }
 
+  /* The segment row holds the date, the date button, the comma and the time,
+   * in the locale's direction (its dir). The insets belong to the field,
+   * which takes the page's direction: it pads its start, and the time button
+   * ends it at the page's inline end. */
+  .sp-date-time-picker-control {
+    padding-inline-start: var(--date-time-picker-segment-start);
+  }
+
+  .sp-date-time-picker-segments {
+    display: flex;
+    flex: none;
+    align-items: center;
+    align-self: stretch;
+  }
+
+  /* The row orders its parts: the date, its button, the comma and the time.
+   * The time button follows the row in the field. */
   .sp-date-time-picker-segment[data-date-time-part="date"] {
     order: 1;
   }
@@ -53,14 +70,6 @@
 
   .sp-date-time-picker-segment[data-date-time-part="hidden"] {
     display: none;
-  }
-
-  .sp-date-time-picker-control
-    .sp-date-time-picker-segment[data-date-time-part="date"]:first-child,
-  .sp-date-time-picker-control
-    .sp-date-time-picker-segment[data-date-time-part="hidden"]:first-child
-    + .sp-date-time-picker-segment[data-date-time-part="date"] {
-    margin-inline-start: var(--date-time-picker-segment-start);
   }
 
   /* The surface (border, radius, shadow) is the floating-md recipe that

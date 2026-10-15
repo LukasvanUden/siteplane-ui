@@ -16,7 +16,7 @@ import { Tooltip, TooltipPopup, TooltipTrigger } from "../tooltip";
 import { useLastValue } from "./chart-cartesian";
 import { CHART_DEFAULT_LABELS } from "./chart-format";
 import type { ChartInteraction } from "./chart-interaction";
-import { ChartSwatch } from "./chart-legend";
+import { ChartLabelSwatch } from "./chart-legend";
 import {
   dipsAtFlip,
   placeChartTooltip,
@@ -439,8 +439,14 @@ function ChartTooltipCard({
       // ResizeObserver loop. A change of the card's size reaches it through
       // the measure above.
       disableAnchorTracking
-      // Dipping takes the card out and back over the panel's own opacity
-      // transition, the one an entrance and an exit run on.
+      // The card is never wider than 18rem, the Tooltip's own width, which it
+      // takes from the popup: a long label wraps inside it and an unbroken
+      // word breaks (rulebook K5). So the card keeps one width while its item
+      // is active and fits beside the item on one side or the other, where a
+      // card of one long line would cross the cards around the chart and
+      // change sides as it was measured. Dipping takes the card out and back
+      // over the panel's own opacity transition, the one an entrance and an
+      // exit run on.
       className="data-dipping:opacity-0"
       id={id}
       ref={setPopup}
@@ -476,7 +482,9 @@ export function chartTooltipText(
 
 /**
  * The card of a chart with several series: a heading, then one row per series
- * with its dot, its name and its value. The values roll to the next item's.
+ * with its dot, its name and its value. The values roll to the next item's. A
+ * name too long for the card wraps, and its dot and its value stay on its
+ * first line (rulebook I5).
  */
 export function ChartTooltipContent({
   heading,
@@ -490,13 +498,15 @@ export function ChartTooltipContent({
       className="sp-chart-tooltip-content grid gap-1"
       data-slot="chart-tooltip-content"
     >
-      {heading ? <div className="font-medium">{heading}</div> : null}
+      {heading ? (
+        <div className="font-(--sp-rw-font-weight-label)">{heading}</div>
+      ) : null}
       {rows.map((row) => (
-        <div className="flex items-center gap-2" key={row.key}>
-          <ChartSwatch color={row.color} />
-          <span className="text-muted-foreground">{row.label}</span>
+        <div className="flex items-start gap-2" key={row.key}>
+          <ChartLabelSwatch color={row.color} />
+          <span className="min-w-0 text-muted-foreground">{row.label}</span>
           <MotionNumber
-            className="ms-auto ps-4 font-medium"
+            className="ms-auto ps-4 font-(--sp-rw-font-weight-label)"
             value={row.value}
           />
         </div>

@@ -1,3 +1,4 @@
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import type { CartesianChartLabels, ChartXValue } from "./chart-types";
 
 /** Charts format numbers and dates in this locale unless they are given another, so the server and the client agree. */
@@ -49,6 +50,32 @@ export function chartNumberFormatter(
     `number|${locale}`,
     () => new Intl.NumberFormat(locale),
   );
+  return (value) => normalizeFormattedText(format.format(value));
+}
+
+/**
+ * A figure in the format of `options` (Intl.NumberFormat options, such as a
+ * currency), or the same figure in compact notation (1.2M), which keeps one
+ * fraction digit at most and pins its fraction digits, so that the server and
+ * the client write it alike.
+ */
+export function chartFigureFormatter(
+  locale: string = CHART_DEFAULT_LOCALE,
+  options: Intl.NumberFormatOptions = {},
+  compact = false,
+): (value: number) => string {
+  const own = compact
+    ? {
+        ...options,
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 0,
+        notation: "compact" as const,
+      }
+    : options;
+  const format = cached(
+    `figure|${locale}|${JSON.stringify(own)}`,
+    () => new Intl.NumberFormat(locale, own),
+  );
   return (value) => format.format(value);
 }
 
@@ -64,7 +91,7 @@ export function chartTickFormatter(
         notation: "compact",
       }),
   );
-  return (value) => format.format(value);
+  return (value) => normalizeFormattedText(format.format(value));
 }
 
 // The compact form keeps one fraction digit of the thousands, millions, ... a
@@ -119,6 +146,6 @@ export function chartXFormatter(
     value instanceof Date
       ? Number.isNaN(value.getTime())
         ? ""
-        : format.format(value)
+        : normalizeFormattedText(format.format(value))
       : value;
 }

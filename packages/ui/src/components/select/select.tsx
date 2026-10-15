@@ -224,14 +224,19 @@ export function SelectPopup({
             data-slot="select-popup"
             {...props}
           >
+            {/* The scroll arrows are strips inside the panel, with the fade
+                into the list on their ::before (design-rework.css). */}
             <SelectPrimitive.ScrollUpArrow
-              className="sp-select-scroll-up-arrow top-0 z-50 hidden h-6 w-full cursor-pointer items-center justify-center data-[visible]:flex before:pointer-events-none before:absolute before:inset-x-px before:top-px before:h-[200%] before:rounded-t-[inherit] before:bg-linear-to-b before:from-50% before:from-popover"
+              className="sp-select-scroll-up-arrow top-0 z-50 hidden h-6 w-full cursor-pointer items-center justify-center data-[visible]:flex"
               data-slot="select-scroll-up-arrow"
             >
               <ChevronUpIcon className="relative size-4.5 sm:size-4" />
             </SelectPrimitive.ScrollUpArrow>
+            {/* The panel: its surface rule names this element alone, so the
+                arrows beside it keep their own look (design-rework.css). */}
             <div
               className={cn(
+                "sp-select-surface",
                 surfaceClassNames.overlay,
                 "h-full min-w-(--anchor-width) w-max max-w-(--available-width) before:rounded-[inherit]",
               )}
@@ -244,7 +249,7 @@ export function SelectPopup({
               </SelectPrimitive.List>
             </div>
             <SelectPrimitive.ScrollDownArrow
-              className="sp-select-scroll-down-arrow bottom-0 z-50 hidden h-6 w-full cursor-pointer items-center justify-center data-[visible]:flex before:pointer-events-none before:absolute before:inset-x-px before:bottom-px before:h-[200%] before:rounded-b-[inherit] before:bg-linear-to-t before:from-50% before:from-popover"
+              className="sp-select-scroll-down-arrow bottom-0 z-50 hidden h-6 w-full cursor-pointer items-center justify-center data-[visible]:flex"
               data-slot="select-scroll-down-arrow"
             >
               <ChevronDownIcon className="relative size-4.5 sm:size-4" />
@@ -333,7 +338,7 @@ export function SelectLabel({
     <SelectPrimitive.Label
       className={cn(
         slotClass("select-label", props),
-        "inline-flex items-center gap-2 font-medium text-base/4.5 sm:text-sm/4",
+        "inline-flex items-center gap-2 font-(--sp-rw-font-weight-label) text-base/4.5 sm:text-sm/4",
         className,
       )}
       data-slot="select-label"
@@ -350,7 +355,7 @@ export function SelectGroupLabel({
     <SelectPrimitive.GroupLabel
       className={cn(
         slotClass("select-group-label", props),
-        "px-2 py-1.5 font-medium text-muted-foreground text-xs",
+        "px-2 py-1.5 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs",
         className,
       )}
       data-slot="select-group-label"

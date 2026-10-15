@@ -522,6 +522,216 @@ export function categoryLabels({
   return labels.filter((_, index) => index % step === 0);
 }
 
+/** The space between the end of a bar and its value label, in px. */
+export const BAR_VALUE_LABEL_OFFSET = 6;
+// The least space between two value labels, in px.
+const valueLabelGap = 4;
+
+/** A value label as it is drawn: what it says and the point its text hangs from. */
+export type BarValueLabel = {
+  /** The key of its bar, or of its stack and the sign it sums. */
+  key: string;
+  /** The key of its category. */
+  category: string;
+  text: string;
+  x: number;
+  y: number;
+  /**
+   * Where the text sits from its point: above or below the end of a column,
+   * after or before the end of a horizontal bar, by the offset.
+   */
+  side: "above" | "below" | "after" | "before";
+};
+
+/**
+ * The texts of the value labels the data asks for, by sign: the value of every
+ * bar, or in a stack the sum of each sign in each category that has one. A
+ * value of 0 counts as positive, so it is written above the 0 line. The chart
+ * keeps room for them before it lays out its bars.
+ */
+export function valueLabelTexts(
+  values: readonly (readonly (number | null)[])[],
+  stacked: boolean,
+  format: (value: number) => string,
+): { positive: string[]; negative: string[] } {
+  const positive: string[] = [];
+  const negative: string[] = [];
+  const rowCount = Math.max(0, ...values.map((own) => own.length));
+  for (let row = 0; row < rowCount; row++) {
+    const own = values
+      .map((series) => series[row])
+      .filter((value): value is number => typeof value === "number");
+    if (!stacked) {
+      for (const value of own)
+        (value >= 0 ? positive : negative).push(format(value));
+      continue;
+    }
+    const up = own.filter((value) => value >= 0);
+    const down = own.filter((value) => value < 0);
+    if (up.length > 0) positive.push(format(up.reduce((a, b) => a + b, 0)));
+    if (down.length > 0) negative.push(format(down.reduce((a, b) => a + b, 0)));
+  }
+  return { negative, positive };
+}
+
+/**
+ * The room value labels need beyond the ends of the bars, in px, at the start
+ * of the value axis (where negative bars end: the bottom of a column chart, the
+ * left of a horizontal one) and at its end (where positive bars end): the
+ * offset and a line of text for columns, the offset and the widest label for
+ * horizontal bars. None on a side that no label is written to.
+ */
+export function valueLabelRoom(
+  texts: { positive: readonly string[]; negative: readonly string[] },
+  orientation: BarOrientation,
+): { start: number; end: number } {
+  const need = (side: readonly string[]) =>
+    side.length === 0
+      ? 0
+      : BAR_VALUE_LABEL_OFFSET +
+        (orientation === "vertical"
+          ? CHART_LABEL_HEIGHT
+          : Math.ceil(Math.max(...side.map(estimateLabelWidth))));
+  return { end: need(texts.positive), start: need(texts.negative) };
+}
+
+/**
+ * The value labels of the bars as they are drawn: the value of each bar at its
+ * end, centred on a column and beside a horizontal bar, or in a stack the sum
+ * of each sign at the end of its outer segment. A positive value is written
+ * beyond the far end of its bar, a negative one below or before it.
+ */
+export function barValueLabels(
+  bars: readonly BarRect[],
+  {
+    format,
+    orientation,
+    stacked,
+  }: {
+    format: (value: number) => string;
+    orientation: BarOrientation;
+    stacked: boolean;
+  },
+): BarValueLabel[] {
+  const vertical = orientation === "vertical";
+  const label = (
+    key: string,
+    category: string,
+    value: number,
+    end: number,
+    across: number,
+  ): BarValueLabel => {
+    const positive = value >= 0;
+    const beyond = hundredths(
+      end + (positive === vertical ? -1 : 1) * BAR_VALUE_LABEL_OFFSET,
+    );
+    return {
+      category,
+      key,
+      side: vertical
+        ? positive
+          ? "above"
+          : "below"
+        : positive
+          ? "after"
+          : "before",
+      text: format(value),
+      x: vertical ? across : beyond,
+      y: vertical ? beyond : across,
+    };
+  };
+  const middle = (bar: BarRect) =>
+    hundredths(vertical ? bar.x0 + bar.width / 2 : bar.y0 + bar.height / 2);
+  // The far end of a bar from the 0 line, along the value axis.
+  const far = (bar: BarRect) =>
+    vertical
+      ? bar.value >= 0
+        ? bar.y0
+        : bar.y0 + bar.height
+      : bar.value >= 0
+        ? bar.x0 + bar.width
+        : bar.x0;
+  if (!stacked)
+    return bars.map((bar) =>
+      label(bar.key, bar.x, bar.value, far(bar), middle(bar)),
+    );
+  const stacks = new Map<string, { down: BarRect[]; up: BarRect[] }>();
+  for (const bar of bars) {
+    const stack = stacks.get(bar.x) ?? { down: [], up: [] };
+    (bar.value >= 0 ? stack.up : stack.down).push(bar);
+    stacks.set(bar.x, stack);
+  }
+  return [...stacks].flatMap(([category, stack]) =>
+    (["up", "down"] as const).flatMap((sign) => {
+      const own = stack[sign];
+      if (own.length === 0) return [];
+      const ends = own.map(far);
+      // The outer end of the stack: furthest from the 0 line on its side.
+      const end =
+        (sign === "up") === vertical ? Math.min(...ends) : Math.max(...ends);
+      const sum = own.reduce((total, bar) => total + bar.value, 0);
+      return [
+        label(`${category}|${sign}`, category, sum, end, middle(own[0]!)),
+      ];
+    }),
+  );
+}
+
+/**
+ * The value labels that are drawn: every k-th category keeps its labels, one k
+ * for the whole chart, the smallest for which no two labels touch, as the axis
+ * keeps every k-th label. None when two labels of one category touch, as on
+ * side by side bars too thin for their labels. `labels` are in the order of
+ * the categories along their axis.
+ */
+export function visibleValueLabels(
+  labels: readonly BarValueLabel[],
+  orientation: BarOrientation,
+): BarValueLabel[] {
+  const vertical = orientation === "vertical";
+  const along = (label: BarValueLabel) => (vertical ? label.x : label.y);
+  const size = (label: BarValueLabel) =>
+    vertical ? estimateLabelWidth(label.text) : CHART_LABEL_HEIGHT;
+  const categories = new Map<string, BarValueLabel[]>();
+  for (const label of labels) {
+    const own = categories.get(label.category) ?? [];
+    own.push(label);
+    categories.set(label.category, own);
+  }
+  for (const own of categories.values())
+    for (const side of ["above", "below", "after", "before"] as const) {
+      const row = own
+        .filter((label) => label.side === side)
+        .sort((a, b) => along(a) - along(b));
+      for (let index = 1; index < row.length; index++) {
+        const before = row[index - 1]!;
+        const label = row[index]!;
+        if (
+          along(label) - along(before) <
+          (size(label) + size(before)) / 2 + valueLabelGap
+        )
+          return [];
+      }
+    }
+  // Each category as one stretch along the category axis.
+  const stretches = [...categories.values()].map((own) => {
+    const start = Math.min(
+      ...own.map((label) => along(label) - size(label) / 2),
+    );
+    const end = Math.max(...own.map((label) => along(label) + size(label) / 2));
+    return { centre: (start + end) / 2, size: end - start };
+  });
+  const step = labelStep(
+    stretches.map((stretch) => stretch.centre),
+    stretches.map((stretch) => stretch.size),
+    valueLabelGap,
+  );
+  const kept = new Set(
+    [...categories.keys()].filter((_, index) => index % step === 0),
+  );
+  return labels.filter((label) => kept.has(label.category));
+}
+
 /**
  * The ticks of a value axis that runs along the bottom, where a label takes the
  * room of its text: the ticks the axis has, or every k-th of them, the smallest

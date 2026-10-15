@@ -1,9 +1,11 @@
 "use client";
 import * as React from "react";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { ChartEmptyState } from "../chart/chart-cartesian";
 import {
   CHART_DEFAULT_LOCALE,
+  chartFigureFormatter,
   chartLabels,
   chartNumberFormatter,
 } from "../chart/chart-format";
@@ -21,6 +23,7 @@ import {
 import {
   DONUT_INNER_RADIUS,
   PIE_BOX,
+  pieCenterFit,
   popDistance,
   popOffset,
   ringOf,
@@ -29,6 +32,7 @@ import {
   shareAtPoint,
   wedgePath,
   type PieArc,
+  type PieCenterStep,
 } from "./pie-geometry";
 // A gap in the ring smaller than this, in percent of the circle, is the
 // rounding of shares that fill it: no track is drawn for it.
@@ -55,10 +59,11 @@ export type PieChartProps = {
   "aria-describedby"?: string;
   /**
    * `brand` (the default) shades the brand colour from strong to light, spread
-   * over the number of shares, for parts of one whole. `categorical` gives each
-   * share its own chart colour, `--chart-1` to `--chart-5` in order. A share
-   * that names its `color` keeps it, and an `empty` share is always neutral.
-   * The last share never takes the color of the first, where the ring closes.
+   * over the number of shares (up to eight), for parts of one whole.
+   * `categorical` gives each share its own chart colour, `--chart-1` to
+   * `--chart-8` in order. Both start over from the ninth share. A share that
+   * names its `color` keeps it, and an `empty` share is always neutral. The
+   * last share never takes the color of the first, where the ring closes.
    */
   palette?: ChartPalette;
   size?: number;
@@ -79,12 +84,26 @@ export type PieChartProps = {
    */
   variant?: "donut" | "pie";
   /**
-   * Content in the hole of the donut, such as a total with a caption. A pie has
-   * no hole and shows none, and a chart with nothing to draw shows `emptyLabel`
-   * in its place. It lies over the ring without taking the pointer and is not
-   * part of the chart's accessible name.
+   * Content of your own in the hole of the donut, in place of `centerValue`
+   * and `centerLabel`. It is laid out in the square around the hole and cut
+   * off at the hole's edge, so it never covers the ring: keep it short, or pass
+   * the figure as `centerValue`, which the chart fits. A pie has no hole and
+   * shows none, and a chart with nothing to draw shows `emptyLabel` in its
+   * place. It lies over the ring without taking the pointer and is not part of
+   * the chart's accessible name.
    */
   center?: React.ReactNode;
+  /**
+   * A figure in the hole of the donut, such as the total of the shares, which
+   * the chart fits into the hole: in the largest text step it fits in, from 30
+   * px down, and in compact notation, such as 1.2M, when it does not fit in
+   * full at 20 px. Screen readers read it in full. It rolls to a new value.
+   */
+  centerValue?: number;
+  /** A caption under `centerValue`, such as Tickets: one line of 12 px muted text that ends in an ellipsis when the hole is too narrow for it. */
+  centerLabel?: string;
+  /** How `centerValue` is written, as Intl.NumberFormat options in `locale`, such as a currency. The chart adds compact notation when the figure needs it. */
+  centerFormat?: Intl.NumberFormatOptions;
   /**
    * Lists the shares beside the ring, each with its colour. Without it screen
    * readers still read each share and its value, as the description of the
@@ -162,6 +181,81 @@ function PieSegment({
   );
 }
 
+// The text classes of the steps of a figure in the hole, written whole for
+// Tailwind: the kit's 30 px figure (the Metric Card's), then the smaller steps.
+const figureStepClassName: Record<PieCenterStep, string> = {
+  12: "text-xs",
+  14: "text-sm",
+  16: "text-base",
+  20: "text-xl",
+  24: "text-2xl",
+  30: "text-3xl",
+};
+
+/**
+ * A figure in the hole of the donut, with an optional caption under it: in the
+ * largest step it fits in, in full or in compact notation (`pieCenterFit`),
+ * which the chart picks from its size and the text alone, so that the server
+ * and the client agree. A compact figure is read in full. The caption stays on
+ * one line and ends in an ellipsis where the hole narrows (rulebook K5).
+ */
+function PieCenterFigure({
+  caption,
+  format,
+  locale,
+  size,
+  value,
+}: {
+  caption: string | undefined;
+  format: Intl.NumberFormatOptions | undefined;
+  locale: string;
+  size: number;
+  value: number;
+}): React.ReactElement {
+  const full = chartFigureFormatter(locale, format)(value);
+  const short = chartFigureFormatter(locale, format, true)(value);
+  const fit = pieCenterFit({ caption, chartSize: size, compact: short, full });
+  const text = fit.compact ? short : full;
+  return (
+    <>
+      <span
+        className={cn(
+          slotClass("pie-chart-center-value"),
+          "max-w-full font-(--sp-rw-font-weight-strong) tabular-nums",
+          figureStepClassName[fit.size],
+          // After the step, which sets a line height of its own.
+          "leading-none",
+        )}
+        data-compact={fit.compact ? "" : undefined}
+        data-size={fit.size}
+        data-slot="pie-chart-center-value"
+      >
+        {text === full ? (
+          <MotionNumber value={text} />
+        ) : (
+          <>
+            <span className="sr-only">{full}</span>
+            <MotionNumber aria-hidden="true" value={text} />
+          </>
+        )}
+      </span>
+      {caption ? (
+        <span
+          className={cn(
+            slotClass("pie-chart-center-label"),
+            "mt-1 truncate text-xs leading-none text-muted-foreground",
+          )}
+          data-slot="pie-chart-center-label"
+          style={{ maxWidth: `${fit.captionWidth}%` }}
+          title={caption}
+        >
+          {caption}
+        </span>
+      ) : null}
+    </>
+  );
+}
+
 export function PieChart({
   data,
   label,
@@ -175,6 +269,9 @@ export function PieChart({
   labels,
   variant = "donut",
   center,
+  centerValue,
+  centerLabel,
+  centerFormat,
   legend = true,
   popOut = false,
 }: PieChartProps): React.ReactElement {
@@ -394,18 +491,30 @@ export function PieChart({
             ring, so that it keeps its 14 px at any size of the chart. */}
         {total <= 0 && <ChartEmptyState label={emptyLabel} />}
         {/* The centre is HTML over the plot, in the hole, which is half the
-            width of the chart. It sits inside the focus stop, whose name is
-            the label alone, and never takes the pointer, so the lookup of the
-            ring sees every point of the hole. A chart with nothing to draw
-            shows its empty label there instead. */}
-        {!pie && center != null && total > 0 && (
-          <div
-            data-slot="pie-chart-center"
-            className="sp-pie-chart-center pointer-events-none absolute inset-1/4 flex flex-col items-center justify-center text-center"
-          >
-            {center}
-          </div>
-        )}
+            width of the chart: the square around the hole, cut off at its
+            round edge, so that nothing in it covers the ring. It sits inside
+            the focus stop, whose name is the label alone, and never takes the
+            pointer, so the lookup of the ring sees every point of the hole. A
+            chart with nothing to draw shows its empty label there instead. */}
+        {!pie &&
+          total > 0 &&
+          (center != null ||
+            (centerValue !== undefined && Number.isFinite(centerValue))) && (
+            <div
+              data-slot="pie-chart-center"
+              className="sp-pie-chart-center pointer-events-none absolute inset-1/4 flex flex-col items-center justify-center overflow-hidden rounded-full text-center"
+            >
+              {center ?? (
+                <PieCenterFigure
+                  caption={centerLabel}
+                  format={centerFormat}
+                  locale={locale}
+                  size={size}
+                  value={centerValue!}
+                />
+              )}
+            </div>
+          )}
       </ChartTooltip>
       {legend && (
         <ChartLegend

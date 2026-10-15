@@ -30,8 +30,19 @@
     will-change: transform;
   }
 
-  :where(.sp-progress-indicator[data-indeterminate]:dir(rtl)),
-  :where(.sp-progress-continuous-fill:dir(rtl)) {
+  /* A right-to-left page: the dir attribute is named beside :dir(rtl), which a
+   * build for older browsers turns into a list of right-to-left languages, as
+   * Tailwind's rtl variant does. */
+  :where(
+    .sp-progress-indicator[data-indeterminate]:is(
+        :dir(rtl),
+        [dir="rtl"],
+        [dir="rtl"] *
+      )
+  ),
+  :where(
+    .sp-progress-continuous-fill:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *)
+  ) {
     transform-origin: right center;
   }
 

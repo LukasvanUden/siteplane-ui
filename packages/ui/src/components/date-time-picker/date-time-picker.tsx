@@ -19,10 +19,12 @@ import {
   DialogTrigger as TimeSelectorTriggerPrimitive,
   Group as DateTimeGroupPrimitive,
   Popover as DateTimePopoverPrimitive,
+  useLocale,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -234,6 +236,9 @@ function DateTimeSegment({
   const cleared = hasClearedSegment(fieldState);
   React.useLayoutEffect(() => onClearedChange(cleared));
   const part = getSegmentPart(segment, fieldState?.segments ?? []);
+  // The segment shows the text the server and the browser agree on: Node's
+  // formatToParts puts a narrow no-break space before AM and PM where the
+  // browser has a plain one (time-field.tsx).
   return (
     <DateTimeSegmentPrimitive
       className={cn(
@@ -253,7 +258,33 @@ function DateTimeSegment({
       }
       data-slot="date-time-picker-segment"
       segment={segment}
-    />
+    >
+      {({ text }) => normalizeFormattedText(text)}
+    </DateTimeSegmentPrimitive>
+  );
+}
+
+// The date, the date button, the comma and the time read in the locale's
+// direction, which React Aria's arrow keys follow, whatever the page's: an
+// en-US value keeps its date before its time in a right-to-left page. The dir
+// attribute also isolates the row from the text around it. The field keeps
+// the page's direction, so the time button ends it at the page's inline end,
+// and date-time-picker.css keeps the field's insets on the field's sides.
+function DateTimeSegments({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
+  const { direction } = useLocale();
+
+  return (
+    <div
+      className="sp-date-time-picker-segments"
+      data-slot="date-time-picker-segments"
+      dir={direction}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -513,42 +544,44 @@ export function DateTimePicker({
               }
               variant={variant}
             >
-              <DateTimeInputPrimitive
-                className="sp-date-time-picker-input sp-base-date-field contents"
-                data-foundation="date-field"
-                data-profile="input-group"
-                data-slot="date-time-picker-input"
-              >
-                {(segment) => (
-                  <DateTimeSegment
-                    onClearedChange={setCleared}
-                    segment={segment}
-                  />
-                )}
-              </DateTimeInputPrimitive>
-              <InputGroupAddon
-                align="inline-end"
-                data-date-time-part="date-action"
-              >
-                <Button
-                  aria-label={openDatePickerLabel}
-                  data-slot="date-time-picker-date-trigger"
-                  disabled={field.disabled || readOnly}
-                  render={<DateTimeButtonPrimitive />}
-                  profile="field-action"
-                  size={actionSizes[resolvedSize]}
+              <DateTimeSegments>
+                <DateTimeInputPrimitive
+                  className="sp-date-time-picker-input sp-base-date-field contents"
+                  data-foundation="date-field"
+                  data-profile="input-group"
+                  data-slot="date-time-picker-input"
                 >
-                  <CalendarDaysIcon aria-hidden="true" />
-                </Button>
-              </InputGroupAddon>
-              <InputGroupText
-                aria-hidden="true"
-                className="mx-1 text-muted-foreground"
-                data-date-time-part="separator"
-                data-slot="date-time-picker-separator"
-              >
-                ,
-              </InputGroupText>
+                  {(segment) => (
+                    <DateTimeSegment
+                      onClearedChange={setCleared}
+                      segment={segment}
+                    />
+                  )}
+                </DateTimeInputPrimitive>
+                <InputGroupAddon
+                  align="inline-end"
+                  data-date-time-part="date-action"
+                >
+                  <Button
+                    aria-label={openDatePickerLabel}
+                    data-slot="date-time-picker-date-trigger"
+                    disabled={field.disabled || readOnly}
+                    render={<DateTimeButtonPrimitive />}
+                    profile="field-action"
+                    size={actionSizes[resolvedSize]}
+                  >
+                    <CalendarDaysIcon aria-hidden="true" />
+                  </Button>
+                </InputGroupAddon>
+                <InputGroupText
+                  aria-hidden="true"
+                  className="mx-1 text-muted-foreground"
+                  data-date-time-part="separator"
+                  data-slot="date-time-picker-separator"
+                >
+                  ,
+                </InputGroupText>
+              </DateTimeSegments>
               <InputGroupAddon
                 align="inline-end"
                 data-date-time-part="time-action"

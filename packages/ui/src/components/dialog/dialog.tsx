@@ -4,7 +4,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { XIcon } from "lucide-react";
-import type React from "react";
+import * as React from "react";
 
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
@@ -103,6 +103,78 @@ type DialogPopupProps = WithStringClassName<DialogPrimitive.Popup.Props> & {
   portalProps?: WithStringClassName<DialogPrimitive.Portal.Props>;
 };
 
+// The elements a browser can focus with Tab, as Base UI's focus manager finds
+// them: the candidates that are enabled, rendered, outside an inert or hidden
+// subtree and not taken out of the tab order.
+const tabbableCandidates =
+  'a[href],button,input,select,textarea,summary,details,iframe,object,embed,[tabindex],[contenteditable]:not([contenteditable="false"]),audio[controls],video[controls]';
+
+function firstTabbable(popup: HTMLElement): HTMLElement | null {
+  for (const element of popup.querySelectorAll<HTMLElement>(
+    tabbableCandidates,
+  )) {
+    if (
+      element.tabIndex < 0 ||
+      element.matches(":disabled") ||
+      (element instanceof HTMLInputElement && element.type === "hidden") ||
+      element.closest("[inert], [hidden]") ||
+      element.getClientRects().length === 0 ||
+      getComputedStyle(element).visibility === "hidden"
+    )
+      continue;
+    return element;
+  }
+  return null;
+}
+
+/** Whether every scrolling box between the element and the popup shows it whole. */
+function startsInView(element: HTMLElement, popup: HTMLElement): boolean {
+  const box = element.getBoundingClientRect();
+  for (
+    let parent = element.parentElement;
+    parent && popup.contains(parent);
+    parent = parent.parentElement
+  ) {
+    if (
+      parent.scrollHeight <= parent.clientHeight &&
+      parent.scrollWidth <= parent.clientWidth
+    )
+      continue;
+    // Content that overflows a box which does not clip it stays in view.
+    const { overflowX, overflowY } = getComputedStyle(parent);
+    if (overflowX === "visible" && overflowY === "visible") continue;
+    const area = parent.getBoundingClientRect();
+    if (
+      box.top < area.top ||
+      box.bottom > area.bottom ||
+      box.left < area.left ||
+      box.right > area.right
+    )
+      return false;
+  }
+  return true;
+}
+
+/**
+ * Where focus goes when the dialog opens. Base UI focuses the first tabbable
+ * element and scrolls it into view, so a dialog whose content scrolls opened
+ * at its end when that element sat below the fold, such as a field under long
+ * terms (stress finding S-14). When the first tabbable element starts out of
+ * view, the popup itself takes focus, as Base UI does for a touch open and as
+ * the WAI-ARIA dialog pattern advises for long content: the dialog opens at its
+ * top, a screen reader reads its title, and Tab moves on to that element. A
+ * dialog whose first tabbable element shows keeps Base UI's default.
+ */
+function kitInitialFocus(
+  popup: HTMLElement | null,
+  openType: string,
+): HTMLElement | true {
+  if (!popup) return true;
+  if (openType === "touch") return popup;
+  const first = firstTabbable(popup);
+  return first && !startsInView(first, popup) ? popup : true;
+}
+
 export function DialogPopup(popupProps: DialogPopupProps): React.ReactElement {
   // Command and TaskCalendar pass their internal profiles through
   // KitDialogPopup (dialog-internal.ts), the same function. Only the default
@@ -115,8 +187,19 @@ export function DialogPopup(popupProps: DialogPopupProps): React.ReactElement {
     size = "sm",
     closeProps,
     portalProps,
+    initialFocus,
+    ref: givenRef,
     ...props
   } = popupProps as KitDialogPopupProps;
+  const popupRef = React.useRef<HTMLDivElement | null>(null);
+  const ref = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      popupRef.current = node;
+      if (typeof givenRef === "function") givenRef(node);
+      else if (givenRef) givenRef.current = node;
+    },
+    [givenRef],
+  );
   return (
     <DialogPortal {...portalProps}>
       <SiteplaneUIPortalScope>
@@ -152,6 +235,11 @@ export function DialogPopup(popupProps: DialogPopupProps): React.ReactElement {
             data-slot="dialog-popup"
             data-profile={profile}
             data-width={profile === "default" ? size : undefined}
+            initialFocus={
+              initialFocus ??
+              ((openType) => kitInitialFocus(popupRef.current, openType))
+            }
+            ref={ref}
             {...props}
           >
             {children}

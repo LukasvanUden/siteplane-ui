@@ -126,7 +126,7 @@ export function CardFrameTitle({
   const defaultProps = {
     className: cn(
       slotClass("card-frame-title", props, render),
-      "self-center font-semibold text-sm wrap-anywhere",
+      "self-center font-(--sp-rw-font-weight-strong) text-sm wrap-anywhere",
       className,
     ),
     "data-slot": "card-frame-title",
@@ -207,15 +207,44 @@ export function CardHeader({
   render,
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
-  // With an action and a single text part, the text and the action share one
-  // row and centre on each other (CardAction).
+  // The text parts share one column; a media (CardMedia) takes a column of its
+  // own before it and an action (CardAction) one after it. With an action or a
+  // media and a single text part, the parts share one row and centre on each
+  // other. The text parts are the children that are neither of the two.
   const defaultProps = {
     className: cn(
       slotClass("card-header", props, render),
-      "grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] items-start has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto] [&:has(>[data-slot=card-action]):not(:has(>:not([data-slot=card-action])~:not([data-slot=card-action])))]:items-center",
+      "grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] items-start has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto] has-data-[slot=card-media]:grid-cols-[auto_minmax(0,1fr)] has-data-[slot=card-media]:has-data-[slot=card-action]:grid-cols-[auto_minmax(0,1fr)_auto] [&:has(>[data-slot=card-action]):not(:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media])))]:items-center [&:has(>[data-slot=card-media]):not(:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media])))]:items-center",
       className,
     ),
     "data-slot": "card-header",
+  };
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(defaultProps, props),
+    render,
+  });
+}
+
+/**
+ * The leading avatar or icon of a header, before its title and description
+ * (rulebook I7). A bare icon is 20 px and centres on the title's first line; an
+ * avatar taller than that line starts at its top (I3, I5). Beside a title
+ * alone it centres on the title, as CardAction does.
+ */
+export function CardMedia({
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"div">): React.ReactElement {
+  const defaultProps = {
+    className: cn(
+      slotClass("card-media", props, render),
+      "col-start-1 row-start-1 flex self-center in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:self-start",
+      className,
+    ),
+    "data-slot": "card-media",
   };
 
   return useRender({
@@ -242,6 +271,32 @@ export function CardTitle({
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
+    render,
+  });
+}
+
+/**
+ * Context beside the title, in its row: a period, a count or a short status.
+ * Place it inside CardTitle, after the title's text. It takes the quieter text
+ * of CardDescription and moves below the title when the row is full.
+ */
+export function CardTitleMeta({
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"span">): React.ReactElement {
+  const defaultProps = {
+    className: cn(
+      slotClass("card-title-meta", props, render),
+      "min-w-0 wrap-anywhere",
+      className,
+    ),
+    "data-slot": "card-title-meta",
+  };
+
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(defaultProps, props),
     render,
   });
 }
@@ -274,11 +329,12 @@ export function CardAction({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   // Beside a title and a description the action spans both rows from the top.
   // Beside one text part it stays in that part's row and centres on it, as
-  // CardFrameAction does, so it adds no second row (rulebook S2, S11).
+  // CardFrameAction does, so it adds no second row (rulebook S2, S11). It takes
+  // the last column, after the text and after a media's column before it.
   const defaultProps = {
     className: cn(
       slotClass("card-action", props, render),
-      "col-start-2 row-start-1 inline-flex self-center justify-self-end in-[[data-slot=card-header]:has(>:not([data-slot=card-action])~:not([data-slot=card-action]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action])~:not([data-slot=card-action]))]:self-start",
+      "-col-start-2 row-start-1 inline-flex self-center justify-self-end in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:self-start",
       className,
     ),
     "data-slot": "card-action",

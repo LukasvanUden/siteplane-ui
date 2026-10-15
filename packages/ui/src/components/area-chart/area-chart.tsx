@@ -7,11 +7,11 @@ import type { CartesianChartProps, ChartCurve } from "../chart/chart-types";
 
 export type AreaChartProps = CartesianChartProps & {
   /**
-   * How the area joins its points. `smooth` (the default) is a natural spline,
-   * which bends evenly and can swing a little past the data between two points;
-   * `monotone` never does, so use it for data that rests on 0 or must not look
-   * higher or lower than it is; `linear` is straight segments and `step` holds
-   * each value until the middle between two points.
+   * How the area joins its points. `monotone` (the default) bends through every
+   * point and never swings past the data, so an area that rests on 0 stays on
+   * it; `smooth` is a natural spline, which bends evenly and can swing a little
+   * past the data between two points; `linear` is straight segments and `step`
+   * holds each value until the middle between two points.
    */
   curve?: ChartCurve;
   /** Stacks the areas on each other: positive values up from 0, negative ones down. */

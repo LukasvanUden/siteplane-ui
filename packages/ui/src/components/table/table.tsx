@@ -16,6 +16,7 @@ import {
   TableBody as AriaTableBody,
   TableFooter as AriaTableFooter,
   TableHeader as AriaTableHeader,
+  TableStateContext,
   type CellProps as AriaCellProps,
   type CheckboxProps as AriaCheckboxProps,
   type ColumnProps as AriaColumnProps,
@@ -560,10 +561,18 @@ export function TableSelectionCheckbox({
 }: TableSelectionCheckboxProps): ReactElement {
   // The box reads the Checkbox's size scale, from the table it sits in.
   const size = useResolvedControlSize(useContext(TableSizeContext));
+  // React Aria counts every one of no rows as selected, so a table whose rows
+  // are gone while keys stay selected showed its select-all box checked. With
+  // no rows there is nothing to select: the box is unchecked, as TanStack
+  // Table's getIsAllRowsSelected() reports for an empty table, and React Aria
+  // keeps it disabled. Only the header box can render then.
+  const tableState = useContext(TableStateContext);
+  const noRows = tableState !== null && tableState.collection.size === 0;
 
   return (
     <AriaCheckbox
       {...props}
+      {...(noRows ? { isIndeterminate: false, isSelected: false } : {})}
       className={composeRenderProps(className, (value) =>
         cn("sp-table-selection-checkbox", value),
       )}

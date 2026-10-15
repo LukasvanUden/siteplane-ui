@@ -30,6 +30,37 @@
     transform: translateX(calc(-100% - 1rem));
   }
 
+  /* The viewport places a side sheet at the inline start or end
+   * (justify-start, justify-end), so in a right-to-left page a left sheet
+   * sits on the right, as the Sidebar's mobile sheet does. It slides in from
+   * the edge it sits at. The dir attribute is named beside :dir(rtl), which a
+   * build for older browsers turns into a list of right-to-left languages. */
+  .sp-sheet-panel-motion[data-side="right"][data-starting-style]:is(
+      :dir(rtl),
+      [dir="rtl"],
+      [dir="rtl"] *
+    ),
+  .sp-sheet-panel-motion[data-side="right"][data-ending-style]:is(
+      :dir(rtl),
+      [dir="rtl"],
+      [dir="rtl"] *
+    ) {
+    transform: translateX(calc(-100% - 1rem));
+  }
+
+  .sp-sheet-panel-motion[data-side="left"][data-starting-style]:is(
+      :dir(rtl),
+      [dir="rtl"],
+      [dir="rtl"] *
+    ),
+  .sp-sheet-panel-motion[data-side="left"][data-ending-style]:is(
+      :dir(rtl),
+      [dir="rtl"],
+      [dir="rtl"] *
+    ) {
+    transform: translateX(calc(100% + 1rem));
+  }
+
   .sp-sheet-panel-motion[data-side="bottom"][data-starting-style],
   .sp-sheet-panel-motion[data-side="bottom"][data-ending-style] {
     transform: translateY(calc(100% + 1rem));

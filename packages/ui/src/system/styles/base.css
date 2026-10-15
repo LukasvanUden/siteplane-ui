@@ -25,6 +25,9 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
   /* rounded-control, rounded-surface and rounded-overlay take the role radii
    * (design-rework.css), so they follow the provider's radius like the kit. */
   --radius-control: var(--sp-rw-radius-control);
@@ -33,3 +36,15 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+/* Text renders with grayscale antialiasing, as the kit is designed: macOS
+ * browsers otherwise apply the system's font smoothing, which draws it
+ * heavier (Lukas, 15 October 2026). The root carries it, so portals inherit
+ * it, and the siteplane layer lets an application's own font-smoothing win.
+ * Other systems ignore both properties. */
+@layer siteplane {
+  :root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

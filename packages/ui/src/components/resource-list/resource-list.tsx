@@ -13,7 +13,7 @@ import { MotionItem, MotionList, type MotionListProps } from "../motion";
 import { useFocusHandoff } from "./resource-list-focus";
 
 export type ResourceListDensity = "default" | "compact";
-export type ResourceListVariant = "default" | "soft";
+export type ResourceListVariant = "default" | "soft" | "divided";
 export type ResourceListIndicatorTone =
   | "chart-1"
   | "chart-2"
@@ -39,6 +39,13 @@ export interface ResourceListProps extends useRender.ComponentProps<"div"> {
    * that much room, as a Card panel has.
    */
   flush?: boolean;
+  /**
+   * `soft` groups the rows on a subtle surface. `divided` draws the kit's
+   * hairline between two rows, across the row content, and keeps no space
+   * above the first row's content or below the last row's: the list reaches
+   * past its top and bottom by the row padding, as `flush` makes it reach past
+   * its sides.
+   */
   variant?: ResourceListVariant;
 }
 
@@ -69,6 +76,17 @@ const resourceListIndicatorShapeClassNames = {
 
 /** Rows read this to know they are in a list, which animates them (rulebook M6, M7). */
 const ResourceListContext = React.createContext(false);
+
+// The line between two rows of a divided list: the kit's hairline (rulebook
+// B7), across the row content, in the middle of the space between the rows
+// (design-rework.css).
+const resourceListDivider = (
+  <span
+    aria-hidden="true"
+    className={slotClass("resource-list-divider")}
+    data-slot="resource-list-divider"
+  />
+);
 
 // A row whose content has a description runs over more than one line. There
 // the leading mark centres on the first line, and text at the end sits on it,
@@ -116,6 +134,9 @@ export function ResourceList({
         data-variant={variant}
         // The space between rows belongs to the rows, so it collapses with them.
         gap={resolvedDensity === "compact" ? 0.5 : 1}
+        // A divided list draws its line in that space, so the line comes and
+        // goes with the row after it (rulebook M6, M7).
+        separator={variant === "divided" ? resourceListDivider : undefined}
         render={render ?? <div />}
         // The list is a div here; MotionList types its default element, a ul.
         {...(props as unknown as Omit<MotionListProps, "children" | "render">)}
@@ -321,7 +342,7 @@ export function ResourceListTitle({
     "data-slot": "resource-list-title",
     className: cn(
       slotClass("resource-list-title", props, render),
-      "truncate font-medium text-foreground",
+      "truncate font-(--sp-rw-font-weight-label) text-foreground",
       className,
     ),
     title: fullTextTitle(props.children),

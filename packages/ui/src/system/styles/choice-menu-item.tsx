@@ -1,6 +1,7 @@
-import { Children, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type React from "react";
 import { cn } from "../utils/cn";
+import { wrapTextRuns } from "../utils/text-runs";
 
 // A menu row keeps one line. Its text sits in a label span that can shrink
 // and ends in an ellipsis when the popup is narrower than the label.
@@ -10,34 +11,15 @@ export const menuRowLabelClassName = "min-w-0 truncate";
 // shortcuts and other elements stay direct children of the row, so the row
 // recipe still lays them out.
 export function menuRowLabel(children: ReactNode): ReactNode[] {
-  const parts: ReactNode[] = [];
-  let run: (string | number)[] = [];
-  const flush = () => {
-    if (run.some((text) => String(text).trim() !== "")) {
-      parts.push(
-        <span
-          className={cn("sp-menu-row-label", menuRowLabelClassName)}
-          data-slot="menu-row-label"
-          key={`label-${parts.length}`}
-        >
-          {run}
-        </span>,
-      );
-    } else {
-      parts.push(...run);
-    }
-    run = [];
-  };
-  for (const child of Children.toArray(children)) {
-    if (typeof child === "string" || typeof child === "number") {
-      run.push(child);
-    } else {
-      flush();
-      parts.push(child);
-    }
-  }
-  flush();
-  return parts;
+  return wrapTextRuns(children, (text, index) => (
+    <span
+      className={cn("sp-menu-row-label", menuRowLabelClassName)}
+      data-slot="menu-row-label"
+      key={`label-${index}`}
+    >
+      {text}
+    </span>
+  ));
 }
 
 // The rows keep one size at every control size, like the menu rows (S1): the

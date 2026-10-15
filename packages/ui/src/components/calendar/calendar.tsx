@@ -43,6 +43,7 @@ import {
 
 import { nativeDayTime, toNativeDay } from "../../system/date/native-day";
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -1412,10 +1413,12 @@ function formatHeading<M extends PointCalendarSelectionMode>(
     ? date.calendar.getFormattableMonth(date)
     : date;
 
-  return new Intl.DateTimeFormat(locale, {
-    calendar: first.calendar.identifier,
-    month: "long",
-    timeZone: state.timeZone,
-    year: "numeric",
-  }).format(first.toDate(state.timeZone));
+  return normalizeFormattedText(
+    new Intl.DateTimeFormat(locale, {
+      calendar: first.calendar.identifier,
+      month: "long",
+      timeZone: state.timeZone,
+      year: "numeric",
+    }).format(first.toDate(state.timeZone)),
+  );
 }

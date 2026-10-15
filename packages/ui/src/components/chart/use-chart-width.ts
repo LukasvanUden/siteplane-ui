@@ -32,6 +32,17 @@ function contentWidth(element: HTMLElement): number {
   );
 }
 
+// The height inside the padding, which is the height a chart that fills its
+// box draws in.
+function contentHeight(element: HTMLElement): number {
+  const style = getComputedStyle(element);
+  return (
+    element.clientHeight -
+    (Number.parseFloat(style.paddingTop) || 0) -
+    (Number.parseFloat(style.paddingBottom) || 0)
+  );
+}
+
 /**
  * The content width of the element, so that a chart draws at the width it has,
  * or null until it has been measured. A chart draws its plot only once it has
@@ -79,4 +90,43 @@ export function useChartWidth(
   }, [ref]);
 
   return width;
+}
+
+/**
+ * The content height of the element while `enabled`, for a chart that fills
+ * the height of its box, or null until it has been measured and while it is
+ * not enabled. It is measured as `useChartWidth` measures the width: once the
+ * element is laid out, before the browser paints, and again whenever it is
+ * resized, a resize as a transition. The element must take its height from its
+ * container and not from what the chart draws in it, or the two would chase
+ * each other: the chart's box is size-contained while it fills.
+ */
+export function useChartHeight(
+  ref: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+): number | null {
+  const [height, setHeight] = React.useState<number | null>(null);
+
+  React.useLayoutEffect(() => {
+    const element = ref.current;
+    if (!enabled || !element) return;
+    let measured = false;
+    const measure = (value: number) => {
+      if (Number.isFinite(value) && value > 0) measured = true;
+      setHeight((previous) => nextChartWidth(previous, value));
+    };
+    measure(contentHeight(element));
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (!entry) return;
+      const value = entry.contentRect.height;
+      if (measured) React.startTransition(() => measure(value));
+      else measure(value);
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [enabled, ref]);
+
+  return enabled ? height : null;
 }

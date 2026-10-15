@@ -319,10 +319,11 @@ export type GlideOnChangeProps = {
  * (`playFromSecondFrame`), with a translate added to its own. A part that is
  * still on its way glides on from where it stands. Measured in
  * getSnapshotBeforeUpdate, as Motion's layout animations measure, so it
- * renders nothing.
+ * renders nothing. The lifecycle methods are marked `override`, so an app
+ * that compiles the installed source with `noImplicitOverride` passes.
  */
 export class GlideOnChange extends React.Component<GlideOnChangeProps> {
-  getSnapshotBeforeUpdate(
+  override getSnapshotBeforeUpdate(
     previous: Readonly<GlideOnChangeProps>,
   ): Before | null {
     if (previous.change === this.props.change || this.props.reduced) {
@@ -337,7 +338,7 @@ export class GlideOnChange extends React.Component<GlideOnChangeProps> {
     return { origin: originBox, places };
   }
 
-  componentDidUpdate(
+  override componentDidUpdate(
     _previous: Readonly<GlideOnChangeProps>,
     _state: unknown,
     before: Before | null,
@@ -345,7 +346,7 @@ export class GlideOnChange extends React.Component<GlideOnChangeProps> {
     if (before) glideParts(this.props, before);
   }
 
-  render(): null {
+  override render(): null {
     return null;
   }
 }

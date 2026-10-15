@@ -259,7 +259,11 @@ export function ProgressCircle({
           r="20"
           strokeDasharray="100"
           strokeDashoffset={100 - percentage}
-          strokeLinecap="round"
+          // A round cap draws a dot even for an empty arc, so an empty circle
+          // takes a flat one and shows nothing until it has progress.
+          strokeLinecap={
+            numericValue === null || percentage > 0 ? "round" : "butt"
+          }
           strokeWidth="4"
         />
       </svg>

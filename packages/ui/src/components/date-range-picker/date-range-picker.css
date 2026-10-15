@@ -29,23 +29,24 @@
     );
   }
 
-  .sp-date-range-control
-    .sp-date-range-picker-start
-    > .sp-date-segment:not([data-type="literal"]):first-child,
-  .sp-date-range-control
-    .sp-date-range-picker-start
-    > .sp-date-segment[data-type="literal"]:first-child
-    + .sp-date-segment:not([data-type="literal"]) {
-    margin-inline-start: var(--date-range-picker-segment-start);
+  /* The segment row holds the start date, the dash and the end date, in the
+   * locale's direction (its dir). The insets belong to the field, which takes
+   * the page's direction: it pads its start, and without the calendar button
+   * (iconMode="none") its end too, as a DateField without its button does, so
+   * a range as wide as its segments is balanced. */
+  .sp-date-range-control {
+    padding-inline-start: var(--date-range-picker-segment-start);
   }
 
-  /* Without the calendar button (iconMode="none") the segments keep the inset
-   * of the start at the end too, as a DateField without its button does, so a
-   * range as wide as its segments is balanced. */
-  .sp-date-range-control[data-icon-mode="none"]
-    .sp-date-range-picker-end
-    > .sp-date-segment:last-child {
-    margin-inline-end: var(--date-range-picker-segment-start);
+  .sp-date-range-control[data-icon-mode="none"] {
+    padding-inline-end: var(--date-range-picker-segment-start);
+  }
+
+  .sp-date-range-picker-segments {
+    display: flex;
+    flex: none;
+    align-items: center;
+    align-self: stretch;
   }
 
   /* The surface (border, radius, shadow) is the floating-md recipe that

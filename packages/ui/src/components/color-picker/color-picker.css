@@ -150,7 +150,10 @@
     );
   }
 
-  :dir(rtl) .sp-color-picker-hue-track {
+  /* A right-to-left page: the dir attribute is named beside :dir(rtl), which a
+   * build for older browsers turns into a list of right-to-left languages, as
+   * Tailwind's rtl variant does. */
+  :is(:dir(rtl), [dir="rtl"], [dir="rtl"] *) .sp-color-picker-hue-track {
     background: linear-gradient(
       to left,
       #f00,
@@ -190,7 +193,7 @@
     gap: var(--sp-rw-space-1);
     color: var(--sp-rw-fg-tertiary);
     font-size: var(--sp-rw-font-12);
-    font-weight: var(--sp-semantic-font-weight-medium);
+    font-weight: var(--sp-rw-font-weight-label);
     text-align: center;
   }
 

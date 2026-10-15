@@ -112,7 +112,7 @@ const contextMenuTriggerAreaWidthClassNames: Record<MenuPopupWidth, string> = {
   ...menuPopupWidthClassNames,
   trigger: "min-w-0 w-(--context-menu-trigger-width) max-w-(--available-width)",
   "at-least-trigger":
-    "min-w-(--context-menu-trigger-width) w-max max-w-(--available-width)",
+    "min-w-(--context-menu-trigger-width) w-max max-w-[min(max(--spacing(80),var(--context-menu-trigger-width)),var(--available-width))]",
 };
 export function ContextMenuPopup({
   children,

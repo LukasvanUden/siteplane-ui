@@ -24,20 +24,28 @@ export const menuPopupVariantClassNames: Record<MenuPopupVariant, string> = {
     menuPopupLayoutClassName,
   ),
 };
-// Every popup stays within the space beside its anchor; a longer row label
-// ends in an ellipsis instead.
+// Every popup stays within the space beside its anchor and is at most 20rem
+// wide, a step of the spacing scale like its minimum (min-w-32); a longer row
+// label ends in an ellipsis instead (rulebook K5). A trigger-wide popup keeps
+// its trigger's width, and one at least as wide as its trigger grows to it.
+// ContextMenu repeats these classes for its trigger area: Tailwind reads
+// class names only as written.
 export const menuPopupWidthClassNames: Record<MenuPopupWidth, string> = {
-  auto: "max-w-(--available-width)",
-  content: "w-max max-w-(--available-width)",
+  auto: "max-w-[min(--spacing(80),var(--available-width))]",
+  content: "w-max max-w-[min(--spacing(80),var(--available-width))]",
   trigger: "min-w-0 w-(--anchor-width) max-w-(--available-width)",
-  "at-least-trigger": "min-w-(--anchor-width) w-max max-w-(--available-width)",
+  "at-least-trigger":
+    "min-w-(--anchor-width) w-max max-w-[min(max(--spacing(80),var(--anchor-width)),var(--available-width))]",
 };
 // Menus stay compact at every control size: rows, group labels and separators
 // keep the default look, and the shared menu-row recipe in design-rework.css
 // sets their height, text and icon.
 export const menuItemClassName =
   "flex cursor-pointer select-none items-center whitespace-nowrap outline-none data-disabled:cursor-not-allowed data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&>svg]:pointer-events-none [&>svg]:shrink-0";
-export const menuGroupLabelClassName = "font-medium";
+// A group label wraps a long unbroken value, such as an email address, within
+// the popup's width (rulebook K5); only rows stay on one line.
+export const menuGroupLabelClassName =
+  "font-(--sp-rw-font-weight-label) wrap-anywhere";
 export const menuSeparatorClassName = "";
 export const menuShortcutClassName = shortcutClassName;
 export const menuSubTriggerClassName =

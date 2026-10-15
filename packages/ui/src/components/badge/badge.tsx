@@ -11,10 +11,13 @@ import {
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
+import { wrapTextRuns } from "../../system/utils/text-runs";
 import "./badge.css";
 
+// The badge sets no white-space of its own: its label wraps the way the text
+// around the badge does (design-rework.css, the badge-label rule).
 export const badgeVariants = cva(
-  "shrink-0 items-center justify-center whitespace-nowrap disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none [&_svg]:shrink-0 [button&,a&]:cursor-pointer [button&,a&]:pointer-coarse:after:absolute [button&,a&]:pointer-coarse:after:size-full [button&,a&]:pointer-coarse:after:min-h-11 [button&,a&]:pointer-coarse:after:min-w-11",
+  "shrink-0 items-center justify-center disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg]:pointer-events-none [&_svg]:shrink-0 [button&,a&]:cursor-pointer [button&,a&]:pointer-coarse:after:absolute [button&,a&]:pointer-coarse:after:size-full [button&,a&]:pointer-coarse:after:min-h-11 [button&,a&]:pointer-coarse:after:min-w-11",
   {
     defaultVariants: {
       size: siteplaneUIDefaults.controlSize,
@@ -48,7 +51,36 @@ export const badgeVariants = cva(
   },
 );
 
-export type BadgeProfile = "count" | "entitlement" | "verified";
+export type BadgeProfile = "count" | "entitlement" | "status" | "verified";
+
+// Counts never truncate (design-rework.css), so their label carries no title.
+const countProfiles: ReadonlySet<string> = new Set([
+  "count",
+  "group-overflow-count",
+]);
+
+/**
+ * The text of a badge is one label: every run of text children, such as
+ * `{count} new`, becomes one label span. The label stays on one line and ends
+ * with an ellipsis where the badge meets the edge of its space (rulebook K5);
+ * its title carries the full text. Icons and other elements stay children of
+ * the badge, which lays them out.
+ */
+function badgeLabels(
+  children: React.ReactNode,
+  titled: boolean,
+): React.ReactNode[] {
+  return wrapTextRuns(children, (text, index) => (
+    <span
+      className="sp-badge-label"
+      data-slot="badge-label"
+      key={`badge-label-${index}`}
+      title={titled ? text.trim() : undefined}
+    >
+      {text}
+    </span>
+  ));
+}
 
 export type BadgeVariant = Exclude<
   NonNullable<VariantProps<typeof badgeVariants>["variant"]>,
@@ -61,14 +93,22 @@ export type BadgeVariant = Exclude<
 export type BadgeDeprecatedVariant = "brand";
 
 export interface BadgeProps extends useRender.ComponentProps<"span"> {
+  /**
+   * A form of the badge. `count` is a compact count that grows as a pill and
+   * never truncates; `entitlement` labels a plan with its icon; `status` is a
+   * state in words after a colored dot, without fill or contour, with the dot
+   * in the tone of the variant; `verified` is the check circle on an avatar.
+   */
   profile?: BadgeProfile;
   /**
    * `default` is a white surface with a hairline contour and `outline` keeps
    * only the contour. `accent`, `inverse` and `destructive` are solid fills,
    * like the Button variants of those names; `info`, `success`, `warning` and
    * `error` tint with a status color. A `count` badge is `inverse` and an
-   * `entitlement` badge is `info` unless a variant is set. `brand` is the
-   * deprecated earlier name of `accent`.
+   * `entitlement` badge is `info` unless a variant is set. A `status` badge
+   * keeps no fill: its variant gives the dot's tone, `success`, `warning`,
+   * `error` (or `destructive`) and `info` (or `accent`), and gray for the
+   * others. `brand` is the deprecated earlier name of `accent`.
    */
   variant?: BadgeVariant | BadgeDeprecatedVariant | null | undefined;
   size?: VariantProps<typeof badgeVariants>["size"];
@@ -111,15 +151,13 @@ export function Badge({
   // when the badge would be wider than the space it sits in (rulebook K5), so
   // a long value never pushes a row apart. The badge-label rule in
   // design-rework.css owns that; icons beside the label keep their size.
-  const label = React.Children.map(children, (child) =>
-    typeof child === "string" || typeof child === "number" ? (
-      <span className="sp-badge-label" data-slot="badge-label">
-        {child}
-      </span>
-    ) : (
-      child
-    ),
-  );
+  const label = badgeLabels(children, !countProfiles.has(profile ?? ""));
+  // The status dot comes from the badge; the words carry the state, so the
+  // dot is hidden from assistive technology.
+  const dot =
+    profile === "status" ? (
+      <span aria-hidden="true" className="sp-badge-dot" data-slot="badge-dot" />
+    ) : null;
   const defaultProps = {
     // The light lives inside the badge, so className and style place a lit
     // badge exactly like any other.
@@ -135,10 +173,14 @@ export function Badge({
           className="sp-badge-light-ring"
           data-slot="badge-light-ring"
         />
+        {dot}
         {label}
       </>
     ) : (
-      label
+      <>
+        {dot}
+        {label}
+      </>
     ),
     className: cn(
       slotClass("badge", props, render),

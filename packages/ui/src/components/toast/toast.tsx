@@ -213,7 +213,7 @@ function Toasts({
 
                     <div className="flex min-w-0 flex-col gap-0.5">
                       <Toast.Title
-                        className="sp-toast-title font-medium wrap-anywhere"
+                        className="sp-toast-title font-(--sp-rw-font-weight-label) wrap-anywhere"
                         data-slot="toast-title"
                       />
                       <Toast.Description

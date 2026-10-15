@@ -263,7 +263,7 @@
 
   :root [data-chassis][data-size].sp-calendar-picker-option[data-selected] {
     --sp-rw-button-fill: var(--sp-rw-bg-accent);
-    --sp-rw-button-text: var(--sp-rw-fg-emphasis);
+    --sp-rw-button-text: var(--sp-rw-fg-on-accent);
     --sp-rw-button-depth: none;
     --sp-rw-button-interaction: transparent;
     --sp-rw-button-spotlights: none;
@@ -272,7 +272,7 @@
     --sp-rw-button-micro: none;
 
     background: var(--sp-rw-bg-accent);
-    color: var(--sp-rw-fg-emphasis);
+    color: var(--sp-rw-fg-on-accent);
     box-shadow: none;
   }
 
@@ -432,7 +432,7 @@
 
   .sp-calendar-cell[data-selected] {
     background: var(--sp-rw-bg-accent);
-    color: var(--sp-rw-fg-emphasis);
+    color: var(--sp-rw-fg-on-accent);
     font-weight: 560;
   }
 

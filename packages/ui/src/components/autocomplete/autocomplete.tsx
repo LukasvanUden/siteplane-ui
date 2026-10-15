@@ -310,7 +310,7 @@ export function AutocompleteGroupLabel({
     <AutocompletePrimitive.GroupLabel
       className={cn(
         slotClass("autocomplete-group-label", props),
-        "px-2 py-1.5 font-medium text-muted-foreground text-xs",
+        "px-2 py-1.5 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs",
         className,
       )}
       data-slot="autocomplete-group-label"
@@ -409,7 +409,7 @@ export function AutocompleteStatus({
     <AutocompletePrimitive.Status
       className={cn(
         slotClass("autocomplete-status", props),
-        "px-3 py-2 font-medium text-muted-foreground text-xs empty:m-0 empty:p-0",
+        "px-3 py-2 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs empty:m-0 empty:p-0",
         className,
       )}
       data-slot="autocomplete-status"

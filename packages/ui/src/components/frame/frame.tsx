@@ -69,7 +69,7 @@ export function FrameTitle({
     <div
       className={cn(
         slotClass("frame-title", props),
-        "font-semibold text-sm",
+        "font-(--sp-rw-font-weight-strong) text-sm",
         className,
       )}
       data-slot="frame-title"

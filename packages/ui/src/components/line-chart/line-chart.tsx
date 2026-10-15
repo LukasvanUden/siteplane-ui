@@ -7,11 +7,11 @@ import type { CartesianChartProps, ChartCurve } from "../chart/chart-types";
 
 export type LineChartProps = CartesianChartProps & {
   /**
-   * How the line joins its points. `smooth` (the default) is a natural spline,
-   * which bends evenly and can swing a little past the data between two points;
-   * `monotone` never does, so use it for data that rests on 0 or must not look
-   * higher or lower than it is; `linear` is straight segments and `step` holds
-   * each value until the middle between two points.
+   * How the line joins its points. `monotone` (the default) bends through every
+   * point and never swings past the data, so a line never looks higher or lower
+   * than its values; `smooth` is a natural spline, which bends evenly and can
+   * swing a little past the data between two points; `linear` is straight
+   * segments and `step` holds each value until the middle between two points.
    */
   curve?: ChartCurve;
   /** Marks every point with a dot. A point on its own always has one. */

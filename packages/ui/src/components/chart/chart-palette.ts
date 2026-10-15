@@ -1,8 +1,12 @@
 import type { ChartPalette, ChartSeries } from "./chart-types";
 
-/** The colour of the series at `index`: `--chart-1` to `--chart-5` in order, then round again. */
+// How many colours each palette has before it starts over: `--chart-1` to
+// `--chart-8`, and the eight brand shades.
+const paletteSize = 8;
+
+/** The colour of the series at `index`: `--chart-1` to `--chart-8` in order, then round again. */
 export function chartSeriesColor(index: number): string {
-  return `var(--chart-${(index % 5) + 1})`;
+  return `var(--chart-${(index % paletteSize) + 1})`;
 }
 
 /**
@@ -15,10 +19,13 @@ function brandShade(share: number): string {
 }
 
 /**
- * The shares of the brand colour in the shades of a chart of 1 to 5 series,
+ * The shares of the brand colour in the shades of a chart of 1 to 8 series,
  * from strong to light. Every count starts at the brand colour itself and
  * spreads its other shades over the range, so that two series stand clearly
- * apart and five take the five steps.
+ * apart and five take the five steps. Six to eight series share the range of
+ * five, 100 down to 24, and keep its curve: their shares are the five steps
+ * read at their own places along it (linear between two steps, rounded), so
+ * the strong shades stay further apart than the light ones, as with five.
  */
 const brandShares = [
   [100],
@@ -26,24 +33,28 @@ const brandShares = [
   [100, 70, 45],
   [100, 76, 56, 38],
   [100, 76, 56, 38, 24],
+  [100, 81, 64, 49, 35, 24],
+  [100, 84, 69, 56, 44, 33, 24],
+  [100, 86, 73, 62, 51, 41, 32, 24],
 ] as const;
 
-/** Brand shades from strong to light, faded into the card (towards a deeper brand in Dark): the five-step order that more than five series go round again. */
+/** The brand shades of five series, from strong to light, faded into the card (towards a deeper brand in Dark). The Bar List draws its bars in the lightest. */
 export const chartBrandShades: readonly string[] =
   brandShares[4].map(brandShade);
 
 /**
  * The brand shades of `count` series, from strong to light: the first series is
- * the brand colour itself. Up to five series are spread over the range of the
- * shades; more than five repeat the five-step order.
+ * the brand colour itself. Up to eight series are spread over the range of the
+ * shades; more than eight repeat the eight-step order.
  */
 export function chartBrandPalette(count: number): string[] {
   const places = Math.max(0, Math.floor(count));
   if (places <= brandShares.length)
     return places === 0 ? [] : brandShares[places - 1]!.map(brandShade);
+  const steps = brandShares[brandShares.length - 1]!.map(brandShade);
   return Array.from(
     { length: places },
-    (_, index) => chartBrandShades[index % chartBrandShades.length]!,
+    (_, index) => steps[index % steps.length]!,
   );
 }
 
@@ -59,17 +70,17 @@ export function chartPaletteColors(
       );
 }
 
-// The step of the five that the last share of a ring takes when the steps
-// would close the ring on the first share's colour: the middle one, which is
-// neither the step before it (the fifth) nor the first.
+// The step that the last share of a ring takes when the steps would close the
+// ring on the first share's colour: the third, which is neither the step
+// before it (the last of the round) nor the first.
 const ringClosingStep = 2;
 
 /**
  * The colours of the `count` filled shares of a ring, in order: the palette's,
  * except that the last share never takes the colour of the first, which it
- * meets where the ring closes. From the sixth share the five steps repeat, so
- * a ring of 6, 11, 16, ... shares would close on two shares of one colour; its
- * last share takes the middle step instead, which differs from both of its
+ * meets where the ring closes. From the ninth share the eight steps repeat, so
+ * a ring of 9, 17, 25, ... shares would close on two shares of one colour; its
+ * last share takes the third step instead, which differs from both of its
  * neighbours.
  */
 export function chartRingColors(

@@ -15,11 +15,13 @@ import {
   Group as DateRangeGroupPrimitive,
   Popover as DateRangePopoverPrimitive,
   type RangeValue,
+  useLocale,
   useSlottedContext,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -291,6 +293,29 @@ function DateRangeEndpoint({
   );
 }
 
+// The start date, the dash and the end date read in the locale's direction,
+// which React Aria's arrow keys follow, whatever the page's: an en-US range
+// stays 01/01/2024 – 10/14/2026 in a right-to-left page. The dir attribute
+// also isolates the row from the text around it; date-range-picker.css keeps
+// the field's insets on the field's sides.
+function DateRangeSegments({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
+  const { direction } = useLocale();
+
+  return (
+    <div
+      className="sp-date-range-picker-segments"
+      data-slot="date-range-picker-segments"
+      dir={direction}
+    >
+      {children}
+    </div>
+  );
+}
+
 // Each date of the range keeps its own field state inside its DateInput; the
 // segments tell the picker whether that date shows a cleared segment.
 function DateRangeSegment({
@@ -303,6 +328,9 @@ function DateRangeSegment({
   const cleared = hasClearedSegment(React.useContext(DateFieldStateContext));
   React.useLayoutEffect(() => onClearedChange(cleared));
 
+  // The segment shows the text that the server's ICU and the browser's agree
+  // on, as the Date Field's do (date-field.tsx), so the prerendered range
+  // hydrates.
   return (
     <DateRangeSegmentPrimitive
       className="sp-date-field-segment sp-date-segment"
@@ -313,7 +341,9 @@ function DateRangeSegment({
       }
       data-slot="date-field-segment"
       segment={segment}
-    />
+    >
+      {({ text }) => normalizeFormattedText(text)}
+    </DateRangeSegmentPrimitive>
   );
 }
 
@@ -445,23 +475,25 @@ export function DateRangePicker({
               }
               variant={variant}
             >
-              <DateRangeEndpoint
-                label={startLabel}
-                onClearedChange={onClearedChange}
-                slot="start"
-              />
-              <InputGroupText
-                aria-hidden="true"
-                className="mx-1 text-foreground"
-                data-slot="date-range-picker-separator"
-              >
-                –
-              </InputGroupText>
-              <DateRangeEndpoint
-                label={endLabel}
-                onClearedChange={onClearedChange}
-                slot="end"
-              />
+              <DateRangeSegments>
+                <DateRangeEndpoint
+                  label={startLabel}
+                  onClearedChange={onClearedChange}
+                  slot="start"
+                />
+                <InputGroupText
+                  aria-hidden="true"
+                  className="mx-1 text-foreground"
+                  data-slot="date-range-picker-separator"
+                >
+                  –
+                </InputGroupText>
+                <DateRangeEndpoint
+                  label={endLabel}
+                  onClearedChange={onClearedChange}
+                  slot="end"
+                />
+              </DateRangeSegments>
               {iconMode === "action-end" ? (
                 <InputGroupAddon align="inline-end" className="ms-auto">
                   <Button

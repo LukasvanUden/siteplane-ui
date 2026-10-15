@@ -15,6 +15,7 @@ import {
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -197,7 +198,7 @@ function DatePickerRoot({
         const label = formatValue
           ? formatValue(nativeValue)
           : nativeValue
-            ? shortDateFormatter.format(nativeValue)
+            ? normalizeFormattedText(shortDateFormatter.format(nativeValue))
             : placeholder;
 
         return (

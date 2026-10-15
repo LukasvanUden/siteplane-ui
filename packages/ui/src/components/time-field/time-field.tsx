@@ -19,6 +19,7 @@ import {
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { normalizeFormattedText } from "../../system/locale/formatted-text";
 import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
 import {
   type SiteplaneControlSize,
@@ -133,7 +134,9 @@ export function useHourOptionLabels(
     return Object.fromEntries(
       hourOptions.map((option) => [
         option,
-        format.format(new Date(2000, 0, 1, Number(option))),
+        normalizeFormattedText(
+          format.format(new Date(2000, 0, 1, Number(option))),
+        ),
       ]),
     );
   }, [hourCycle, locale]);
@@ -433,6 +436,12 @@ function TimeFieldContent({
   const optionTextClassName = resolvedTextSize
     ? formControlTextClassNames[resolvedTextSize]
     : "text-base sm:text-sm";
+  // The segments read in the locale's direction, which React Aria's arrow
+  // keys follow, whatever the page's: an en-US time keeps its hours before
+  // its minutes in a right-to-left page. The dir attribute also isolates the
+  // row from the text around it; the field keeps the page's direction and
+  // pads its own insets (time-field.css), as the Date Field does.
+  const { direction } = useLocale();
   const control = (
     <InputGroup
       aria-label={undefined}
@@ -469,6 +478,7 @@ function TimeFieldContent({
       <DateInputPrimitive
         className="sp-time-field-input"
         data-slot="time-field-input"
+        dir={direction}
         ref={segmentsRef}
       >
         {(segment) => (
@@ -599,6 +609,10 @@ function TimeFieldSegment({
     if (label) ref.current?.setAttribute("aria-label", label);
   });
 
+  // React Aria builds the segments with formatToParts, which gives Node's
+  // narrow no-break space before AM and PM where the browser has a plain
+  // space; the segment shows the text the server and the browser agree on, or
+  // the prerendered field fails hydration (React error #418).
   return (
     <DateSegmentPrimitive
       className="sp-time-field-segment sp-time-segment"
@@ -610,7 +624,9 @@ function TimeFieldSegment({
       data-slot="time-field-segment"
       ref={ref}
       segment={segment}
-    />
+    >
+      {({ text }) => normalizeFormattedText(text)}
+    </DateSegmentPrimitive>
   );
 }
 

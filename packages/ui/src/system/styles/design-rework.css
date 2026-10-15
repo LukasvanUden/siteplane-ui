@@ -80,6 +80,15 @@
   --sp-rw-letter-spacing-default: -0.015em;
   --sp-rw-line-height-default: var(--sp-rw-line-21);
   --sp-semantic-font-family: var(--sp-rw-font-family-default);
+  /* The weights of the text roles above body text; Theming lists their parts
+   * and the values for each typeface. Titles: the Card, Dialog, Sheet, Drawer
+   * and Alert Dialog titles. Labels: field labels, group labels and the small
+   * titles of Alerts, Popovers, Toasts and lists. Strong: semibold emphasis,
+   * such as a Fieldset legend or a Frame title. Body text, controls and
+   * inputs keep --sp-rw-font-weight-default. */
+  --sp-rw-font-weight-title: 450;
+  --sp-rw-font-weight-label: 500;
+  --sp-rw-font-weight-strong: 600;
 
   --sp-rw-fg-primary: oklch(10% 0 0);
   --sp-rw-fg-secondary: oklch(30% 0.001 107);
@@ -87,6 +96,10 @@
   --sp-rw-fg-quaternary: oklch(69% 0.001 107);
   --sp-rw-fg-inverse: oklch(98.51% 0 89.88);
   --sp-rw-fg-emphasis: oklch(100% 0 0);
+  /* Text and glyphs on an accent fill: the accent Button and Badge, the
+   * verified Badge, a checked box or radio and a selected calendar day. A light
+   * brand sets it dark; destructive fills keep --sp-rw-fg-emphasis. */
+  --sp-rw-fg-on-accent: var(--sp-rw-fg-emphasis);
   --sp-rw-fg-accent: oklch(43.93% 0.2025 274.2);
   --sp-rw-fg-positive: oklch(45.82% 0.1382 138.23);
   --sp-rw-fg-attention: oklch(49.33% 0.1528 40.04);
@@ -763,15 +776,28 @@
   transition-duration: var(--motion-duration-fast);
 }
 
-/* The text label of a badge (badge.tsx wraps a text child in it) stays on one
- * line and ends with an ellipsis where the badge meets the edge of its space.
- * It clips sideways only: the badge's line is as tall as its font, so the
- * descenders of g, j, p, q and y reach below it and must stay whole. */
-:where(.sp-badge-label) {
+/* The text label of a badge (badge.tsx gathers the text children in one), and
+ * of a Combobox chip, which follows the outline badge's grammar, stays on one
+ * line and ends with an ellipsis where the badge meets the edge of its space
+ * (rulebook K5). It wraps the way the text around the badge does.
+ * In a context that wraps, such as a card, a list or a Tag Group, it may break
+ * between any two characters, so a long label never makes its container wider
+ * than the space it has, and the clamp shows its first line, filled to the
+ * edge, with the ellipsis. In a context that keeps text on one line, such as a
+ * table cell, a tab or a button, the label keeps its full width like the text
+ * beside it. The label's line box is taller than its glyphs, so the clip keeps
+ * the descenders of g, j, p, q and y whole; the badge centres the label, so
+ * its text sits where it did. */
+:where(.sp-badge-label),
+:where(.sp-combobox-chip-label) {
+  display: -webkit-box;
   min-width: 0;
-  overflow-x: clip;
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-height: 1.5;
 }
 
 :where(.sp-base-badge svg:not([class*="size-"])) {
@@ -1025,7 +1051,7 @@
 :where(.sp-field-label) {
   display: inline-flex;
   font-size: var(--sp-rw-font-16);
-  font-weight: var(--sp-semantic-font-weight-medium);
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-18);
 }
 
@@ -1038,6 +1064,14 @@
 
 :where(.sp-field-label:not(:has(> *))) {
   display: block;
+}
+
+/* Labels and descriptions wrap a long unbroken value, such as a URL or a
+ * German compound, within the field's width (rulebook K5). */
+:where(.sp-base-label),
+:where(.sp-field-label),
+:where(.sp-field-description) {
+  overflow-wrap: anywhere;
 }
 
 :where(.sp-select-value[data-placeholder]) {
@@ -1602,6 +1636,192 @@ html[data-motion-reduce="true"]
   --sidebar-width: 15rem;
 }
 
+/* Dashboard Shell header: a leading sidebar trigger keeps its target and puts
+ * its glyph on the start line of the header and the main area, 16 px in, so
+ * the glyph, a title without a trigger and the content start on one line. The
+ * trigger reaches into the inset by half of what its square adds to the
+ * glyph: 10 px for the 36 px trigger with its 16 px glyph. */
+:root .sp-dashboard-shell-header > .sp-sidebar-trigger:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-control-lg);
+  margin-inline-start: calc(
+    (var(--sp-rw-button-icon) - var(--dashboard-shell-trigger-size)) / 2
+  );
+}
+
+:root
+  .sp-dashboard-shell-header
+  > .sp-sidebar-trigger[data-size="icon-2xs"]:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-space-5);
+}
+
+:root
+  .sp-dashboard-shell-header
+  > .sp-sidebar-trigger[data-size="icon-xs"]:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-control-xs);
+}
+
+:root
+  .sp-dashboard-shell-header
+  > .sp-sidebar-trigger[data-size="icon-sm"]:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-control-sm);
+}
+
+:root
+  .sp-dashboard-shell-header
+  > .sp-sidebar-trigger[data-size="icon-md"]:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-control-md);
+}
+
+:root
+  .sp-dashboard-shell-header
+  > .sp-sidebar-trigger[data-size="icon-xl"]:first-child {
+  --dashboard-shell-trigger-size: var(--sp-rw-control-xl);
+}
+
+/* The header is one line (K5). A Breadcrumb in it keeps one row: it takes
+ * the room the bar leaves, and its links end with an ellipsis like the
+ * current page (Breadcrumb), so a long trail never runs past the bar. */
+:root .sp-dashboard-shell-header > .sp-breadcrumb {
+  min-width: 0;
+}
+
+:root .sp-dashboard-shell-header .sp-breadcrumb-list {
+  flex-wrap: nowrap;
+}
+
+:root .sp-dashboard-shell-header .sp-breadcrumb-link {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sidebar separator (SidebarSeparator): the kit line inside the sidebar's
+ * 8 px inset (its mx-2). The separator's own width of 100 % plus that inset
+ * ran 8 px past the sidebar. It stretches across the band it sits in, also
+ * where the icon rail centres the band's items. */
+:root .sp-separator[data-sidebar="separator"][data-orientation="horizontal"] {
+  align-self: stretch;
+  width: auto;
+}
+
+/* A two-line menu row (SidebarMenuButtonText): the title in the row's own
+ * text over a quieter description one kit step smaller, 12 px on 18 under the
+ * 14 px rows and 14 px on 21 under the 16 px xl row, in the tertiary text.
+ * Both stay on one line and end with an ellipsis (K5). The text takes the
+ * row's free width, so a trailing chevron stays at the row's end. Two lines
+ * fill the 48 px xl row. */
+:root .sp-sidebar-menu-button-text {
+  display: grid;
+  flex: 1 1 0%;
+  min-width: 0;
+  text-align: start;
+}
+
+:root .sp-sidebar-menu-button-title,
+:root .sp-sidebar-menu-button-description {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:root .sp-sidebar-menu-button-description {
+  color: var(--sp-rw-fg-tertiary);
+  font-size: var(--sp-rw-font-12);
+  line-height: var(--sp-rw-line-18);
+}
+
+:root [data-chassis][data-size="xl"] .sp-sidebar-menu-button-description {
+  font-size: var(--sp-rw-font-14);
+  line-height: var(--sp-rw-line-21);
+}
+
+/* Sidebar brand (SidebarBrand): the app's logo at the top of the sidebar, its
+ * mark first, then its name or wordmark. It starts where the menu rows start
+ * their icons, a row's 8 px inline inset, with a row's gap between the mark and
+ * the name, so a 20 px mark puts the name on the labels' line. It shrinks in a
+ * narrow sidebar, where a name in a span ends with an ellipsis (K5). It is as
+ * tall as the rail's 36 px square and reaches 2 px into the 8 px above and
+ * below it, so the header band stays 48 px, the top bar's height, as with the
+ * 32 px trigger beside it (S2). A link takes the kit's focus outline
+ * (focusRingRecipe) and, as a logo rather than a row, no hover fill. */
+:root .sp-sidebar-brand {
+  display: flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  block-size: var(--sp-rw-control-lg);
+  margin-block: calc((var(--sp-rw-control-md) - var(--sp-rw-control-lg)) / 2);
+  align-items: center;
+  gap: var(--sp-rw-button-content-gap);
+  padding-inline: var(--sp-rw-space-2);
+  border-radius: var(--sp-rw-radius-control);
+  color: var(--sp-rw-fg-primary);
+  font-size: var(--sp-rw-font-14);
+  font-weight: var(--sp-rw-font-weight-strong);
+  line-height: var(--sp-rw-line-21);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* A mark without a size takes a row icon's 20 px. */
+:root .sp-sidebar-brand > svg:first-child:not([class*="size-"]) {
+  inline-size: var(--sp-rw-space-5);
+  block-size: var(--sp-rw-space-5);
+}
+
+:root .sp-sidebar-brand > span:not(:first-child) {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* On the collapsed icon rail the brand is the rail's square, with the mark
+ * centred in it on the rail's axis, like the row icons. The name leaves the
+ * layout and the screen, so nothing of it is cut off mid-letter, and stays
+ * the link's accessible name, as a collapsed row keeps its label. */
+:root .sp-sidebar[data-collapsible="icon"] .sp-sidebar-brand {
+  inline-size: var(--sp-rw-control-lg);
+  justify-content: center;
+  padding-inline: 0;
+}
+
+:root
+  .sp-sidebar[data-collapsible="icon"]
+  .sp-sidebar-brand
+  > :not(:first-child) {
+  position: absolute;
+  overflow: hidden;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* In a SidebarMenuItem with an expand trigger, the item reaches into the band
+ * in the brand's place, so the trigger over the item covers the brand's
+ * square. */
+:root .sp-sidebar-menu-item:has(> .sp-sidebar-brand) {
+  margin-block: calc((var(--sp-rw-control-md) - var(--sp-rw-control-lg)) / 2);
+}
+
+:root .sp-sidebar-menu-item > .sp-sidebar-brand {
+  margin-block: 0;
+}
+
+/* In the inset layout the top bar sits on the framed surface, 8 px down. The
+ * band with the brand moves down with it, so the logo and the collapse button
+ * stay level with the top bar beside them (S2). */
+:root
+  .sp-sidebar-container[data-layout="inset"]
+  .sp-sidebar-header:has(.sp-sidebar-brand) {
+  margin-block-start: var(--sp-rw-space-2);
+}
+
 /* Sidebar: a menu action is the Button's muted inline action, which owns its
  * colours in every state and draws no fill (rulebook T2). These rules only
  * reveal one that shows on hover: it appears with its row's hover or focus and
@@ -1640,12 +1860,14 @@ html[data-motion-reduce="true"]
  * or focusing the item swaps them: the row's content shrinks, blurs and fades
  * out while the trigger's glyph grows in, and back. Elsewhere the trigger stays
  * hidden and lets the pointer through. Only the contents move, so the Button
- * keeps its own fill, focus and transitions. */
+ * keeps its own fill, focus and transitions. A SidebarBrand in the item, which
+ * has no fill, moves as a whole. */
 :where(
   [data-sidebar="menu-item"][data-expand-trigger]
     > :is([data-sidebar="menu-button"], [data-sidebar="expand-trigger"])
     > .sp-button-content
-) {
+),
+:where([data-sidebar="menu-item"][data-expand-trigger] > .sp-sidebar-brand) {
   transition-property: opacity, scale, filter;
   transition-duration: var(--motion-duration-slow);
   transition-timing-function: var(--motion-ease-soft-in-out);
@@ -1660,7 +1882,11 @@ html[data-motion-reduce="true"]
   .sp-sidebar[data-collapsible="icon"]
   [data-sidebar="menu-item"][data-expand-trigger]:focus-within
   > [data-sidebar="menu-button"]
-  > .sp-button-content {
+  > .sp-button-content,
+:root
+  .sp-sidebar[data-collapsible="icon"]
+  [data-sidebar="menu-item"][data-expand-trigger]:focus-within
+  > .sp-sidebar-brand {
   opacity: 0;
   filter: blur(4px);
   scale: 0.25;
@@ -1669,7 +1895,11 @@ html[data-motion-reduce="true"]
 :root
   .sp-sidebar[data-collapsible="icon"]
   [data-sidebar="menu-item"][data-expand-trigger]
-  > [data-sidebar="menu-button"] {
+  > [data-sidebar="menu-button"],
+:root
+  .sp-sidebar[data-collapsible="icon"]
+  [data-sidebar="menu-item"][data-expand-trigger]
+  > .sp-sidebar-brand {
   pointer-events: none;
 }
 
@@ -1695,7 +1925,11 @@ html[data-motion-reduce="true"]
     .sp-sidebar[data-collapsible="icon"]
     [data-sidebar="menu-item"][data-expand-trigger]:hover
     > [data-sidebar="menu-button"]
-    > .sp-button-content {
+    > .sp-button-content,
+  :root
+    .sp-sidebar[data-collapsible="icon"]
+    [data-sidebar="menu-item"][data-expand-trigger]:hover
+    > .sp-sidebar-brand {
     opacity: 0;
     filter: blur(4px);
     scale: 0.25;
@@ -1717,7 +1951,8 @@ html[data-motion-reduce="true"]
     [data-sidebar="menu-item"][data-expand-trigger]
       > :is([data-sidebar="menu-button"], [data-sidebar="expand-trigger"])
       > .sp-button-content
-  ) {
+  ),
+  :where([data-sidebar="menu-item"][data-expand-trigger] > .sp-sidebar-brand) {
     transition: none;
   }
 }
@@ -1727,7 +1962,9 @@ html[data-motion-reduce="true"]
     [data-sidebar="menu-item"][data-expand-trigger]
       > :is([data-sidebar="menu-button"], [data-sidebar="expand-trigger"])
       > .sp-button-content
-  ) {
+  ),
+:is(:root[data-motion-reduce="true"], [data-sp-motion="reduced"])
+  :where([data-sidebar="menu-item"][data-expand-trigger] > .sp-sidebar-brand) {
   transition: none;
 }
 
@@ -1760,6 +1997,16 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   border-color: transparent;
   background: var(--sp-rw-bg-muted);
   box-shadow: none;
+}
+
+/* A page link is at least as wide as it is high, the square of its size, and
+ * a longer number, such as 1,248, widens it with 4 px on each side instead of
+ * filling the square edge to edge. A number that fits with that room keeps
+ * the square, as three digits do at the lg and xl sizes. */
+:root .sp-pagination-link[data-profile="default"][data-size^="icon-"] {
+  width: auto;
+  aspect-ratio: 1;
+  padding-inline: var(--sp-rw-space-1);
 }
 
 :root [data-dashboard-shell="header"][data-divider="true"] {
@@ -1828,6 +2075,13 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   display: none;
 }
 
+/* A header that is the popup's last part keeps as much space below its text
+ * as above it, 20 px, as a Dialog header alone does (rulebook S2); the 24 px
+ * below are for the actions (FB-10). */
+:root .sp-alert-dialog-popup:has(> .sp-alert-dialog-header:last-child) {
+  padding-bottom: var(--sp-rw-space-5);
+}
+
 :root .sp-alert-dialog-header {
   display: grid;
   gap: var(--sp-rw-space-1-5);
@@ -1839,7 +2093,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-rw-fg-primary);
   font-family: var(--sp-rw-font-family-default);
   font-size: 1.125rem;
-  font-weight: 450;
+  font-weight: var(--sp-rw-font-weight-title);
   line-height: 1.6875rem;
 }
 
@@ -2015,9 +2269,28 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   padding-inline-end: calc(var(--sp-rw-space-2) * 2 + var(--sp-rw-space-6));
 }
 
-/* Card titles share the title of the overlays: 18 px on 27 px, weight 450. The
- * tinted Card band keeps its compact 14 px semibold title (see the Card
- * rules). */
+/* A header that is the popup's last part, such as a title alone, keeps as much
+ * space below its text as above it, 20 px, as a lone Card header keeps its
+ * inset all round (rulebook S2, S3). Only the corner close button and the
+ * Drawer's grab bar, which sit outside the flow, may follow it (FB-10). */
+:root
+  :where(.sp-dialog-header):not(
+    :has(~ :not([data-profile="overlay-dismiss"], .sp-drawer-bar))
+  ),
+:root
+  :where(.sp-sheet-header):not(
+    :has(~ :not([data-profile="overlay-dismiss"], .sp-drawer-bar))
+  ),
+:root
+  :where(.sp-drawer-header):not(
+    :has(~ :not([data-profile="overlay-dismiss"], .sp-drawer-bar))
+  ) {
+  padding-bottom: var(--sp-rw-space-5);
+}
+
+/* Card titles share the title of the overlays: 18 px on 27 px, in the title
+ * weight (--sp-rw-font-weight-title, 450). The tinted Card band keeps its
+ * compact 14 px semibold title (see the Card rules). */
 :root :where(.sp-dialog-title),
 :root :where(.sp-sheet-title),
 :root :where(.sp-drawer-title),
@@ -2025,7 +2298,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-rw-fg-primary);
   font-family: var(--sp-rw-font-family-default);
   font-size: 1.125rem;
-  font-weight: 450;
+  font-weight: var(--sp-rw-font-weight-title);
   line-height: 1.6875rem;
 }
 
@@ -2583,7 +2856,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-rw-fg-primary);
   font-family: var(--sp-rw-font-family-default);
   font-size: var(--sp-rw-font-14);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-21);
 }
 
@@ -3542,13 +3815,25 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   height: var(--sp-rw-space-4);
 }
 
+/* A row's text ends with an ellipsis wherever it sits (K5): a span after the
+ * row's icon or avatar, also before a trailing chevron, or the row's only
+ * span. Only a span that ends the row truncated before, so a label before a
+ * chevron pushed the chevron out of the row. Kit parts with a slot of their
+ * own, such as an Avatar, a Badge or the two-line text, keep their sizing. */
 :root
   [data-chassis]:is(
     [data-profile="navigation-row"],
     [data-profile="navigation-sub-row"]
   )
   > .sp-button-content
-  > span:last-child {
+  > span:not(:first-child, [data-slot]),
+:root
+  [data-chassis]:is(
+    [data-profile="navigation-row"],
+    [data-profile="navigation-sub-row"]
+  )
+  > .sp-button-content
+  > span:only-child:not([data-slot]) {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4031,6 +4316,136 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   line-height: var(--sp-rw-line-18);
 }
 
+/* The now marker (TimelineNow) is a row of the timeline with the accent dot
+ * of an event. Its label sits on the line of a description, so the dot
+ * centres on it (rulebook I5), in the accent at the label weight, and a line
+ * in the accent's border colour runs from 8 px after it to the end of the
+ * row, at least 16 px long. */
+:root .sp-timeline-now-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-rw-space-2);
+  color: var(--sp-rw-fg-accent);
+  font-size: var(--sp-rw-font-12);
+  font-weight: var(--sp-rw-font-weight-label, 500);
+  line-height: var(--sp-rw-line-18);
+  overflow-wrap: anywhere;
+}
+
+:root .sp-timeline-now-label::after {
+  flex: 1 0 var(--sp-rw-space-4);
+  height: var(--sp-rw-border-default);
+  background: var(--sp-rw-border-accent);
+  content: "";
+}
+
+/* Data List: label and value rows of a description list. Horizontal by
+ * default: every item is a row of the list's grid (subgrid), so the labels
+ * share one column, as wide as the widest label up to 40% of the list or as
+ * --data-list-label-width sets it, and the values take the rest, 16 px after
+ * it. Rows are 12 px apart. The vertical orientation sets each label 4 px
+ * above its value and the items 16 px apart. The defaults have no specificity,
+ * so the orientation and the dividers refine them (rulebook P6). */
+:where(.sp-data-list) {
+  display: grid;
+  grid-template-columns:
+    var(--data-list-label-width, fit-content(40%))
+    minmax(0, 1fr);
+  gap: var(--sp-rw-space-3) var(--sp-rw-space-4);
+  margin: 0;
+}
+
+:where(.sp-data-list-item) {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+}
+
+:root .sp-data-list[data-orientation="vertical"] {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-rw-space-4);
+}
+
+:root .sp-data-list[data-orientation="vertical"] > .sp-data-list-item {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-rw-space-1);
+}
+
+/* Labels are the quieter text at the regular weight and values the primary
+ * text, as Radix Themes and Chakra set their data lists; both wrap a long
+ * unbroken value in their column (rulebook K5). */
+:root .sp-data-list-label {
+  min-width: 0;
+  margin: 0;
+  color: var(--sp-rw-fg-tertiary);
+  font-size: var(--sp-rw-font-14);
+  font-weight: var(--sp-rw-font-weight-default);
+  line-height: var(--sp-rw-line-21);
+  overflow-wrap: anywhere;
+}
+
+:root .sp-data-list-value {
+  min-width: 0;
+  margin: 0;
+  color: var(--sp-rw-fg-primary);
+  font-size: var(--sp-rw-font-14);
+  font-weight: var(--sp-rw-font-weight-default);
+  line-height: var(--sp-rw-line-21);
+  overflow-wrap: anywhere;
+}
+
+/* Dividers: the kit's hairline (rulebook B7) between two items, 12 px above
+ * and below it; the first and the last item keep no space outside their
+ * content. */
+:root .sp-data-list[data-dividers] {
+  row-gap: 0;
+}
+
+:root .sp-data-list[data-dividers] > .sp-data-list-item {
+  padding-block: var(--sp-rw-space-3);
+}
+
+:root .sp-data-list[data-dividers] > .sp-data-list-item + .sp-data-list-item {
+  border-top: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+}
+
+:root .sp-data-list[data-dividers] > .sp-data-list-item:first-child {
+  padding-top: 0;
+}
+
+:root .sp-data-list[data-dividers] > .sp-data-list-item:last-child {
+  padding-bottom: 0;
+}
+
+/* Truncate: text that ends in an ellipsis. By default it stays on one line and
+ * is cut where its box ends: the box is as wide as the text, up to the width of
+ * its container or the width a utility in its className sets, such as
+ * max-w-1/2, which beats these rules (rulebook P6). It flows inline at the top
+ * of its line, so a Truncate alone in a title leaves the line as tall as the
+ * text, and in a flex or grid row it can shrink below the width of its text.
+ * data-lines wraps the text and clamps it after that many lines, the count
+ * --truncate-lines sets; a long word without spaces breaks inside a line
+ * rather than run past it (K5). The defaults have no specificity, so the line
+ * count refines them. */
+:where(.sp-truncate) {
+  display: inline-block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+:root .sp-truncate[data-lines] {
+  display: -webkit-box;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--truncate-lines, 2);
+}
+
 :root [data-chassis][data-size="lg"] {
   height: var(--sp-rw-control-lg);
 }
@@ -4213,6 +4628,36 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   gap: inherit;
 }
 
+/* A Button of the default profile is never wider than the space it sits in,
+ * and its label (button.tsx) stays on one line. In a narrower space the label
+ * may break between any two characters, and the clamp shows its first line,
+ * filled to the edge, with an ellipsis, while its title carries the full text
+ * (rulebook K5). A label that fits shows whole, and a multiline Button wraps.
+ * A Button of an icon size holds a glyph or a short figure, such as a page
+ * number that widens its square, and never cuts it. The label's line box is
+ * the Button's, which holds its descenders. */
+:where([data-chassis][data-profile="default"]) {
+  max-width: 100%;
+}
+
+:where(
+    [data-chassis][data-profile="default"]:not(
+        [data-multiline],
+        [data-size^="icon-"]
+      )
+      > .sp-button-content
+  )
+  > .sp-button-label {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
 /* In a Button whose text wraps, a leading icon or check (the ListBox check
  * leads its row) centres on the first line (I5); a trailing chevron keeps the
  * row centre. The icon keeps the size its owner gives it and moves by half the
@@ -4321,6 +4766,43 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 :root
   .sp-sidebar[data-side="right"][data-state="collapsed"]
   [data-chassis][data-profile="sidebar-rail"][data-resizable] {
+  cursor: w-resize;
+}
+
+/* A right-to-left page mirrors the side, so the edge moves the other way.
+ * The dir attribute is named beside :dir(rtl), which a build for older
+ * browsers turns into a list of right-to-left languages. */
+:root
+  .sp-sidebar[data-side="left"][data-state="expanded"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  )
+  .sp-sidebar-rail[data-resizable],
+:root
+  .sp-sidebar[data-side="right"][data-state="collapsed"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  )
+  .sp-sidebar-rail[data-resizable] {
+  cursor: e-resize;
+}
+
+:root
+  .sp-sidebar[data-side="right"][data-state="expanded"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  )
+  .sp-sidebar-rail[data-resizable],
+:root
+  .sp-sidebar[data-side="left"][data-state="collapsed"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  )
+  .sp-sidebar-rail[data-resizable] {
   cursor: w-resize;
 }
 
@@ -4482,6 +4964,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 
 :root [data-chassis][data-variant="accent"] {
   --sp-rw-button-source: var(--sp-rw-bg-accent);
+  --sp-rw-button-text: var(--sp-rw-fg-on-accent);
 }
 
 :root [data-chassis][data-variant="destructive"] {
@@ -4894,6 +5377,28 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   padding-block: var(--sp-rw-space-2);
 }
 
+/* A divided list (variant="divided") draws the kit's hairline (rulebook B7)
+ * between two rows, in the middle of the space between them, across the row
+ * content: it starts and ends where the rows' text does, and the rows' fills
+ * stay clear of it. The first and the last row keep no space outside their
+ * content: the list reaches past its top and bottom by the row padding, as a
+ * flush list reaches past its sides, so the fills keep their inset. */
+:root .sp-resource-list[data-variant="divided"] {
+  margin-block: calc(var(--sp-rw-space-2-5) * -1);
+}
+
+:root .sp-resource-list[data-variant="divided"][data-density="compact"] {
+  margin-block: calc(var(--sp-rw-space-2) * -1);
+}
+
+:root .sp-resource-list-divider {
+  display: block;
+  height: var(--sp-rw-border-default);
+  margin-inline: var(--sp-rw-space-3);
+  margin-bottom: var(--sp-motion-gap);
+  background: var(--sp-rw-border-translucent);
+}
+
 /* The selected row owns its metadata colour: the pressed fill under a selected
  * row lowers the contrast of muted text, so metadata reads at 80% foreground
  * there. Consumers (TaskCalendar) do not recolour it themselves. */
@@ -5145,6 +5650,59 @@ html[data-motion-reduce="true"] .sp-collapsible-panel,
  * wait. The tab that keyboard focus brings into view stops clear of that fade. */
 :root .sp-tabs-rail .sp-scroll-area-viewport {
   scroll-padding-inline: var(--fade-size);
+}
+
+/* A tab list whose tabs do not fit scrolls (S-13). Its frame adds no box
+ * while the tabs fit. When they overflow, it lays a scroll button on either
+ * side of the list: each holds its place while the list overflows and shows
+ * while more tabs wait in its direction. A press
+ * scrolls a page of tabs; the selected tab and the focused one scroll into
+ * view (tabs.tsx). The buttons fade in and out over the state time. */
+:where(.sp-tabs-list-frame) {
+  display: contents;
+}
+
+/* The tab that keyboard focus brings into view keeps the list's inset beside
+ * it, so the list scrolls to its very start and end. */
+:root .sp-tabs-list {
+  scroll-padding-inline: var(--sp-rw-tabs-inset);
+}
+
+:where(.sp-tabs-list-frame[data-overflow]) {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--sp-rw-space-1);
+}
+
+:root .sp-tabs-scroll-button {
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease-state);
+}
+
+:root .sp-tabs-scroll-button[hidden] {
+  display: none;
+}
+
+:root .sp-tabs-scroll-button[data-visible] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* On a touch screen the list scrolls by swiping, so the frame lays out no
+ * scroll buttons and keeps no room for them. The selected tab and the focused
+ * one still scroll into view (tabs-overflow.ts). */
+@media (pointer: coarse) {
+  :where(.sp-tabs-list-frame[data-overflow]) {
+    display: contents;
+  }
+
+  :root .sp-tabs-scroll-button {
+    display: none;
+  }
 }
 
 :root .sp-tabs-tab {
@@ -5487,6 +6045,31 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   line-height: var(--sp-rw-line-21);
 }
 
+/* A Combobox item is as tall as a one-line field of its Combobox, as a Select
+ * item is as tall as its trigger: the height of the field its popup anchors
+ * to. A chips field grows a row for each line of chips, so a popup anchored to
+ * it names the control size of its input (data-item-size), and its items take
+ * that size's control height (FB-9). */
+:root .sp-combobox-item {
+  min-height: var(--sp-rw-combobox-item-height, var(--anchor-height));
+}
+
+:root .sp-combobox-popup[data-item-size="sm"] {
+  --sp-rw-combobox-item-height: var(--sp-rw-control-sm);
+}
+
+:root .sp-combobox-popup[data-item-size="md"] {
+  --sp-rw-combobox-item-height: var(--sp-rw-control-md);
+}
+
+:root .sp-combobox-popup[data-item-size="lg"] {
+  --sp-rw-combobox-item-height: var(--sp-rw-control-lg);
+}
+
+:root .sp-combobox-popup[data-item-size="xl"] {
+  --sp-rw-combobox-item-height: var(--sp-rw-control-xl);
+}
+
 /* Focus ring of a field. A joined OTP Field is an InputGroup too, but its slots
  * draw the ring, as separate slots do: the field around them does not take it
  * (otp-field.css). */
@@ -5602,7 +6185,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * text utility on NumberFieldInput still overrides it. */
 :root .sp-number-field[data-emphasized] .sp-number-field-group {
   font-size: var(--sp-rw-font-18);
-  font-weight: var(--sp-semantic-font-weight-semibold);
+  font-weight: var(--sp-rw-font-weight-strong);
   line-height: var(--sp-rw-line-27);
 }
 
@@ -5634,8 +6217,12 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-radius: var(--sp-rw-radius-surface);
 }
 
+/* A value longer than the field ends with an ellipsis at rest (S-07). While
+ * the field has focus, the browser drops the ellipsis and the value scrolls to
+ * the caret, as in any input. */
 :root .sp-number-field-input {
   height: 100%;
+  text-overflow: ellipsis;
 }
 
 :root .sp-otp-field[data-size="xl"] .sp-otp-field-input {
@@ -5765,7 +6352,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 :root .sp-stepper-title {
   color: var(--sp-rw-fg-primary);
   font-size: var(--sp-rw-font-14);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-21);
 }
 
@@ -6123,7 +6710,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 :root .sp-base-label {
   gap: var(--sp-rw-space-2);
   font-size: var(--sp-rw-font-14);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-16);
 }
 
@@ -6374,7 +6961,12 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
     color var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
-:root .sp-field[data-label-placement="floating"]:dir(rtl) {
+:root
+  .sp-field[data-label-placement="floating"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  ) {
   --field-floating-label-origin: right top;
 }
 
@@ -6885,14 +7477,14 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root .sp-checkbox-indicator,
 :root .sp-table-selection-indicator {
-  color: white;
+  color: var(--sp-rw-fg-on-accent);
 }
 
 :root .sp-radio-indicator::before {
   width: var(--sp-rw-space-1-5);
   height: var(--sp-rw-space-1-5);
   border-radius: var(--sp-rw-radius-full);
-  background: white;
+  background: var(--sp-rw-fg-on-accent);
 }
 
 /* Switch: measured 32x20 default with a 16px thumb and 12px travel. The
@@ -6993,6 +7585,18 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   transform: translateX(calc(var(--sp-rw-switch-thumb) - var(--sp-rw-space-1)));
 }
 
+/* The thumb starts at the track's inline start, so in a right-to-left page
+ * it travels left, within the track. A build for older browsers turns
+ * :dir(rtl) into a list of right-to-left languages, so the dir attribute is
+ * named as well, as Tailwind's rtl variant does. */
+:root
+  .sp-switch[data-checked]:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *)
+  .sp-switch-thumb {
+  transform: translateX(
+    calc((var(--sp-rw-switch-thumb) - var(--sp-rw-space-1)) * -1)
+  );
+}
+
 :root .sp-switch[data-disabled] {
   opacity: var(--sp-semantic-state-disabled-opacity);
 }
@@ -7016,7 +7620,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   box-shadow: none;
   color: var(--sp-rw-fg-secondary);
   font-size: var(--sp-rw-font-14);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-21);
 }
 
@@ -7363,6 +7967,18 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   translate: -50% -50%;
 }
 
+/* A Breadcrumb trail wraps onto more lines where it has no room; a header bar,
+ * which is one line, keeps it on one row instead (Dashboard Shell header). The
+ * trail can shrink inside a grid or flex parent, so a current page that
+ * truncates never makes its container wider (rulebook K5). */
+:where(.sp-breadcrumb) {
+  min-width: 0;
+}
+
+:where(.sp-breadcrumb-list) {
+  flex-wrap: wrap;
+}
+
 /* Breadcrumb links and the ellipsis ease their colour with the kit's state
  * motion (M1); reduced motion is instant (M5). */
 :where(.sp-breadcrumb-link),
@@ -7594,7 +8210,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   background: var(--sp-rw-bg-depth);
   color: var(--sp-rw-fg-secondary);
   font-size: var(--sp-rw-font-12);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-18);
 }
 
@@ -7646,7 +8262,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   background: var(--sp-rw-bg-secondary);
   color: var(--sp-rw-fg-primary);
   font-size: var(--sp-rw-font-12);
-  font-weight: 450;
+  font-weight: var(--sp-rw-badge-font-weight, 450);
   line-height: var(--sp-rw-font-12);
 }
 
@@ -7780,7 +8396,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * tint is the info variant. Badge renders the deprecated `brand` as accent. */
 :root .sp-base-badge[data-variant="accent"] {
   --sp-rw-badge-bg: var(--sp-rw-bg-accent);
-  --sp-rw-badge-fg: var(--sp-rw-fg-emphasis);
+  --sp-rw-badge-fg: var(--sp-rw-fg-on-accent);
 }
 
 /* Inverse is filled like the inverse Button, the primary action: the black that
@@ -7813,27 +8429,32 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * color of the surface they sit on: --sp-rw-surface-color, which Card, Dialog,
  * Popover and the other surfaces publish, or the page background. It separates
  * each circle from the one it overlaps, so a group passes no size or ring
- * class. */
+ * class. An avatar is a circle of that size; the count is at least one. */
 :root .sp-base-badge[data-profile="group-overflow-count"],
 :root .sp-avatar-group .sp-avatar {
-  width: var(--avatar-group-size, var(--sp-rw-space-8));
   min-width: var(--avatar-group-size, var(--sp-rw-space-8));
   height: var(--avatar-group-size, var(--sp-rw-space-8));
   box-shadow: 0 0 0 2px var(--sp-rw-surface-color, var(--sp-rw-bg-base));
 }
 
+:root .sp-avatar-group .sp-avatar {
+  width: var(--avatar-group-size, var(--sp-rw-space-8));
+}
+
 /* AvatarGroupCount: the circle at the end of a group, a kit-internal Badge
- * profile. The ring above replaces the default badge's hairline contour; the
- * rim below draws its edge. */
+ * profile. A count never truncates: a longer one grows as a pill of the same
+ * height, with 4 px inside its ends, and a short one stays a circle. The ring
+ * above replaces the default badge's hairline contour; the rim below draws its
+ * edge. */
 :root .sp-base-badge[data-profile="group-overflow-count"] {
   gap: 0;
   border: 0;
   border-radius: var(--sp-rw-radius-full);
-  padding: 0;
+  padding: 0 var(--sp-rw-space-1);
   background: var(--sp-rw-bg-primary);
   color: var(--color-muted-foreground);
   font-size: var(--sp-rw-font-12);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-16);
 }
 
@@ -7847,22 +8468,33 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 /* Count profile: a compact notification count, 16px high with a full radius
- * and 10px type. IconButton passes it and Button only places the Badge. */
+ * and 10px type. IconButton passes it and Button only places the Badge. A
+ * count never truncates: it grows as a pill, at least as wide as it is high. */
 :root .sp-base-badge[data-profile="count"] {
   display: block;
   width: auto;
   height: var(--sp-rw-space-4);
   min-width: var(--sp-rw-space-4);
-  max-width: var(--sp-rw-space-8);
+  max-width: none;
   border: 0;
   border-radius: var(--sp-rw-radius-full);
   padding: 0 var(--sp-rw-space-1);
-  overflow: hidden;
   outline: 2px solid var(--sp-rw-surface-color, var(--sp-rw-bg-base));
   font-size: var(--sp-rw-font-10);
   line-height: var(--sp-rw-line-16);
   text-align: center;
-  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The label of a count stays whole: one line at its full width, never
+ * clamped. */
+:root .sp-base-badge[data-profile="count"] .sp-badge-label,
+:root .sp-base-badge[data-profile="group-overflow-count"] .sp-badge-label {
+  display: inline;
+  overflow: visible;
+  -webkit-line-clamp: none;
+  line-height: inherit;
+  white-space: nowrap;
 }
 
 /* Verified profile: a solid accent circle with a check, the mark of a verified
@@ -7878,7 +8510,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   padding: 0;
   background: var(--sp-rw-bg-accent);
   box-shadow: none;
-  color: var(--sp-rw-fg-emphasis);
+  color: var(--sp-rw-fg-on-accent);
   outline: 2px solid var(--sp-rw-surface-color, var(--sp-rw-bg-base));
 }
 
@@ -7887,6 +8519,68 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   height: 60%;
   opacity: 1;
   stroke-width: 3;
+}
+
+/* Status profile: a state in words after a coloured dot, with no fill and no
+ * contour, for list rows and running text. The words carry the state in the
+ * secondary text colour, at the badge's size and weight; the dot repeats it.
+ * The dot grows with the size, 6 px at sm and md and 8 px at lg and xl, with
+ * as much space before the words. It takes the tone of the variant: success,
+ * warning, error or destructive, info or accent, and otherwise the grey of the
+ * Avatar's offline dot. */
+:root .sp-base-badge[data-profile="status"] {
+  --sp-badge-dot-size: var(--sp-rw-space-1-5);
+  --sp-badge-dot-color: var(--color-muted-foreground);
+  height: auto;
+  min-width: 0;
+  gap: var(--sp-badge-dot-size);
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--sp-rw-fg-secondary);
+}
+
+:root
+  .sp-base-badge[data-profile="status"]:where(
+    [data-size="lg"],
+    [data-size="xl"]
+  ) {
+  --sp-badge-dot-size: var(--sp-rw-space-2);
+}
+
+:root .sp-base-badge[data-profile="status"][data-variant="success"] {
+  --sp-badge-dot-color: var(--color-success);
+}
+
+:root .sp-base-badge[data-profile="status"][data-variant="warning"] {
+  --sp-badge-dot-color: var(--color-warning);
+}
+
+:root
+  .sp-base-badge[data-profile="status"]:where(
+    [data-variant="error"],
+    [data-variant="destructive"]
+  ) {
+  --sp-badge-dot-color: var(--color-destructive);
+}
+
+:root
+  .sp-base-badge[data-profile="status"]:where(
+    [data-variant="info"],
+    [data-variant="accent"]
+  ) {
+  --sp-badge-dot-color: var(--sp-rw-bg-accent);
+}
+
+/* The status dot, which the status profile renders before its words. */
+:root .sp-badge-dot {
+  width: var(--sp-badge-dot-size, var(--sp-rw-space-1-5));
+  height: var(--sp-badge-dot-size, var(--sp-rw-space-1-5));
+  flex-shrink: 0;
+  border-radius: var(--sp-rw-radius-full);
+  background: var(--sp-badge-dot-color, var(--color-muted-foreground));
 }
 
 /* One surface contract for every card-like surface: no border of its own, the
@@ -7983,11 +8677,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-radius: 0;
 }
 
-/* The inline inset of a card's parts. A CardFrame sets --card-inset-inline on
- * its cards, so their text starts with the frame header's (card.tsx). */
+/* The inset of a card's parts: 20 px, or the theme's --sp-rw-card-inset, which
+ * the kit leaves unset. It pads the header, the panel and the footer, the
+ * sides of the bands and the space above and below a divided header. A
+ * CardFrame sets --card-inset-inline on its cards, so their text starts with
+ * the frame header's (card.tsx). */
 :root .sp-card-header,
 :root .sp-card-panel {
-  padding: var(--sp-rw-space-5) var(--card-inset-inline, var(--sp-rw-space-5));
+  padding: var(--sp-rw-card-inset, var(--sp-rw-space-5))
+    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)));
 }
 
 :root .sp-card-header {
@@ -8003,6 +8701,50 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   padding-bottom: var(--sp-rw-space-3);
 }
 
+/* A divided header, above a Separator or with its own bottom border, is a band
+ * of its own: as much space below its text as above it, the card inset, where
+ * a header before a panel otherwise keeps 12 px (rulebook S4b). The tinted
+ * band keeps its own 12 px above and below. */
+:root .sp-card > .sp-card-header.border-b,
+:root .sp-card > .sp-card-header:has(+ .sp-separator) {
+  padding-bottom: var(--sp-rw-card-inset, var(--sp-rw-space-5));
+}
+
+/* A header's media (CardMedia) leads its text, 12 px before it: the header's
+ * 6 px column gap and 6 px of its own. Its box is one title line high, so a
+ * bare icon centres on the title's first line and an avatar taller than the
+ * line starts at its top (rulebook I3, I5, I7). The icon is 20 px and takes
+ * the accent, as an icon beside a Metric Card heading does. */
+:root .sp-card-media {
+  min-height: var(--sp-rw-line-27);
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: var(--sp-rw-space-1-5);
+}
+
+:root .sp-card-media > svg {
+  color: var(--sp-rw-fg-accent);
+}
+
+:root .sp-card-media > svg:not([class*="size-"]) {
+  width: var(--sp-rw-space-5);
+  height: var(--sp-rw-space-5);
+}
+
+/* Context beside the title (CardTitleMeta) shares the title's row and first
+ * baseline, 8 px after it, and moves below it when the row is full. It takes
+ * the description's text (below) at the regular weight. */
+:root .sp-card-title:has(> .sp-card-title-meta) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--sp-rw-space-2);
+}
+
+:root .sp-card-title-meta {
+  font-weight: var(--sp-rw-font-weight-default);
+}
+
 /* The part before the footer gives up its bottom padding, so the footer's
  * 16 px separate it from the actions: after a panel and after a header alone
  * (the tinted band keeps its own band). A divided part keeps its padding. */
@@ -8014,8 +8756,9 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 :root .sp-card-footer {
-  padding: var(--sp-rw-space-4) var(--card-inset-inline, var(--sp-rw-space-5))
-    var(--sp-rw-space-5);
+  padding: var(--sp-rw-space-4)
+    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)))
+    var(--sp-rw-card-inset, var(--sp-rw-space-5));
 }
 
 /* A footer divided off by a separator or its own top border is a band of its
@@ -8031,34 +8774,79 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-bottom: var(--sp-rw-border-default) solid
     var(--sp-rw-border-translucent);
   background: var(--sp-rw-bg-primary);
-  padding: var(--sp-rw-space-3) var(--card-inset-inline, var(--sp-rw-space-5));
+  padding: var(--sp-rw-space-3)
+    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)));
 }
 
-/* A header with only a title, with or without an action, has no second row. Its
- * empty grid row would keep the 6 px title gap below the title: in the band it
- * made the band bottom-heavy, and in a default card it added 6 px between the
- * title and the content (the title keeps its 16 px, only the empty row goes;
- * rulebook S2). */
+/* A header with only a title, with or without an action or a media, has no
+ * second row. Its empty grid row would keep the 6 px title gap below the title:
+ * in the band it made the band bottom-heavy, and in a default card it added
+ * 6 px between the title and the content (the title keeps its 16 px, only the
+ * empty row goes; rulebook S2). */
 :root
   .sp-card
-  > .sp-card-header:not(:has(> :not(.sp-card-action) ~ :not(.sp-card-action))) {
+  > .sp-card-header:not(
+    :has(
+      > :not(.sp-card-action):not(.sp-card-media)
+        ~ :not(.sp-card-action):not(.sp-card-media)
+    )
+  ) {
   row-gap: 0;
 }
 
-:root .sp-card[data-variant="header"] > .sp-card-header + .sp-card-panel {
-  padding-top: var(--sp-rw-space-5);
+/* An action beside a title alone keeps the header as tall as one without an
+ * action (Lukas, 15 October 2026). It centres on the title's line and reaches
+ * up to 12 px into the padding above and below, the band's padding and the
+ * space below a header before its panel, or less with a smaller card inset. So
+ * a link or a Button up to xl beside the 27 px line takes no height of its
+ * own; only what the 12 px cannot take, such as an xl Button beside the band's
+ * 20 px line, adds to the row, and the action never leaves the padding. Beside
+ * a title and a description it stays at the top of both. */
+:root
+  .sp-card-header:not(
+    :has(
+      > :not(.sp-card-action):not(.sp-card-media)
+        ~ :not(.sp-card-action):not(.sp-card-media)
+    )
+  )
+  > .sp-card-action {
+  margin-block: calc(
+    min(var(--sp-rw-space-3), var(--sp-rw-card-inset, var(--sp-rw-space-5))) *
+      -1
+  );
 }
 
-/* The tinted band is a compact header: its title is 14 px semibold. */
+:root .sp-card[data-variant="header"] > .sp-card-header + .sp-card-panel {
+  padding-top: var(--sp-rw-card-inset, var(--sp-rw-space-5));
+}
+
+/* In the band the media follows the compact title: its box is the 20 px title
+ * line and a bare icon is 16 px. */
+:root .sp-card[data-variant="header"] > .sp-card-header > .sp-card-media {
+  min-height: var(--sp-rw-line-20);
+}
+
+:root
+  .sp-card[data-variant="header"]
+  > .sp-card-header
+  > .sp-card-media
+  > svg:not([class*="size-"]) {
+  width: var(--sp-rw-control-icon);
+  height: var(--sp-rw-control-icon);
+}
+
+/* The tinted band is a compact header: its title is 14 px in the strong
+ * weight (--sp-rw-font-weight-strong, 600). */
 :root .sp-card[data-variant="header"] > .sp-card-header > .sp-card-title {
   font-size: var(--sp-rw-font-14);
-  font-weight: 600;
+  font-weight: var(--sp-rw-font-weight-strong);
   line-height: var(--sp-rw-line-20);
 }
 
 /* A Fieldset's description explains a group, as a Card's does, and takes the
- * same text. */
+ * same text. So does the context beside a card's title. */
 :root .sp-card-description,
+:root .sp-card-title-meta,
 :root .sp-fieldset-description {
   color: var(--sp-rw-fg-tertiary);
   font-size: var(--sp-rw-font-14);
@@ -8277,7 +9065,11 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   color: var(--sp-rw-fg-primary);
 }
 
-:root .sp-select-popup > div {
+/* The panel of a Select is the surface that holds its list (sp-select-surface
+ * in select.tsx). Base UI renders the scroll arrows beside it, as divs of the
+ * popup too, so the rule names the surface alone: a rule for every div of the
+ * popup gave each arrow the panel's fill, radius and shadow (FB-8). */
+:root .sp-select-surface {
   overflow: hidden;
   border: 0;
   border-radius: var(--sp-rw-radius-surface);
@@ -8286,8 +9078,39 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   box-shadow: var(--sp-rw-floating-md-shadow);
 }
 
-:root .sp-select-popup > div::before {
+:root .sp-select-surface::before {
   box-shadow: none;
+}
+
+/* A scroll arrow is a 24 px strip along the panel's top or bottom edge, inside
+ * it: the chevron sits on the panel's colour, which fades into the list over
+ * the next 24 px. The fade is the surface's colour, so no seam shows, and it
+ * takes the surface's radius at its edge, so the panel's corners stay round. */
+:root .sp-select-scroll-up-arrow::before,
+:root .sp-select-scroll-down-arrow::before {
+  position: absolute;
+  inset-inline: 0;
+  height: 200%;
+  content: "";
+  pointer-events: none;
+}
+
+:root .sp-select-scroll-up-arrow::before {
+  top: 0;
+  border-start-start-radius: var(--sp-rw-radius-surface);
+  border-start-end-radius: var(--sp-rw-radius-surface);
+  background: linear-gradient(var(--sp-rw-bg-secondary) 50%, transparent);
+}
+
+:root .sp-select-scroll-down-arrow::before {
+  bottom: 0;
+  border-end-start-radius: var(--sp-rw-radius-surface);
+  border-end-end-radius: var(--sp-rw-radius-surface);
+  background: linear-gradient(
+    to top,
+    var(--sp-rw-bg-secondary) 50%,
+    transparent
+  );
 }
 
 :root .sp-select-list {
@@ -8352,7 +9175,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 :root .sp-settings-list-title {
   color: var(--sp-rw-fg-primary);
   font-size: var(--sp-rw-font-16);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
   line-height: var(--sp-rw-line-24);
 }
 
@@ -8446,7 +9269,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 :root .sp-alert-title {
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
 }
 
 :root .sp-alert-description {
@@ -8532,8 +9355,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root :where(.sp-progress-label),
 :root :where(.sp-meter-label) {
+  min-width: 0;
   color: var(--sp-rw-fg-primary);
-  font-weight: 500;
+  font-weight: var(--sp-rw-font-weight-label);
+  overflow-wrap: anywhere;
 }
 
 :root :where(.sp-progress-value),
@@ -8631,9 +9456,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 /* Tooltip popup. A tone sets its fill, text and contour through
  * --sp-rw-tooltip-bg, --sp-rw-tooltip-fg, --sp-rw-tooltip-rim and
- * --sp-rw-tooltip-contour; without one it keeps the secondary surface. */
+ * --sp-rw-tooltip-contour; without one it keeps the secondary surface.
+ * It is at most 18rem (288 px) wide, within the 240 to 300 px that
+ * established kits give their tooltips: a long text wraps into a compact
+ * block of about 45 characters a line in the tooltip's 12 px, at every
+ * control size, and an unbroken word breaks (rulebook K5). A max-w-* class
+ * in className sets another width (P6). */
 :root .sp-tooltip-popup {
   min-height: var(--sp-rw-control-xs);
+  max-width: calc(var(--sp-rw-space) * 72);
   border-radius: var(--sp-rw-radius-sm);
   background: var(--sp-rw-tooltip-bg, var(--sp-rw-bg-secondary));
   box-shadow:
@@ -8652,6 +9483,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   font-size: var(--sp-rw-font-12);
   font-weight: 400;
   line-height: var(--sp-rw-line-16);
+  overflow-wrap: anywhere;
 }
 
 :root .sp-tooltip-popup::before {
@@ -8687,11 +9519,14 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 
+/* The logical sides name the dir attribute beside :dir(rtl), which a build
+ * for older browsers turns into a list of right-to-left languages, as
+ * Tailwind's rtl variant does; left to right is every other page. */
 :root
   .sp-tooltip-arrow:is(
     [data-side="right"],
-    [data-side="inline-end"]:dir(ltr),
-    [data-side="inline-start"]:dir(rtl)
+    [data-side="inline-end"]:not(:dir(rtl), [dir="rtl"], [dir="rtl"] *),
+    [data-side="inline-start"]:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *)
   ) {
   left: calc(var(--sp-rw-space-1) * -1);
   width: var(--sp-rw-space-1);
@@ -8702,8 +9537,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 :root
   .sp-tooltip-arrow:is(
     [data-side="left"],
-    [data-side="inline-start"]:dir(ltr),
-    [data-side="inline-end"]:dir(rtl)
+    [data-side="inline-start"]:not(:dir(rtl), [dir="rtl"], [dir="rtl"] *),
+    [data-side="inline-end"]:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *)
   ) {
   right: calc(var(--sp-rw-space-1) * -1);
   width: var(--sp-rw-space-1);

@@ -31,12 +31,44 @@ const paginationIconSizeByControlSize = {
   React.ComponentProps<typeof Button>["size"]
 >;
 
+/**
+ * The words of a Pagination. `labels` on Pagination replaces them, merged with
+ * the English defaults: pass the translation of each one for an application in
+ * another language.
+ */
+export type PaginationLabels = {
+  /** The name of the navigation landmark: "pagination" by default. */
+  navigation: string;
+  /** The text of PaginationPrevious: "Previous" by default. */
+  previous: string;
+  /** The accessible name of PaginationPrevious: "Go to previous page" by default. */
+  previousPage: string;
+  /** The text of PaginationNext: "Next" by default. */
+  next: string;
+  /** The accessible name of PaginationNext: "Go to next page" by default. */
+  nextPage: string;
+  /** The hidden text of PaginationEllipsis: "More pages" by default. */
+  morePages: string;
+};
+
+const defaultPaginationLabels: PaginationLabels = {
+  navigation: "pagination",
+  previous: "Previous",
+  previousPage: "Go to previous page",
+  next: "Next",
+  nextPage: "Go to next page",
+  morePages: "More pages",
+};
+
 const PaginationContext = React.createContext<{
+  labels: PaginationLabels;
   variant: NonNullable<PaginationProps["variant"]>;
-}>({ variant: "default" });
+}>({ labels: defaultPaginationLabels, variant: "default" });
 
 export interface PaginationProps extends React.ComponentProps<"nav"> {
   animate?: boolean | undefined;
+  /** Replaces the English words of the parts, such as Previous and Next. */
+  labels?: Partial<PaginationLabels> | undefined;
   variant?: "default" | "ghost" | undefined;
 }
 
@@ -44,13 +76,19 @@ export function Pagination({
   animate = true,
   children,
   className,
+  labels: labelsProp,
   variant = "default",
   ...props
 }: PaginationProps): React.ReactElement {
+  const labels = React.useMemo(
+    () => ({ ...defaultPaginationLabels, ...labelsProp }),
+    [labelsProp],
+  );
+  const context = React.useMemo(() => ({ labels, variant }), [labels, variant]);
   return (
-    <PaginationContext.Provider value={{ variant }}>
+    <PaginationContext.Provider value={context}>
       <nav
-        aria-label="pagination"
+        aria-label={labels.navigation}
         className={cn(
           slotClass("pagination", props),
           "mx-auto flex w-full justify-center",
@@ -202,25 +240,27 @@ const KitPaginationLink = PaginationLink as (
   props: KitPaginationLinkProps,
 ) => React.ReactElement;
 
+// Previous points to the inline start and Next to the inline end, so their
+// chevrons mirror in a right-to-left page.
 export function PaginationPrevious({
   className,
   size,
   ...props
 }: PaginationDirectionalProps): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
-  const { variant } = React.useContext(PaginationContext);
+  const { labels, variant } = React.useContext(PaginationContext);
   return (
     <KitPaginationLink
-      aria-label="Go to previous page"
+      aria-label={labels.previousPage}
       className={className}
       profile="responsive-navigation"
       profileMode={variant === "ghost" ? "compact" : "responsive"}
       size={resolvedSize}
       {...props}
     >
-      <ChevronLeftIcon className="in-data-[profile-mode=compact]:m-0" />
+      <ChevronLeftIcon className="in-data-[profile-mode=compact]:m-0 rtl:-scale-x-100" />
       <span className="max-sm:hidden in-data-[profile-mode=compact]:hidden">
-        Previous
+        {labels.previous}
       </span>
     </KitPaginationLink>
   );
@@ -232,10 +272,10 @@ export function PaginationNext({
   ...props
 }: PaginationDirectionalProps): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
-  const { variant } = React.useContext(PaginationContext);
+  const { labels, variant } = React.useContext(PaginationContext);
   return (
     <KitPaginationLink
-      aria-label="Go to next page"
+      aria-label={labels.nextPage}
       className={className}
       profile="responsive-navigation"
       profileMode={variant === "ghost" ? "compact" : "responsive"}
@@ -243,9 +283,9 @@ export function PaginationNext({
       {...props}
     >
       <span className="max-sm:hidden in-data-[profile-mode=compact]:hidden">
-        Next
+        {labels.next}
       </span>
-      <ChevronRightIcon className="in-data-[profile-mode=compact]:m-0" />
+      <ChevronRightIcon className="in-data-[profile-mode=compact]:m-0 rtl:-scale-x-100" />
     </KitPaginationLink>
   );
 }
@@ -254,6 +294,7 @@ export function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">): React.ReactElement {
+  const { labels } = React.useContext(PaginationContext);
   return (
     <span
       aria-hidden
@@ -266,7 +307,7 @@ export function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-5 sm:size-4" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{labels.morePages}</span>
     </span>
   );
 }

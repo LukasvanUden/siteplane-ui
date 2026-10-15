@@ -132,14 +132,20 @@
   --success: var(--sp-semantic-color-success);
   --warning: var(--sp-semantic-color-warning);
   --button-text: oklch(0.466 0.027 271.6);
-  /* Categorical chart palette in a fixed order: blue, orange, teal, purple, gold.
-   * Each series keeps its hue in Dark, which is lighter and more saturated. Every
-   * mark is at least 3:1 on the card and page surfaces of its theme. */
+  /* Categorical chart palette in a fixed order: blue, orange, teal, purple, gold,
+   * cyan, rose, green. Each series keeps its hue in Dark, which is lighter and
+   * more saturated. Every mark is at least 3:1 on the card and page surfaces of
+   * its theme. The last three hues sit halfway in the widest gaps the first five
+   * leave on the hue circle, so every two hues are at least 40 degrees apart,
+   * and neighbours in the order stay as far apart as the first five. */
   --chart-1: oklch(57.5% 0.185 265);
   --chart-2: oklch(63.5% 0.172 48);
   --chart-3: oklch(63% 0.112 181);
   --chart-4: oklch(50.5% 0.196 325);
   --chart-5: oklch(62% 0.122 91);
+  --chart-6: oklch(61% 0.11 223);
+  --chart-7: oklch(58% 0.19 7);
+  --chart-8: oklch(60% 0.155 136);
   /* The brand colour of a chart, whose shades are its default palette: the
    * brand itself in Light, and in Dark the lifted brand that progress fills
    * take, so that a mark and its lighter shades still read on a dark card. The
@@ -175,6 +181,9 @@
   --chart-3: oklch(66.5% 0.116 181);
   --chart-4: oklch(61% 0.21 325);
   --chart-5: oklch(66.5% 0.126 91);
+  --chart-6: oklch(66.5% 0.116 223);
+  --chart-7: oklch(64% 0.2 7);
+  --chart-8: oklch(66.5% 0.165 136);
   --chart-brand: var(--sp-rw-progress-fill);
   --chart-brand-fade: color-mix(in oklab, var(--chart-brand) 50%, black);
   --sidebar: color-mix(

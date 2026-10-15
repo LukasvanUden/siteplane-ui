@@ -54,6 +54,24 @@ export function ChartSwatch({ color }: { color: string }): React.ReactElement {
   );
 }
 
+/**
+ * The dot before the name of a series, in a legend entry or a tooltip row: in
+ * a box one line of the name tall, so that it centres on the name's first line
+ * however many lines follow (rulebook I5). The row it starts aligns its items
+ * at their top.
+ */
+export function ChartLabelSwatch({
+  color,
+}: {
+  color: string;
+}): React.ReactElement {
+  return (
+    <span className="flex h-lh shrink-0 items-center">
+      <ChartSwatch color={color} />
+    </span>
+  );
+}
+
 export type ChartLegendItem = {
   key: string;
   label: string;
@@ -114,7 +132,9 @@ export function legendEntryHandlers(
  * so a series that comes or goes animates and the others glide. Given the
  * chart's `focus`, a mouse over an entry makes its series the focused one and
  * the other entries step back, as the marks of the chart do, unless `fade` is
- * off.
+ * off. The legend never grows wider than the room it is given: a long label
+ * wraps, and a word too long for its line breaks inside it (rulebook K5),
+ * while the dot stays on the label's first line (I5).
  */
 export function ChartLegend({
   items,
@@ -143,7 +163,10 @@ export function ChartLegend({
   // A div and not the figure's caption: the caption would name the chart's
   // figure after its series, and the chart is named by its label alone.
   return (
-    <div className={cn("sp-chart-legend", className)} data-slot="chart-legend">
+    <div
+      className={cn("sp-chart-legend", "min-w-0 max-w-full", className)}
+      data-slot="chart-legend"
+    >
       <MotionList
         className={cn(
           "text-sm text-muted-foreground",
@@ -155,7 +178,7 @@ export function ChartLegend({
           <MotionItem key={item.key}>
             <div
               className={cn(
-                "flex items-center gap-2",
+                "flex items-start gap-2",
                 focus && fade && dimClassName,
                 focus &&
                   fade &&
@@ -167,11 +190,13 @@ export function ChartLegend({
                 ? legendEntryHandlers(item.key, focus.setFocusedKey)
                 : undefined)}
             >
-              <ChartSwatch color={item.color} />
-              {item.label}
-              {item.value !== undefined && (
-                <span className="sr-only">: {item.value}</span>
-              )}
+              <ChartLabelSwatch color={item.color} />
+              <span className="min-w-0 wrap-anywhere">
+                {item.label}
+                {item.value !== undefined && (
+                  <span className="sr-only">: {item.value}</span>
+                )}
+              </span>
             </div>
           </MotionItem>
         ))}

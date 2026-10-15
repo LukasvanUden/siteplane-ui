@@ -24,11 +24,22 @@
   --sp-floating-panel-y: 0px;
 }
 
-.sp-floating-panel:dir(rtl)[data-side="inline-start"] {
+/* A right-to-left page: the dir attribute is named beside :dir(rtl), which a
+ * build for older browsers turns into a list of right-to-left languages, as
+ * Tailwind's rtl variant does. */
+.sp-floating-panel[data-side="inline-start"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  ) {
   --sp-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
 }
 
-.sp-floating-panel:dir(rtl)[data-side="inline-end"] {
+.sp-floating-panel[data-side="inline-end"]:is(
+    :dir(rtl),
+    [dir="rtl"],
+    [dir="rtl"] *
+  ) {
   --sp-floating-panel-x: var(--motion-floating-panel-offset);
 }
 

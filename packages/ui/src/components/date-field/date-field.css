@@ -43,22 +43,28 @@
     outline: none;
   }
 
-  .sp-date-field-control > .sp-date-field-input {
-    margin-inline-start: var(--date-field-segment-start);
+  /* The insets of the segments belong to the field, which takes the page's
+   * direction, while the segment row takes the locale's (its dir): the field
+   * pads its start, and its end where no picker button ends it. Without the
+   * button the segments keep the inset of the start at the end too, so a
+   * field as wide as its segments is balanced. */
+  .sp-date-field-control {
+    padding-inline-start: var(--date-field-segment-start);
   }
 
-  /* The picker button's room ends the field; without it the segments keep the
-   * inset of the start, so a field as wide as its segments is balanced. */
-  .sp-date-field-control:not([data-icon-mode="action-end"])
-    > .sp-date-field-input {
-    margin-inline-end: var(--date-field-segment-start);
+  .sp-date-field-control:not([data-icon-mode="action-end"]) {
+    padding-inline-end: var(--date-field-segment-start);
   }
 
-  /* The leading icon is a regular InputGroup addon; the first segment's text
-   * starts where an InputGroup input's text starts after the same icon. */
-  .sp-date-field-control:has(> .sp-date-field-icon-addon)
-    > .sp-date-field-input {
-    margin-inline-start: calc(
+  /* The leading icon is a regular InputGroup addon at the field's start; the
+   * first segment's text starts where an InputGroup input's text starts after
+   * the same icon. */
+  .sp-date-field-control:has(> .sp-date-field-icon-addon) {
+    padding-inline-start: 0;
+  }
+
+  .sp-date-field-control > .sp-date-field-icon-addon {
+    margin-inline-end: calc(
       var(--sp-composite-control-padding-inline-start) -
         var(--input-segment-padding-inline)
     );

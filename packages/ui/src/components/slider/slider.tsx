@@ -269,8 +269,9 @@ function SliderLabels({
                 className={cn(
                   "absolute top-0 whitespace-nowrap text-muted-foreground",
                   state.values.includes(labelValue) &&
-                    "font-semibold text-foreground",
+                    "font-(--sp-rw-font-weight-strong) text-foreground",
                 )}
+                data-active={state.values.includes(labelValue) || undefined}
                 key={labelValue}
                 style={{
                   left: `${position}%`,

@@ -498,15 +498,17 @@ export function Sidebar({
       {/* A collapsed offcanvas sidebar leaves the tab order and the
           accessibility tree once it has slid out (visibility switches at the
           end of the slide and at its start when it opens). The rail stays
-          visible to open it again. */}
+          visible to open it again. The side is the inline start or end, so
+          a right-to-left page puts a left sidebar on the right, where its gap
+          is. */}
       <div
         className={cn(
           slotClass("sidebar-container", props),
           "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width,visibility] duration-(--motion-duration-base) ease-(--motion-ease-linear)",
           mobileBreakpoint === "lg" ? "lg:flex" : "md:flex",
           side === "left"
-            ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
-            : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
+            ? "start-0 group-data-[collapsible=offcanvas]:start-[calc(var(--sidebar-width)*-1)]"
+            : "end-0 group-data-[collapsible=offcanvas]:end-[calc(var(--sidebar-width)*-1)]",
           "group-data-[collapsible=offcanvas]:invisible",
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
@@ -588,7 +590,9 @@ export function SidebarTrigger({
     >
       {children ?? (
         <>
-          <PanelLeftIcon />
+          {/* The panel glyph shows the sidebar at the inline start, so it
+              mirrors in a right-to-left page. */}
+          <PanelLeftIcon className="rtl:-scale-x-100" />
           <span className="sr-only">Toggle sidebar</span>
         </>
       )}
@@ -639,7 +643,11 @@ export function SidebarRail({
     }
 
     const wrapper = sidebarWrapper;
-    const side = sidebar.dataset.side ?? "left";
+    // The side is the inline start or end: in a right-to-left page a left
+    // sidebar sits on the right, so its edge moves the other way.
+    const rightToLeft = getComputedStyle(sidebar).direction === "rtl";
+    const onPhysicalRight =
+      (sidebar.dataset.side ?? "left") === "right" ? !rightToLeft : rightToLeft;
     const startX = event.clientX;
     const startWidth = sidebarContainer.getBoundingClientRect().width;
     const minWidth = getSidebarLengthInPixels(
@@ -662,10 +670,9 @@ export function SidebarRail({
     document.body.style.userSelect = "none";
 
     function handlePointerMove(moveEvent: PointerEvent): void {
-      const delta =
-        side === "right"
-          ? startX - moveEvent.clientX
-          : moveEvent.clientX - startX;
+      const delta = onPhysicalRight
+        ? startX - moveEvent.clientX
+        : moveEvent.clientX - startX;
 
       if (Math.abs(delta) > 3) {
         didDragRef.current = true;
@@ -709,9 +716,10 @@ export function SidebarRail({
       // An 8 px strip along the whole edge, on its outer side: it leaves the
       // sidebar's own scrollbar free and reaches as little as it can into the
       // content beside it. A collapsed offcanvas sidebar keeps it at the
-      // screen edge.
+      // screen edge. The edge is the sidebar's inline end, or its start for a
+      // right sidebar, in either direction.
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-2 group-data-[side=left]:left-full group-data-[side=right]:right-full sm:flex",
+        "absolute inset-y-0 z-20 hidden w-2 group-data-[side=left]:start-full group-data-[side=right]:end-full sm:flex",
         "group-data-[collapsible=offcanvas]:visible",
         className,
       )}
@@ -834,6 +842,56 @@ export function SidebarHeader({
   );
 }
 
+/**
+ * The application's logo at the top of the sidebar: its mark first, then its
+ * name or wordmark. It starts where the menu rows start their icons, and the
+ * header band around it keeps the top bar's height. On the collapsed icon
+ * rail it shows only the mark, centred in the rail's square like the row
+ * icons. Render it as a link with `render`, such as `render={<a href="/" />}`:
+ * it takes the kit's focus outline and, as a logo rather than a row, no hover
+ * fill. In a SidebarMenuItem with `expandTrigger`, its mark also expands the
+ * collapsed rail.
+ */
+export function SidebarBrand({
+  className,
+  children,
+  render,
+  ...props
+}: useRender.ComponentProps<"div">): React.ReactElement {
+  // On the collapsed rail an expand trigger can stand in for the brand, as it
+  // does for a menu button.
+  const stepsAside = React.useContext(SidebarMenuItemContext);
+  // A plain-text name gets a span of its own, so a long one ends with an
+  // ellipsis, keeps its full text in title (K5) and leaves the rail whole.
+  const content = React.Children.map(children, (child) =>
+    typeof child === "string" || typeof child === "number" ? (
+      <span title={String(child)}>{child}</span>
+    ) : (
+      child
+    ),
+  );
+  const defaultProps = {
+    children: content,
+    className: cn(
+      slotClass("sidebar-brand", props, render),
+      focusRingRecipe(),
+      className,
+    ),
+    "data-sidebar": "brand",
+    "data-slot": "sidebar-brand",
+  };
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps(
+      defaultProps,
+      props,
+      stepsAside ? { "aria-hidden": true, tabIndex: -1 } : {},
+    ),
+    render,
+  });
+}
+
 export function SidebarFooter({
   className,
   ...props
@@ -862,7 +920,9 @@ export function SidebarSeparator({
 }: React.ComponentProps<typeof Separator>): React.ReactElement {
   return (
     // The line is the kit separator's (data-slot="separator"), like every
-    // other divider; the Sidebar adds only its inset.
+    // other divider; the Sidebar adds only its inset. design-rework.css keeps
+    // the line inside that inset, where the separator's own width of 100 %
+    // ran 8 px past the sidebar.
     <Separator
       className={cn("mx-2", className)}
       data-sidebar="separator"
@@ -945,6 +1005,7 @@ export function SidebarGroup({
 export function SidebarGroupLabel({
   className,
   render,
+  children,
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   // Rendered as a button, the label takes the kit focus outline (T3). On the
@@ -953,11 +1014,23 @@ export function SidebarGroupLabel({
   // Rendered as a disabled button, such as a CollapsibleTrigger whose group
   // cannot fold, it fades as a disabled label does (T1); Base UI keeps such a
   // trigger focusable with aria-disabled. The rail's fade-out still wins.
+  // A plain-text label gets a span of its own, so a long one ends with an
+  // ellipsis instead of being cut off, with its full text in title (K5).
+  const text = plainText(children);
+  const label =
+    text === undefined ? (
+      children
+    ) : (
+      <span className="truncate" title={text}>
+        {children}
+      </span>
+    );
   const defaultProps = {
+    children: label,
     className: cn(
       slotClass("sidebar-group-label", props, render),
       focusRingRecipe(),
-      "flex h-8 shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg px-2 font-medium text-sidebar-foreground text-xs transition-opacity duration-(--motion-duration-base) ease-(--motion-ease-linear) [&>svg]:size-4 [&>svg]:shrink-0",
+      "flex h-8 shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg px-2 font-(--sp-rw-font-weight-label) text-sidebar-foreground text-xs transition-opacity duration-(--motion-duration-base) ease-(--motion-ease-linear) [&>svg]:size-4 [&>svg]:shrink-0",
       "group-data-[collapsible=icon]:opacity-0",
       "not-group-data-[collapsible=icon]:disabled:opacity-(--sp-rw-disabled-opacity-action) not-group-data-[collapsible=icon]:aria-disabled:opacity-(--sp-rw-disabled-opacity-action)",
       className,
@@ -980,10 +1053,10 @@ export function SidebarGroupAction({
 }: useRender.ComponentProps<"button">): React.ReactElement {
   return (
     // The 24px target of the control scale (S1), centred where the 20px one
-    // was: on the 32px label row.
+    // was: on the 32px label row, at its inline end.
     <KitButton
       className={cn(
-        "absolute top-3 right-2.5",
+        "absolute end-2.5 top-3",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
@@ -1044,7 +1117,8 @@ export function SidebarMenuItem({
   /**
    * Places the kit's SidebarTrigger over the item's row. On the collapsed icon
    * rail, hovering or focusing the item swaps the row for the trigger, so the
-   * row (a workspace mark, for example) is also the way to expand.
+   * row (a workspace mark, for example) is also the way to expand. A
+   * SidebarBrand in the item steps aside for the trigger in the same way.
    */
   expandTrigger?: boolean;
   /** The accessible name of the expand trigger. */
@@ -1061,8 +1135,8 @@ export function SidebarMenuItem({
     sidebar?.state === "collapsed" &&
     !sidebar.isMobile;
 
-  // Expanding hides the trigger. If it held focus, focus moves to the row it
-  // stood in for instead of staying on a hidden control.
+  // Expanding hides the trigger. If it held focus, focus moves to the row or
+  // the brand it stood in for instead of staying on a hidden control.
   const steppedAside = React.useRef(stepsAside);
   React.useEffect(() => {
     const trigger = triggerRef.current;
@@ -1073,7 +1147,9 @@ export function SidebarMenuItem({
       trigger.ownerDocument.activeElement === trigger
     ) {
       trigger.parentElement
-        ?.querySelector<HTMLElement>(':scope > [data-sidebar="menu-button"]')
+        ?.querySelector<HTMLElement>(
+          ':scope > :is([data-sidebar="menu-button"], [data-sidebar="brand"])',
+        )
         ?.focus();
     }
     steppedAside.current = stepsAside;
@@ -1171,16 +1247,98 @@ export function SidebarMenuButton({
     typeof tooltip === "string" ? { children: tooltip } : tooltip;
 
   // The tooltip wrapper stays mounted while the sidebar collapses or expands,
-  // so the button keeps focus; the tooltip only opens on the collapsed rail.
+  // so the button keeps focus; the tooltip only opens on the collapsed rail,
+  // beside it at its inline end, toward the content in either direction.
   return (
     <Tooltip disabled={state !== "collapsed" || isMobile}>
       <TooltipTrigger
         delay={0}
         render={buttonElement as React.ReactElement<Record<string, unknown>>}
       />
-      <TooltipPopup align="center" side="right" {...tooltipProps} />
+      <TooltipPopup align="center" side="inline-end" {...tooltipProps} />
     </Tooltip>
   );
+}
+
+/**
+ * The text of a two-line menu row: a title over a quieter description, such as
+ * an account's name and email or a workspace's name and plan. Place it in a
+ * SidebarMenuButton after the row's icon or avatar; it takes the row's free
+ * width, so a trailing chevron stays at the row's end.
+ */
+export function SidebarMenuButtonText({
+  className,
+  ...props
+}: React.ComponentProps<"span">): React.ReactElement {
+  return (
+    <span
+      className={cn(slotClass("sidebar-menu-button-text", props), className)}
+      data-sidebar="menu-button-text"
+      data-slot="sidebar-menu-button-text"
+      {...props}
+    />
+  );
+}
+
+/**
+ * The first line of a two-line menu row, in the row's own text. A long title
+ * ends with an ellipsis; plain text keeps its full value in `title` (K5).
+ */
+export function SidebarMenuButtonTitle({
+  className,
+  children,
+  title,
+  ...props
+}: React.ComponentProps<"span">): React.ReactElement {
+  return (
+    <span
+      className={cn(slotClass("sidebar-menu-button-title", props), className)}
+      data-sidebar="menu-button-title"
+      data-slot="sidebar-menu-button-title"
+      title={title ?? plainText(children)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
+
+/**
+ * The second line of a two-line menu row: one kit text step smaller than the
+ * row, in the tertiary text colour. A long description ends with an ellipsis;
+ * plain text keeps its full value in `title` (K5).
+ */
+export function SidebarMenuButtonDescription({
+  className,
+  children,
+  title,
+  ...props
+}: React.ComponentProps<"span">): React.ReactElement {
+  return (
+    <span
+      className={cn(
+        slotClass("sidebar-menu-button-description", props),
+        className,
+      )}
+      data-sidebar="menu-button-description"
+      data-slot="sidebar-menu-button-description"
+      title={title ?? plainText(children)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** The text of children made of strings and numbers only, such as `Invoice {id}`. */
+function plainText(children: React.ReactNode): string | undefined {
+  const parts = React.Children.toArray(children);
+  const text = parts.every(
+    (part) => typeof part === "string" || typeof part === "number",
+  )
+    ? parts.join("")
+    : "";
+  return text === "" ? undefined : text;
 }
 
 export function SidebarMenuAction({
@@ -1229,8 +1387,10 @@ export function SidebarMenuBadge({
   return (
     <div
       className={cn(
+        // The badge sits at the row's inline end, in the room the row keeps
+        // for it, in either direction.
         slotClass("sidebar-menu-badge", props),
-        "pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-lg px-1 font-medium text-sidebar-foreground text-xs tabular-nums",
+        "pointer-events-none absolute end-1 flex h-5 min-w-5 select-none items-center justify-center rounded-lg px-1 font-(--sp-rw-font-weight-label) text-sidebar-foreground text-xs tabular-nums",
         "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
         // The 20 px badge centres on rows of 28, 32, 36 and 48 px.
         "peer-data-[size=sm]/menu-button:top-1",
@@ -1309,9 +1469,10 @@ export function SidebarMenuSub({
   return (
     <ul
       className={cn(
-        // The guide line is the kit's divider colour.
+        // The guide line is the kit's divider colour, at the inline start
+        // under the row's icon in either direction.
         slotClass("sidebar-menu-sub", props),
-        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sp-rw-border-translucent)] border-l px-2.5 py-0.5",
+        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sp-rw-border-translucent)] border-s px-2.5 py-0.5 rtl:-translate-x-px",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
@@ -1363,7 +1524,7 @@ export function SidebarMenuSubButton({
       align="start"
       aria-current={ariaCurrent ?? (active ? "page" : undefined)}
       className={cn(
-        "-translate-x-px",
+        "-translate-x-px rtl:translate-x-px",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}

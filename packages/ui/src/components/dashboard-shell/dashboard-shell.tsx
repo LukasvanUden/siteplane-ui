@@ -3,24 +3,16 @@
 import * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import {
   Sidebar,
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
-  SidebarContext,
   SidebarTrigger,
 } from "../sidebar";
 
 export type DashboardShellLayout = "inset" | "push";
-
-type DashboardShellContextValue = {
-  layout: DashboardShellLayout;
-};
-
-const DashboardShellContext = React.createContext<DashboardShellContextValue>({
-  layout: "push",
-});
 
 export interface DashboardShellProps extends React.ComponentProps<
   typeof SidebarProvider
@@ -47,19 +39,17 @@ export function DashboardShell({
   ...props
 }: DashboardShellProps): React.ReactElement {
   return (
-    <DashboardShellContext.Provider value={{ layout }}>
-      <SidebarProvider
-        className={cn("min-h-svh", className)}
-        // The bar height and the sidebar width are the stylesheet's
-        // (design-rework.css, "Dashboard Shell"); an app's style overrides
-        // them.
-        data-dashboard-shell="root"
-        layout={layout}
-        {...props}
-      >
-        {children}
-      </SidebarProvider>
-    </DashboardShellContext.Provider>
+    <SidebarProvider
+      className={cn("min-h-svh", className)}
+      // The bar height and the sidebar width are the stylesheet's
+      // (design-rework.css, "Dashboard Shell"); an app's style overrides
+      // them.
+      data-dashboard-shell="root"
+      layout={layout}
+      {...props}
+    >
+      {children}
+    </SidebarProvider>
   );
 }
 
@@ -110,43 +100,28 @@ export function DashboardShellInset({
   );
 }
 
-// The desktop insets start where the desktop sidebar does, at the provider's
-// mobile breakpoint. In the push layout SidebarInset moves the header clear of
-// the expanded sidebar with the rest of the content.
-const dashboardShellHeaderClassNames = {
-  lg: {
-    inset: "ps-4 lg:ps-4",
-    push: "lg:pe-5",
-  },
-  md: {
-    inset: "ps-4 md:ps-4",
-    push: "md:pe-5",
-  },
-} as const;
-
 export function DashboardShellHeader({
   className,
   divider = true,
   ...props
 }: DashboardShellHeaderProps): React.ReactElement {
-  const { layout } = React.useContext(DashboardShellContext);
-  const insets =
-    dashboardShellHeaderClassNames[
-      React.useContext(SidebarContext)?.mobileBreakpoint ?? "md"
-    ];
-
   // The header sits on the main surface (B1), never on the page canvas: it has
   // no fill of its own, so the sidebar and the content never share one grey.
+  // Its inline inset is the main area's 16 px in both layouts and at every
+  // width, so a title in it starts on the content's line; a leading sidebar
+  // trigger puts its glyph on that line (design-rework.css, "Dashboard Shell
+  // header"). In the push layout SidebarInset moves the header clear of the
+  // expanded sidebar with the rest of the content.
   return (
     <header
       className={cn(
-        "flex min-h-(--dashboard-shell-header-height) shrink-0 items-center gap-2 px-2",
-        insets.push,
-        layout === "inset" && insets.inset,
+        slotClass("dashboard-shell-header", props),
+        "flex min-h-(--dashboard-shell-header-height) shrink-0 items-center gap-2 px-4",
         className,
       )}
       data-dashboard-shell="header"
       data-divider={divider ? "true" : "false"}
+      data-slot="dashboard-shell-header"
       {...props}
     />
   );

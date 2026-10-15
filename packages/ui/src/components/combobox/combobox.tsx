@@ -43,11 +43,39 @@ export const ComboboxContext: React.Context<{
   multiple: false,
 });
 
+/**
+ * The control size of the Combobox's input, ComboboxChipsInput's or
+ * ComboboxInput's. A popup anchored to a chips field sizes its items by it,
+ * because the field grows a row for each line of chips (FB-9). Internal, beside
+ * the public ComboboxContext.
+ */
+const ComboboxInputSizeContext = React.createContext<{
+  size: SiteplaneControlSize | undefined;
+  setSize: React.Dispatch<
+    React.SetStateAction<SiteplaneControlSize | undefined>
+  >;
+} | null>(null);
+
+/** Gives the Combobox the resolved control size of its input. */
+function useComboboxInputSize(size: SiteplaneControlSize) {
+  const setSize = React.useContext(ComboboxInputSizeContext)?.setSize;
+  React.useLayoutEffect(() => {
+    if (!setSize) return;
+    setSize(size);
+    return () => setSize((current) => (current === size ? undefined : current));
+  }, [setSize, size]);
+}
+
 export function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>,
 ): React.ReactElement {
   const chipsRef = React.useRef<Element | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const [inputSize, setInputSize] = React.useState<SiteplaneControlSize>();
+  const inputSizeValue = React.useMemo(
+    () => ({ size: inputSize, setSize: setInputSize }),
+    [inputSize],
+  );
   const [resetKey, setResetKey] = React.useState(0);
 
   React.useEffect(() => {
@@ -77,7 +105,9 @@ export function Combobox<Value, Multiple extends boolean | undefined = false>(
     <ComboboxContext.Provider
       value={{ chipsRef, inputRef, multiple: !!props.multiple }}
     >
-      <ComboboxPrimitive.Root {...props} key={resetKey} />
+      <ComboboxInputSizeContext.Provider value={inputSizeValue}>
+        <ComboboxPrimitive.Root {...props} key={resetKey} />
+      </ComboboxInputSizeContext.Provider>
     </ComboboxContext.Provider>
   );
 }
@@ -94,6 +124,7 @@ export function ComboboxChipsInput({
   const visualSize = typeof size === "number" ? undefined : size;
   const nativeSize = typeof size === "number" ? size : undefined;
   const resolvedSize = useResolvedControlSize(visualSize);
+  useComboboxInputSize(resolvedSize);
   const contextInputRef = React.useContext(ComboboxContext).inputRef;
   const fallbackInputRef = React.useRef<HTMLInputElement | null>(null);
   const inputRef = contextInputRef ?? fallbackInputRef;
@@ -152,6 +183,7 @@ export function ComboboxInput({
   const visualSize = typeof size === "number" ? undefined : size;
   const nativeSize = typeof size === "number" ? size : undefined;
   const resolvedSize = useResolvedControlSize(visualSize);
+  useComboboxInputSize(resolvedSize);
   const contextInputRef = React.useContext(ComboboxContext).inputRef;
   const fallbackInputRef = React.useRef<HTMLInputElement | null>(null);
   const inputRef = contextInputRef ?? fallbackInputRef;
@@ -293,6 +325,16 @@ export function ComboboxPopup({
 }): React.ReactElement {
   const { chipsRef, multiple } = React.useContext(ComboboxContext);
   const anchor = anchorProp ?? (multiple ? chipsRef : undefined);
+  // An item is as tall as the one-line field the popup anchors to (the item
+  // rule in design-rework.css). A chips field grows a row for each line of
+  // chips, so a popup anchored to it names the control size of its input
+  // instead, and its items take that size's height (FB-9).
+  const contextSize = useResolvedControlSize(undefined);
+  const inputSize = React.useContext(ComboboxInputSizeContext)?.size;
+  const itemSize =
+    anchorProp === undefined && multiple
+      ? (inputSize ?? contextSize)
+      : undefined;
 
   return (
     <ComboboxPrimitive.Portal {...portalProps}>
@@ -313,6 +355,7 @@ export function ComboboxPopup({
               "flex max-h-[min(var(--available-height),23rem)] min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col overflow-hidden rounded-lg text-foreground before:rounded-[inherit]",
               className,
             )}
+            data-item-size={itemSize}
             data-slot="combobox-popup"
             {...props}
           >
@@ -385,7 +428,7 @@ export function ComboboxItem({
     <ComboboxPrimitive.Item
       className={cn(
         slotClass("combobox-item", props),
-        "grid min-h-(--anchor-height) in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer items-center gap-2 rounded-sm py-1 ps-2 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "grid in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer items-center gap-2 rounded-sm py-1 ps-2 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         end
           ? cn(choiceMenuItemEndGridClassName, "pe-2")
           : "grid-cols-[1rem_1fr] pe-4",
@@ -498,7 +541,7 @@ export function ComboboxGroupLabel({
     <ComboboxPrimitive.GroupLabel
       className={cn(
         slotClass("combobox-group-label", props),
-        "px-2 py-1.5 font-medium text-muted-foreground text-xs",
+        "px-2 py-1.5 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs",
         className,
       )}
       data-slot="combobox-group-label"
@@ -631,7 +674,7 @@ export function ComboboxStatus({
     <ComboboxPrimitive.Status
       className={cn(
         slotClass("combobox-status", props),
-        "px-3 py-2 font-medium text-muted-foreground text-xs empty:m-0 empty:p-0",
+        "px-3 py-2 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs empty:m-0 empty:p-0",
         className,
       )}
       data-slot="combobox-status"
@@ -690,6 +733,15 @@ export function ComboboxChips({
   );
 }
 
+/** The plain text of a chip's value, for the title of its label. */
+function chipText(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return `${node}`;
+  if (Array.isArray(node)) return node.map(chipText).join("").trim();
+  if (React.isValidElement<{ children?: React.ReactNode }>(node))
+    return chipText(node.props.children);
+  return "";
+}
+
 export function ComboboxChip({
   children,
   removeProps,
@@ -731,12 +783,14 @@ export function ComboboxChip({
           {startAddon}
         </span>
       )}
-      {/* A long value ends in an ellipsis on the chip's one line instead of
-          wrapping out of its fixed height (rulebook K5). */}
+      {/* A long value ends in an ellipsis on the chip's one line, at the
+          width the chips give it, and the title carries the full value
+          (rulebook K5). The badge label rule owns it (design-rework.css). */}
       <span
-        className="sp-combobox-chip-label min-w-0 truncate"
+        className="sp-combobox-chip-label"
         data-slot="combobox-chip-label"
         id={labelId}
+        title={chipText(children) || undefined}
       >
         {children}
       </span>

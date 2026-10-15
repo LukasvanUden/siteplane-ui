@@ -24,7 +24,7 @@ export function Stepper({
 // marker's edge, ring and transitions are design-rework.css's, so the reduced
 // motion modes switch them off.
 const stepIndicatorVariants = cva(
-  "relative z-10 flex shrink-0 items-center justify-center rounded-full font-semibold after:pointer-events-none after:absolute after:-inset-1 after:origin-center after:scale-75 after:rounded-full after:opacity-0 after:content-['']",
+  "relative z-10 flex shrink-0 items-center justify-center rounded-full font-(--sp-rw-font-weight-strong) after:pointer-events-none after:absolute after:-inset-1 after:origin-center after:scale-75 after:rounded-full after:opacity-0 after:content-['']",
   {
     defaultVariants: { status: "open" },
     variants: {
@@ -50,10 +50,11 @@ const defaultStatusLabels: Partial<
 };
 
 // A step is the marker and its text, then the body, with the connector to the
-// next step running down its left edge. The body opens and closes inside the
-// step, so a step keeps its marker, title and connector when its content changes.
+// next step running down under the marker, at the step's inline start: on the
+// right in a right-to-left page. The body opens and closes inside the step, so
+// a step keeps its marker, title and connector when its content changes.
 const stepItemClassName =
-  "relative pb-5 last:pb-0 before:absolute before:top-7 before:bottom-0 before:left-3 before:-translate-x-1/2 last:before:hidden";
+  "relative pb-5 last:pb-0 before:absolute before:top-7 before:bottom-0 before:start-3 before:-translate-x-1/2 rtl:before:translate-x-1/2 last:before:hidden";
 
 export interface StepperItemProps
   extends

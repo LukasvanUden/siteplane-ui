@@ -9,9 +9,9 @@ export type ChartDatum = Record<
 
 /**
  * Where a chart takes the colour of a series that names none. `brand` shades
- * the brand colour from strong to light, spread over the number of series;
- * `categorical` gives each series its own chart colour, `--chart-1` to
- * `--chart-5` in order.
+ * the brand colour from strong to light, spread over the number of series (up
+ * to eight); `categorical` gives each series its own chart colour, `--chart-1`
+ * to `--chart-8` in order. Both start over from the ninth series.
  */
 export type ChartPalette = "brand" | "categorical";
 
@@ -60,9 +60,10 @@ export type CartesianChartLabels = ChartLabels & {
 };
 
 /**
- * How a line or an area connects its points. `smooth` is a natural spline,
- * which bends evenly and can swing a little past the data between two points;
- * `monotone` never does.
+ * How a line or an area connects its points. `monotone`, the default of the
+ * Line and the Area Chart, bends through every point and never swings past the
+ * data; `smooth` is a natural spline, which bends evenly and can swing a little
+ * past the data between two points.
  */
 export type ChartCurve = "smooth" | "monotone" | "linear" | "step";
 
@@ -89,9 +90,10 @@ export type CartesianChartProps = {
   locale?: string;
   /**
    * The colours of the series that name none. `brand` (the default) shades the
-   * brand colour from strong to light, spread over the number of series;
-   * `categorical` gives each series its own chart colour, `--chart-1` to
-   * `--chart-5` in order. A series that names its `color` keeps it either way.
+   * brand colour from strong to light, spread over the number of series (up to
+   * eight); `categorical` gives each series its own chart colour, `--chart-1`
+   * to `--chart-8` in order. Both start over from the ninth series. A series
+   * that names its `color` keeps it either way.
    */
   palette?: ChartPalette;
   /** Whether to list the series below the plot. On when there is more than one series. */

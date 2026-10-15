@@ -421,7 +421,10 @@ const plotClassName = "relative block w-full rounded-lg";
 function LineAreaPlot({
   area,
   colors,
-  curve = "smooth",
+  // The monotone curve by default, as d3's curveMonotoneX draws it: it never
+  // swings past the data, so a spike cannot pull a line below 0 or through
+  // the labels of the axis.
+  curve = "monotone",
   describedBy,
   description,
   dots = false,
