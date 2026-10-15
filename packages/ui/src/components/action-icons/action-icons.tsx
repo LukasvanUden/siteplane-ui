@@ -12,7 +12,7 @@ export type CopyIconPhase = "idle" | "check" | "check-out" | "redraw";
 /** How long the check stays on the icon before it fades, in milliseconds. */
 const copyCheckHold = 2000;
 
-/** What a screen reader hears when a copy succeeds. */
+/** What a screen reader hears when a copy succeeds, unless the caller names it. */
 const copyAnnouncement = "Copied";
 
 /**
@@ -54,29 +54,61 @@ function copyStatusRegion(): HTMLElement | null {
   return region;
 }
 
+/**
+ * Says `text` in the shared copy live region and takes it back after `hold`
+ * milliseconds, unless something else was said since. The region is emptied
+ * first and takes the text a micro beat later, so the same words are
+ * announced again. Returns a function that stops what is still to come.
+ */
+export function announceCopyStatus(text: string, hold: number): () => void {
+  const region = copyStatusRegion();
+  if (!region) return () => {};
+  region.textContent = "";
+  const timers = [
+    setTimeout(
+      () => {
+        region.textContent = text;
+      },
+      motionTokenMs("--motion-duration-micro", 100),
+    ),
+    setTimeout(() => {
+      if (region.textContent === text) region.textContent = "";
+    }, hold),
+  ];
+  return () => {
+    for (const timer of timers) clearTimeout(timer);
+  };
+}
+
 export type CopyIconPhaseOptions = {
   /**
-   * Whether a copy is announced in the shared "Copied" live region. Turn it
-   * off where the caller says it itself, such as a visible label that changes
-   * in a live region of its own, so a copy is announced once.
+   * Whether a copy is announced in the shared live region. Turn it off where
+   * the caller says it itself, such as a status line of its own, so a copy is
+   * announced once.
    */
   announce?: boolean;
+  /** What the shared region says after a copy, "Copied" by default. */
+  announcement?: string | undefined;
 };
 
 export function useCopyIconPhase({
   announce = true,
+  announcement = copyAnnouncement,
 }: CopyIconPhaseOptions = {}) {
   const [copyPhase, setCopyPhase] = useState<CopyIconPhase>("idle");
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const stopAnnouncementRef = useRef<(() => void) | undefined>(undefined);
   useEffect(() => {
     // The region exists before the first copy, so that copy is announced.
     if (announce) copyStatusRegion();
     return () => {
       for (const timer of timersRef.current) clearTimeout(timer);
+      stopAnnouncementRef.current?.();
     };
   }, [announce]);
   function playCopyFeedback() {
     for (const timer of timersRef.current) clearTimeout(timer);
+    stopAnnouncementRef.current?.();
     setCopyPhase("check");
     // The check stays for two seconds, long enough to read a "copied" label
     // beside it; then it fades and, a micro beat later, the copy icon draws
@@ -85,18 +117,12 @@ export function useCopyIconPhase({
     const beat = motionTokenMs("--motion-duration-micro", 100);
     const draw = motionTokenMs("--motion-duration-slow", 320);
     const redraw = copyCheckHold + checkOut + beat;
-    // The region is emptied first, so a second copy is announced again, and
-    // says "Copied" for as long as the check shows.
-    const region = announce ? copyStatusRegion() : null;
-    if (region) region.textContent = "";
+    // The region says the copy for as long as the check shows.
+    stopAnnouncementRef.current = announce
+      ? announceCopyStatus(announcement, copyCheckHold)
+      : undefined;
     timersRef.current = [
-      setTimeout(() => {
-        if (region) region.textContent = copyAnnouncement;
-      }, beat),
       setTimeout(() => setCopyPhase("check-out"), copyCheckHold),
-      setTimeout(() => {
-        if (region?.textContent === copyAnnouncement) region.textContent = "";
-      }, copyCheckHold),
       setTimeout(() => setCopyPhase("redraw"), redraw),
       setTimeout(() => setCopyPhase("idle"), redraw + draw * 1.8),
     ];

@@ -1175,12 +1175,18 @@
 }
 
 /* The current and the previous content of a Popover or Tooltip viewport
- * (Base UI) cross-fade at the popup's inner width over the overlay time;
- * content with a width of its own, such as the Calendar picker, keeps it. The
- * reduced-motion rules below make the swap instant (M5). */
+ * (Base UI) cross-fade at the popup's inner width over the overlay time:
+ * its width less the viewport's inline padding and the popup's edge on each
+ * side, the 1px border of a Popover; a Tooltip draws its edge as a shadow and
+ * sets --viewport-edge-width to 0. Content with a width of its own, such as
+ * the Calendar picker, keeps it. The reduced-motion rules below make the swap
+ * instant (M5). */
 :where(:is(.sp-popover-viewport, .sp-tooltip-viewport) [data-current]),
 :where(:is(.sp-popover-viewport, .sp-tooltip-viewport) [data-previous]) {
-  width: calc(var(--popup-width) - 2 * var(--viewport-inline-padding) - 2px);
+  width: calc(
+    var(--popup-width) - 2 * var(--viewport-inline-padding) - 2 *
+      var(--viewport-edge-width, 1px)
+  );
   opacity: 1;
   transition-property: opacity;
   transition-timing-function: var(--motion-ease-standard);
@@ -4446,6 +4452,33 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   -webkit-line-clamp: var(--truncate-lines, 2);
 }
 
+/* CopyButton: a Button whose icon is CopyRedrawIcon, a box around the two
+ * strokes of the copy glyph rather than a bare svg. With a label, the inline
+ * profile's icon rule above does not see that box, so this rule gives the
+ * icon and the label the same flex row, spaced by the Button's content gap.
+ * A failed copy shows a cross in the destructive text colour, and in the
+ * Button's own text colour on a variant with a fill of its own, as the check
+ * of a copy does (action-icons.css). */
+:root
+  .sp-copy-button[data-profile="inline"]:has(> .sp-button-content > .sp-copy) {
+  display: inline-flex;
+}
+
+:where(.sp-copy-fail) {
+  color: var(--sp-semantic-color-destructive-foreground);
+}
+
+:root
+  .sp-copy-button:is(
+    [data-variant="accent"],
+    [data-variant="destructive"],
+    [data-variant="inverse"],
+    [data-variant="glass"]
+  )
+  .sp-copy-fail {
+  color: inherit;
+}
+
 :root [data-chassis][data-size="lg"] {
   height: var(--sp-rw-control-lg);
 }
@@ -5249,6 +5282,16 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 :root [data-chassis]:where([data-variant="link"], [data-variant="text"]) {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
   background: transparent;
+}
+
+/* A link reads as text, so its words can be selected and copied as on any link
+ * on the web; a Button that acts keeps user-select: none above, so a double
+ * click on it selects nothing. A drag that starts on a link still drags the
+ * link, as browsers do; a triple click, or a drag that starts beside the link,
+ * selects its text (Lukas, 15 October 2026). */
+:root [data-chassis][data-variant="link"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Inline links retain Button states while fitting surrounding prose. The link
@@ -9546,8 +9589,13 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
+/* The inline padding is the variable the viewport's content width subtracts
+ * (above), so a text that changes while the tooltip is open, such as the
+ * "Copied" of a CopyButton, keeps the line it was measured on. */
 :root .sp-tooltip-viewport {
-  padding: var(--sp-rw-space-1) var(--sp-rw-space-1-5);
+  --viewport-inline-padding: var(--sp-rw-space-1-5);
+  --viewport-edge-width: 0px;
+  padding: var(--sp-rw-space-1) var(--viewport-inline-padding);
 }
 
 :root:where(.dark) .sp-tooltip-popup,

@@ -27,8 +27,8 @@ import {
 } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
-import { CopyRedrawIcon, useCopyIconPhase } from "../action-icons/action-icons";
 import { Button, type ButtonProps } from "../button/button";
+import { CopyButton } from "../copy-button/copy-button";
 import {
   noOwnerValidation,
   useFieldControlBridge,
@@ -56,6 +56,8 @@ export type ColorPickerLabels = {
   copy: string;
   /** The copy button while its check confirms a copy. */
   copied: string;
+  /** The copy button and its announcement when the clipboard refuses. */
+  copyFailed: string;
   /** The red, green and blue channel fields. */
   red: string;
   green: string;
@@ -69,6 +71,7 @@ const defaultColorPickerLabels: ColorPickerLabels = {
   hex: "Hex color value",
   copy: "Copy hex value",
   copied: "Copied hex value",
+  copyFailed: "Copy unavailable",
   red: "R color channel",
   green: "G color channel",
   blue: "B color channel",
@@ -356,12 +359,16 @@ export function ColorPicker({
                           spellCheck={false}
                         />
                       </ColorFieldPrimitive>
-                      <ColorCopyButton
-                        copiedLabel={text.copied}
-                        copyLabel={text.copy}
+                      <CopyButton
                         disabled={disabled}
-                        size={resolvedSize}
+                        labels={{
+                          copied: text.copied,
+                          copy: text.copy,
+                          copyFailed: text.copyFailed,
+                        }}
+                        size={getCopyButtonSize(resolvedSize)}
                         value={current}
+                        variant="outline"
                       />
                     </div>
 
@@ -535,39 +542,6 @@ function ColorTextInput({
   );
 }
 
-function ColorCopyButton({
-  copiedLabel,
-  copyLabel,
-  disabled,
-  size,
-  value,
-}: {
-  copiedLabel: string;
-  copyLabel: string;
-  disabled?: boolean;
-  size: SiteplaneControlSize;
-  value: string;
-}): React.ReactElement {
-  const { copyPhase, isShowingCheck, playCopyFeedback } = useCopyIconPhase();
-
-  async function copy() {
-    if (await copyTextToClipboard(value)) playCopyFeedback();
-  }
-
-  return (
-    <Button
-      aria-label={isShowingCheck ? copiedLabel : copyLabel}
-      disabled={disabled}
-      onClick={copy}
-      size={getCopyButtonSize(size)}
-      type="button"
-      variant="outline"
-    >
-      <CopyRedrawIcon phase={copyPhase} />
-    </Button>
-  );
-}
-
 // Props that are set, for components that do not accept an explicit undefined.
 function present<T extends Record<string, unknown>>(
   props: T,
@@ -613,33 +587,5 @@ function normalizeHexColor(
     return parseColor(withHash).toString("hex").toLowerCase();
   } catch {
     return fallback;
-  }
-}
-
-async function copyTextToClipboard(value: string): Promise<boolean> {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(value);
-      return true;
-    } catch {
-      // Fall back to selection-based copy below.
-    }
-  }
-
-  const textArea = document.createElement("textarea");
-  textArea.value = value;
-  textArea.readOnly = true;
-  textArea.style.left = "-9999px";
-  textArea.style.position = "fixed";
-  textArea.style.top = "0";
-  document.body.appendChild(textArea);
-  textArea.focus({ preventScroll: true });
-  textArea.select();
-  textArea.setSelectionRange(0, value.length);
-
-  try {
-    return document.execCommand("copy");
-  } finally {
-    document.body.removeChild(textArea);
   }
 }

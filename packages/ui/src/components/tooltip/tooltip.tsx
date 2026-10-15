@@ -158,7 +158,7 @@ export function TooltipPopup({
                 its width and its reduced-motion rules, is the viewport rule
                 it shares with Popover in design-rework.css. */}
             <TooltipPrimitive.Viewport
-              className="sp-tooltip-viewport relative size-full overflow-clip [--viewport-inline-padding:--spacing(2)] data-instant:transition-none **:data-previous:truncate"
+              className="sp-tooltip-viewport relative size-full overflow-clip data-instant:transition-none **:data-previous:truncate"
               data-slot="tooltip-viewport"
             >
               {children}

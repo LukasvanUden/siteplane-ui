@@ -1,13 +1,13 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { XIcon } from "lucide-react";
-import { useEffect, useState, type ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
-import { CopyRedrawIcon, RevealIcon, useCopyIconPhase } from "../action-icons";
+import { RevealIcon } from "../action-icons";
 import { Button } from "../button";
+import { CopyButton } from "../copy-button";
 
 // Inline code wraps a long command or an unbroken value between any two
 // characters with the text around it, so it never widens its line (rulebook
@@ -32,9 +32,6 @@ export function Code({ className, ...props }: ComponentProps<"code">) {
     />
   );
 }
-
-// How long the cross of a failed copy stays, in milliseconds.
-const copyFailureHold = 2400;
 
 const codeBlockVariants = cva(codeBlockBaseClassName, {
   defaultVariants: { size: "md" },
@@ -87,7 +84,6 @@ export function CodeBlock({
   ...props
 }: CodeBlockProps) {
   const text = { ...defaultCodeBlockLabels, ...labels };
-  const { copyPhase, isShowingCheck, playCopyFeedback } = useCopyIconPhase();
   // The person's reveal, which a change of `mask` takes back: a block that is
   // masked after it loaded is hidden again, not left in clear text.
   const [revealedByPerson, setRevealedByPerson] = useState(false);
@@ -97,23 +93,6 @@ export function CodeBlock({
     setRevealedByPerson(false);
   }
   const revealed = !mask || revealedByPerson;
-  // A clipboard that is missing or refuses shows a cross for a moment, like the
-  // check of a copy that worked.
-  const [copyFailed, setCopyFailed] = useState(false);
-  useEffect(() => {
-    if (!copyFailed) return;
-    const timer = setTimeout(() => setCopyFailed(false), copyFailureHold);
-    return () => clearTimeout(timer);
-  }, [copyFailed]);
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopyFailed(false);
-      playCopyFeedback();
-    } catch {
-      setCopyFailed(true);
-    }
-  }
   const masked = mask && !revealed;
   const hasActions = copyable || mask;
   // The 24px field actions keep their glyph as far from the top edge as from
@@ -165,35 +144,20 @@ export function CodeBlock({
               <RevealIcon revealed={revealed} />
             </Button>
           ) : null}
+          {/* The kit's copy action: its check after a copy, a cross for a
+              moment when the clipboard is missing or refuses, its tooltip
+              and the announcement of either. */}
           {copyable ? (
-            <Button
-              aria-label={
-                copyFailed
-                  ? text.copyFailed
-                  : isShowingCheck
-                    ? text.copied
-                    : text.copy
-              }
-              onClick={copy}
+            <CopyButton
+              labels={{
+                copied: text.copied,
+                copy: text.copy,
+                copyFailed: text.copyFailed,
+              }}
               profile="field-action"
               shape="square"
-              type="button"
-            >
-              {copyFailed ? (
-                <XIcon
-                  aria-hidden="true"
-                  className="sp-icon-pop size-4 text-destructive-foreground"
-                />
-              ) : (
-                <CopyRedrawIcon phase={copyPhase} />
-              )}
-            </Button>
-          ) : null}
-          {/* The failure is announced without moving focus. */}
-          {copyable ? (
-            <span aria-live="polite" className="sr-only">
-              {copyFailed ? text.copyFailed : ""}
-            </span>
+              value={value}
+            />
           ) : null}
         </span>
       ) : null}
