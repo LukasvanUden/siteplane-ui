@@ -28,10 +28,10 @@ const inputGroupInteractiveSelector =
 
 // An addon's cursor, line height, its order and padding by alignment, and the
 // first-line alignment beside a textarea are the kit base (design-rework.css).
-// The addon sizes and spaces the icons it holds, but not the icon of a Button
-// in it, which the Button's own icon rule sizes.
+// The addon spaces the icons it holds; design-rework.css sizes them, but not
+// the icon of a Button in it, which the Button's own icon rule sizes.
 const inputGroupAddonVariants = cva(
-  "flex h-auto select-none justify-center gap-2 in-[[data-foundation=input-group]:has([data-slot=input-control],[data-slot=textarea-control],[role=spinbutton])]:[&_svg:not([class*='size-']):where(:not([data-chassis]>[data-slot=button-content]>svg))]:size-4 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
+  "flex h-auto select-none justify-center gap-2 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
   {
     defaultVariants: {
       align: "inline-start",
@@ -195,14 +195,16 @@ export function InputGroupText({
   ...props
 }: React.ComponentProps<"span">): React.ReactElement {
   // The text sits on a 1em line, and the kit font draws descenders below it,
-  // so a long text is clipped at the sides only.
+  // so a long text is clipped at the sides only. design-rework.css sizes its
+  // icons beside a field control.
   return (
     <span
       className={cn(
         // The text takes the slot of its host (a Date Range Picker's
-        // separator), and its class with it.
+        // separator), and its class with it; sp-input-group-text marks the
+        // text in every host.
         slotClass(undefined, props),
-        "flex items-center gap-2 overflow-x-clip whitespace-nowrap text-muted-foreground leading-none in-[[data-foundation=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-foundation=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
+        "sp-input-group-text flex items-center gap-2 overflow-x-clip whitespace-nowrap text-muted-foreground leading-none [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
         className,
       )}
       {...props}

@@ -39,19 +39,19 @@ export const switchVariants = cva(
 // when checked: in a right-to-left page it starts on the right and travels
 // left, and it stretches from its leading edge there too.
 export const switchThumbClassName =
-  "pointer-events-none block aspect-square h-full origin-left rounded-[inherit] bg-background shadow-sm/5 will-change-transform in-[[data-foundation=switch]:active,[data-foundation=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[data-foundation=switch][data-checked]]:origin-[var(--thumb-size)_50%] in-[[data-foundation=switch][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-[calc(100%-var(--thumb-size))_50%] rtl:in-[[data-foundation=switch][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]";
+  "pointer-events-none block aspect-square h-full origin-left rounded-[inherit] bg-background shadow-sm/5 will-change-transform in-[[data-foundation=switch][data-checked]]:origin-[var(--thumb-size)_50%] in-[[data-foundation=switch][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-[calc(100%-var(--thumb-size))_50%] rtl:in-[[data-foundation=switch][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]";
 
 // The standalone control draws its track and thumb, their sizes and the
 // thumb's travel from design-rework.css ([data-slot="switch"]); the utilities
 // above style the menu tracks only. Both tracks take one edge from that
 // stylesheet, the standalone control's 3:1 edge, which a menu track finds by
-// its switch-track slot. The thumb stretches from its leading edge while
-// pressed, in either direction.
+// its switch-track slot. Every thumb stretches from its leading edge while the
+// switch or its label is pressed, in either direction (design-rework.css).
 const switchControlClassName =
   "sp-switch-motion inline-flex shrink-0 cursor-pointer items-center data-disabled:cursor-not-allowed";
 
 const switchControlThumbClassName =
-  "pointer-events-none block aspect-square origin-left will-change-transform in-[[data-foundation=switch]:active,[data-foundation=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[data-foundation=switch][data-checked]]:origin-right rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-left";
+  "pointer-events-none block aspect-square origin-left will-change-transform in-[[data-foundation=switch][data-checked]]:origin-right rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-left";
 
 export const switchMenuTrackClassName =
   "col-start-2 in-[[data-foundation=switch][data-checked]]:bg-primary in-[[data-foundation=switch][data-unchecked]]:bg-input";

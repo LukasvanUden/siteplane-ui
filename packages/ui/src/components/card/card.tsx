@@ -3,16 +3,25 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import type React from "react";
+import { useResolvedDensity } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
 
 export function Card({
   className,
+  density,
   render,
   variant = "raised",
   ...props
 }: useRender.ComponentProps<"div"> & {
+  /**
+   * The inset of the card's parts: 20 px, or 16 px compact. Without it the
+   * card takes the density of the SiteplaneUIProvider around it. A theme's
+   * --sp-rw-card-inset, --sp-rw-card-inset-block or --sp-rw-card-inset-inline
+   * takes the place of the density's inset (design-rework.css).
+   */
+  density?: "default" | "compact" | undefined;
   variant?:
     | "raised"
     | "subtle"
@@ -23,6 +32,7 @@ export function Card({
     | "elevated"
     | "glass";
 }): React.ReactElement {
+  const resolvedDensity = useResolvedDensity(density);
   const defaultProps = {
     // A card nested in a framed card keeps the default inset of its parts: the
     // frame's inset (CardFrame) reaches only the cards joined into it.
@@ -35,6 +45,7 @@ export function Card({
       "flex flex-col [--card-inset-inline:initial]",
       className,
     ),
+    "data-density": resolvedDensity,
     // Stays when the Card renders as another part and takes its slot (a
     // ContextMenu trigger), so the Card's base radius still reaches it.
     "data-foundation": "card",
@@ -208,13 +219,14 @@ export function CardHeader({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   // The text parts share one column; a media (CardMedia) takes a column of its
-  // own before it and an action (CardAction) one after it. With an action or a
-  // media and a single text part, the parts share one row and centre on each
-  // other. The text parts are the children that are neither of the two.
+  // own before it and an action (CardAction) one after it. The text parts are
+  // the children that are neither of the two. How the parts align in the rows
+  // follows from how many text parts the header holds, which design-rework.css
+  // decides in one block of its Card section.
   const defaultProps = {
     className: cn(
       slotClass("card-header", props, render),
-      "grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] items-start has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto] has-data-[slot=card-media]:grid-cols-[auto_minmax(0,1fr)] has-data-[slot=card-media]:has-data-[slot=card-action]:grid-cols-[auto_minmax(0,1fr)_auto] [&:has(>[data-slot=card-action]):not(:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media])))]:items-center [&:has(>[data-slot=card-media]):not(:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media])))]:items-center",
+      "grid auto-rows-min grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto] has-data-[slot=card-media]:grid-cols-[auto_minmax(0,1fr)] has-data-[slot=card-media]:has-data-[slot=card-action]:grid-cols-[auto_minmax(0,1fr)_auto]",
       className,
     ),
     "data-slot": "card-header",
@@ -236,15 +248,24 @@ export function CardHeader({
 export function CardMedia({
   className,
   render,
+  tone = "accent",
   ...props
-}: useRender.ComponentProps<"div">): React.ReactElement {
+}: useRender.ComponentProps<"div"> & {
+  /**
+   * The color of a bare icon: `accent`, or `neutral` for the secondary text
+   * color (--sp-rw-fg-secondary), for a module icon that leaves color to
+   * states. An avatar or an image keeps its own colors.
+   */
+  tone?: "accent" | "neutral" | undefined;
+}): React.ReactElement {
   const defaultProps = {
     className: cn(
       slotClass("card-media", props, render),
-      "col-start-1 row-start-1 flex self-center in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:self-start",
+      "col-start-1 row-start-1 flex",
       className,
     ),
     "data-slot": "card-media",
+    "data-tone": tone,
   };
 
   return useRender({
@@ -329,12 +350,13 @@ export function CardAction({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   // Beside a title and a description the action spans both rows from the top.
   // Beside one text part it stays in that part's row and centres on it, as
-  // CardFrameAction does, so it adds no second row (rulebook S2, S11). It takes
-  // the last column, after the text and after a media's column before it.
+  // CardFrameAction does, so it adds no second row (rulebook S2, S11); the
+  // Card section of design-rework.css owns both. It takes the last column,
+  // after the text and after a media's column before it.
   const defaultProps = {
     className: cn(
       slotClass("card-action", props, render),
-      "-col-start-2 row-start-1 inline-flex self-center justify-self-end in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:row-end-3 in-[[data-slot=card-header]:has(>:not([data-slot=card-action]):not([data-slot=card-media])~:not([data-slot=card-action]):not([data-slot=card-media]))]:self-start",
+      "-col-start-2 row-start-1 inline-flex justify-self-end",
       className,
     ),
     "data-slot": "card-action",

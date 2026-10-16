@@ -726,6 +726,14 @@
   cursor: not-allowed;
 }
 
+/* A tab whose render replaces its Button keeps the chassis' place in its list:
+ * positioned, at its own width and on one line. */
+:where(.sp-tabs-tab:not([data-chassis])) {
+  position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 :where([data-chassis])::before {
   position: absolute;
   inset: 0;
@@ -1345,9 +1353,9 @@ html[data-motion-reduce="true"]
 }
 
 /* A check, radio or switch row takes the accent fill while it is hovered,
- * focused or highlighted. The menu-row state rules below replace it while a
- * Menu or ContextMenu row is highlighted and while a DrawerMenu row is
- * hovered. */
+ * focused or highlighted, with the primary text of a highlighted menu row. The
+ * menu-row state rules below replace it while a Menu or ContextMenu row is
+ * highlighted and while a DrawerMenu row is hovered. */
 @media (hover: hover) {
   :where(
     .sp-choice-menu-item:not(
@@ -1357,7 +1365,7 @@ html[data-motion-reduce="true"]
       ):hover
   ) {
     background-color: var(--sp-semantic-color-accent);
-    color: var(--sp-semantic-color-accent-foreground);
+    color: var(--sp-rw-fg-primary);
   }
 }
 
@@ -1369,7 +1377,7 @@ html[data-motion-reduce="true"]
     ):is(:focus-visible, [data-highlighted])
 ) {
   background-color: var(--sp-semantic-color-accent);
-  color: var(--sp-semantic-color-accent-foreground);
+  color: var(--sp-rw-fg-primary);
 }
 
 /* ListBox: the options stack 4 px apart across its width, and the options
@@ -1399,6 +1407,12 @@ html[data-motion-reduce="true"]
 
 /* Display and navigation. */
 
+/* Alert: one text column, which wraps a long value (K5); the Alert rules add
+ * the icon column and, from 640 px, the action column. */
+:where(.sp-alert) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* Header Navigation: the page background. Its own bg-background utility beat
  * the glass class a consumer adds. */
 :where(.sp-header-navigation) {
@@ -1411,6 +1425,18 @@ html[data-motion-reduce="true"]
  * CardFrame clips its joined cards to. */
 :where(.sp-base-card) {
   border-radius: var(--sp-rw-radius-surface);
+}
+
+/* Card header: its parts start at the top of their row, and a media
+ * (CardMedia) and an action (CardAction) centre on theirs. The Card section
+ * refines both by the number of text parts the header holds. */
+:where(.sp-card-header) {
+  align-items: flex-start;
+}
+
+:where(.sp-card-media),
+:where(.sp-card-action) {
+  align-self: center;
 }
 
 /* Stepper: a marker and its title ease their colours between steps; the
@@ -1476,9 +1502,19 @@ html[data-motion-reduce="true"]
   border-bottom-width: 1px;
 }
 
-/* ResourceList: metadata is muted; a selected row lifts it (see below). */
+/* ResourceList: a row and the header keep 10 px above and below their
+ * content, and metadata is muted text at the rows' size. A compact list
+ * refines both for its own rows; a selected row lifts the metadata (see
+ * the ResourceList block). */
+:where(.sp-resource-list-item),
+:where(.sp-resource-list-header) {
+  padding-block: var(--sp-rw-space-2-5);
+}
+
 :where(.sp-resource-list-meta) {
   color: var(--sp-semantic-color-muted-foreground);
+  font-size: var(--sp-rw-font-14);
+  line-height: var(--text-sm--line-height);
 }
 
 /* Separator: a 1 px line in the border colour, across its container when
@@ -1642,6 +1678,52 @@ html[data-motion-reduce="true"]
   --sidebar-width: 15rem;
 }
 
+/* Dashboard Shell sticky header (stickyHeader): the header stays in view while
+ * the content scrolls, switching where the Sidebar does (its mobileBreakpoint,
+ * md or lg). From the breakpoint up the shell is the viewport's height and only
+ * the main area scrolls (DashboardShellMain), as in Linear and the Vercel
+ * dashboard. Below it the page scrolls, so Safari can still collapse its
+ * toolbars and a tap on the iOS status bar still scrolls to the top, and the
+ * header sticks to the top of the viewport, as shadcn's sticky site header
+ * does. There it sits on the page background, which the inset shows below the
+ * breakpoint, with that fill, so the content scrolls under it unseen, and above
+ * the content's own layers (z-index 10), below overlays. The inset clips its
+ * content without becoming the header's scroll container (DashboardShellInset).
+ * A utility on the shell or the header still wins. */
+@media (width >= 48rem) {
+  :where(.sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="md"]) {
+    height: 100svh;
+  }
+}
+
+@media (width >= 64rem) {
+  :where(.sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="lg"]) {
+    height: 100svh;
+  }
+}
+
+@media (width < 48rem) {
+  :root
+    .sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="md"]
+    .sp-dashboard-shell-header {
+    position: sticky;
+    z-index: 20;
+    top: 0;
+    background: var(--sp-rw-bg-base);
+  }
+}
+
+@media (width < 64rem) {
+  :root
+    .sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="lg"]
+    .sp-dashboard-shell-header {
+    position: sticky;
+    z-index: 20;
+    top: 0;
+    background: var(--sp-rw-bg-base);
+  }
+}
+
 /* Dashboard Shell header: a leading sidebar trigger keeps its target and puts
  * its glyph on the start line of the header and the main area, 16 px in, so
  * the glyph, a title without a trigger and the content start on one line. The
@@ -1684,13 +1766,10 @@ html[data-motion-reduce="true"]
   --dashboard-shell-trigger-size: var(--sp-rw-control-xl);
 }
 
-/* The header is one line (K5). A Breadcrumb in it keeps one row: it takes
- * the room the bar leaves, and its links end with an ellipsis like the
- * current page (Breadcrumb), so a long trail never runs past the bar. */
-:root .sp-dashboard-shell-header > .sp-breadcrumb {
-  min-width: 0;
-}
-
+/* The header is one line (K5). A Breadcrumb in it keeps one row: it shrinks
+ * to the room the bar leaves, as every trail can (its own min-width: 0, the
+ * Breadcrumb rule below), and its links end with an ellipsis like the current
+ * page, so a long trail never runs past the bar. */
 :root .sp-dashboard-shell-header .sp-breadcrumb-list {
   flex-wrap: nowrap;
 }
@@ -1716,7 +1795,8 @@ html[data-motion-reduce="true"]
  * 14 px rows and 14 px on 21 under the 16 px xl row, in the tertiary text.
  * Both stay on one line and end with an ellipsis (K5). The text takes the
  * row's free width, so a trailing chevron stays at the row's end. Two lines
- * fill the 48 px xl row. */
+ * fill the 48 px xl row. When the row changes its size, the description
+ * follows at the row's pace (see the navigation rows' transition). */
 :root .sp-sidebar-menu-button-text {
   display: grid;
   flex: 1 1 0%;
@@ -1736,6 +1816,9 @@ html[data-motion-reduce="true"]
   color: var(--sp-rw-fg-tertiary);
   font-size: var(--sp-rw-font-12);
   line-height: var(--sp-rw-line-18);
+  transition-property: font-size, line-height;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-linear);
 }
 
 :root [data-chassis][data-size="xl"] .sp-sidebar-menu-button-description {
@@ -1747,16 +1830,19 @@ html[data-motion-reduce="true"]
  * mark first, then its name or wordmark. It starts where the menu rows start
  * their icons, a row's 8 px inline inset, with a row's gap between the mark and
  * the name, so a 20 px mark puts the name on the labels' line. It shrinks in a
- * narrow sidebar, where a name in a span ends with an ellipsis (K5). It is as
- * tall as the rail's 36 px square and reaches 2 px into the 8 px above and
- * below it, so the header band stays 48 px, the top bar's height, as with the
- * 32 px trigger beside it (S2). A link takes the kit's focus outline
- * (focusRingRecipe) and, as a logo rather than a row, no hover fill. */
+ * narrow sidebar, where a name in a span ends with an ellipsis (K5), and clips
+ * what does not fit, such as a wordmark, at its own edge, but never below the
+ * rail's 36 px square, so its mark is never cut. It is as tall as that square
+ * and reaches 2 px into the 8 px above and below it, so the header band stays
+ * 48 px, the top bar's height, as with the 32 px trigger beside it (S2). A
+ * link takes the kit's focus outline (focusRingRecipe) and, as a logo rather
+ * than a row, no hover fill. */
 :root .sp-sidebar-brand {
   display: flex;
+  overflow: hidden;
   inline-size: fit-content;
   max-inline-size: 100%;
-  min-inline-size: 0;
+  min-inline-size: var(--sp-rw-control-lg);
   block-size: var(--sp-rw-control-lg);
   margin-block: calc((var(--sp-rw-control-md) - var(--sp-rw-control-lg)) / 2);
   align-items: center;
@@ -1771,6 +1857,11 @@ html[data-motion-reduce="true"]
   white-space: nowrap;
 }
 
+/* The mark keeps its size wherever the brand narrows; the name gives way. */
+:root .sp-sidebar-brand > :first-child {
+  flex-shrink: 0;
+}
+
 /* A mark without a size takes a row icon's 20 px. */
 :root .sp-sidebar-brand > svg:first-child:not([class*="size-"]) {
   inline-size: var(--sp-rw-space-5);
@@ -1783,29 +1874,22 @@ html[data-motion-reduce="true"]
   text-overflow: ellipsis;
 }
 
-/* On the collapsed icon rail the brand is the rail's square, with the mark
- * centred in it on the rail's axis, like the row icons. The name leaves the
- * layout and the screen, so nothing of it is cut off mid-letter, and stays
- * the link's accessible name, as a collapsed row keeps its label. */
-:root .sp-sidebar[data-collapsible="icon"] .sp-sidebar-brand {
-  inline-size: var(--sp-rw-control-lg);
-  justify-content: center;
-  padding-inline: 0;
+/* On the collapsed icon rail the brand shows only its mark, in the rail's
+ * square on the rail's axis, like the row icons. Like a row, it keeps its
+ * inset, so the mark stays where it is while the width animates (FB1-3,
+ * Lukas, 16 October 2026): the band narrows the brand to the square, and the
+ * name fades out in its place at the rail's pace and gives way, as a row's
+ * label does. It stays in the layout, so it is still the link's accessible
+ * name, and expanding fades it back in. */
+:root .sp-sidebar-brand > :not(:first-child) {
+  transition: opacity var(--motion-duration-base) var(--motion-ease-linear);
 }
 
 :root
   .sp-sidebar[data-collapsible="icon"]
   .sp-sidebar-brand
   > :not(:first-child) {
-  position: absolute;
-  overflow: hidden;
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  opacity: 0;
 }
 
 /* In a SidebarMenuItem with an expand trigger, the item reaches into the band
@@ -3267,14 +3351,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       :is(
           [data-slot$="-item"],
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
         > .sp-button-content
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       [data-slot$="checkbox-item"] > span:first-child > svg:first-child
     )
   ),
@@ -3294,14 +3378,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       :is(
           [data-slot$="-item"],
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
         > .sp-button-content
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       [data-slot$="checkbox-item"] > span:first-child > svg:first-child
     )
   ),
@@ -3321,14 +3405,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       :is(
           [data-slot$="-item"],
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
         > .sp-button-content
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       [data-slot$="checkbox-item"] > span:first-child > svg:first-child
     )
   ),
@@ -3348,14 +3432,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       :is(
           [data-slot$="-item"],
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
         > .sp-button-content
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       [data-slot$="checkbox-item"] > span:first-child > svg:first-child
     )
   ),
@@ -3375,14 +3459,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       :is(
           [data-slot$="-item"],
           [data-slot$="sub-trigger"],
           .sp-drawer-menu-trigger
         )
         > .sp-button-content
-        > :is(svg, .sp-avatar, .sp-company-mark):first-child,
+        > :is(svg, .sp-avatar):first-child,
       [data-slot$="checkbox-item"] > span:first-child > svg:first-child
     )
   ) {
@@ -3410,7 +3494,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
     [data-popup-open]
   ):not(:disabled, [aria-disabled="true"]) {
   background: var(--accent);
-  color: var(--accent-foreground);
+  color: var(--sp-rw-fg-primary);
 }
 
 :root
@@ -3683,6 +3767,17 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
 }
 
+/* Beside a leading icon, a navigation menu link's description starts under the
+ * title text (I7): the icon, which the Button pulls 2 px out on each side, and
+ * the 8 px gap put that text 4 px past the icon's width. */
+:root
+  .sp-navigation-menu-link-title:has(> svg:first-child)
+  + .sp-navigation-menu-link-description {
+  padding-inline-start: calc(
+    var(--sp-rw-button-icon, var(--sp-rw-control-icon)) + var(--sp-rw-space-1)
+  );
+}
+
 :root
   [data-chassis][data-size]:is(
     [data-profile="navigation-row"],
@@ -3736,6 +3831,25 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   min-width: var(--sp-rw-navigation-row-size);
   /* The rail hides the menu action and badge, so it keeps no room for them. */
   padding-inline-end: var(--sp-rw-space-2);
+}
+
+/* A row follows a change of its size at the sidebar's own pace, as shadcn's
+ * menu buttons do (transition-[width,height,padding]): its height, padding and
+ * text, and the size of an Avatar in it. A two-line row that steps from xl to
+ * the rail's lg square as the sidebar collapses shrinks with the rail's width,
+ * and the rows below glide up with it instead of jumping (FB1-4, Lukas,
+ * 16 October 2026). Reduced motion makes it instant through the duration
+ * token (M5). */
+:root [data-chassis][data-profile="navigation-row"] {
+  transition-property: width, height, padding, font-size, line-height;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-linear);
+}
+
+:root [data-chassis][data-profile="navigation-row"] .sp-avatar {
+  transition-property: width, height;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-linear);
 }
 
 /* In the collapsed rail a row paints only its leading icon. The label and any
@@ -4497,7 +4611,13 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
  * Button of the same size, and more lines grow from there. In xs, sm and
  * default the padding centres one line in that height; lg and xl keep the
  * chassis padding and take the height as their minimum. A profile with its own
- * row recipe (menu rows, accordion, stepper) outranks these rules. */
+ * row recipe (menu rows, accordion, stepper) outranks these rules. The first
+ * rule lets the height follow the lines at every size; it outranks each size
+ * rule, the icon sizes below included. */
+:root [data-chassis][data-size][data-multiline] {
+  height: auto;
+}
+
 :root [data-chassis][data-multiline]:where([data-size="xs"]) {
   padding-block: calc((var(--sp-rw-control-xs) - 1lh) / 2);
 }
@@ -5402,9 +5522,12 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 }
 
 /* ResourceList owns row geometry; the composed ghost Button owns interactive
- * hover, pressed, focus-visible and disabled visuals. */
+ * hover, pressed, focus-visible and disabled visuals. An interactive row is a
+ * block-level row: the chassis default (inline-flex, centred) refined here,
+ * not repeated as utilities on the row. The row is a multiline Button, so its
+ * height follows its lines through the multiline Button rule. */
 :root [data-chassis][data-resource-list-item] {
-  height: auto;
+  display: flex;
   min-height: var(--sp-rw-control-md);
   gap: var(--sp-rw-space-3);
   padding: var(--sp-rw-space-2-5) var(--sp-rw-space-3);
@@ -5414,10 +5537,57 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   display: contents;
 }
 
+/* A compact list, by its density prop or by its provider's density, gives
+ * its own rows and its header 8 px above and below and its metadata the small
+ * text step. The rules start at the list's own data-density and reach its
+ * parts through child combinators: a compact element around a list of density
+ * "default", such as a compact Card, or a compact list it is nested in,
+ * leaves it as it is. */
 :root
   .sp-resource-list[data-density="compact"]
-  [data-chassis][data-resource-list-item] {
+  > .sp-motion-item
+  > .sp-resource-list-item,
+:root
+  .sp-resource-list[data-density="compact"]
+  > .sp-motion-item
+  > .sp-resource-list-header {
   padding-block: var(--sp-rw-space-2);
+}
+
+:root
+  .sp-resource-list[data-density="compact"]
+  > .sp-motion-item
+  > .sp-resource-list-item
+  > .sp-resource-list-meta,
+:root
+  .sp-resource-list[data-density="compact"]
+  > .sp-motion-item
+  > .sp-resource-list-item
+  > .sp-button-content
+  > .sp-resource-list-meta {
+  font-size: var(--sp-rw-font-12);
+  line-height: var(--text-xs--line-height);
+}
+
+/* A row whose content has a description runs over more than one line
+ * (rulebook I5). Its leading mark centres on the first line, and text at its
+ * end sits on that line, as a date does in an inbox. A control at the end,
+ * such as a chevron or a button, stays centred on the row, and so does every
+ * part of a row of one line. The meta counts as text while it holds nothing
+ * but text and the selection check. */
+:root
+  .sp-resource-list-indicator:has(
+    ~ .sp-resource-list-content > .sp-resource-list-description
+  ) {
+  align-self: flex-start;
+  translate: 0 calc((1lh - 100%) / 2);
+}
+
+:root
+  .sp-resource-list-content:has(> .sp-resource-list-description)
+  ~ .sp-resource-list-meta:not(:has(> :not(.sp-resource-list-selection))) {
+  align-self: flex-start;
+  min-height: var(--sp-rw-space-5);
 }
 
 /* A divided list (variant="divided") draws the kit's hairline (rulebook B7)
@@ -5425,7 +5595,9 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
  * content: it starts and ends where the rows' text does, and the rows' fills
  * stay clear of it. The first and the last row keep no space outside their
  * content: the list reaches past its top and bottom by the row padding, as a
- * flush list reaches past its sides, so the fills keep their inset. */
+ * flush list reaches past its sides, so the fills keep their inset. A
+ * ResourceListHeader is an entry like a row, so the line below it is this
+ * divider too, with the same space on both sides. */
 :root .sp-resource-list[data-variant="divided"] {
   margin-block: calc(var(--sp-rw-space-2-5) * -1);
 }
@@ -5440,6 +5612,18 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   margin-inline: var(--sp-rw-space-3);
   margin-bottom: var(--sp-motion-gap);
   background: var(--sp-rw-border-translucent);
+}
+
+/* With clickable rows (interactive), the line is as wide as their hover
+ * surface, flush or not, the header's line included, so the hover fill never
+ * stands out over a line. A list of static rows keeps the line across the
+ * row content. */
+:root
+  .sp-resource-list[data-variant="divided"]:has(
+    > .sp-motion-item > .sp-resource-list-item[data-interactive]
+  )
+  .sp-resource-list-divider {
+  margin-inline: 0;
 }
 
 /* The selected row owns its metadata colour: the pressed fill under a selected
@@ -6491,6 +6675,43 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 :root
   :where(.sp-combobox-start-addon, .sp-autocomplete-start-addon)
   svg:not([class*="size-"]) {
+  width: var(--sp-rw-space-4);
+  height: var(--sp-rw-space-4);
+}
+
+/* Icons in an InputGroup around a field control. In an InputGroupText an icon
+ * is 18 px, and 16 px from 640 px, beside an input or a textarea. In an addon
+ * it is 16 px, beside date segments too; the addon rule follows the text rules,
+ * so an InputGroupText in an addon takes it. The icon of a Button in an addon
+ * keeps the Button's own size, and an icon with a size class keeps that. */
+:root
+  .sp-base-input-group:has(.sp-input-control, .sp-textarea-control)
+  .sp-input-group-text
+  svg:not([class*="size-"]) {
+  width: calc(var(--sp-rw-space) * 4.5);
+  height: calc(var(--sp-rw-space) * 4.5);
+}
+
+@media (width >= 40rem) {
+  :root
+    .sp-base-input-group:has(.sp-input-control, .sp-textarea-control)
+    .sp-input-group-text
+    svg:not([class*="size-"]) {
+    width: var(--sp-rw-space-4);
+    height: var(--sp-rw-space-4);
+  }
+}
+
+:root
+  .sp-base-input-group:has(
+    .sp-input-control,
+    .sp-textarea-control,
+    [role="spinbutton"]
+  )
+  .sp-input-group-addon
+  svg:not([class*="size-"]):where(
+    :not([data-chassis] > .sp-button-content > svg)
+  ) {
   width: var(--sp-rw-space-4);
   height: var(--sp-rw-space-4);
 }
@@ -7640,6 +7861,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   );
 }
 
+/* While a switch, its label or its field label is pressed, the thumb of the
+ * standalone control and of a menu row stretches from its leading edge by a
+ * tenth of its width; a disabled one stays. */
+:root
+  :is(.sp-base-switch, .sp-base-label, .sp-field-label):active
+  .sp-switch-thumb:not([data-disabled]) {
+  scale: 110% 1;
+}
+
 :root .sp-switch[data-disabled] {
   opacity: var(--sp-semantic-state-disabled-opacity);
 }
@@ -7978,6 +8208,164 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-inline-start: 0;
 }
 
+/* The ::before layer of every joined child, a chassis or not, meets its
+ * neighbour's at a join, as the child's edge and corners do. A part that
+ * another part follows squares the corners of its end edge, and one that
+ * follows another part those of its start edge; a part other than a separator
+ * also reaches half a pixel past that edge. In a vertical group a part that
+ * another part follows hides its layer. A part that another part follows is a
+ * [data-slot] child that is not the last of them,
+ * :not(:nth-last-child(1 of [data-slot]), :not([data-slot])), and one that
+ * follows another part is not the first of them; neither walks the siblings
+ * as :has() would (F-08). Chromium does not match an :nth-child() of a
+ * selector that stands right before ::before, nor inside an :is() there, which
+ * the minifier removes, but it matches one inside :not() (Chromium 151). */
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > :not(:nth-last-child(1 of [data-slot]), :not([data-slot]))::before {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  content: "";
+}
+
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > :not(:nth-last-child(1 of [data-slot]), :not([data-slot])):not(
+    .sp-separator
+  )::before {
+  inset-inline-end: -0.5px;
+}
+
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > :not(:nth-child(1 of [data-slot]), :not([data-slot]))::before {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  content: "";
+}
+
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > :not(:nth-child(1 of [data-slot]), :not([data-slot])):not(
+    .sp-separator
+  )::before {
+  inset-inline-start: -0.5px;
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > :not(:nth-last-child(1 of [data-slot]), :not([data-slot]))::before {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  content: "";
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > :not(:nth-last-child(1 of [data-slot]), :not([data-slot])):not(
+    .sp-separator
+  )::before {
+  display: none;
+  bottom: -0.5px;
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > :not(:nth-child(1 of [data-slot]), :not([data-slot]))::before {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  content: "";
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > :not(:nth-child(1 of [data-slot]), :not([data-slot])):not(
+    .sp-separator
+  )::before {
+  top: -0.5px;
+}
+
+/* In Dark the first child of a vertical group shows its layer and the last
+ * hides it, where the rules above leave it shown. */
+:root
+  .sp-group[data-orientation="vertical"]
+  > :first-child:where(.dark *)::before,
+:root
+  .sp-group[data-orientation="vertical"]
+  > :first-child:where([data-theme="dark"] *)::before {
+  display: block;
+  content: "";
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > :last-child:where(.dark *)::before,
+:root
+  .sp-group[data-orientation="vertical"]
+  > :last-child:where([data-theme="dark"] *)::before {
+  display: none;
+  content: "";
+}
+
+/* separator="inset": the divider is 20 px high, centred on the end edge of a
+ * button that another part follows; the joins above keep their offsets. */
+:root .sp-group[data-separator="inset"] > .sp-button:not(:last-child)::before {
+  inset-block: auto;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  top: 50%;
+  height: var(--sp-rw-space-5);
+  translate: 0 -50%;
+}
+
+/* A separator in Dark: the input colour at 32 %, and at 64 % beside the item
+ * under the pointer or pressed, the separator before that item and the one
+ * after it. */
+:root
+  .sp-base-separator[data-profile="group"]:where(
+    .dark,
+    .dark *,
+    [data-theme="dark"],
+    [data-theme="dark"] *
+  )::before {
+  background-color: color-mix(
+    in oklab,
+    var(--sp-semantic-color-input) 32%,
+    transparent
+  );
+}
+
+:root
+  .sp-group
+  > .sp-separator:has(~ button:hover):not(
+    :has(~ .sp-separator ~ [data-slot]:hover)
+  ):where(.dark *, [data-theme="dark"] *)::before,
+:root
+  .sp-group
+  > .sp-separator:has(~ [data-slot][data-pressed]):not(
+    :has(~ .sp-separator ~ [data-slot][data-pressed])
+  ):where(.dark *, [data-theme="dark"] *)::before,
+:root
+  .sp-group
+  > button:hover
+  ~ .sp-separator:not([data-slot]:hover ~ .sp-separator ~ .sp-separator):where(
+    .dark *,
+    [data-theme="dark"] *
+  )::before,
+:root
+  .sp-group
+  > [data-slot][data-pressed]
+  ~ .sp-separator:not(
+    [data-slot][data-pressed] ~ .sp-separator ~ .sp-separator
+  ):where(.dark *, [data-theme="dark"] *)::before {
+  background-color: color-mix(
+    in oklab,
+    var(--sp-semantic-color-input) 64%,
+    transparent
+  );
+  content: "";
+}
+
 /* A Group that pairs GroupText with an input is one field. The shared field
  * rules above give the Group the frame, focus, invalid and disabled states, so
  * the input hands over its own contour, fill and states instead of drawing a
@@ -8012,8 +8400,9 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 /* A Breadcrumb trail wraps onto more lines where it has no room; a header bar,
  * which is one line, keeps it on one row instead (Dashboard Shell header). The
- * trail can shrink inside a grid or flex parent, so a current page that
- * truncates never makes its container wider (rulebook K5). */
+ * trail can shrink inside a grid or flex parent, the Dashboard Shell header
+ * included, so a current page that truncates never makes its container wider
+ * (rulebook K5). This rule is the trail's one owner of its minimum width. */
 :where(.sp-breadcrumb) {
   min-width: 0;
 }
@@ -8309,12 +8698,14 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   line-height: var(--sp-rw-font-12);
 }
 
-/* The hairline contour of the neutral variants. The default badge draws it on
- * its white surface and the outline badge on the surface behind it, so the two
- * differ only by the fill. */
+/* The hairline contour of the neutral variants is their border, which every
+ * badge has (transparent on the others): it sits on the badge's edge with the
+ * fill inside it, so no band of fill shows outside the line, as shadcn's
+ * outline badge draws it. The default badge draws it on its white surface and
+ * the outline badge on the surface behind it, so the two differ only by the
+ * fill. */
 :root .sp-base-badge:where([data-variant="default"], [data-variant="outline"]) {
-  box-shadow: inset 0 0 0 var(--sp-rw-border-default)
-    var(--sp-rw-border-translucent);
+  border-color: var(--sp-rw-border-translucent);
 }
 
 /* The icon follows the badge size: 10, 12, 14 and 16 px for sm, md, lg
@@ -8384,8 +8775,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   padding-right: var(--sp-rw-space-1);
 }
 
+/* Secondary is the neutral fill, mixed from the kit's tokens: the muted grey at
+ * 60 % in Light, and 6 % of the text colour in Dark, which lightens the surface
+ * it sits on. It stays translucent, so it reads on a white card, on a tinted
+ * row and on a dark card (Lukas, 16 October 2026). */
 :root .sp-base-badge[data-variant="secondary"] {
-  background: var(--sp-rw-bg-muted);
+  background: light-dark(
+    color-mix(in oklch, var(--sp-rw-bg-muted) 60%, transparent),
+    color-mix(in oklch, var(--sp-rw-fg-primary) 6%, transparent)
+  );
   color: var(--sp-rw-fg-secondary);
 }
 
@@ -8450,8 +8848,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 /* Link and button badges: a hover tint from the badge's own text color works on
- * every variant, and the control focus ring replaces the utility ring. Only the
- * variants that draw their contour as a box-shadow keep it on focus. */
+ * every variant, and the control focus ring replaces the utility ring. The
+ * contour of the default and outline badges is their border, so it stays. */
 :root :is(a, button).sp-base-badge:hover {
   background-image: linear-gradient(
     color-mix(in srgb, currentColor 12%, transparent),
@@ -8459,11 +8857,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   );
 }
 
-:root
-  :is(a, button).sp-base-badge:not(
-    [data-variant="default"],
-    [data-variant="outline"]
-  ):focus-visible {
+:root :is(a, button).sp-base-badge:focus-visible {
   box-shadow: none;
 }
 
@@ -8720,15 +9114,46 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-radius: 0;
 }
 
-/* The inset of a card's parts: 20 px, or the theme's --sp-rw-card-inset, which
- * the kit leaves unset. It pads the header, the panel and the footer, the
- * sides of the bands and the space above and below a divided header. A
- * CardFrame sets --card-inset-inline on its cards, so their text starts with
- * the frame header's (card.tsx). */
+/* The inset of a card's parts: 20 px, or 16 px in a compact card (the Card's
+ * density, by default its provider's). Three tokens take the place of the
+ * density's inset. The kit only reads them, so a theme sets them on :root after
+ * the base import, and one card in its className:
+ * - --sp-rw-card-inset, the shared value;
+ * - --sp-rw-card-inset-block, the space above and below, and
+ *   --sp-rw-card-inset-inline, the sides; each is the shared value unless set.
+ * The inset pads the header, the panel and the footer, the sides of the bands
+ * and the space above and below a divided header, and an action beside a title
+ * alone reaches into it. A CardFrame sets --card-inset-inline on the cards
+ * joined into it, so their text starts with the frame header's; every Card
+ * resets it (card.tsx), so a card nested in a joined card keeps its own sides.
+ * Each part works out its two insets once, for the rules below. */
+:root :where(.sp-base-card) {
+  --card-density-inset: var(--sp-rw-space-5);
+}
+
+:root .sp-base-card[data-density="compact"] {
+  --card-density-inset: var(--sp-rw-space-4);
+}
+
+:root .sp-card-header,
+:root .sp-card-panel,
+:root .sp-card-footer {
+  --card-part-inset-block: var(
+    --sp-rw-card-inset-block,
+    var(--sp-rw-card-inset, var(--card-density-inset, var(--sp-rw-space-5)))
+  );
+  --card-part-inset-inline: var(
+    --card-inset-inline,
+    var(
+      --sp-rw-card-inset-inline,
+      var(--sp-rw-card-inset, var(--card-density-inset, var(--sp-rw-space-5)))
+    )
+  );
+}
+
 :root .sp-card-header,
 :root .sp-card-panel {
-  padding: var(--sp-rw-card-inset, var(--sp-rw-space-5))
-    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)));
+  padding: var(--card-part-inset-block) var(--card-part-inset-inline);
 }
 
 :root .sp-card-header {
@@ -8750,14 +9175,16 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * band keeps its own 12 px above and below. */
 :root .sp-card > .sp-card-header.border-b,
 :root .sp-card > .sp-card-header:has(+ .sp-separator) {
-  padding-bottom: var(--sp-rw-card-inset, var(--sp-rw-space-5));
+  padding-bottom: var(--card-part-inset-block);
 }
 
 /* A header's media (CardMedia) leads its text, 12 px before it: the header's
  * 6 px column gap and 6 px of its own. Its box is one title line high, so a
  * bare icon centres on the title's first line and an avatar taller than the
  * line starts at its top (rulebook I3, I5, I7). The icon is 20 px and takes
- * the accent, as an icon beside a Metric Card heading does. */
+ * the accent, as an icon beside a Metric Card heading does. A neutral media
+ * (tone="neutral") draws it in the secondary text colour instead, for a module
+ * icon that leaves colour to states. */
 :root .sp-card-media {
   min-height: var(--sp-rw-line-27);
   align-items: center;
@@ -8767,6 +9194,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root .sp-card-media > svg {
   color: var(--sp-rw-fg-accent);
+}
+
+:root .sp-card-media[data-tone="neutral"] > svg {
+  color: var(--sp-rw-fg-secondary);
 }
 
 :root .sp-card-media > svg:not([class*="size-"]) {
@@ -8799,9 +9230,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 :root .sp-card-footer {
-  padding: var(--sp-rw-space-4)
-    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)))
-    var(--sp-rw-card-inset, var(--sp-rw-space-5));
+  padding: var(--sp-rw-space-4) var(--card-part-inset-inline)
+    var(--card-part-inset-block);
 }
 
 /* A footer divided off by a separator or its own top border is a band of its
@@ -8817,15 +9247,65 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-bottom: var(--sp-rw-border-default) solid
     var(--sp-rw-border-translucent);
   background: var(--sp-rw-bg-primary);
-  padding: var(--sp-rw-space-3)
-    var(--card-inset-inline, var(--sp-rw-card-inset, var(--sp-rw-space-5)));
+  padding: var(--sp-rw-space-3) var(--card-part-inset-inline);
 }
 
-/* A header with only a title, with or without an action or a media, has no
- * second row. Its empty grid row would keep the 6 px title gap below the title:
- * in the band it made the band bottom-heavy, and in a default card it added
- * 6 px between the title and the content (the title keeps its 16 px, only the
- * empty row goes; rulebook S2). */
+/* The rows of a header (rulebook S2, S3, I5, I7). card.tsx gives a media
+ * (CardMedia) a column before the text and an action (CardAction) one after
+ * it; the header's other children are its text parts and share one column. A
+ * header holds two text parts, such as a title and a description, when a text
+ * part follows another. The rules below test it with one condition:
+ *
+ *   :has(
+ *     > :not(.sp-card-action):not(.sp-card-media)
+ *       ~ :not(.sp-card-action):not(.sp-card-media)
+ *   )
+ *
+ * - With two text parts, the media and the action span both rows from the
+ *   top. The Component base block starts the parts at the top of their row
+ *   and centres the media and the action on theirs.
+ * - With one text part, such as a title alone, the header has no second row.
+ *   A media or an action centres the parts on each other. The empty grid row
+ *   keeps no gap: its 6 px made the band bottom-heavy, and in a default card
+ *   it added 6 px between the title and the content (the title keeps its
+ *   16 px, only the empty row goes; rulebook S2). An action keeps the header
+ *   as tall as one without an action (Lukas, 15 October 2026): it reaches up
+ *   to 12 px into the padding above and below, the band's padding and the
+ *   space below a header before its panel, or less with a smaller block
+ *   inset. So a link or a Button up to xl beside the 27 px line takes no
+ *   height of its own; only what the 12 px cannot take, such as an xl Button
+ *   beside the band's 20 px line, adds to the row, and the action never leaves
+ *   the padding.
+ * card.tsx sets none of these properties (rulebook P6): the base block, the
+ * header's gap above and these rules own the header's align-items and
+ * row-gap and the media's and the action's align-self, grid-row-end and
+ * margin-block. */
+:root
+  .sp-card-header:has(
+    > :not(.sp-card-action):not(.sp-card-media)
+      ~ :not(.sp-card-action):not(.sp-card-media)
+  )
+  > .sp-card-media,
+:root
+  .sp-card-header:has(
+    > :not(.sp-card-action):not(.sp-card-media)
+      ~ :not(.sp-card-action):not(.sp-card-media)
+  )
+  > .sp-card-action {
+  grid-row-end: 3;
+  align-self: flex-start;
+}
+
+:root
+  .sp-card-header:has(> .sp-card-action, > .sp-card-media):not(
+    :has(
+      > :not(.sp-card-action):not(.sp-card-media)
+        ~ :not(.sp-card-action):not(.sp-card-media)
+    )
+  ) {
+  align-items: center;
+}
+
 :root
   .sp-card
   > .sp-card-header:not(
@@ -8837,14 +9317,6 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   row-gap: 0;
 }
 
-/* An action beside a title alone keeps the header as tall as one without an
- * action (Lukas, 15 October 2026). It centres on the title's line and reaches
- * up to 12 px into the padding above and below, the band's padding and the
- * space below a header before its panel, or less with a smaller card inset. So
- * a link or a Button up to xl beside the 27 px line takes no height of its
- * own; only what the 12 px cannot take, such as an xl Button beside the band's
- * 20 px line, adds to the row, and the action never leaves the padding. Beside
- * a title and a description it stays at the top of both. */
 :root
   .sp-card-header:not(
     :has(
@@ -8854,13 +9326,12 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   )
   > .sp-card-action {
   margin-block: calc(
-    min(var(--sp-rw-space-3), var(--sp-rw-card-inset, var(--sp-rw-space-5))) *
-      -1
+    min(var(--sp-rw-space-3), var(--card-part-inset-block)) * -1
   );
 }
 
 :root .sp-card[data-variant="header"] > .sp-card-header + .sp-card-panel {
-  padding-top: var(--sp-rw-card-inset, var(--sp-rw-space-5));
+  padding-top: var(--card-part-inset-block);
 }
 
 /* In the band the media follows the compact title: its box is the 20 px title
@@ -9286,6 +9757,31 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   color: var(--sp-rw-fg-primary);
   font-size: var(--sp-rw-font-14);
   line-height: var(--sp-rw-line-21);
+}
+
+/* The columns beside the text column of the kit base: a 16 px icon column
+ * before it when an icon leads, and from 640 px an action column after it,
+ * only beside a title or a description, so no empty track stays (S11). */
+:root .sp-alert:has(> svg) {
+  grid-template-columns: var(--sp-rw-space-4) minmax(0, 1fr);
+}
+
+@media (width >= 40rem) {
+  :root
+    .sp-alert:has(.sp-alert-action):has(
+      .sp-alert-title,
+      .sp-alert-description
+    ) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  :root
+    .sp-alert:has(> svg):has(.sp-alert-action):has(
+      .sp-alert-title,
+      .sp-alert-description
+    ) {
+    grid-template-columns: var(--sp-rw-space-4) minmax(0, 1fr) auto;
+  }
 }
 
 /* Each status rim is its status colour at 32%: the accent for info, and the

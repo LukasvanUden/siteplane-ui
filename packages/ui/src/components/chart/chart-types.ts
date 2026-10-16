@@ -80,8 +80,15 @@ export type CartesianChartProps = {
    * its data that the chart gives assistive technology itself.
    */
   "aria-describedby"?: string;
-  /** The height of the chart in px, a legend included; the width follows the container. */
-  height?: number;
+  /**
+   * The height of the chart in px, a legend included, or `fill` to take the
+   * height of its box: the chart is as tall as the room its container gives it,
+   * as a flex item that grows, a grid cell or a box with a height, and never
+   * lower than `minHeight`. The width always follows the container.
+   */
+  height?: number | "fill";
+  /** With `height="fill"`, the least height of the chart in px, a legend included. */
+  minHeight?: number;
   /** Formats a value in the tooltip, and on the value axis when given. */
   formatValue?: (value: number) => string;
   /** Formats an x value on the axis and in the tooltip heading. */

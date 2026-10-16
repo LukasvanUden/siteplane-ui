@@ -818,9 +818,10 @@ export function ComboboxChipRemove({
       }
       {...props}
       // A className of the app's replaces the action's own classes; the
-      // slot's class stays either way.
+      // slot's class stays either way. The chassis keeps the kit's action at
+      // its width; an element of the app's render takes shrink-0 for that.
       className={withClass(
-        props.className ?? "me-0.5 shrink-0",
+        props.className ?? (render ? "me-0.5 shrink-0" : "me-0.5"),
         slotClass("combobox-chip-remove", props, render),
       )}
     >

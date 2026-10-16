@@ -34,8 +34,9 @@ export const surfaceClassNames = {
     "relative inline-flex w-full ring-ring/24 focus-within:has-aria-invalid:ring-destructive/16 dark:has-aria-invalid:ring-destructive/24",
   formControlCell:
     "relative min-w-0 text-center text-base ring-ring/24 focus-visible:z-10 focus-visible:ring-ring/24 disabled:cursor-not-allowed aria-invalid:focus-visible:ring-destructive/16 sm:text-sm dark:aria-invalid:focus-visible:ring-destructive/24",
-  formControlComposite:
-    "relative inline-flex w-full min-w-0 items-center ring-ring/24 has-[input:focus-visible,textarea:focus-visible,[role=spinbutton][data-focus-visible]]:has-[input[aria-invalid],textarea[aria-invalid],[role=spinbutton][aria-invalid=true]]:ring-destructive/16 dark:has-[input[aria-invalid],textarea[aria-invalid],[role=spinbutton][aria-invalid=true]]:ring-destructive/24",
+  // The InputGroup's focus and invalid rings are the shared field rules'
+  // box-shadows in design-rework.css, so it sets no ring colour.
+  formControlComposite: "relative inline-flex w-full min-w-0 items-center",
   formControlCompositeSoft:
     "relative inline-flex w-full min-w-0 items-center ring-ring/24 focus-within:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/16 dark:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/24",
   glass: "sp-glass-surface",

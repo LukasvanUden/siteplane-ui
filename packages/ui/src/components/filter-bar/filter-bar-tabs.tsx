@@ -48,6 +48,13 @@ export interface FilterBarTabsProps extends Omit<
   defaultSearching?: boolean;
   /** The search text. Uncontrolled by default; closing the search empties it. */
   defaultQuery?: string;
+  /**
+   * The bar takes the rest of its row (`true`, the default), or, with `false`,
+   * the width of its tabs, so its surface ends after the last tab while the
+   * filters beside it keep their place. The search then opens in that width.
+   * Tabs that do not fit still scroll.
+   */
+  grow?: boolean;
   /** Props of the search input, such as `placeholder` or `aria-label`. */
   inputProps?: FilterBarTabsInputProps;
   /** Called with the new text as it is typed, and with an empty text when the search closes. */
@@ -102,6 +109,7 @@ export function FilterBarTabs({
   clearLabel = "Clear search",
   defaultQuery = "",
   defaultSearching = false,
+  grow = true,
   inputProps,
   onQueryChange,
   onSearchingChange,
@@ -145,7 +153,8 @@ export function FilterBarTabs({
 
   return (
     <Tabs
-      className={cn("min-w-0 flex-1", className)}
+      className={cn("min-w-0", grow ? "flex-1" : "flex-initial", className)}
+      data-grow={grow ? undefined : "false"}
       data-pattern="filter-bar-tabs"
       data-searching={searching || undefined}
       size={resolvedSize}

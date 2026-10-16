@@ -44,6 +44,7 @@ import {
   ChartValueAxis,
   cartesianLayout,
   useCartesianLayout,
+  useChartBox,
   useGlidingLabels,
   useGlidingTicks,
   useLastValue,
@@ -102,7 +103,6 @@ import type {
   ChartCurve,
   ChartXValue,
 } from "./chart-types";
-import { useChartWidth } from "./use-chart-width";
 import type { ScaleTime } from "d3-scale";
 
 /** The runs of rows that have a number, so that a gap in the data breaks a line instead of bridging it. */
@@ -287,7 +287,8 @@ function areaPath(
  * chart that sizes to its container must: until then, on the server too, it
  * renders the box of the plot at its full height, the legend and what screen
  * readers read, so the page does not move and no plot is ever laid out for
- * another width. It glides to new data.
+ * another width. A chart that fills the height of its box measures that height
+ * too, and keeps `minHeight` until it knows it. It glides to new data.
  */
 export function LineAreaChart({
   mode,
@@ -297,7 +298,8 @@ export function LineAreaChart({
   series,
   label,
   "aria-describedby": describedBy,
-  height = 240,
+  height: givenHeight,
+  minHeight,
   formatValue,
   formatX,
   locale = CHART_DEFAULT_LOCALE,
@@ -311,7 +313,10 @@ export function LineAreaChart({
   ...plot
 }: LineAreaChartProps): React.ReactElement {
   const root = React.useRef<HTMLElement>(null);
-  const width = useChartWidth(root);
+  // The chart core sizes the chart: its width, and its height in px or from
+  // the box it fills.
+  const box = useChartBox(root, { height: givenHeight, minHeight });
+  const { height, width } = box;
   const area = mode === "area";
   const stack = area && stacked;
   const colors = seriesColors(series, palette);
@@ -343,10 +348,13 @@ export function LineAreaChart({
       className={cn(
         area ? "sp-area-chart" : "sp-line-chart",
         "flex w-full flex-col",
+        box.className,
         className,
       )}
+      data-height={box.dataHeight}
       data-slot={area ? "area-chart" : "line-chart"}
       ref={root}
+      style={box.style}
     >
       {width === null ? (
         <ChartPlotPlaceholder

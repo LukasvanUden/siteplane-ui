@@ -102,7 +102,9 @@ export interface BadgeProps extends useRender.ComponentProps<"span"> {
   profile?: BadgeProfile;
   /**
    * `default` is a white surface with a hairline contour and `outline` keeps
-   * only the contour. `accent`, `inverse` and `destructive` are solid fills,
+   * only the contour. `secondary` is a light, translucent neutral fill that
+   * reads on a white card, on a tinted row and in Dark.
+   * `accent`, `inverse` and `destructive` are solid fills,
    * like the Button variants of those names; `info`, `success`, `warning` and
    * `error` tint with a status color. A `count` badge is `inverse` and an
    * `entitlement` badge is `info` unless a variant is set. A `status` badge

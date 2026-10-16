@@ -16,6 +16,7 @@ import { Button } from "../button";
 import { KitButton } from "../button/button-internal";
 import { useLeavingPane } from "../motion/motion-follow";
 import { panelSwitchClassName } from "../motion/motion-presence";
+import { layoutSize, railIndicatorGeometry } from "./tabs-geometry";
 import { useTabsOverflow } from "./tabs-overflow";
 
 export type TabsVariant = "default" | "pill" | "underline";
@@ -77,20 +78,24 @@ function placeRailIndicator(
     '[data-slot="scroll-area-viewport"]',
   );
   const strip = viewport && rail.contains(viewport) ? viewport : list;
-  const railBox = rail.getBoundingClientRect();
-  const targetBox = target.getBoundingClientRect();
-  const stripBox = strip?.getBoundingClientRect();
+  // The boxes are read on screen and turned into the rail's own px, so a rail
+  // in a popup that still zooms in places its selection on the tab, not beside
+  // it (tabs-geometry.ts).
+  const place = railIndicatorGeometry({
+    rail: rail.getBoundingClientRect(),
+    railSize: layoutSize(rail),
+    target: target.getBoundingClientRect(),
+    targetSize: layoutSize(target),
+    strip: strip?.getBoundingClientRect(),
+  });
 
-  indicator.style.setProperty(
-    "--active-tab-left",
-    `${targetBox.left - railBox.left}px`,
-  );
-  indicator.style.setProperty("--active-tab-width", `${targetBox.width}px`);
-  indicator.style.setProperty("--active-tab-height", `${targetBox.height}px`);
-  indicator.parentElement!.style.clipPath = stripBox
-    ? `inset(0 ${Math.max(0, railBox.right - stripBox.right)}px 0 ${Math.max(0, stripBox.left - railBox.left)}px)`
+  indicator.style.setProperty("--active-tab-left", `${place.left}px`);
+  indicator.style.setProperty("--active-tab-width", `${place.width}px`);
+  indicator.style.setProperty("--active-tab-height", `${place.height}px`);
+  indicator.parentElement!.style.clipPath = strip
+    ? `inset(0 ${place.clipEnd}px 0 ${place.clipStart}px)`
     : "inset(0)";
-  return targetBox.width > 0 && targetBox.height > 0;
+  return place.width > 0 && place.height > 0;
 }
 
 /** Shared rail and selection indicator for tabs composed with an adjacent action. */
@@ -344,8 +349,11 @@ export function TabsTab({
   return (
     <TabsPrimitive.Tab
       className={cn(
+        // Its place in the list (positioned, at its own width, on one line) is
+        // the chassis default, or the kit base for a render of the app's
+        // (design-rework.css).
         slotClass("tabs-tab", props, render),
-        "relative z-10 shrink-0 whitespace-nowrap data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "z-10 data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       data-profile="tabs-tab"

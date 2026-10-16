@@ -36,19 +36,20 @@ export const buttonVariants = cva(
     },
     variants: {
       // The icon and label of each size come from the control scale in
-      // design-rework.css (--sp-rw-button-icon and the size's text).
+      // design-rework.css (--sp-rw-button-icon and the size's text); the
+      // ::before layer takes the chassis radius at every size.
       size: {
         md: "",
         "icon-md": "",
         "icon-lg": "",
         "icon-sm": "",
         "icon-xl": "",
-        "icon-xs": "before:rounded-[inherit]",
-        "icon-2xs": "before:rounded-[inherit]",
+        "icon-xs": "",
+        "icon-2xs": "",
         lg: "",
         sm: "",
         xl: "",
-        xs: "before:rounded-[inherit]",
+        xs: "",
       },
       variant: {
         default:
@@ -416,9 +417,8 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
       buttonVariants({ size: resolvedSize, variant: resolvedVariant }),
       resolvedVariant === "glass" && surfaceClassNames.glass,
       "sp-button-motion",
-      // The height follows the lines; design-rework.css keeps one line on the
-      // control scale ([data-multiline]).
-      multiline && "h-auto",
+      // A multiline Button's height follows its lines, and one line stays on
+      // the control scale: both are design-rework.css's ([data-multiline]).
       selectTriggerProfileMode &&
         selectTriggerProfileModeClassNames[selectTriggerProfileMode],
       width === "fit" && "w-fit",

@@ -18,6 +18,15 @@ export interface DashboardShellProps extends React.ComponentProps<
   typeof SidebarProvider
 > {
   layout?: DashboardShellLayout;
+  /**
+   * Keeps DashboardShellHeader in view while the content scrolls. Default
+   * true. From the Sidebar's mobile breakpoint up, the shell is the
+   * viewport's height and only DashboardShellMain scrolls. Below it the page
+   * scrolls and the header sticks to the top of the viewport. Set false for a
+   * page that scrolls as a whole: the shell is then at least the viewport's
+   * height, and the header scrolls away with the page.
+   */
+  stickyHeader?: boolean;
 }
 
 export interface DashboardShellHeaderProps extends React.ComponentProps<"header"> {
@@ -32,24 +41,39 @@ export interface DashboardShellMainProps extends React.ComponentProps<"div"> {
   flush?: boolean;
 }
 
+// The parts that follow the shell's settings read them here. Outside a
+// DashboardShell no sticky rule applies, so a part there keeps the Sidebar's
+// own behaviour.
+const DashboardShellContext: React.Context<{ stickyHeader: boolean }> =
+  React.createContext<{ stickyHeader: boolean }>({ stickyHeader: false });
+
 export function DashboardShell({
   children,
   className,
   layout = "push",
+  mobileBreakpoint = "md",
+  stickyHeader = true,
   ...props
 }: DashboardShellProps): React.ReactElement {
+  const context = React.useMemo(() => ({ stickyHeader }), [stickyHeader]);
   return (
-    <SidebarProvider
-      className={cn("min-h-svh", className)}
-      // The bar height and the sidebar width are the stylesheet's
-      // (design-rework.css, "Dashboard Shell"); an app's style overrides
-      // them.
-      data-dashboard-shell="root"
-      layout={layout}
-      {...props}
-    >
-      {children}
-    </SidebarProvider>
+    <DashboardShellContext.Provider value={context}>
+      <SidebarProvider
+        className={cn("min-h-svh", className)}
+        // The bar height and the sidebar width are the stylesheet's
+        // (design-rework.css, "Dashboard Shell"); an app's style overrides
+        // them. So are the sticky header's rules, which switch at the
+        // Sidebar's mobile breakpoint.
+        data-dashboard-shell="root"
+        data-mobile-breakpoint={stickyHeader ? mobileBreakpoint : undefined}
+        data-sticky-header={stickyHeader || undefined}
+        layout={layout}
+        mobileBreakpoint={mobileBreakpoint}
+        {...props}
+      >
+        {children}
+      </SidebarProvider>
+    </DashboardShellContext.Provider>
   );
 }
 
@@ -91,9 +115,14 @@ export function DashboardShellInset({
   className,
   ...props
 }: React.ComponentProps<typeof SidebarInset>): React.ReactElement {
+  const { stickyHeader } = React.useContext(DashboardShellContext);
   return (
     <SidebarInset
-      className={className}
+      // A sticky header sticks to its nearest scroll container. The inset
+      // clips its content without becoming one (overflow: clip, where it is
+      // otherwise hidden), so below the breakpoint, where the page scrolls,
+      // the header sticks to the viewport.
+      className={cn(stickyHeader && "overflow-clip", className)}
       data-dashboard-shell="inset"
       {...props}
     />
@@ -111,7 +140,10 @@ export function DashboardShellHeader({
   // width, so a title in it starts on the content's line; a leading sidebar
   // trigger puts its glyph on that line (design-rework.css, "Dashboard Shell
   // header"). In the push layout SidebarInset moves the header clear of the
-  // expanded sidebar with the rest of the content.
+  // expanded sidebar with the rest of the content. With the shell's
+  // stickyHeader, the default, it sticks to the top below the breakpoint,
+  // filled with the surface it sits on there, so the content scrolls under it
+  // unseen.
   return (
     <header
       className={cn(

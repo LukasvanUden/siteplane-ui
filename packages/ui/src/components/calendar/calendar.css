@@ -95,10 +95,10 @@
     font: inherit;
   }
 
+  /* The heading icons take the tertiary text colour; their 16 px size comes
+   * from the Button they sit in. */
   .sp-calendar-heading-trigger svg,
   .sp-calendar-picker-heading svg {
-    width: var(--sp-rw-space-3-5);
-    height: var(--sp-rw-space-3-5);
     color: var(--sp-rw-fg-tertiary);
   }
 

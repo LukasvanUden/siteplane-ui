@@ -44,7 +44,8 @@ export interface ResourceListProps extends useRender.ComponentProps<"div"> {
    * hairline between two rows, across the row content, and keeps no space
    * above the first row's content or below the last row's: the list reaches
    * past its top and bottom by the row padding, as `flush` makes it reach past
-   * its sides.
+   * its sides. With clickable (`interactive`) rows the line is as wide as their
+   * hover surface. A `ResourceListHeader` gets the same line below it.
    */
   variant?: ResourceListVariant;
 }
@@ -77,9 +78,10 @@ const resourceListIndicatorShapeClassNames = {
 /** Rows read this to know they are in a list, which animates them (rulebook M6, M7). */
 const ResourceListContext = React.createContext(false);
 
-// The line between two rows of a divided list: the kit's hairline (rulebook
-// B7), across the row content, in the middle of the space between the rows
-// (design-rework.css).
+// The line between two rows of a divided list, and below its header: the
+// kit's hairline (rulebook B7), across the row content, in the middle of the
+// space between the rows. With clickable rows it is as wide as their hover
+// surface (design-rework.css).
 const resourceListDivider = (
   <span
     aria-hidden="true"
@@ -87,16 +89,6 @@ const resourceListDivider = (
     data-slot="resource-list-divider"
   />
 );
-
-// A row whose content has a description runs over more than one line. There
-// the leading mark centres on the first line, and text at the end sits on it,
-// as a date does in an inbox (rulebook I5). A control
-// at the end, such as a chevron or a button, stays centred on the row, and so
-// does every part of a row of one line.
-const firstLineMarkClassName =
-  "has-[~[data-slot=resource-list-content]>[data-slot=resource-list-description]]:self-start has-[~[data-slot=resource-list-content]>[data-slot=resource-list-description]]:translate-y-[calc((1lh-100%)/2)]";
-const firstLineTextClassName =
-  "[[data-slot=resource-list-content]:has(>[data-slot=resource-list-description])~&:not(:has(>:not([data-slot=resource-list-selection])))]:self-start [[data-slot=resource-list-content]:has(>[data-slot=resource-list-description])~&:not(:has(>:not([data-slot=resource-list-selection])))]:min-h-5";
 
 /**
  * Rows that are added, removed or reordered expand, collapse and glide on their
@@ -128,6 +120,9 @@ export function ResourceList({
           "data-[flush=true]:-mx-(--resource-list-flush-offset) data-[flush=true]:w-[calc(100%+var(--resource-list-flush-offset)*2)]",
           className,
         )}
+        // The kit's compact rules key on the list's own density, never on an
+        // ancestor's, such as a compact Card around a default list
+        // (design-rework.css).
         data-density={resolvedDensity}
         data-flush={flush || undefined}
         data-slot="resource-list"
@@ -144,6 +139,44 @@ export function ResourceList({
         {children}
       </MotionList>
     </ResourceListContext.Provider>
+  );
+}
+
+/**
+ * The heading of a list, before its rows. Its text starts where the rows' text
+ * does, at their size and in the muted color of their metadata; a second
+ * child, such as an action, sits at the end. In a list it is an entry like a
+ * row: a divided list draws its line below the header, as wide as the lines
+ * between the rows, and the first row keeps the space below it that every row
+ * keeps below a line.
+ */
+export function ResourceListHeader({
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"div">): React.ReactElement {
+  const defaultProps = {
+    "data-slot": "resource-list-header",
+    className: cn(
+      slotClass("resource-list-header", props, render),
+      "flex min-w-0 items-center justify-between gap-3 px-3 text-muted-foreground text-sm",
+      className,
+    ),
+  };
+  const header = useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(defaultProps, props),
+    render,
+  });
+  const inList = React.useContext(ResourceListContext);
+
+  // The entry holds the space and the line after the header, as a row's does.
+  return inList ? (
+    <MotionItem className="min-w-0" render={<div />}>
+      {header}
+    </MotionItem>
+  ) : (
+    header
   );
 }
 
@@ -191,13 +224,15 @@ export function ResourceListItem({
     "data-selected": selected || undefined,
     "data-slot": "resource-list-item",
     // A row without an indicator or meta takes no room for it (rulebook S11):
-    // the content fills what the other parts leave. An interactive row is a
-    // Button, whose spacing and text the kit's resource-list rule sets.
+    // the content fills what the other parts leave. The space above and below
+    // the content is a kit rule, which a compact list refines. An interactive
+    // row is a Button: its chassis centres the parts, and the kit's
+    // resource-list rule makes it a row and sets its spacing and text.
     className: cn(
       slotClass("resource-list-item", props, render),
-      "flex min-w-0 items-center",
+      "min-w-0",
       !interactive &&
-        "gap-3 px-3 py-2.5 text-left text-sm in-data-[density=compact]:py-2 rounded-lg data-[active=true]:bg-state-selected data-[selected=true]:bg-state-selected data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-(--sp-rw-disabled-opacity-action)",
+        "flex items-center gap-3 px-3 text-left text-sm rounded-lg data-[active=true]:bg-state-selected data-[selected=true]:bg-state-selected data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-(--sp-rw-disabled-opacity-action)",
       className,
     ),
   };
@@ -264,10 +299,12 @@ export function ResourceListIndicator({
     "data-slot": "resource-list-indicator",
     "data-shape": shape,
     "data-tone": tone,
+    // In a row with a description the mark centres on the first line, and
+    // text in the meta sits on it (rulebook I5): two rules in the ResourceList
+    // block of design-rework.css.
     className: cn(
       slotClass("resource-list-indicator", props, render),
       "inline-flex shrink-0 items-center justify-center",
-      firstLineMarkClassName,
       icon
         ? "size-5 rounded-full text-primary-foreground [&>svg]:size-3"
         : resourceListIndicatorShapeClassNames[shape],
@@ -314,23 +351,57 @@ export function ResourceListContent({
   });
 }
 
-// The plain text of a title or description, for its title attribute. Text
-// inside elements counts too, so a highlighted part or a link keeps the full
-// value.
-function textOf(node: React.ReactNode): string {
-  if (typeof node === "string" || typeof node === "number") return `${node}`;
-  if (Array.isArray(node)) return node.map(textOf).join("");
-  if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
-    return textOf(node.props.children);
+// The text of children that are nothing but text: strings and numbers, and
+// the values React renders as nothing. It reads the same on the server and in
+// the browser. With an element among the children it is undefined.
+function plainText(node: React.ReactNode): string | undefined {
+  if (node === null || node === undefined || typeof node === "boolean")
+    return "";
+  if (
+    typeof node === "string" ||
+    typeof node === "number" ||
+    typeof node === "bigint"
+  )
+    return `${node}`;
+  if (!Array.isArray(node)) return undefined;
+  let text = "";
+  for (const child of node as React.ReactNode[]) {
+    const part = plainText(child);
+    if (part === undefined) return undefined;
+    text += part;
   }
-  return "";
+  return text;
 }
 
-// A title and a description stay on one line and end with an ellipsis, so a
-// dense list keeps its rhythm (rulebook K5, list rows); the title attribute
-// shows the full text. A title prop of its own replaces it.
-function fullTextTitle(children: React.ReactNode): string | undefined {
-  return textOf(children).trim() || undefined;
+/**
+ * A title and a description stay on one line and end with an ellipsis, so a
+ * dense list keeps its rhythm (rulebook K5, list rows); their title attribute
+ * holds the full text. Text children give it while rendering, the same on the
+ * server and in the browser. With an element among the children it is read
+ * from the rendered text after mount, and again after each render: a Server
+ * Component hands element children over as references, which the server and
+ * the browser may not resolve alike, so reading them while rendering broke
+ * hydration. A title prop of the consumer's own replaces it, and then nothing
+ * is read.
+ */
+function useFullTextTitle(props: {
+  children?: React.ReactNode;
+  title?: string | undefined;
+}): {
+  ref: React.RefObject<HTMLSpanElement | null>;
+  title: string | undefined;
+} {
+  const ref = React.useRef<HTMLSpanElement | null>(null);
+  const text = plainText(props.children);
+  const read = text === undefined && !("title" in props);
+  const [rendered, setRendered] = React.useState<string>();
+  React.useLayoutEffect(() => {
+    if (read) setRendered(ref.current?.textContent?.trim() || undefined);
+  });
+  return {
+    ref,
+    title: text === undefined ? rendered : text.trim() || undefined,
+  };
 }
 
 export function ResourceListTitle({
@@ -338,6 +409,7 @@ export function ResourceListTitle({
   render,
   ...props
 }: useRender.ComponentProps<"span">): React.ReactElement {
+  const fullText = useFullTextTitle(props);
   const defaultProps = {
     "data-slot": "resource-list-title",
     className: cn(
@@ -345,12 +417,13 @@ export function ResourceListTitle({
       "truncate font-(--sp-rw-font-weight-label) text-foreground",
       className,
     ),
-    title: fullTextTitle(props.children),
+    title: fullText.title,
   };
 
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(defaultProps, props),
+    ref: fullText.ref,
     render,
   });
 }
@@ -360,6 +433,7 @@ export function ResourceListDescription({
   render,
   ...props
 }: useRender.ComponentProps<"span">): React.ReactElement {
+  const fullText = useFullTextTitle(props);
   const defaultProps = {
     "data-slot": "resource-list-description",
     className: cn(
@@ -367,12 +441,13 @@ export function ResourceListDescription({
       "truncate text-muted-foreground text-xs",
       className,
     ),
-    title: fullTextTitle(props.children),
+    title: fullText.title,
   };
 
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(defaultProps, props),
+    ref: fullText.ref,
     render,
   });
 }
@@ -390,8 +465,7 @@ export function ResourceListMeta({
     "data-slot": "resource-list-meta",
     className: cn(
       slotClass("resource-list-meta", props, render),
-      "inline-flex shrink-0 items-center whitespace-nowrap text-sm in-data-[density=compact]:text-xs",
-      firstLineTextClassName,
+      "inline-flex shrink-0 items-center whitespace-nowrap",
       className,
     ),
     children: (

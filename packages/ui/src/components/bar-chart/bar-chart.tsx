@@ -14,6 +14,7 @@ import {
   chartAxisLabelClassName,
   chartHighlightedTextClassName,
   useCartesianLayout,
+  useChartBox,
   useGlidingLabels,
   useGlidingTicks,
   useLastValue,
@@ -57,7 +58,6 @@ import type {
   CartesianChartProps,
   ChartXValue,
 } from "../chart/chart-types";
-import { useChartHeight, useChartWidth } from "../chart/use-chart-width";
 import { useTweenedRows, useTweenedValues } from "../motion";
 import {
   barPath,
@@ -79,7 +79,7 @@ import {
   type BarSlot,
 } from "./bar-layout";
 
-export type BarChartProps = Omit<CartesianChartProps, "height"> & {
+export type BarChartProps = CartesianChartProps & {
   /**
    * `vertical` draws columns over a category axis along the bottom; `horizontal`
    * puts the categories down the left side and the bars along them, the way a
@@ -94,15 +94,6 @@ export type BarChartProps = Omit<CartesianChartProps, "height"> & {
    * bars stand side by side.
    */
   stacked?: boolean;
-  /**
-   * The height of the chart in px, a legend included, or `fill` to take the
-   * height of its box: the chart is as tall as the room its container gives it,
-   * as a flex item that grows or in a box with a height, and never lower than
-   * `minHeight`. The width always follows the container.
-   */
-  height?: number | "fill";
-  /** With `height="fill"`, the least height of the chart in px, a legend included. */
-  minHeight?: number;
   /**
    * Writes the value of each bar at its end: above a column, below one under
    * 0, beside a horizontal bar. A stack shows the sum of each sign at its outer
@@ -158,8 +149,8 @@ export function BarChart({
   series,
   label,
   "aria-describedby": describedBy,
-  height: givenHeight = 240,
-  minHeight = 240,
+  height: givenHeight,
+  minHeight,
   formatValue,
   formatX,
   locale = CHART_DEFAULT_LOCALE,
@@ -171,15 +162,10 @@ export function BarChart({
   ...plot
 }: BarChartProps): React.ReactElement {
   const root = React.useRef<HTMLElement>(null);
-  const width = useChartWidth(root);
-  // A chart that fills its box takes the height of its box, which takes it from
-  // its container and never from the chart: the box is size-contained, so what
-  // the chart draws cannot make it taller, and the two never chase each other.
-  const fill = givenHeight === "fill";
-  const measuredHeight = useChartHeight(root, fill);
-  const height = fill
-    ? Math.max(minHeight, measuredHeight ?? minHeight)
-    : givenHeight;
+  // The chart core sizes the chart: its width, and its height in px or from
+  // the box it fills.
+  const box = useChartBox(root, { height: givenHeight, minHeight });
+  const { height, width } = box;
   const colors = seriesColors(series, palette);
   const showLegend = legend && series.length > 0;
   // The series whose entry the mouse is over in the legend: the chart owns it
@@ -212,13 +198,13 @@ export function BarChart({
       className={cn(
         "sp-bar-chart",
         "flex w-full flex-col",
-        fill && "h-full [contain:size]",
+        box.className,
         className,
       )}
-      data-height={fill ? "fill" : undefined}
+      data-height={box.dataHeight}
       data-slot="bar-chart"
       ref={root}
-      style={fill ? { minHeight } : undefined}
+      style={box.style}
     >
       {width === null ? (
         <ChartPlotPlaceholder

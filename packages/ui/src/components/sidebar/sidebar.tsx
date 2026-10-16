@@ -748,23 +748,27 @@ export function SidebarRail({
 
 // The content's desktop surface starts where the desktop sidebar does, at the
 // provider's mobile breakpoint, so it never frames itself beside a sidebar that
-// is still a sheet. Sidebar `variant="inset"` and `layout="inset"` draw the
-// same framed surface. Tailwind needs every class spelled out, hence one set
+// is still a sheet. From there SidebarInset is the primary surface beside the
+// sidebar on the page canvas, with a layout or without one, so the two never
+// share one grey (rulebook B1). Sidebar `variant="inset"` and `layout="inset"`
+// frame that surface. Tailwind needs every class spelled out, hence one set
 // per breakpoint.
 const sidebarInsetClassNames = {
   lg: {
     inset:
-      "lg:m-2 lg:ms-0 lg:rounded-2xl lg:bg-[var(--sp-rw-bg-primary)] lg:shadow-[var(--sp-rw-surface-sm-shadow)]",
-    push: "lg:bg-[var(--sp-rw-bg-primary)] lg:peer-data-[state=expanded]:[--sidebar-content-offset:calc(var(--sidebar-width)-var(--sidebar-width-icon))]",
+      "lg:m-2 lg:ms-0 lg:rounded-2xl lg:shadow-[var(--sp-rw-surface-sm-shadow)]",
+    push: "lg:peer-data-[state=expanded]:[--sidebar-content-offset:calc(var(--sidebar-width)-var(--sidebar-width-icon))]",
+    surface: "lg:bg-[var(--sp-rw-bg-primary)]",
     variantInset:
-      "lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2 lg:peer-data-[variant=inset]:m-2 lg:peer-data-[variant=inset]:ms-0 lg:peer-data-[variant=inset]:rounded-2xl lg:peer-data-[variant=inset]:bg-[var(--sp-rw-bg-primary)] lg:peer-data-[variant=inset]:shadow-[var(--sp-rw-surface-sm-shadow)]",
+      "lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2 lg:peer-data-[variant=inset]:m-2 lg:peer-data-[variant=inset]:ms-0 lg:peer-data-[variant=inset]:rounded-2xl lg:peer-data-[variant=inset]:shadow-[var(--sp-rw-surface-sm-shadow)]",
   },
   md: {
     inset:
-      "md:m-2 md:ms-0 md:rounded-2xl md:bg-[var(--sp-rw-bg-primary)] md:shadow-[var(--sp-rw-surface-sm-shadow)]",
-    push: "md:bg-[var(--sp-rw-bg-primary)] md:peer-data-[state=expanded]:[--sidebar-content-offset:calc(var(--sidebar-width)-var(--sidebar-width-icon))]",
+      "md:m-2 md:ms-0 md:rounded-2xl md:shadow-[var(--sp-rw-surface-sm-shadow)]",
+    push: "md:peer-data-[state=expanded]:[--sidebar-content-offset:calc(var(--sidebar-width)-var(--sidebar-width-icon))]",
+    surface: "md:bg-[var(--sp-rw-bg-primary)]",
     variantInset:
-      "md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:bg-[var(--sp-rw-bg-primary)] md:peer-data-[variant=inset]:shadow-[var(--sp-rw-surface-sm-shadow)]",
+      "md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ms-2 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ms-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:shadow-[var(--sp-rw-surface-sm-shadow)]",
   },
 } as const;
 
@@ -785,6 +789,7 @@ export function SidebarInset({
       className={cn(
         slotClass("sidebar-inset", props),
         "relative flex w-full flex-1 flex-col bg-background",
+        desktop.surface,
         desktop.variantInset,
         layout &&
           "min-w-0 overflow-hidden bg-transparent [--sidebar-content-offset:0px]",
@@ -814,11 +819,13 @@ export function SidebarInput({
   );
 }
 
-// Header and footer are bands with the same 8px above and below (S2). In the
-// icon rail their items stand on the rail's centre axis, whatever their width,
-// and never grow wider than the rail.
-const sidebarBandRailClassName =
-  "group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:*:max-w-full";
+// Header and footer are bands with the same 8px above and below (S2). On the
+// collapsed icon rail their items keep the inset they have in the expanded
+// sidebar, as the rows do, so nothing moves while the width animates: the rail
+// is a clipped view with fixed insets, as in shadcn's sidebar. A 36px item,
+// such as the brand's square or a row, stands on the rail's centre axis. The
+// items never grow wider than the rail.
+const sidebarBandRailClassName = "group-data-[collapsible=icon]:*:max-w-full";
 
 export function SidebarHeader({
   className,
@@ -846,11 +853,12 @@ export function SidebarHeader({
  * The application's logo at the top of the sidebar: its mark first, then its
  * name or wordmark. It starts where the menu rows start their icons, and the
  * header band around it keeps the top bar's height. On the collapsed icon
- * rail it shows only the mark, centred in the rail's square like the row
- * icons. Render it as a link with `render`, such as `render={<a href="/" />}`:
- * it takes the kit's focus outline and, as a logo rather than a row, no hover
- * fill. In a SidebarMenuItem with `expandTrigger`, its mark also expands the
- * collapsed rail.
+ * rail it shows only the mark, in the rail's square like the row icons: the
+ * mark keeps its place while the name fades out with the rail's width, as the
+ * row labels do. Render it as a link with `render`, such as
+ * `render={<a href="/" />}`: it takes the kit's focus outline and, as a logo
+ * rather than a row, no hover fill. In a SidebarMenuItem with `expandTrigger`,
+ * its mark also expands the collapsed rail.
  */
 export function SidebarBrand({
   className,

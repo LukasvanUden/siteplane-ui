@@ -149,10 +149,9 @@ export function NavigationMenuLink({
         </span>
         {description && (
           // Beside a leading icon the description starts under the title text
-          // (I7): the icon, which the Button pulls 2 px out on each side, and
-          // the 8 px gap put that text 4 px past the icon's width.
+          // (I7), a design-rework.css rule.
           <span
-            className="sp-navigation-menu-link-description block text-sm font-normal text-muted-foreground [[data-slot=navigation-menu-link-title]:has(>svg:first-child)+&]:ps-[calc(var(--sp-rw-button-icon,var(--sp-rw-control-icon))+--spacing(1))]"
+            className="sp-navigation-menu-link-description block text-sm font-normal text-muted-foreground"
             data-slot="navigation-menu-link-description"
           >
             {description}

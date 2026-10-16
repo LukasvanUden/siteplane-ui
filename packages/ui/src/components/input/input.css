@@ -150,9 +150,21 @@
     background-color: var(--input-segment-background);
   }
 
-  .sp-date-input::selection,
-  .sp-date-input::-webkit-datetime-edit-day-field::selection,
-  .sp-date-input::-webkit-datetime-edit-month-field::selection,
+  /* One rule per selector: Chrome rejects a ::selection after another
+   * pseudo-element, and one selector it rejects drops a whole list, so the
+   * input's own selection rule stands alone. */
+  .sp-date-input::selection {
+    background-color: transparent;
+  }
+
+  .sp-date-input::-webkit-datetime-edit-day-field::selection {
+    background-color: transparent;
+  }
+
+  .sp-date-input::-webkit-datetime-edit-month-field::selection {
+    background-color: transparent;
+  }
+
   .sp-date-input::-webkit-datetime-edit-year-field::selection {
     background-color: transparent;
   }

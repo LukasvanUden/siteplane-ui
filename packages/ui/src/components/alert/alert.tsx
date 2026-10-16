@@ -4,13 +4,13 @@ import type * as React from "react";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 
-// The action takes a column of its own only from 640 px and only beside a
-// title or description; below 640 px it wraps under the text, so the grid
-// keeps no empty track for it (rulebook S11). The text column is
-// minmax(0, 1fr), so a long value wraps instead of pushing the action out
-// (rulebook K5).
+// The columns are design-rework.css's (Alert): the action takes a column of
+// its own only from 640 px and only beside a title or description; below
+// 640 px it wraps under the text, so the grid keeps no empty track for it
+// (rulebook S11). The text column is minmax(0, 1fr), so a long value wraps
+// instead of pushing the action out (rulebook K5).
 const alertVariants = cva(
-  "relative grid w-full grid-cols-[minmax(0,1fr)] items-start has-[>svg]:grid-cols-[calc(var(--spacing)*4)_minmax(0,1fr)] sm:has-data-[slot=alert-action]:has-[[data-slot=alert-title],[data-slot=alert-description]]:grid-cols-[minmax(0,1fr)_auto] sm:has-[>svg]:has-data-[slot=alert-action]:has-[[data-slot=alert-title],[data-slot=alert-description]]:grid-cols-[calc(var(--spacing)*4)_minmax(0,1fr)_auto] [&>svg]:h-lh [&>svg]:w-4",
+  "relative grid w-full items-start [&>svg]:h-lh [&>svg]:w-4",
   {
     defaultVariants: { variant: "default" },
     variants: {

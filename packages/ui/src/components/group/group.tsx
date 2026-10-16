@@ -10,24 +10,23 @@ import { slotClass } from "../../system/utils/slot-class";
 import { Separator } from "../separator";
 import { KitSeparator } from "../separator/separator-internal";
 
+// The joins are design-rework.css's (Group): the children's edges and corners,
+// so the joins of a control's own rules still win; the ::before layer of each
+// child; the short divider of separator="inset"; and the separators' fill in
+// Dark, which deepens beside the item under the pointer or pressed.
 export const groupVariants = cva(
-  "flex w-fit *:focus-visible:z-1 *:has-focus-visible:z-1 dark:*:[[data-slot=separator]:has(~button:hover):not(:has(~[data-slot=separator]~[data-slot]:hover)),[data-slot=separator]:has(~[data-slot][data-pressed]):not(:has(~[data-slot=separator]~[data-slot][data-pressed]))]:before:bg-input/64 dark:*:[button:hover~[data-slot=separator]:not([data-slot]:hover~[data-slot=separator]~[data-slot=separator]),[data-slot][data-pressed]~[data-slot=separator]:not([data-slot][data-pressed]~[data-slot=separator]~[data-slot=separator])]:before:bg-input/64",
+  "flex w-fit *:focus-visible:z-1 *:has-focus-visible:z-1",
   {
     defaultVariants: {
       orientation: "horizontal",
     },
     variants: {
       orientation: {
-        // The children's edges and corners at the joins are design-rework.css's
-        // (Group), so the joins of a control's own rules still win.
-        horizontal:
-          "*:pointer-coarse:after:min-w-auto *:data-slot:not-data-[slot=separator]:has-[~[data-slot]]:before:-end-[0.5px] *:data-slot:has-[~[data-slot]]:before:rounded-e-none *:[[data-slot]~[data-slot]:not([data-slot=separator])]:before:-start-[0.5px] *:[[data-slot]~[data-slot]]:before:rounded-s-none",
-        vertical:
-          "flex-col *:pointer-coarse:after:min-h-auto *:data-slot:not-data-[slot=separator]:has-[~[data-slot]]:before:-bottom-[0.5px] *:data-slot:not-data-[slot=separator]:has-[~[data-slot]]:before:hidden *:data-slot:has-[~[data-slot]]:before:rounded-b-none dark:*:last:before:hidden dark:*:first:before:block *:[[data-slot]~[data-slot]:not([data-slot=separator])]:before:-top-[0.5px] *:[[data-slot]~[data-slot]]:before:rounded-t-none",
+        horizontal: "*:pointer-coarse:after:min-w-auto",
+        vertical: "flex-col *:pointer-coarse:after:min-h-auto",
       },
       separator: {
-        inset:
-          "[&>[data-slot=button]:not(:last-child)]:before:inset-y-auto [&>[data-slot=button]:not(:last-child)]:before:start-auto [&>[data-slot=button]:not(:last-child)]:before:end-0 [&>[data-slot=button]:not(:last-child)]:before:top-1/2 [&>[data-slot=button]:not(:last-child)]:before:h-5 [&>[data-slot=button]:not(:last-child)]:before:-translate-y-1/2",
+        inset: "",
       },
     },
   },
@@ -108,7 +107,7 @@ export function GroupSeparator({
   return (
     <KitSeparator
       className={cn(
-        "pointer-events-none relative z-2 before:absolute before:inset-0 dark:before:bg-input/32",
+        "pointer-events-none relative z-2 before:absolute before:inset-0",
         className,
       )}
       orientation={orientation}

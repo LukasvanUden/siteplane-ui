@@ -26,6 +26,7 @@ import {
   readableLabels,
   truncateLabel,
 } from "./chart-scales";
+import { useChartHeight, useChartWidth } from "./use-chart-width";
 
 /** The space around the plot, in px, for the labels of the axes. */
 export type ChartMargins = {
@@ -139,6 +140,68 @@ export function useCartesianLayout(options: {
       }),
     [width, height, yLabels, xAxis, yAxis, legend],
   );
+}
+
+/**
+ * The height of a Bar, Line or Area Chart in px, and the least height of one
+ * that fills its box, when the chart is given neither.
+ */
+export const CHART_DEFAULT_HEIGHT = 240;
+
+/** The size a Bar, Line or Area Chart draws at, and what its box takes for it. */
+export type ChartBox = {
+  /** The width to draw at in px, or null until the box has been measured. */
+  width: number | null;
+  /** The height to draw at in px, a legend included. */
+  height: number;
+  /** The classes of the box while the chart fills it. */
+  className: string | undefined;
+  /** The box's `data-height`: `fill` while the chart fills it. */
+  dataHeight: "fill" | undefined;
+  /** The style of the box while the chart fills it: its least height. */
+  style: React.CSSProperties | undefined;
+};
+
+/**
+ * The size of a Bar, Line or Area Chart, the one owner of the box rules of all
+ * three. The width is the content width of the chart's box (`useChartWidth`).
+ * The height is `height` in px, or with `height="fill"` the content height of
+ * the box (`useChartHeight`), never lower than `minHeight`; until the box is
+ * measured, on the server too, the chart is `minHeight` tall. A box that the
+ * chart fills is the full height of its container, at least `minHeight` tall
+ * and size-contained, so it takes its height from the container (a flex item
+ * that grows, a grid cell or a box with a height) and never from what the
+ * chart draws in it: the two never chase each other. Both heights are 240 px
+ * by default.
+ */
+export function useChartBox(
+  root: React.RefObject<HTMLElement | null>,
+  {
+    height = CHART_DEFAULT_HEIGHT,
+    minHeight = CHART_DEFAULT_HEIGHT,
+  }: {
+    height?: number | "fill" | undefined;
+    minHeight?: number | undefined;
+  },
+): ChartBox {
+  const width = useChartWidth(root);
+  const fill = height === "fill";
+  const measured = useChartHeight(root, fill);
+  if (!fill)
+    return {
+      className: undefined,
+      dataHeight: undefined,
+      height,
+      style: undefined,
+      width,
+    };
+  return {
+    className: "h-full [contain:size]",
+    dataHeight: "fill",
+    height: Math.max(minHeight, measured ?? minHeight),
+    style: { minHeight },
+    width,
+  };
 }
 
 /**
