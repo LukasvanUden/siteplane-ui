@@ -69,7 +69,9 @@ export const buttonVariants = cva(
         "outline-destructive":
           "*:data-[slot=button-loading-indicator]:text-foreground",
         ghost: "*:data-[slot=button-loading-indicator]:text-foreground",
-        link: "underline-offset-4 not-aria-disabled:hover:underline not-aria-disabled:data-pressed:underline *:data-[slot=button-loading-indicator]:text-foreground",
+        // A link is underlined at rest; a text Button underlines on hover
+        // and press (design-rework.css). Lukas, 16 October 2026.
+        link: "underline underline-offset-4 *:data-[slot=button-loading-indicator]:text-foreground",
         "muted-accent": "",
         outline: "*:data-[slot=button-loading-indicator]:text-foreground",
         text: "not-aria-disabled:data-pressed:opacity-80 *:data-[slot=button-loading-indicator]:text-foreground",

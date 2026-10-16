@@ -5408,6 +5408,21 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   user-select: text;
 }
 
+/* A link stays underlined in its text colour; hover and press fade it to
+ * 70 %, so the pointer is answered without changing its look (Lukas,
+ * 17 October 2026, from the link hover review). */
+:root [data-chassis][data-variant="link"] {
+  transition: opacity var(--motion-duration-fast) var(--motion-ease-state);
+}
+
+:root
+  [data-chassis][data-variant="link"]:where(:hover, [data-pressed]):not(
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  opacity: 0.7;
+}
+
 /* Inline links retain Button states while fitting surrounding prose. The link
  * flows and wraps with the words around it, so a long name or project link
  * breaks across lines instead of running out of its container. Its content
@@ -5437,6 +5452,33 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 
 :root [data-chassis][data-profile="inline"] > .sp-button-content {
   display: contents;
+}
+
+/* A link in running text keeps its words together: the whole link moves to
+ * the next line when the line runs out, such as Open booking at the end of an
+ * Alert's sentence, and only a link longer than a whole line breaks inside it,
+ * so a long name never runs past its container (Lukas, 16 October 2026). */
+:root
+  [data-chassis][data-variant="link"][data-profile="inline"]:where(
+    :not([data-shape="square"])
+  ) {
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* A link is underlined at rest (button.tsx); a text Button, inline or on its
+ * own, underlines on hover and press. The kit's own text controls (Tabs,
+ * Sidebar rows, icon actions) keep their profiles' treatment. */
+:root
+  [data-chassis][data-variant="text"]:is(
+    [data-profile="default"],
+    [data-profile="inline"]
+  ):not([data-shape="square"]):where(:hover, [data-pressed]):not(
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  text-decoration-line: underline;
+  text-underline-offset: var(--sp-rw-space-1);
 }
 
 /* On touch screens every Button widens its target to 44 px with an absolutely
@@ -9131,7 +9173,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root .sp-card-header,
 :root .sp-card-panel,
-:root .sp-card-footer {
+:root .sp-card-footer,
+:root .sp-card > .sp-motion-reveal > .sp-alert[data-layout="band"] {
   --card-part-inset-block: var(
     --sp-rw-card-inset-block,
     var(--sp-rw-card-inset, var(--card-density-inset, var(--sp-rw-space-5)))
@@ -9168,7 +9211,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * a header before a panel otherwise keeps 12 px (rulebook S4b). The tinted
  * band keeps its own 12 px above and below. */
 :root .sp-card > .sp-card-header.border-b,
-:root .sp-card > .sp-card-header:has(+ .sp-separator) {
+:root .sp-card > .sp-card-header:has(+ .sp-separator),
+:root
+  .sp-card
+  > .sp-card-header:has(+ .sp-motion-reveal > .sp-alert[data-layout="band"]) {
   padding-bottom: var(--card-part-inset-block);
 }
 
@@ -9755,14 +9801,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 /* The columns beside the text column of the kit base: a 16 px icon column
  * before it when an icon leads, and from 640 px an action column after it,
- * only beside a title or a description, so no empty track stays (S11). */
-:root .sp-alert:has(> svg) {
+ * only beside a title or a description, so no empty track stays (S11). A
+ * banner or a band has columns of its own (Alert layouts, below). */
+:root .sp-alert:not([data-layout]):has(> svg) {
   grid-template-columns: var(--sp-rw-space-4) minmax(0, 1fr);
 }
 
 @media (width >= 40rem) {
   :root
-    .sp-alert:has(.sp-alert-action):has(
+    .sp-alert:not([data-layout]):has(.sp-alert-action):has(
       .sp-alert-title,
       .sp-alert-description
     ) {
@@ -9770,7 +9817,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   }
 
   :root
-    .sp-alert:has(> svg):has(.sp-alert-action):has(
+    .sp-alert:not([data-layout]):has(> svg):has(.sp-alert-action):has(
       .sp-alert-title,
       .sp-alert-description
     ) {
@@ -9807,6 +9854,180 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root .sp-alert-description {
   color: var(--sp-rw-fg-tertiary);
+}
+
+/* Alert layouts (Lukas, 16 October 2026; coss origin's banner for the
+ * structure, Salesforce Lightning's alert for the link in the text). A banner
+ * runs across the top of a page, above its header; a band runs across the top
+ * of a Card, under its header. Both take their tone's tint over the full
+ * width, a hairline in the tone's rim colour below it, and no radius. The
+ * icon, the text, an action and the close control stand on one row while the
+ * Alert's own width allows it; below 32rem of that width the icon and the
+ * close control sit on the title's line and an action goes under the text.
+ * Columns: icon, text, action, close. The spacing between them is the items'
+ * own margin, so a column without an item takes no space (rulebook S11). */
+:root .sp-alert:is([data-layout="banner"], [data-layout="band"]) {
+  container-type: inline-size;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 0;
+  border-radius: 0;
+  padding-block: calc(var(--sp-rw-space) * 3.5);
+  background: var(--sp-rw-alert-tint);
+  box-shadow: inset 0 calc(var(--sp-rw-border-default) * -1) 0
+    var(--sp-rw-alert-rim);
+  --sp-rw-alert-tint: var(--sp-rw-bg-secondary);
+  --sp-rw-alert-rim: var(--sp-rw-border-translucent);
+}
+
+:root .sp-alert[data-layout="banner"] {
+  padding-inline: calc(var(--sp-rw-space) * 7);
+}
+
+/* A band starts where the card's text starts. */
+:root .sp-alert[data-layout="band"] {
+  padding-inline: var(--card-part-inset-inline, var(--sp-rw-space-5))
+    var(--sp-rw-space-3);
+}
+
+/* Each tone tints with its status fill: 8 % for an error, 12 % for a warning
+ * (whose attention colour is lighter), 12 % and 16 % in Dark, and draws its
+ * hairline in the rim colour of the inline Alert. */
+:root
+  .sp-alert:is(
+    [data-layout="banner"],
+    [data-layout="band"]
+  )[data-variant="error"] {
+  --sp-rw-alert-tint: light-dark(
+    oklch(from var(--sp-rw-bg-destructive) l c h / 8%),
+    oklch(from var(--sp-rw-bg-destructive) l c h / 12%)
+  );
+  --sp-rw-alert-rim: oklch(from var(--sp-rw-bg-destructive) l c h / 32%);
+}
+
+:root
+  .sp-alert:is(
+    [data-layout="banner"],
+    [data-layout="band"]
+  )[data-variant="warning"] {
+  --sp-rw-alert-tint: light-dark(
+    oklch(from var(--sp-rw-bg-attention) l c h / 12%),
+    oklch(from var(--sp-rw-bg-attention) l c h / 16%)
+  );
+  --sp-rw-alert-rim: oklch(from var(--sp-rw-bg-attention) l c h / 32%);
+}
+
+:root
+  .sp-alert:is(
+    [data-layout="banner"],
+    [data-layout="band"]
+  )[data-variant="info"] {
+  --sp-rw-alert-tint: light-dark(
+    oklch(from var(--sp-rw-bg-accent) l c h / 8%),
+    oklch(from var(--sp-rw-bg-accent) l c h / 12%)
+  );
+  --sp-rw-alert-rim: oklch(from var(--sp-rw-bg-accent) l c h / 32%);
+}
+
+:root
+  .sp-alert:is(
+    [data-layout="banner"],
+    [data-layout="band"]
+  )[data-variant="success"] {
+  --sp-rw-alert-tint: light-dark(
+    oklch(from var(--sp-rw-bg-positive) l c h / 8%),
+    oklch(from var(--sp-rw-bg-positive) l c h / 12%)
+  );
+  --sp-rw-alert-rim: oklch(from var(--sp-rw-bg-positive) l c h / 32%);
+}
+
+/* The icon: 20 px on a banner, 16 px on a band, centred on the text. */
+:root .sp-alert:is([data-layout="banner"], [data-layout="band"]) > svg {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin-inline-end: var(--sp-rw-space-3);
+}
+
+:root .sp-alert[data-layout="banner"] > svg {
+  width: var(--sp-rw-space-5);
+  height: var(--sp-rw-space-5);
+  margin-inline-end: var(--sp-rw-space-4);
+}
+
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-title,
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-description {
+  grid-column: 2;
+}
+
+/* A short title breaks into even lines, in the primary text colour for every
+ * tone: only the icon carries the tone. The sentence below reads in the
+ * secondary text colour, which keeps its contrast on the tint. */
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-title {
+  text-wrap: balance;
+}
+
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-description {
+  color: var(--sp-rw-fg-secondary);
+}
+
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-title
+  + .sp-alert-description {
+  margin-top: var(--sp-rw-space-0-5);
+}
+
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-action {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin-inline-start: var(--sp-rw-space-4);
+}
+
+:root
+  .sp-alert:is([data-layout="banner"], [data-layout="band"])
+  > .sp-alert-close {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin-inline-start: var(--sp-rw-space-3);
+}
+
+@container (width < 32rem) {
+  :root .sp-alert:is([data-layout="banner"], [data-layout="band"]) > svg,
+  :root
+    .sp-alert:is([data-layout="banner"], [data-layout="band"])
+    > .sp-alert-close {
+    grid-row: 1;
+    align-self: start;
+  }
+
+  /* The 24 px close control centres on the title's first line. */
+  :root
+    .sp-alert:is([data-layout="banner"], [data-layout="band"])
+    > .sp-alert-close {
+    margin-block: calc((1lh - var(--sp-rw-space-6)) / 2);
+  }
+
+  :root
+    .sp-alert:is([data-layout="banner"], [data-layout="band"])
+    > .sp-alert-action {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-inline-start: 0;
+    margin-top: var(--sp-rw-space-3);
+  }
 }
 
 /* The shimmer is a highlight band across the muted fill; animate-skeleton
