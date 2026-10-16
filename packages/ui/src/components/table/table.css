@@ -90,12 +90,19 @@
     border-bottom-width: 0;
   }
 
-  /* A selected row keeps its pressed fill under the pointer and in focus: the
-   * stronger state wins over hover, as it does for pressed and open elsewhere. */
+  /* Rows take the rows ladder of the ghost controls (hover and selected
+   * steps of --sp-rw-interaction-*), in the control interaction colour. A
+   * selected row keeps its fill under the pointer and in focus: the stronger
+   * state wins over hover, as it does for pressed and open elsewhere. */
   :where(.sp-table[data-hoverable="true"])
     > .sp-table-body
     > .sp-table-row[data-hoverable="true"]:not([data-selected]):hover {
-    background: var(--sp-rw-glow-hover);
+    background: color-mix(
+      in srgb,
+      var(--sp-rw-control-interaction)
+        calc(var(--sp-rw-interaction-hover) * 100%),
+      transparent
+    );
   }
 
   :where(.sp-table[data-hoverable="true"])
@@ -113,7 +120,12 @@
   }
 
   .sp-table-row[data-selected] {
-    background: var(--sp-rw-glow-pressed);
+    background: color-mix(
+      in srgb,
+      var(--sp-rw-control-interaction)
+        calc(var(--sp-rw-interaction-selected) * 100%),
+      transparent
+    );
   }
 
   .sp-table-row[data-focus-visible] {

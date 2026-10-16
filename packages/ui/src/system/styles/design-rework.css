@@ -143,6 +143,17 @@
   --sp-rw-glow-on-fill-hover: oklch(0% 0 0 / 8%);
   --sp-rw-glow-on-fill-pressed: oklch(0% 0 0 / 16%);
 
+  /* Interaction ladders (Lukas, 16 October 2026): the opacity of a Button's
+   * interaction layer. One ladder for rows and ghost controls on a
+   * transparent surface (ghost Buttons, ResourceList rows, the Sidebar and
+   * navigation rows, Table rows), one for the filled default and outline
+   * Buttons. Dark sets its own steps. */
+  --sp-rw-interaction-hover: 0.03;
+  --sp-rw-interaction-pressed: 0.06;
+  --sp-rw-interaction-selected: 0.05;
+  --sp-rw-interaction-on-fill-hover: 0.04;
+  --sp-rw-interaction-on-fill-pressed: 0.07;
+
   /* Disabled opacity (T1): a disabled element fades once, never compounded.
    * Fields, choice controls, the Slider and swatches fade by the semantic
    * --sp-semantic-state-disabled-opacity (0.5); actions, rows, chips and
@@ -445,6 +456,11 @@
   --sp-rw-glow-pressed: oklch(100% 0 0 / 8%);
   --sp-rw-glow-on-fill-hover: oklch(100% 0 0 / 8%);
   --sp-rw-glow-on-fill-pressed: oklch(100% 0 0 / 16%);
+  --sp-rw-interaction-hover: 0.035;
+  --sp-rw-interaction-pressed: 0.07;
+  --sp-rw-interaction-selected: 0.06;
+  --sp-rw-interaction-on-fill-hover: 0.06;
+  --sp-rw-interaction-on-fill-pressed: 0.1;
   --sp-rw-control-depth:
     0 2px 2px -1px oklch(0% 0 0 / 12%), 0 4px 4px -2px oklch(0% 0 0 / 12%);
   --sp-rw-control-spotlights:
@@ -3749,8 +3765,8 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
     .sp-navigation-menu-link
   ) {
   --sp-rw-button-text: var(--sp-rw-fg-secondary);
-  --sp-rw-button-interaction-hover: 0.04;
-  --sp-rw-button-interaction-pressed: 0.08;
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-hover);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-pressed);
 }
 
 :root
@@ -3798,8 +3814,6 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 
 :root
   [data-chassis][data-profile="navigation-row"][data-sidebar-variant="workspace"] {
-  --sp-rw-button-interaction-hover: 0.08;
-  --sp-rw-button-interaction-pressed: 0.1;
   border-radius: calc(
     (var(--sp-rw-radius-control) + var(--sp-rw-radius-surface)) / 2
   );
@@ -3979,9 +3993,10 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 
 /* One persistent current-destination fill (rulebook T5): the Sidebar rows
  * (data-active), the navigation links (aria-current) of the mobile menu and
- * of the header bar, and the links in navigation menu content. The shared
- * interaction layer draws it at the same level at rest, on hover and pressed,
- * in the color of each Button's own interaction layer. */
+ * of the header bar, the links in navigation menu content, and the selected
+ * or current rows of a ResourceList. The shared interaction layer draws it at
+ * the selected step of the rows ladder at rest, on hover and pressed, in the
+ * color of each Button's own interaction layer. */
 :root
   [data-chassis]:is(
     [data-profile="navigation-row"],
@@ -3991,10 +4006,15 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   [data-chassis]:is(
     [data-profile="navigation-link"],
     .sp-navigation-menu-link
-  )[aria-current="page"]:not(:disabled, [aria-disabled="true"]) {
-  --sp-rw-button-interaction-rest: 0.08;
-  --sp-rw-button-interaction-hover: 0.08;
-  --sp-rw-button-interaction-pressed: 0.08;
+  )[aria-current="page"]:not(:disabled, [aria-disabled="true"]),
+:root
+  [data-chassis][data-resource-list-item]:is(
+    [data-selected],
+    [data-active]
+  ):not(:disabled, [aria-disabled="true"]) {
+  --sp-rw-button-interaction-rest: var(--sp-rw-interaction-selected);
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-selected);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-selected);
 }
 
 :root [data-chassis][data-profile="compact-icon-action"] {
@@ -4706,22 +4726,12 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
   --sp-rw-button-depth: var(--sp-rw-control-depth);
   --sp-rw-button-interaction: var(--sp-rw-control-interaction);
-  --sp-rw-button-interaction-hover: 0.04;
-  --sp-rw-button-interaction-pressed: 0.06;
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-on-fill-hover);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-on-fill-pressed);
   --sp-rw-button-spotlights: var(--sp-rw-control-spotlights);
   --sp-rw-button-dome: var(--sp-rw-control-dome);
   --sp-rw-button-rim: var(--sp-rw-control-rim);
   --sp-rw-button-micro: var(--sp-rw-control-micro);
-}
-
-/* The dark rules name the variant by attribute like the light rule above, so
- * both tie in specificity and the later one wins. */
-:root:where(.dark) [data-chassis][data-variant="default"],
-:root:where([data-theme="dark"]) [data-chassis][data-variant="default"],
-:root :where(.dark) [data-chassis][data-variant="default"],
-:root :where([data-theme="dark"]) [data-chassis][data-variant="default"] {
-  --sp-rw-button-interaction-hover: 0.08;
-  --sp-rw-button-interaction-pressed: 0.12;
 }
 
 /* The six layers of the chassis, each named, so the rule is looked up on them
@@ -5203,17 +5213,9 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 :root [data-chassis][data-variant="outline"] {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
   --sp-rw-button-interaction: var(--sp-rw-control-interaction);
-  --sp-rw-button-interaction-hover: 0.08;
-  --sp-rw-button-interaction-pressed: 0.1;
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-on-fill-hover);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-on-fill-pressed);
   --sp-rw-button-rim: var(--sp-rw-outline-rim);
-}
-
-:root:where(.dark) [data-chassis][data-variant="outline"],
-:root:where([data-theme="dark"]) [data-chassis][data-variant="outline"],
-:root :where(.dark) [data-chassis][data-variant="outline"],
-:root :where([data-theme="dark"]) [data-chassis][data-variant="outline"] {
-  --sp-rw-button-interaction-hover: 0.12;
-  --sp-rw-button-interaction-pressed: 0.16;
 }
 
 :root
@@ -5270,16 +5272,8 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 :root [data-chassis][data-variant="ghost"] {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
   --sp-rw-button-interaction: var(--sp-rw-control-interaction);
-  --sp-rw-button-interaction-hover: 0.08;
-  --sp-rw-button-interaction-pressed: 0.1;
-}
-
-:root:where(.dark) [data-chassis][data-variant="ghost"],
-:root:where([data-theme="dark"]) [data-chassis][data-variant="ghost"],
-:root :where(.dark) [data-chassis][data-variant="ghost"],
-:root :where([data-theme="dark"]) [data-chassis][data-variant="ghost"] {
-  --sp-rw-button-interaction-hover: 0.12;
-  --sp-rw-button-interaction-pressed: 0.16;
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-hover);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-pressed);
 }
 
 /* The quiet brand action: accent text on a tint of the accent, the brand
@@ -8852,8 +8846,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * contour of the default and outline badges is their border, so it stays. */
 :root :is(a, button).sp-base-badge:hover {
   background-image: linear-gradient(
-    color-mix(in srgb, currentColor 12%, transparent),
-    color-mix(in srgb, currentColor 12%, transparent)
+    color-mix(in srgb, currentColor 6%, transparent),
+    color-mix(in srgb, currentColor 6%, transparent)
   );
 }
 
