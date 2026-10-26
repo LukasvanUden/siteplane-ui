@@ -100,7 +100,7 @@
    * verified Badge, a checked box or radio and a selected calendar day. A light
    * brand sets it dark; destructive fills keep --sp-rw-fg-emphasis. */
   --sp-rw-fg-on-accent: var(--sp-rw-fg-emphasis);
-  --sp-rw-fg-accent: oklch(43.93% 0.2025 274.2);
+  --sp-rw-fg-accent: oklch(43.93% 0.1384 254.2);
   --sp-rw-fg-positive: oklch(45.82% 0.1382 138.23);
   --sp-rw-fg-attention: oklch(49.33% 0.1528 40.04);
   --sp-rw-fg-destructive: oklch(49.84% 0.197 26.56);
@@ -113,8 +113,8 @@
   --sp-rw-bg-muted: oklch(56.74% 0.009 106.68 / 16%);
   --sp-rw-bg-translucent: oklch(100% 0 0 / 80%);
   --sp-rw-bg-inverse: oklch(0% 0 0 / 88%);
-  --sp-rw-bg-accent: oklch(55% 0.227 274.2);
-  --sp-rw-bg-accent-translucent: oklch(55% 0.227 274.2 / 16%);
+  --sp-rw-bg-accent: oklch(52.9% 0.1552 254.2);
+  --sp-rw-bg-accent-translucent: oklch(52.9% 0.1552 254.2 / 16%);
   --sp-rw-bg-positive: oklch(54.42% 0.1689 138.23);
   --sp-rw-bg-positive-translucent: oklch(54.42% 0.1689 138.23 / 16%);
   --sp-rw-bg-attention: oklch(58.01% 0.1819 40.04);
@@ -127,15 +127,15 @@
   --sp-rw-bg-scrim: var(--sp-semantic-color-overlay-backdrop);
   --sp-rw-progress-track: hsl(0 0% 80.8%);
   /* A deeper accent, derived from it, so a brand override reaches progress
-   * (oklch(43.93% 0.2025 274.2) for the default accent). */
+   * (oklch(41.83% 0.1307 254.2) for the default accent). */
   --sp-rw-progress-fill: oklch(
     from var(--sp-rw-bg-accent) calc(l - 0.1107) calc(c - 0.0245) h
   );
 
   --sp-rw-border-default: 1px;
   --sp-rw-border-translucent: oklch(55% 0.002 107 / 16%);
-  --sp-rw-border-focus: oklch(61.32% 0.1995 274.2);
-  --sp-rw-border-accent: oklch(61.32% 0.1995 274.2 / 40%);
+  --sp-rw-border-focus: oklch(61.32% 0.1364 254.2);
+  --sp-rw-border-accent: oklch(61.32% 0.1364 254.2 / 40%);
   --sp-rw-border-attention: oklch(66.84% 0.1815 40.04 / 40%);
   --sp-rw-border-destructive: oklch(67.3% 0.2102 26.56 / 40%);
   --sp-rw-glow-hover: oklch(0% 0 0 / 4%);
@@ -359,7 +359,8 @@
   --sp-rw-glass-background: oklab(0 0 0 / 18%);
   /* The accent's own lightness sits close to the dark film; a lighter accent
    * keeps a checked switch distinct. It is derived from the accent, so a brand
-   * override reaches it (oklch(63% 0.2 274.2) for the default accent). */
+   * override reaches it (oklch(60.9% 0.1282 254.2) for the default
+   * accent). */
   --sp-rw-glass-switch-checked: oklch(
     from var(--sp-rw-bg-accent) calc(l + 0.08) calc(c - 0.027) h
   );
@@ -422,12 +423,12 @@
   --sp-rw-fg-tertiary: oklch(62.33% 0 0);
   --sp-rw-fg-quaternary: oklch(100% 0 0 / 35%);
   --sp-rw-fg-inverse: oklch(23.85% 0.004 106.68);
-  --sp-rw-fg-accent: oklch(70.62% 0.1318 274.2);
+  --sp-rw-fg-accent: oklch(70.62% 0.0901 254.2);
   --sp-rw-fg-positive: oklch(72.92% 0.155 138.23);
   --sp-rw-fg-attention: oklch(75.82% 0.1594 40.04);
   --sp-rw-fg-destructive: oklch(76.15% 0.1564 26.56);
-  --sp-rw-border-focus: oklch(55% 0.227 274.2);
-  --sp-rw-border-accent: oklch(55% 0.227 274.2 / 40%);
+  --sp-rw-border-focus: oklch(52.9% 0.1552 254.2);
+  --sp-rw-border-accent: oklch(52.9% 0.1552 254.2 / 40%);
   --sp-rw-border-attention: oklch(58.01% 0.1819 40.04 / 40%);
   --sp-rw-border-destructive: oklch(76.15% 0.1564 26.56 / 40%);
   --sp-rw-bg-base: var(--sp-semantic-color-background);
@@ -441,13 +442,13 @@
    * Light (Lukas, 13 October 2026; 16 % put it above the Button). */
   --sp-rw-bg-translucent: oklch(56.74% 0.009 106.68 / 8%);
   --sp-rw-bg-inverse: oklch(100% 0 0 / 96%);
-  --sp-rw-bg-accent-translucent: oklch(55% 0.227 274.2 / 20%);
+  --sp-rw-bg-accent-translucent: oklch(52.9% 0.1552 254.2 / 20%);
   --sp-rw-bg-positive-translucent: oklch(54.42% 0.1689 138.23 / 20%);
   --sp-rw-bg-attention-translucent: oklch(58.01% 0.1819 40.04 / 20%);
   --sp-rw-bg-destructive-translucent: oklch(58.53% 0.2203 26.56 / 20%);
   --sp-rw-bg-scrim: var(--sp-semantic-color-overlay-backdrop);
   --sp-rw-progress-track: hsl(60 3.1% 37.6%);
-  /* A lighter accent, derived from it (oklch(61.32% 0.1995 274.2) for the
+  /* A lighter accent, derived from it (oklch(59.22% 0.1277 254.2) for the
    * default accent). */
   --sp-rw-progress-fill: oklch(
     from var(--sp-rw-bg-accent) calc(l + 0.0632) calc(c - 0.0275) h
@@ -7701,7 +7702,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 /* A checked or indeterminate box fills with the accent and keeps a rim of a
  * deeper accent at 40%, derived from the accent so a brand override reaches
- * it (oklch(43.93% 0.2025 274.2 / 40%) for the default accent). */
+ * it (oklch(41.83% 0.1307 254.2 / 40%) for the default accent). */
 :root
   :where(.sp-checkbox):where(
     [data-checked],
