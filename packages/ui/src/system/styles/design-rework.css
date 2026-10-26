@@ -153,6 +153,9 @@
   --sp-rw-interaction-selected: 0.05;
   --sp-rw-interaction-on-fill-hover: 0.04;
   --sp-rw-interaction-on-fill-pressed: 0.07;
+  /* An accent Animated Button darkens its fill by this, in both themes, on
+   * hover and press (Lukas, 26 October 2026). */
+  --sp-rw-interaction-darken: 0.18;
 
   /* Disabled opacity (T1): a disabled element fades once, never compounded.
    * Fields, choice controls, the Slider and swatches fade by the semantic
@@ -1454,6 +1457,15 @@ html[data-motion-reduce="true"]
 :where(.sp-card-media),
 :where(.sp-card-action) {
   align-self: center;
+}
+
+/* The action takes the last column, after the text and after a media's column
+ * before it, in the first row. Its place is a default here, so a class of the
+ * app's still moves it and the Card section below moves it on a narrow card. */
+:where(.sp-card-action) {
+  grid-column-start: -2;
+  grid-row-start: 1;
+  justify-self: end;
 }
 
 /* Stepper: a marker and its title ease their colours between steps; the
@@ -4281,6 +4293,45 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-fill-sweep-hover-foreground);
 }
 
+/* A fill that passes through keeps the label's colour and is the Button's
+ * only hover and press feedback (Lukas, 26 October 2026). */
+:root [data-chassis][data-profile="animated-fill"][data-sweep] {
+  --sp-fill-sweep-hover-foreground: var(--sp-rw-button-text);
+  --sp-rw-button-interaction-hover: 0;
+  --sp-rw-button-interaction-pressed: 0;
+}
+
+/* An accent Animated Button darkens instead of sweeping: its interaction
+ * layer turns black at --sp-rw-interaction-darken on hover and stays there on
+ * press. */
+:root [data-chassis][data-profile="animated-fill"][data-variant="accent"] {
+  --sp-fill-sweep-hover-foreground: var(--sp-rw-button-text);
+  --sp-rw-button-interaction: oklch(0% 0 0);
+  --sp-rw-button-interaction-hover: var(--sp-rw-interaction-darken);
+  --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-darken);
+}
+
+:root
+  [data-chassis][data-profile="animated-fill"][data-variant="accent"]
+  > .sp-button-chassis-interaction {
+  transition: opacity var(--motion-duration-sweep) var(--motion-ease-sweep);
+}
+
+/* The arrow's tile sits 4 px inside the end edge. */
+:root
+  [data-chassis][data-size][data-profile="animated-fill"][data-arrow="tile"] {
+  padding-inline-end: var(--sp-rw-space-1);
+}
+
+/* A Button that is only an arrow also fades a little under the pointer. */
+:root
+  [data-chassis][data-profile="animated-fill"][data-arrow-only]:hover:not(
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  opacity: 0.8;
+}
+
 :root [data-chassis][data-size][data-profile="animated-arrow"] {
   position: relative;
   display: inline-block;
@@ -5467,6 +5518,22 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   max-width: 100%;
 }
 
+/* A link or text Button of its own (the default profile) draws no box: no
+ * padding and the height of its line, so its words line up with the text
+ * around it, such as a card title above it or the edge of a column (Lukas,
+ * 20 October 2026; it was an invisible box of its size, 36 px tall at lg with
+ * 10 px on each side). A square or icon one keeps its size. Its focus outline
+ * stays, and on touch screens its 44 px target (below) centres on the label. */
+:root
+  [data-chassis][data-profile="default"]:is(
+    [data-variant="link"],
+    [data-variant="text"]
+  ):not([data-shape="square"], [data-size^="icon"]) {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+}
+
 /* A link is underlined at rest (button.tsx); a text Button, inline or on its
  * own, underlines on hover and press. The kit's own text controls (Tabs,
  * Sidebar rows, icon actions) keep their profiles' treatment. */
@@ -5488,6 +5555,20 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
  * sits centred on the label instead. */
 @media (pointer: coarse) {
   :root [data-chassis][data-profile="inline"]::after {
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
+}
+
+/* A link or text Button of its own draws no box either (above), so its
+ * 44 px target centres on its label too. */
+@media (pointer: coarse) {
+  :root
+    [data-chassis][data-profile="default"]:is(
+      [data-variant="link"],
+      [data-variant="text"]
+    ):not([data-shape="square"], [data-size^="icon"])::after {
     top: 50%;
     left: 50%;
     translate: -50% -50%;
@@ -9127,6 +9208,110 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   box-shadow: none;
 }
 
+/* A Card with a hover color raises it from its bottom edge while the pointer
+ * is over the card, under its content, and lowers it again when the pointer
+ * leaves (Lukas, 26 October 2026). The color is its chart color muted to one
+ * lightness and chroma, so the card's text turns dark and reads on it. */
+:root .sp-card[data-hover-color] {
+  --sp-card-hover-lightness: 0.68;
+  --sp-card-hover-chroma: 0.042;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+
+:root
+  .sp-card[data-hover-color]
+  :is(.sp-card-title, .sp-card-description, .sp-card-title-meta) {
+  transition: color var(--motion-duration-card-fill) var(--motion-ease-sweep);
+}
+
+:root
+  .sp-card[data-hover-color]:hover
+  :is(.sp-card-title, .sp-card-description, .sp-card-title-meta) {
+  color: light-dark(var(--sp-rw-fg-primary), var(--sp-rw-fg-inverse));
+}
+
+:root .sp-card[data-hover-color] > .sp-card-hover-fill {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--sp-card-hover-color);
+  pointer-events: none;
+  transform-origin: bottom;
+  scale: 1 0;
+  transition: scale var(--motion-duration-card-fill) var(--motion-ease-sweep);
+}
+
+:root .sp-card[data-hover-color]:hover > .sp-card-hover-fill {
+  scale: 1 1;
+}
+
+/* An Animated Button in such a card changes its surface at the color's pace,
+ * so an action that turns inverse with the card keeps in step with it. */
+:root
+  .sp-card[data-hover-color]
+  [data-chassis][data-size][data-profile="animated-fill"] {
+  transition-duration: var(--motion-duration-card-fill);
+  transition-timing-function: var(--motion-ease-sweep);
+}
+
+:root .sp-card[data-hover-color="chart-1"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-1) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-2"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-2) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-3"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-3) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-4"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-4) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-5"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-5) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-6"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-6) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-7"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-7) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
+:root .sp-card[data-hover-color="chart-8"] {
+  --sp-card-hover-color: oklch(
+    from var(--chart-8) var(--sp-card-hover-lightness)
+      var(--sp-card-hover-chroma) h
+  );
+}
+
 /* A subtle card that holds only its panel, a well, insets it by 24 px. Beside a
  * header or footer the panel takes the inset and the collapses of every other
  * card, so its text starts with theirs (rulebook P3). */
@@ -9196,6 +9381,14 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 :root .sp-card-header {
   gap: var(--sp-rw-space-1-5);
+}
+
+/* A header with an action is a size container, so the action can move on a
+ * narrow card (the last rule of the header block below). A header without one
+ * stays out of it: a container no longer passes its content's width to the
+ * card, and a card that takes its width from its content keeps it. */
+:root .sp-card-header:has(> .sp-card-action) {
+  container: sp-card-header / inline-size;
 }
 
 /* A divided header (border-b) keeps the panel's own padding below its line. */
@@ -9288,6 +9481,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-bottom: var(--sp-rw-border-default) solid
     var(--sp-rw-border-translucent);
   background: var(--sp-rw-bg-primary);
+  /* An action reaches at most 8 px into the band's 12 px, so it keeps 4 px
+   * from the band's edges; a Button taller than that grows the band (Lukas,
+   * 20 October 2026; an xl Button touched the edges). */
+  --card-action-reach: var(--sp-rw-space-2);
   padding: var(--sp-rw-space-3) var(--card-part-inset-inline);
 }
 
@@ -9314,9 +9511,12 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  *   to 12 px into the padding above and below, the band's padding and the
  *   space below a header before its panel, or less with a smaller block
  *   inset. So a link or a Button up to xl beside the 27 px line takes no
- *   height of its own; only what the 12 px cannot take, such as an xl Button
- *   beside the band's 20 px line, adds to the row, and the action never leaves
- *   the padding.
+ *   height of its own. In the tinted band the action reaches 8 px
+ *   (--card-action-reach), so it keeps 4 px from the band's edges, and what
+ *   the 8 px cannot take, such as an xl Button beside the band's 20 px line,
+ *   adds to the row; the action never leaves the padding.
+ * - A divided header with one text part is a one-line band with 16 px above
+ *   and below its title (rulebook S4b), the last rule of the block.
  * card.tsx sets none of these properties (rulebook P6): the base block, the
  * header's gap above and these rules own the header's align-items and
  * row-gap and the media's and the action's align-self, grid-row-end and
@@ -9367,8 +9567,49 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   )
   > .sp-card-action {
   margin-block: calc(
-    min(var(--sp-rw-space-3), var(--card-part-inset-block)) * -1
+    var(
+        --card-action-reach,
+        min(var(--sp-rw-space-3), var(--card-part-inset-block))
+      ) *
+      -1
   );
+}
+
+/* A divided header with one text part, such as a title alone or a title with
+ * its meta, is a one-line band: 16 px above and below its title, or the card's
+ * inset where that is smaller (rulebook S4b, Lukas, 20 October 2026). A title
+ * with a description keeps the inset above and below. */
+:root
+  .sp-card:not([data-variant="header"])
+  > .sp-card-header:is(
+    .border-b,
+    :has(+ .sp-separator),
+    :has(+ .sp-motion-reveal > .sp-alert[data-layout="band"])
+  ):not(
+    :has(
+      > :not(.sp-card-action):not(.sp-card-media)
+        ~ :not(.sp-card-action):not(.sp-card-media)
+    )
+  ) {
+  padding-block: min(var(--sp-rw-space-4), var(--card-part-inset-block));
+}
+
+/* On a narrow card, below 15 rem of header width, the action moves under the
+ * text instead of squeezing the title: it starts where the text does, after a
+ * media's column, 8 px below it, and reaches no padding (Lukas, 20 October
+ * 2026; a title beside an action broke letter by letter at about 200 px). */
+@container sp-card-header (max-width: 15rem) {
+  :root .sp-card-header > .sp-card-action {
+    --card-action-reach: 0px;
+    grid-column: 1 / -1;
+    grid-row-start: 3;
+    justify-self: start;
+    padding-top: var(--sp-rw-space-2);
+  }
+
+  :root .sp-card-header:has(> .sp-card-media) > .sp-card-action {
+    grid-column: 2 / -1;
+  }
 }
 
 :root .sp-card[data-variant="header"] > .sp-card-header + .sp-card-panel {

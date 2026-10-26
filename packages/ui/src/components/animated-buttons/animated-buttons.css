@@ -1,12 +1,28 @@
 @layer theme, base, components, siteplane, utilities;
 
+/* A growing Fill Sweep's corners turn from square to the Button's radius, so
+ * the radius the Button clips with animates as a length. */
+@property --sp-fill-sweep-radius {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 @layer siteplane {
   /* Fill Sweep */
   .sp-fill-sweep-button-root {
     --sp-fill-sweep-radius: var(--radius-lg);
     --sp-fill-sweep-duration: var(--motion-duration-moderate);
     --sp-fill-sweep-inset: 0px;
-    --sp-fill-sweep-hover-width: 100%;
+    /* The full fill reaches one radius past the end edge, so its rounded
+     * leading corners leave the Button and the Button alone clips its
+     * corners. */
+    --sp-fill-sweep-hover-width: calc(100% + var(--sp-fill-sweep-radius));
+    /* A fill that passes through takes the label colour at this strength,
+     * and the label shrinks to this scale. */
+    --sp-fill-sweep-tonal-strength: 35%;
+    --sp-fill-sweep-label-shrink: 0.9;
+    --sp-fill-sweep-control: var(--sp-rw-control-md);
     display: inline-flex;
   }
 
@@ -20,8 +36,10 @@
       var(--sp-fill-sweep-inset);
     height: auto;
     width: 0;
-    /* The Button clips the sweep once; a second rounded edge leaks its dark base. */
-    border-radius: 0;
+    /* The leading edge is rounded; the edge that stays at the start is
+     * square, so the Button clips it once and no second rounded edge leaks
+     * its dark base. */
+    border-radius: 0 var(--sp-fill-sweep-radius) var(--sp-fill-sweep-radius) 0;
     background-color: var(--sp-fill-sweep-layer);
     z-index: 20;
     transition-property: width;
@@ -50,6 +68,389 @@
     .sp-fill-sweep-button-root .sp-fill-sweep-fill {
       transition-duration: 0ms;
     }
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-size="sm"], [data-size="icon-sm"]) {
+    --sp-fill-sweep-control: var(--sp-rw-control-sm);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-size="lg"], [data-size="icon-lg"]) {
+    --sp-fill-sweep-control: var(--sp-rw-control-lg);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-size="xl"], [data-size="icon-xl"]) {
+    --sp-fill-sweep-control: var(--sp-rw-control-xl);
+  }
+
+  /* Through: a rounded fill of the label colour waits outside its start
+   * edge, covers the Button while the pointer is over it and leaves through
+   * the far edge; a reset two frames long returns it to the start unseen.
+   * Without an arrow it rises from the bottom edge, with one it crosses from
+   * the start edge. */
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-sweep] {
+    --sp-fill-sweep-hover-width: 100%;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-sweep="up"] {
+    --sp-fill-sweep-through-duration: var(--motion-duration-sweep);
+    --sp-fill-sweep-from: 0 100%;
+    --sp-fill-sweep-to: 0 -100%;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-sweep="across"] {
+    --sp-fill-sweep-through-duration: var(--motion-duration-sweep-across);
+    --sp-fill-sweep-from: -100% 0;
+    --sp-fill-sweep-to: 100% 0;
+  }
+
+  /* A filled Button with an arrow takes a lighter fill. */
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep="across"]:not([data-variant="outline"]) {
+    --sp-fill-sweep-tonal-strength: 30%;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep]
+    .sp-fill-sweep-fill {
+    inset: 0;
+    width: 100%;
+    border-radius: var(--sp-fill-sweep-radius);
+    background-color: color-mix(
+      in srgb,
+      currentColor var(--sp-fill-sweep-tonal-strength),
+      transparent
+    );
+    translate: var(--sp-fill-sweep-from);
+    transition: translate var(--sp-fill-sweep-through-duration)
+      var(--motion-ease-sweep);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep-phase="in"]
+    .sp-fill-sweep-fill {
+    translate: 0 0;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep-phase="out"]
+    .sp-fill-sweep-fill {
+    translate: var(--sp-fill-sweep-to);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep-phase="reset"]
+    .sp-fill-sweep-fill {
+    transition: none;
+  }
+
+  :is(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
+    .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep]
+    .sp-fill-sweep-fill {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-fill-sweep-button-root
+      .sp-fill-sweep-button[data-sweep]
+      .sp-fill-sweep-fill {
+      transition-duration: 0ms;
+    }
+  }
+
+  /* An accent Button darkens instead of sweeping. */
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-variant="accent"]
+    .sp-fill-sweep-fill {
+    display: none;
+  }
+
+  /* The label lines up its text and arrow; a fill that rises shrinks it. */
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-sweep], [data-arrow], [data-entrance])
+    .sp-fill-sweep-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-rw-button-content-gap);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep="up"]
+    .sp-fill-sweep-label {
+    transition: scale var(--motion-duration-sweep) var(--motion-ease-sweep);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-sweep="up"]:not(
+      :disabled,
+      [aria-disabled="true"]
+    ):hover
+    .sp-fill-sweep-label {
+    scale: var(--sp-fill-sweep-label-shrink);
+  }
+
+  /* The arrow: two chevrons on a track twice the width of their box, each in
+   * the middle of its half. While the pointer is over the Button the track
+   * moves one box on, so one chevron runs out while the next comes in;
+   * leaving puts it back without a transition. Beside a label the box is
+   * twice the chevron and starts where the label ends, alone it is 1.75
+   * times the chevron, and on a tile it is the tile. Negative margins keep
+   * the footprint of a Button icon. */
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: calc(2 * var(--sp-rw-button-icon));
+    height: var(--sp-rw-button-icon);
+    margin-inline: calc(-1 * var(--sp-rw-button-content-gap))
+      calc(-0.5 * var(--sp-rw-button-icon));
+    overflow: hidden;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow[data-standalone] {
+    width: calc(1.75 * var(--sp-rw-button-icon));
+    margin-inline: calc(-0.375 * var(--sp-rw-button-icon));
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow-tile .sp-fill-sweep-arrow {
+    width: 100%;
+    height: 100%;
+    margin-inline: 0;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow-track {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: flex;
+    width: 200%;
+    height: 100%;
+    translate: -50% 0;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-arrow[data-direction="previous"]
+    .sp-fill-sweep-arrow-track {
+    translate: 0 0;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow-track > span {
+    display: grid;
+    flex: 0 0 50%;
+    place-items: center;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow-track svg {
+    width: var(--sp-rw-button-icon);
+    height: var(--sp-rw-button-icon);
+    margin-inline: 0;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-hovered]
+    .sp-fill-sweep-arrow-track {
+    translate: 0 0;
+    transition: translate var(--motion-duration-sweep-across)
+      var(--motion-ease-sweep);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-hovered]
+    .sp-fill-sweep-arrow[data-direction="previous"]
+    .sp-fill-sweep-arrow-track {
+    translate: -50% 0;
+  }
+
+  /* The tile: in the label colour, 4 px inside the end, top and bottom
+   * edges and 16 px after the label, its chevron in the Button's own
+   * colour. */
+  .sp-fill-sweep-button-root .sp-fill-sweep-arrow-tile {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: calc(var(--sp-fill-sweep-control) - 2 * var(--sp-rw-space-1));
+    height: calc(var(--sp-fill-sweep-control) - 2 * var(--sp-rw-space-1));
+    margin-inline-start: calc(
+      var(--sp-rw-space-4) - var(--sp-rw-button-content-gap)
+    );
+    overflow: hidden;
+    border-radius: calc(var(--sp-fill-sweep-radius) - var(--sp-rw-space-1));
+    background: var(--sp-rw-button-text);
+    color: var(--sp-rw-fg-inverse);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-variant="inverse"]
+    .sp-fill-sweep-arrow-tile {
+    color: var(--sp-rw-fg-primary);
+  }
+
+  /* Entrances, played once when the Button mounts. Grow: the Button grows
+   * from its start edge with its corners, its content follows a beat later,
+   * the tile settles into place and the text fades in last. */
+  @keyframes sp-fill-sweep-grow {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+      --sp-fill-sweep-radius: 0px;
+    }
+  }
+
+  @keyframes sp-fill-sweep-grow-content {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes sp-fill-sweep-settle-start {
+    from {
+      translate: calc(-1 * var(--sp-rw-space-1-5)) 0;
+    }
+  }
+
+  @keyframes sp-fill-sweep-settle-end {
+    from {
+      translate: var(--sp-rw-space-1-5) 0;
+    }
+  }
+
+  @keyframes sp-fill-sweep-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-entrance="grow"] {
+    transform-origin: left center;
+    animation: sp-fill-sweep-grow var(--motion-duration-entrance)
+      var(--motion-ease-entrance) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="grow"]
+    .sp-fill-sweep-label {
+    transform-origin: left center;
+    animation: sp-fill-sweep-grow-content var(--motion-duration-entrance)
+      var(--motion-ease-entrance) var(--motion-duration-micro) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="grow"]
+    .sp-fill-sweep-arrow-tile {
+    animation: sp-fill-sweep-settle-start var(--motion-duration-entrance)
+      var(--motion-ease-entrance-settle) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="grow"]
+    .sp-fill-sweep-text {
+    animation: sp-fill-sweep-fade-in var(--motion-duration-entrance-label)
+      var(--motion-ease-entrance-label)
+      calc(var(--motion-duration-entrance) - var(--motion-duration-micro))
+      backwards;
+  }
+
+  /* Widen: a see-through box with a ring widens from 40 % while its height
+   * settles from 115 %, its content scaled against it; in the second half
+   * the fill comes in, the ring fades and the text and arrow settle 6 px
+   * apart into place. */
+  @keyframes sp-fill-sweep-widen-x {
+    from {
+      transform: scaleX(0.4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes sp-fill-sweep-widen-y {
+    from {
+      scale: 1 1.15;
+    }
+  }
+
+  @keyframes sp-fill-sweep-widen-fill {
+    from {
+      background-color: transparent;
+      box-shadow: inset 0 0 0 var(--sp-rw-border-default)
+        var(--sp-rw-fg-emphasis);
+    }
+
+    to {
+      box-shadow: inset 0 0 0 var(--sp-rw-border-default) transparent;
+    }
+  }
+
+  @keyframes sp-fill-sweep-widen-content-x {
+    from {
+      transform: scaleX(2.5);
+    }
+  }
+
+  @keyframes sp-fill-sweep-widen-content-y {
+    from {
+      scale: 1 calc(1 / 1.15);
+    }
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-entrance="widen"] {
+    transform-origin: 50% 50%;
+    animation:
+      sp-fill-sweep-widen-x calc(var(--motion-duration-entrance) / 2)
+        var(--motion-ease-entrance-widen) backwards,
+      sp-fill-sweep-widen-y var(--motion-duration-entrance)
+        var(--motion-ease-entrance-height) backwards,
+      sp-fill-sweep-widen-fill calc(var(--motion-duration-entrance) / 2)
+        var(--motion-ease-entrance-settle)
+        calc(var(--motion-duration-entrance) / 2) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    .sp-fill-sweep-label {
+    transform-origin: 50% 50%;
+    animation:
+      sp-fill-sweep-widen-content-x calc(var(--motion-duration-entrance) / 2)
+        var(--motion-ease-entrance-widen) backwards,
+      sp-fill-sweep-widen-content-y var(--motion-duration-entrance)
+        var(--motion-ease-entrance-counter) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    > :is(
+      .sp-button-chassis-drop-shadow,
+      .sp-button-chassis-spotlights,
+      .sp-button-chassis-dome-overlay,
+      .sp-button-chassis-rim,
+      .sp-button-chassis-secondary-spotlights
+    ) {
+    animation: sp-fill-sweep-fade-in calc(var(--motion-duration-entrance) / 2)
+      var(--motion-ease-entrance-settle)
+      calc(var(--motion-duration-entrance) / 2) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    .sp-fill-sweep-text {
+    animation: sp-fill-sweep-settle-end
+      calc(var(--motion-duration-entrance) / 2)
+      var(--motion-ease-entrance-settle)
+      calc(var(--motion-duration-entrance) / 2) backwards;
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    .sp-fill-sweep-arrow {
+    animation: sp-fill-sweep-settle-start
+      calc(var(--motion-duration-entrance) / 2)
+      var(--motion-ease-entrance-settle)
+      calc(var(--motion-duration-entrance) / 2) backwards;
+  }
+
+  .sp-fill-sweep-button-root .sp-fill-sweep-button[data-entrance="fade"] {
+    animation: sp-fill-sweep-fade-in var(--motion-duration-entrance)
+      var(--motion-ease-entrance) backwards;
   }
 
   /* Expanding Arrow. The circle is the height of the control size at every

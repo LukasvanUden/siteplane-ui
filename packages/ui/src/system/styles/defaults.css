@@ -55,6 +55,22 @@
   --motion-duration-ring-pulse: 4000ms;
   /* One turn of the Badge light: both lights run once around the badge. */
   --motion-duration-badge-light: 5000ms;
+  /* A fill that passes through an Animated Button from its bottom edge, the
+   * label that shrinks with it and the darkening of an accent one. */
+  --motion-duration-sweep: 300ms;
+  /* A fill that passes across an Animated Button with an arrow, and the
+   * arrow that runs through. */
+  --motion-duration-sweep-across: 600ms;
+  /* How long a fill that has passed through waits after the pointer leaves
+   * before it returns to its start edge unseen. */
+  --motion-duration-sweep-reset: 680ms;
+  /* A linked Card's colour that rises from its bottom edge, and its action
+   * that turns inverse with it. */
+  --motion-duration-card-fill: 500ms;
+  /* An Animated Button that grows, widens or fades in. */
+  --motion-duration-entrance: 850ms;
+  /* The label of a growing Animated Button, which fades in last. */
+  --motion-duration-entrance-label: 500ms;
   /* The standard curve: a quick start that settles softly. What appears,
    * moves, draws or changes takes it unless its motion names another curve. */
   --motion-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
@@ -87,6 +103,154 @@
    * the content stay in step, and a featured icon's traveling rings, so
    * that the two stay evenly spaced. */
   --motion-ease-linear: linear;
+  /* A fill that passes through an Animated Button, its label and arrow, the
+   * darkening of an accent one and a linked Card's colour: a quick start
+   * that eases out. */
+  --motion-ease-sweep: cubic-bezier(0, 0, 0.2, 1);
+  /* The entrances of the Animated Buttons, polynomial curves sampled every
+   * 5 %: a Button that grows or fades in (quartic ease-out), the parts that
+   * settle into place and the fill that comes in (quartic ease-in-out), a
+   * Button that widens (cubic ease-out) and its height that settles (cubic
+   * ease-in-out), the content that keeps its own height meanwhile, and the
+   * label that fades in last (quadratic ease-out). */
+  --motion-ease-entrance: linear(
+    0,
+    0.185,
+    0.344,
+    0.478,
+    0.59,
+    0.684,
+    0.76,
+    0.821,
+    0.87,
+    0.908,
+    0.938,
+    0.959,
+    0.974,
+    0.985,
+    0.992,
+    0.996,
+    0.998,
+    0.999,
+    1,
+    1,
+    1
+  );
+  --motion-ease-entrance-settle: linear(
+    0,
+    0,
+    0.001,
+    0.004,
+    0.013,
+    0.031,
+    0.065,
+    0.12,
+    0.205,
+    0.328,
+    0.5,
+    0.672,
+    0.795,
+    0.88,
+    0.935,
+    0.969,
+    0.987,
+    0.996,
+    0.999,
+    1,
+    1
+  );
+  --motion-ease-entrance-widen: linear(
+    0,
+    0.143,
+    0.271,
+    0.386,
+    0.488,
+    0.578,
+    0.657,
+    0.725,
+    0.784,
+    0.834,
+    0.875,
+    0.909,
+    0.936,
+    0.957,
+    0.973,
+    0.984,
+    0.992,
+    0.997,
+    0.999,
+    1,
+    1
+  );
+  --motion-ease-entrance-height: linear(
+    0,
+    0.001,
+    0.004,
+    0.013,
+    0.032,
+    0.063,
+    0.108,
+    0.171,
+    0.256,
+    0.365,
+    0.5,
+    0.636,
+    0.744,
+    0.829,
+    0.892,
+    0.938,
+    0.968,
+    0.987,
+    0.996,
+    0.999,
+    1
+  );
+  --motion-ease-entrance-counter: linear(
+    0,
+    0,
+    0.003,
+    0.012,
+    0.028,
+    0.055,
+    0.095,
+    0.153,
+    0.23,
+    0.333,
+    0.465,
+    0.603,
+    0.716,
+    0.808,
+    0.878,
+    0.929,
+    0.963,
+    0.985,
+    0.995,
+    0.999,
+    1
+  );
+  --motion-ease-entrance-label: linear(
+    0,
+    0.098,
+    0.19,
+    0.278,
+    0.36,
+    0.438,
+    0.51,
+    0.577,
+    0.64,
+    0.698,
+    0.75,
+    0.798,
+    0.84,
+    0.878,
+    0.91,
+    0.938,
+    0.96,
+    0.978,
+    0.99,
+    0.997,
+    1
+  );
   /* How far a NavigationMenu popup or a popover that flips sides travels as
    * it settles, and the scale the flipping popover starts from. */
   --motion-overlay-y: 4px;
@@ -231,6 +395,12 @@
     --motion-duration-panel: 1ms !important;
     --motion-duration-panel-release: 1ms !important;
     --motion-duration-carousel: 1ms !important;
+    --motion-duration-sweep: 1ms !important;
+    --motion-duration-sweep-across: 1ms !important;
+    --motion-duration-sweep-reset: 1ms !important;
+    --motion-duration-card-fill: 1ms !important;
+    --motion-duration-entrance: 1ms !important;
+    --motion-duration-entrance-label: 1ms !important;
   }
 }
 
@@ -256,6 +426,12 @@
   --motion-duration-panel: 1ms !important;
   --motion-duration-panel-release: 1ms !important;
   --motion-duration-carousel: 1ms !important;
+  --motion-duration-sweep: 1ms !important;
+  --motion-duration-sweep-across: 1ms !important;
+  --motion-duration-sweep-reset: 1ms !important;
+  --motion-duration-card-fill: 1ms !important;
+  --motion-duration-entrance: 1ms !important;
+  --motion-duration-entrance-label: 1ms !important;
 }
 
 .animate-skeleton {

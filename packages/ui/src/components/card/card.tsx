@@ -8,9 +8,21 @@ import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
 
+export type CardHoverColor =
+  | "chart-1"
+  | "chart-2"
+  | "chart-3"
+  | "chart-4"
+  | "chart-5"
+  | "chart-6"
+  | "chart-7"
+  | "chart-8";
+
 export function Card({
+  children,
   className,
   density,
+  hoverColor,
   render,
   variant = "raised",
   ...props
@@ -22,6 +34,12 @@ export function Card({
    * takes the place of the density's inset (design-rework.css).
    */
   density?: "default" | "compact" | undefined;
+  /**
+   * A chart color, muted, that rises from the card's bottom edge and fills it
+   * while the pointer is over the card, under its content; the card's title
+   * and description turn dark on it.
+   */
+  hoverColor?: CardHoverColor | undefined;
   variant?:
     | "raised"
     | "subtle"
@@ -34,6 +52,14 @@ export function Card({
 }): React.ReactElement {
   const resolvedDensity = useResolvedDensity(density);
   const defaultProps = {
+    children: hoverColor ? (
+      <>
+        <span aria-hidden="true" className="sp-card-hover-fill" />
+        {children}
+      </>
+    ) : (
+      children
+    ),
     // A card nested in a framed card keeps the default inset of its parts: the
     // frame's inset (CardFrame) reaches only the cards joined into it.
     className: cn(
@@ -49,6 +75,7 @@ export function Card({
     // Stays when the Card renders as another part and takes its slot (a
     // ContextMenu trigger), so the Card's base radius still reaches it.
     "data-foundation": "card",
+    "data-hover-color": hoverColor,
     "data-slot": "card",
     "data-variant": variant,
   };
@@ -350,13 +377,13 @@ export function CardAction({
 }: useRender.ComponentProps<"div">): React.ReactElement {
   // Beside a title and a description the action spans both rows from the top.
   // Beside one text part it stays in that part's row and centres on it, as
-  // CardFrameAction does, so it adds no second row (rulebook S2, S11); the
-  // Card section of design-rework.css owns both. It takes the last column,
-  // after the text and after a media's column before it.
+  // CardFrameAction does, so it adds no second row (rulebook S2, S11). It takes
+  // the last column, after the text and after a media's column before it, and
+  // moves under the text on a narrow card; design-rework.css owns its place.
   const defaultProps = {
     className: cn(
       slotClass("card-action", props, render),
-      "-col-start-2 row-start-1 inline-flex justify-self-end",
+      "inline-flex",
       className,
     ),
     "data-slot": "card-action",
