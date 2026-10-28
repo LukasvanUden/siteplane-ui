@@ -122,6 +122,22 @@
     );
   }
 
+  /* A browser paints an autofilled input with its own colour, `!important` in
+   * its stylesheet so page CSS cannot replace it (Chrome blue, Safari yellow),
+   * and Safari also turns the text black. The colour covers only the native
+   * input: beside an InputGroup addon it was a square block. The field marks
+   * autofill with its tint (above, or the group's), so the input clips the
+   * browser's colour to its text, where the text covers it, and keeps the kit
+   * text colour. A segment keeps its own focus fill. */
+  .sp-input-control:not([data-unstyled]) > .sp-input:autofill,
+  .sp-base-input[data-profile="input-group"]:not(.sp-input-segment)
+    > .sp-input:autofill {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: var(--sp-rw-fg-primary);
+    caret-color: var(--sp-rw-fg-primary);
+  }
+
   .sp-input-hide-picker::-webkit-calendar-picker-indicator {
     display: none;
   }
