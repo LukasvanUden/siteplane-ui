@@ -9220,15 +9220,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   overflow: clip;
 }
 
-:root
-  .sp-card[data-hover-color]
-  :is(.sp-card-title, .sp-card-description, .sp-card-title-meta) {
+:root .sp-card[data-hover-color] .sp-card-title,
+:root .sp-card[data-hover-color] .sp-card-description,
+:root .sp-card[data-hover-color] .sp-card-title-meta {
   transition: color var(--motion-duration-card-fill) var(--motion-ease-sweep);
 }
 
-:root
-  .sp-card[data-hover-color]:hover
-  :is(.sp-card-title, .sp-card-description, .sp-card-title-meta) {
+:root .sp-card[data-hover-color]:hover .sp-card-title,
+:root .sp-card[data-hover-color]:hover .sp-card-description,
+:root .sp-card[data-hover-color]:hover .sp-card-title-meta {
   color: light-dark(var(--sp-rw-fg-primary), var(--sp-rw-fg-inverse));
 }
 

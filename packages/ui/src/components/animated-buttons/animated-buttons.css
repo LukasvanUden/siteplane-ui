@@ -1,14 +1,14 @@
 @layer theme, base, components, siteplane, utilities;
 
-/* A growing Fill Sweep's corners turn from square to the Button's radius, so
- * the radius the Button clips with animates as a length. */
-@property --sp-fill-sweep-radius {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
 @layer siteplane {
+  /* A growing Fill Sweep's corners turn from square to the Button's radius, so
+   * the radius the Button clips with animates as a length. */
+  @property --sp-fill-sweep-radius {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+  }
+
   /* Fill Sweep */
   .sp-fill-sweep-button-root {
     --sp-fill-sweep-radius: var(--radius-lg);
@@ -418,13 +418,19 @@
 
   .sp-fill-sweep-button-root
     .sp-fill-sweep-button[data-entrance="widen"]
-    > :is(
-      .sp-button-chassis-drop-shadow,
-      .sp-button-chassis-spotlights,
-      .sp-button-chassis-dome-overlay,
-      .sp-button-chassis-rim,
-      .sp-button-chassis-secondary-spotlights
-    ) {
+    > .sp-button-chassis-drop-shadow,
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    > .sp-button-chassis-spotlights,
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    > .sp-button-chassis-dome-overlay,
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    > .sp-button-chassis-rim,
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button[data-entrance="widen"]
+    > .sp-button-chassis-secondary-spotlights {
     animation: sp-fill-sweep-fade-in calc(var(--motion-duration-entrance) / 2)
       var(--motion-ease-entrance-settle)
       calc(var(--motion-duration-entrance) / 2) backwards;

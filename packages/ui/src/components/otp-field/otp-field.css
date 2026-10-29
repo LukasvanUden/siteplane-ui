@@ -12,7 +12,8 @@
    *   so the ring marks the slot and not the whole field.
    * - There is no caret and no highlight fill, as in a separate slot.
    * - The other slots stay bare cells in the surface of the field.
-   * - A disabled field keeps its surface and fades, like the separate slots. */
+   * - A disabled field keeps its surface and fades, like the separate slots.
+   * - An autofilled slot shows the field's autofill tint, as an Input does. */
 
   /* An xl Input has the larger surface radius; the joined field follows it. */
   .sp-otp-field[data-layout="joined"][data-size="xl"] {
@@ -63,6 +64,18 @@
    * Field keeps its surface and only fades, in both layouts. */
   :root .sp-otp-field[data-layout="joined"]:has(.sp-otp-field-input:disabled) {
     background-color: transparent;
+  }
+
+  /* A browser paints an autofilled slot with its own colour, `!important` in
+   * its stylesheet, as a block in the field. The InputGroup marks autofill with
+   * its tint, so the slot clips the browser's colour to its character, where
+   * the character covers it, and keeps the kit text colour (input.css). */
+  :root
+    .sp-otp-field[data-layout="joined"][data-size]
+    > .sp-otp-field-input:autofill {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: var(--sp-rw-fg-primary);
   }
 
   /* One divider precedes every slot. Only the dividers that follow another slot
