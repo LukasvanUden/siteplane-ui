@@ -1,0 +1,228 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* Attachment: a file or an image as a small card, with its media, its name
+   * and details, its actions and, over the whole card, one optional trigger.
+   * Every value is a kit token, so a theme or a radius override reaches it.
+   * The card clips what it holds, so the square corners of the trigger's
+   * hover tint follow the card's radius instead of a radius of their own.
+   * The card is no control, so it keeps the plain cursor also inside a field,
+   * whose addons show a text cursor; the trigger and the actions are Buttons
+   * and show their own. */
+  .sp-attachment {
+    --sp-attachment-media: var(--sp-rw-space-10);
+    --sp-attachment-padding: var(--sp-rw-space-2);
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    box-sizing: border-box;
+    width: fit-content;
+    min-width: 0;
+    max-width: 100%;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    overflow: clip;
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: var(--sp-rw-radius-surface);
+    padding: var(--sp-attachment-padding);
+    background: var(--sp-rw-bg-secondary);
+    color: var(--sp-rw-fg-primary);
+    cursor: default;
+    font-size: var(--sp-rw-font-14);
+    line-height: var(--sp-rw-line-18);
+    transition-property: border-color, background-color;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-state);
+  }
+
+  .sp-attachment[data-size="sm"] {
+    --sp-attachment-media: var(--sp-rw-space-8);
+    --sp-attachment-padding: var(--sp-rw-space-1-5);
+
+    font-size: var(--sp-rw-font-12);
+    line-height: var(--sp-rw-line-16);
+  }
+
+  .sp-attachment[data-orientation="horizontal"] {
+    min-width: calc(var(--sp-rw-space) * 40);
+  }
+
+  /* A vertical card stacks its media over its text: 96 px wide with media
+   * alone, 120 px with text. */
+  .sp-attachment[data-orientation="vertical"] {
+    width: calc(var(--sp-rw-space) * 24);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sp-attachment[data-orientation="vertical"]:has(> .sp-attachment-content) {
+    width: calc(var(--sp-rw-space) * 30);
+  }
+
+  /* A file that was selected and waits to upload is drawn with a dashed edge,
+   * a failure with the destructive edge of an invalid field. The words of the
+   * state stay in the description, so the color is never the only cue. */
+  .sp-attachment[data-state="idle"] {
+    border-style: dashed;
+  }
+
+  .sp-attachment[data-state="error"] {
+    border-color: var(--sp-rw-border-destructive);
+  }
+
+  /* The media is a square tile for an icon, and the thumbnail of an image. */
+  .sp-attachment-media {
+    position: relative;
+    display: flex;
+    width: var(--sp-attachment-media);
+    flex: none;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--sp-rw-radius-control);
+    background: var(--sp-rw-bg-muted);
+    color: var(--sp-rw-fg-secondary);
+  }
+
+  .sp-attachment[data-size="sm"] .sp-attachment-media {
+    border-radius: var(--sp-rw-radius-sm);
+  }
+
+  .sp-attachment[data-orientation="vertical"] .sp-attachment-media {
+    width: 100%;
+  }
+
+  /* A file type icon is a sheet with its own label, so it needs no tile. */
+  .sp-attachment-media:has(> .sp-file-type-icon) {
+    background: transparent;
+  }
+
+  .sp-attachment-media > svg:not([class*="size-"]) {
+    width: var(--sp-rw-control-icon);
+    height: var(--sp-rw-control-icon);
+    flex: none;
+    pointer-events: none;
+  }
+
+  .sp-attachment[data-orientation="vertical"]
+    .sp-attachment-media
+    > svg:not([class*="size-"]) {
+    width: var(--sp-rw-space-6);
+    height: var(--sp-rw-space-6);
+  }
+
+  .sp-attachment-media[data-variant="image"] > img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  /* An image that is still on its way shows dimmed. */
+  .sp-attachment[data-state="uploading"]
+    .sp-attachment-media[data-variant="image"],
+  .sp-attachment[data-state="processing"]
+    .sp-attachment-media[data-variant="image"] {
+    opacity: 0.6;
+  }
+
+  .sp-attachment[data-state="error"] .sp-attachment-media {
+    background: var(--sp-rw-bg-destructive-translucent);
+    color: var(--sp-rw-fg-destructive);
+  }
+
+  /* The text track may shrink below its text (rulebook K5), so a long name
+   * ends in an ellipsis and never pushes the actions out of the card. */
+  .sp-attachment-content {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: var(--sp-rw-space-0-5);
+  }
+
+  .sp-attachment[data-orientation="vertical"] .sp-attachment-content {
+    padding-inline: var(--sp-rw-space-1);
+  }
+
+  .sp-attachment-title,
+  .sp-attachment-description {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sp-attachment-title {
+    font-weight: var(--sp-rw-font-weight-label);
+  }
+
+  .sp-attachment-description {
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    line-height: var(--sp-rw-line-16);
+  }
+
+  .sp-attachment[data-state="error"] .sp-attachment-description {
+    color: var(--sp-rw-fg-destructive);
+  }
+
+  /* The actions sit above the trigger, so both stay clickable. On a vertical
+   * card they float 8 px inside the media's top-end corner. */
+  .sp-attachment-actions {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sp-rw-space-0-5);
+  }
+
+  .sp-attachment[data-orientation="vertical"] .sp-attachment-actions {
+    position: absolute;
+    inset-block-start: calc(
+      var(--sp-attachment-padding) + var(--sp-rw-space-2)
+    );
+    inset-inline-end: calc(var(--sp-attachment-padding) + var(--sp-rw-space-2));
+    gap: var(--sp-rw-space-1);
+  }
+
+  /* The group is a row of cards that scrolls sideways and snaps card by card.
+   * The ScrollArea fades the edge that has more to show; the snap clears
+   * that fade, as the tabs of a scrolling rail do. */
+  .sp-attachment-group {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .sp-attachment-group .sp-scroll-area-viewport {
+    scroll-padding-inline: var(--fade-size);
+    scroll-snap-type: x mandatory;
+  }
+
+  .sp-attachment-group-row {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    align-items: flex-start;
+    gap: var(--sp-rw-space-2);
+  }
+
+  .sp-attachment-group-item {
+    display: flex;
+    flex: none;
+    scroll-snap-align: start;
+  }
+
+  /* A card in a row is at most 16 rem wide, so a long file name ends in an
+   * ellipsis there too; a max-w utility on the card widens it. */
+  .sp-attachment-group-item > .sp-attachment {
+    max-width: calc(var(--sp-rw-space) * 64);
+  }
+}

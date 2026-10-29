@@ -9,12 +9,33 @@ import {
 } from "react-file-icon";
 import { cn } from "../../system/utils/cn";
 
+/** The heights of the icon box in px; the width follows (see `boxClassNames`). */
+export type FileTypeIconSize = 16 | 20 | 24 | 32 | 40;
+
 export type FileTypeIconProps = {
   /** The file name used to identify the extension. Render its accessible name alongside the icon. */
   name: string;
   /** Optional extension override, for files without a suffix. */
   extension?: string | undefined;
+  /**
+   * The height of the box in px: 16, 20, 24, 32 or 40 (the default). The width
+   * keeps the sheet's 34:40 proportion, rounded to whole pixels, and the sheet,
+   * glyph and label scale with the box.
+   */
+  size?: FileTypeIconSize | undefined;
   className?: string | undefined;
+};
+
+// One box per size: the height, and the width at the 34:40 proportion of the
+// sheet (13.6, 17, 20.4, 27.2 and 34 px) rounded to whole pixels. The classes
+// are written out so the stylesheet generator finds them. The 40 px box is the
+// one the icon always had.
+const boxClassNames: Record<FileTypeIconSize, string> = {
+  16: "h-4 w-[14px]",
+  20: "h-5 w-[17px]",
+  24: "h-6 w-5",
+  32: "h-8 w-[27px]",
+  40: "h-10 w-[34px]",
 };
 
 type FileTypeIconTone = "error" | "success" | "warning" | "accent" | "neutral";
@@ -74,6 +95,7 @@ function FileIconWithoutFixedId(props: FileIconProps): React.ReactElement {
 export function FileTypeIcon({
   name,
   extension,
+  size = 40,
   className,
 }: FileTypeIconProps): React.ReactElement {
   const basename = name.split(/[\\/]/).pop() ?? name;
@@ -106,7 +128,9 @@ export function FileTypeIcon({
       data-tone={tone}
       className={cn(
         "sp-file-type-icon",
-        "inline-flex h-10 w-[34px] shrink-0 items-center justify-center [&>svg]:block [&>svg]:h-full [&>svg]:w-full [&>svg]:opacity-100",
+        "inline-flex",
+        boxClassNames[size],
+        "shrink-0 items-center justify-center [&>svg]:block [&>svg]:h-full [&>svg]:w-full [&>svg]:opacity-100",
         className,
       )}
     >

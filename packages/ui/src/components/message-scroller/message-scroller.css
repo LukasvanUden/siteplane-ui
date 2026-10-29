@@ -1,0 +1,43 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A row of the thread. Rows far from the viewport skip their rendering
+   * work; a row that has been rendered once keeps the size it had (`auto`),
+   * and one that has not is taken to be a line or two high. Paint
+   * containment clips what a row draws outside its box, so a row keeps room
+   * for the focus ring of its controls. */
+  .sp-message-scroller-item {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto var(--sp-rw-space-12);
+  }
+
+  /* A row that arrives after the thread opened fades in with a small rise. It
+   * takes its full height at once: height, margin and padding never animate,
+   * because the scroller measures the row to settle a new turn and to follow
+   * the end, and an expanding row (rulebook M6) would move both while it
+   * runs. The animation ends where the row rests and fills nothing forward, so
+   * no stacking context or transform is left on the row afterwards. */
+  .sp-message-scroller-item[data-entering] {
+    animation: sp-message-scroller-item-enter var(--motion-duration-base)
+      var(--motion-ease-standard);
+  }
+
+  @keyframes sp-message-scroller-item-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  /* Reduced motion is instant (M5): the row is at rest at once. */
+  @media (prefers-reduced-motion: reduce) {
+    .sp-message-scroller-item[data-entering] {
+      animation: none;
+    }
+  }
+
+  html[data-motion-reduce="true"] .sp-message-scroller-item[data-entering],
+  [data-sp-motion="reduced"] .sp-message-scroller-item[data-entering] {
+    animation: none;
+  }
+}

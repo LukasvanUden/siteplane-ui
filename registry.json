@@ -188,7 +188,7 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -218,9 +218,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/spinner.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/badge.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/spinner.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/badge.json"
       ],
       "files": [
         {
@@ -279,11 +279,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/copy-button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/color-swatch-picker.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/copy-button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/color-swatch-picker.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json"
       ],
       "files": [
         {
@@ -335,8 +335,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json"
       ],
       "files": [
         {
@@ -392,9 +392,9 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tooltip.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
       ],
       "files": [
         {
@@ -472,10 +472,10 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/locale.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/popover.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/popover.json"
       ],
       "files": [
         {
@@ -533,13 +533,13 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/locale.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/popover.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/popover.json"
       ],
       "files": [
         {
@@ -597,14 +597,14 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/list-box.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/popover.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/list-box.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/popover.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -662,11 +662,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/locale.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/locale.json"
       ],
       "files": [
         {
@@ -724,13 +724,13 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/date-field.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/locale.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/locale.json"
       ],
       "files": [
         {
@@ -789,14 +789,14 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/date-field.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/locale.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/time-field.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/locale.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/time-field.json"
       ],
       "files": [
         {
@@ -853,9 +853,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/textarea.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/textarea.json"
       ],
       "files": [
         {
@@ -909,7 +909,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -952,8 +952,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -1005,7 +1005,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1051,7 +1051,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1093,8 +1093,8 @@
       "description": "Menu button whose bars morph into a close icon. Search terms: actions.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -1144,7 +1144,7 @@
       "description": "Layered surface with headers, panels, descriptions and footers.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1191,8 +1191,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -1239,9 +1239,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json"
       ],
       "files": [
         {
@@ -1298,11 +1298,11 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -1348,7 +1348,7 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1367,7 +1367,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1414,8 +1414,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/badge.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/badge.json"
       ],
       "files": [
         {
@@ -1472,7 +1472,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1529,7 +1529,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1578,9 +1578,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -1628,7 +1628,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1673,7 +1673,7 @@
       "description": "Decorative loading placeholder with consumer-owned geometry.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1719,7 +1719,7 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1771,9 +1771,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -1818,21 +1818,31 @@
     {
       "name": "code",
       "title": "Code",
-      "description": "Inline and block code with optional reveal and clipboard actions.",
+      "description": "Inline and block code with optional syntax highlighting, a title, line numbers and marked lines, a reveal and clipboard actions. Search terms: snippet.",
       "dependencies": [
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/copy-button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/copy-button.json"
       ],
       "files": [
         {
           "path": "packages/ui/src/components/code/code.tsx",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/code/code.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/code/code-highlight-slot.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/code/code-highlight-slot.ts"
+        },
+        {
+          "path": "packages/ui/src/components/code/code.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/code/code.css"
         },
         {
           "path": "packages/ui/src/components/code/index.ts",
@@ -1847,23 +1857,53 @@
       ],
       "meta": {
         "avoidWhen": [
-          "Avoid for syntax-highlighted listings; Code does not highlight.",
+          "Avoid for a code editor or a whole source file; CodeBlock shows a snippet and does not edit, fold or search it.",
           "Avoid masking as protection for a secret: a masked value still reaches the browser."
         ],
-        "description": "Inline and block code with optional reveal and clipboard actions.",
+        "description": "Inline and block code with optional syntax highlighting, a title, line numbers and marked lines, a reveal and clipboard actions.",
         "knownLimitations": [
           "Copying depends on browser permissions and a secure context; a failed copy is shown on the button.",
-          "A reveal by the person survives a new value and resets when mask changes."
+          "A reveal by the person survives a new value and resets when mask changes.",
+          "Highlighting is an optional module: import code-highlight once, before the first CodeBlock renders, for example in the client component that holds the app's providers; calling its enableCodeHighlighting() does the same where a bare import would be dropped. Without the module, and for a block that mounted before it, a language shows as plain text.",
+          "Highlighting covers bash, css, diff, html, javascript, json, jsx, markdown, python, sql, tsx, typescript and yaml; any other language shows as plain text. A block is plain text until its language has loaded, and on the server.",
+          "Line numbers and the marks of added and removed lines are left out of a selection and of the copied value, which is the value as given; lineStates counts lines by the numbers shown, so startLine moves them.",
+          "streaming only keeps the copy action disabled while the text arrives; the app passes the growing value, and the lines that are complete keep their highlighting."
         ],
-        "providerNotes": [],
+        "providerNotes": [
+          "Highlighting is the optional code-highlight item, which adds shiki; the code item installs without it."
+        ],
         "releaseStatus": "stable",
         "searchTerms": [
-          "code"
+          "code",
+          "syntax highlighting",
+          "line numbers",
+          "snippet"
         ],
         "useWhen": [
-          "Use to show inline code, or a block of text that people can copy and that can stay masked until revealed."
+          "Use to show inline code, or a block of text that people can copy and that can stay masked until revealed.",
+          "Use for a snippet with a language, a file title, line numbers or marked lines, such as a listing or a diff in a chat answer."
         ]
       }
+    },
+    {
+      "name": "code-highlight",
+      "title": "Code Highlighting",
+      "description": "Optional syntax highlighting for Code Block. Import it once in client code; shiki loads when a block first names a language.",
+      "dependencies": [
+        "shiki@4.5.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/code.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/code/code-highlight.ts",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/components/code/code-highlight.ts"
+        }
+      ],
+      "type": "registry:lib"
     },
     {
       "name": "kbd",
@@ -1871,7 +1911,7 @@
       "description": "Keyboard input notation for keys and grouped shortcuts.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1916,7 +1956,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -1966,7 +2006,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2018,7 +2058,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2064,8 +2104,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json"
       ],
       "files": [
         {
@@ -2122,7 +2162,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2177,8 +2217,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/checkbox.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/checkbox.json"
       ],
       "files": [
         {
@@ -2226,7 +2266,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2284,7 +2324,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2341,7 +2381,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2393,9 +2433,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/toggle.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/toggle.json"
       ],
       "files": [
         {
@@ -2445,9 +2485,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/label.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/label.json"
       ],
       "files": [
         {
@@ -2499,10 +2539,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/label.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/label.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -2557,7 +2597,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2603,7 +2643,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2653,13 +2693,13 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/checkbox.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/menu.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/radio-group.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/switch.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/menu.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/radio-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/switch.json"
       ],
       "files": [
         {
@@ -2716,9 +2756,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json"
       ],
       "files": [
         {
@@ -2773,8 +2813,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -2823,7 +2863,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2869,7 +2909,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -2917,8 +2957,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/switch.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/switch.json"
       ],
       "files": [
         {
@@ -2970,9 +3010,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/menu.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/switch.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/menu.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/switch.json"
       ],
       "files": [
         {
@@ -3022,8 +3062,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -3070,8 +3110,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -3116,9 +3156,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -3178,10 +3218,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -3226,9 +3266,9 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/spinner.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/spinner.json"
       ],
       "files": [
         {
@@ -3291,7 +3331,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -3322,7 +3362,8 @@
         ],
         "description": "Bounded overflow region with native overlay scrollbars, optional edge fades and gutter handling.",
         "knownLimitations": [
-          "The viewport joins the tab order while its content overflows; name it with aria-label or aria-labelledby."
+          "The viewport joins the tab order while its content overflows; name it with aria-label or aria-labelledby.",
+          "The root does not scroll, and ref goes to it. Pass viewportRef to read or set the scroll position of the viewport or to listen for its scroll events."
         ],
         "providerNotes": [],
         "releaseStatus": "stable",
@@ -3346,14 +3387,14 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/sheet.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/skeleton.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tooltip.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/sheet.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/skeleton.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
       ],
       "files": [
         {
@@ -3404,7 +3445,7 @@
       "description": "The Menu under DropdownMenu-prefixed part names.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/menu.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/menu.json"
       ],
       "files": [
         {
@@ -3453,10 +3494,10 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -3501,11 +3542,11 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -3557,8 +3598,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -3610,7 +3651,7 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -3669,10 +3710,10 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/badge.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/badge.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -3730,11 +3771,11 @@
       "description": "Searchable keyboard-first action collection.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/autocomplete.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/dialog.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/kbd.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/autocomplete.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/dialog.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/kbd.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -3780,8 +3821,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -3828,7 +3869,7 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -3870,8 +3911,8 @@
       "description": "Responsive application frame with a sidebar, a header and scrolling content. Search terms: sticky header.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/sidebar.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/sidebar.json"
       ],
       "files": [
         {
@@ -3922,12 +3963,12 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/input.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tabs.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tabs.json"
       ],
       "files": [
         {
@@ -3984,8 +4025,8 @@
       "description": "Right-side drawer for the details of a record, with an optional edit form.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/drawer.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/drawer.json"
       ],
       "files": [
         {
@@ -4033,10 +4074,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -4094,9 +4135,9 @@
       "description": "Sectioned settings surface with passive items and consumer-provided controls, tags and supporting content. Search terms: preferences, rows.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/card.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/card.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -4142,7 +4183,7 @@
       "description": "Show the details of one record as label and value rows, side by side or stacked. Search terms: description list, detail list, key value, properties, dl.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -4196,8 +4237,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tooltip.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
       ],
       "files": [
         {
@@ -4254,10 +4295,10 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tooltip.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
       ],
       "files": [
         {
@@ -4314,8 +4355,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -4374,8 +4415,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/toggle.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/toggle.json"
       ],
       "files": [
         {
@@ -4427,9 +4468,9 @@
       "description": "Show how a total divides into shares as a donut or pie chart. Search terms: ring, distribution.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json"
       ],
       "files": [
         {
@@ -4502,7 +4543,7 @@
         "@types/react-file-icon@1.0.5"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -4529,7 +4570,7 @@
         "description": "Show a file’s type as a document icon with its extension.",
         "knownLimitations": [
           "The type comes from the file name or the extension prop only; the file’s contents and MIME type are not read.",
-          "There is no size prop: resize the box with className and keep its proportion.",
+          "The size prop offers box heights of 16, 20, 24, 32 and 40 px; for another size, resize the box with className and keep its proportion.",
           "The label color follows the type, from the kit status and accent colors; no prop sets it."
         ],
         "providerNotes": [
@@ -4558,8 +4599,8 @@
         "lucide-react@1.18.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/button.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json"
       ],
       "files": [
         {
@@ -4612,15 +4653,72 @@
       }
     },
     {
+      "name": "native-table",
+      "title": "Native Table",
+      "description": "Native HTML table in the look of Table, for content that people read and for cells whose inputs and buttons keep their own tab stops. Search terms: static table, report, markdown table.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/table.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/native-table/native-table.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-table/native-table.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/native-table/native-table.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-table/native-table.css"
+        },
+        {
+          "path": "packages/ui/src/components/native-table/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-table/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/native-table.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when people select rows, sort columns or move between cells with the arrow keys; use Table, the React Aria grid.",
+          "Avoid for the details of one record as label and value pairs; use Data List."
+        ],
+        "description": "Native HTML table in the look of Table, for content that people read and for cells whose inputs and buttons keep their own tab stops.",
+        "knownLimitations": [
+          "Installing Native Table also installs the Table item with react-aria-components, because the two share the stylesheet of Table.",
+          "The table holds no state and renders every row it is given; sorting, filtering, paging and totals stay in the application."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "native-table",
+          "native table",
+          "html table",
+          "static table",
+          "report",
+          "markdown table"
+        ],
+        "useWhen": [
+          "Use for tabular content that people read, such as a report, a price list or a table in rendered markdown.",
+          "Use when the cells hold inputs or buttons that each keep their own tab stop and keys."
+        ]
+      }
+    },
+    {
       "name": "motion",
       "title": "Motion",
-      "description": "Animate items that appear, leave, move or replace one another, and numbers that change, with no animation code. Search terms: presence, animate presence, transition, list, reorder, reveal, swap, enter, exit, rolling number, odometer, counter, tween, chart.",
+      "description": "Animate items that appear, leave, move or replace one another, and numbers that change, with no animation code. Search terms: presence, animate presence, transition, list, reorder, reveal, swap, enter, exit, rolling number, odometer, counter, tween, chart, shimmer, thinking.",
       "dependencies": [
         "@base-ui/react@1.7.0",
         "motion@12.43.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
       ],
       "files": [
         {
@@ -4647,6 +4745,11 @@
           "path": "packages/ui/src/components/motion/motion-number-cells.ts",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/motion/motion-number-cells.ts"
+        },
+        {
+          "path": "packages/ui/src/components/motion/motion-shimmer.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/motion/motion-shimmer.tsx"
         },
         {
           "path": "packages/ui/src/components/motion/motion-values.ts",
@@ -4694,7 +4797,8 @@
           "A leaving item is inert, so focus inside it is lost when it leaves. Move focus before removing it.",
           "MotionNumber formats a number in en-US unless you pass locales, so the server and the client always agree. A string is shown as it is and only its Latin digits (0 to 9) roll; every other character fades.",
           "MotionNumber is read once, as its final text, with no live announcement. Wrap it in your own live region when a change must be announced.",
-          "The value tweens move lists of numbers of the same length. A list that changes its length shows the new values at once, unless the values are keyed with useTweenedRows."
+          "The value tweens move lists of numbers of the same length. A list that changes its length shows the new values at once, unless the values are keyed with useTweenedRows.",
+          "MotionShimmer only draws and announces nothing. Keep the state in its words, and put it in a live region where a change should be announced."
         ],
         "providerNotes": [
           "Depends on the motion package, which the registry installs with the component.",
@@ -4718,7 +4822,9 @@
           "odometer",
           "counter",
           "tween",
-          "chart"
+          "chart",
+          "shimmer",
+          "thinking"
         ],
         "useWhen": [
           "Use when items are added, removed or reordered and the items around them should glide into their new place.",
@@ -4726,7 +4832,8 @@
           "Use when a step, a state or a panel replaces another, so that the old content fades out before the new content fades in and the container follows the new height.",
           "Use when a figure changes in place, such as a total, a rate or a count, and its digits should roll to the new value.",
           "Use when the marks of a chart should glide to new data: the value tweens move numbers toward their new targets.",
-          "Use when a mark or a card should glide after the pointer from item to item without overshooting, as the crosshair and the tooltip of a chart do."
+          "Use when a mark or a card should glide after the pointer from item to item without overshooting, as the crosshair and the tooltip of a chart do.",
+          "Use for a label that is live, such as Thinking, a step that runs or a file that uploads: MotionShimmer sweeps a highlight across its text."
         ]
       }
     },
@@ -4743,10 +4850,10 @@
         "@types/d3-array@3.2.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/badge.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/tooltip.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/badge.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
       ],
       "files": [
         {
@@ -4852,8 +4959,8 @@
       "title": "Line Chart",
       "description": "Show how one or several measures change over time or across ordered categories. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json"
       ],
       "files": [
         {
@@ -4914,8 +5021,8 @@
       "title": "Area Chart",
       "description": "Show how one or several measures change over time as filled areas, overlaid or stacked. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json"
       ],
       "files": [
         {
@@ -4981,9 +5088,9 @@
         "d3-scale@4.0.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json"
       ],
       "files": [
         {
@@ -5058,9 +5165,9 @@
       "title": "Sparkline",
       "description": "Show the trend of one or several measures in a small chart without axes. Search terms: spark chart, spark line, spark area, mini chart, inline chart, metric.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
       ],
       "files": [
         {
@@ -5119,10 +5226,10 @@
       "title": "Bar List",
       "description": "Rank labeled values with a bar for each, relative to the largest. Search terms: ranking, top list, leaderboard, horizontal bars, chart, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.6.2/base.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/chart.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/motion.json",
-        "https://ui.siteplane.io/registry/v/1.6.2/separator.json"
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/chart.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
       ],
       "files": [
         {
@@ -5175,6 +5282,544 @@
         "useWhen": [
           "Use when a short ranked list of labeled values, such as top pages or traffic sources, should read at a glance.",
           "Use when the order of the rows is the point and each value should be seen next to the largest."
+        ]
+      }
+    },
+    {
+      "name": "message-scroller",
+      "title": "Message Scroller",
+      "description": "Scroll a chat thread that opens at the latest message, follows a streaming reply and leads back to the latest message. Search terms: conversation, scroll to bottom, auto scroll, stick to bottom, AI chat.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/message-scroller/message-scroller.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/message-scroller.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/message-scroller/message-scroller-context.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/message-scroller-context.ts"
+        },
+        {
+          "path": "packages/ui/src/components/message-scroller/message-scroller-controller.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/message-scroller-controller.ts"
+        },
+        {
+          "path": "packages/ui/src/components/message-scroller/message-scroller-math.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/message-scroller-math.ts"
+        },
+        {
+          "path": "packages/ui/src/components/message-scroller/message-scroller.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/message-scroller.css"
+        },
+        {
+          "path": "packages/ui/src/components/message-scroller/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message-scroller/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/message-scroller.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for content that does not grow at its end, such as a feed or a list; use Scroll Area.",
+          "Avoid for a long history loaded at once; the rows are not virtualized, so load older messages in pages."
+        ],
+        "description": "Scroll a chat thread that opens at the latest message, follows a streaming reply and leads back to the latest message.",
+        "knownLimitations": [
+          "Rows are not virtualized. Every row stays mounted, and rows outside the viewport only skip their rendering work.",
+          "Only the MessageScrollerItem children of MessageScrollerContent count as rows; a row inside another element is not measured.",
+          "The reader's place is kept for rows added above the first row. Rows inserted between two rows take their place without that correction.",
+          "Screen readers treat aria-busy differently, so check how a streaming reply is announced with the screen readers your users rely on."
+        ],
+        "providerNotes": [
+          "The responding and complete messages go to the kit's shared polite live region, which the registry installs with the scroller.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting make the row entrance and every scroll instant."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "message-scroller",
+          "chat",
+          "conversation",
+          "thread",
+          "scroll to bottom",
+          "auto scroll",
+          "stick to bottom",
+          "streaming",
+          "AI chat"
+        ],
+        "useWhen": [
+          "Use for the thread of a chat or an AI assistant, where turns arrive at the end and replies stream in.",
+          "Use when a reader who scrolls up to read must stay in place while a reply streams, with one press back to the latest message."
+        ]
+      }
+    },
+    {
+      "name": "message",
+      "title": "Message",
+      "description": "Lay out one turn of a conversation with the message, its actions and, in a chat between people, an avatar and a header. Search terms: chat message, message actions, message group.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/message/message.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message/message.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/message/message.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message/message.css"
+        },
+        {
+          "path": "packages/ui/src/components/message/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/message/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/message.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a line in a conversation that is not a message, such as a status, a note or a date; use Marker.",
+          "Avoid as the surface of a message; Message draws none, so put the text in a Bubble."
+        ],
+        "description": "Lay out one turn of a conversation with the message, its actions and, in a chat between people, an avatar and a header.",
+        "knownLimitations": [
+          "Message lays out a turn and keeps no state. Selection, editing, reactions and read receipts belong to the application.",
+          "With a footer, the avatar's slot reserves a footer row of 24 px. A taller footer needs --sp-message-footer-size set to its height."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "message",
+          "chat message",
+          "turn",
+          "conversation",
+          "message actions",
+          "message group"
+        ],
+        "useWhen": [
+          "Use for each turn of a chat or an AI conversation, to place the message and its actions, and in a chat between people the avatar, the sender's name and the delivery status.",
+          "Use MessageGroup for consecutive turns from one sender, so that their content lines up beside one avatar."
+        ]
+      }
+    },
+    {
+      "name": "bubble",
+      "title": "Bubble",
+      "description": "Show the text of a chat message on a surface that fits its sender and purpose. Search terms: chat bubble, message bubble, speech bubble.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/bubble/bubble.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bubble/bubble.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/bubble/bubble.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bubble/bubble.css"
+        },
+        {
+          "path": "packages/ui/src/components/bubble/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/bubble/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/bubble.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a message people click; a bubble is not interactive, so put a Button or a link inside it or in the footer of its Message.",
+          "Avoid for a status, a note or a date in a conversation; use Marker."
+        ],
+        "description": "Show the text of a chat message on a surface that fits its sender and purpose.",
+        "knownLimitations": [
+          "Bubbles show no reactions and have no render prop for a link or a button.",
+          "A variant's color alone does not say what happened, so state a failure in the text of a destructive bubble."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "bubble",
+          "chat bubble",
+          "message bubble",
+          "speech bubble",
+          "chat"
+        ],
+        "useWhen": [
+          "Use for the text of a message in an AI chat, with muted for the person's turns and ghost for the assistant's text.",
+          "Use default or tinted for the person's own messages in a conversation between people, and destructive for a message or a reply that failed."
+        ]
+      }
+    },
+    {
+      "name": "marker",
+      "title": "Marker",
+      "description": "Show a line in a conversation that is not a message, such as a status, a note or a date. Search terms: status line, system message, date separator, divider, thinking, typing indicator.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/marker/marker.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/marker/marker.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/marker/marker.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/marker/marker.css"
+        },
+        {
+          "path": "packages/ui/src/components/marker/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/marker/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/marker.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for the steps an agent took, such as its tool calls; use Trace.",
+          "Avoid for a message from a person or the assistant; use Message with a Bubble."
+        ],
+        "description": "Show a line in a conversation that is not a message, such as a status, a note or a date.",
+        "knownLimitations": [
+          "A marker has no role by default. Pass role=\"status\" for a line that changes, such as a live status.",
+          "There is no render prop, so an action such as Restore is a Button inside the marker."
+        ],
+        "providerNotes": [
+          "The separator variant draws the kit Separator, which the registry installs with the marker."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "marker",
+          "status line",
+          "system message",
+          "date separator",
+          "divider",
+          "thinking",
+          "typing indicator"
+        ],
+        "useWhen": [
+          "Use for a live status such as Thinking, a system note such as a change of model, a date between turns or a note that a reply was stopped."
+        ]
+      }
+    },
+    {
+      "name": "trace",
+      "title": "Trace",
+      "description": "Show the steps an AI agent took, such as its reasoning, tool calls and sources, as one-line rows that can expand to their details. Search terms: agent steps, thinking, chain of thought, citations.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/collapsible.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/trace/trace.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/trace/trace.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/trace/trace.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/trace/trace.css"
+        },
+        {
+          "path": "packages/ui/src/components/trace/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/trace/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/trace.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a history of events by people, such as an audit log; Timeline shows events in time order.",
+          "Avoid for steps a person moves through, such as a checkout; Stepper shows where they are.",
+          "Avoid for a question that waits for the person, such as an approval of a tool call; ask it in an Alert after the Trace, and add the line once it is answered."
+        ],
+        "description": "Show the steps an AI agent took, such as its reasoning, tool calls and sources, as one-line rows that can expand to their details.",
+        "knownLimitations": [
+          "Trace presents steps and holds no logic: the app maps its messages to lines, orders them and measures durations, which a description shows as text such as 6s.",
+          "The title is the accessible name of a line, and the status is not announced on its own: write it into the title, in the present tense while a step runs and as Failed to … when it failed.",
+          "A step that opens while it runs needs the app to keep the reader's choice in state and pass open ?? running; a step that is not controlled starts closed.",
+          "Titles and descriptions stay on one line; a long one ends with an ellipsis and carries its full text in a title attribute, taken from text children.",
+          "A link opens in a new tab only with target _blank, which the line announces to screen readers; the arrow icon after the title is the app's."
+        ],
+        "providerNotes": [
+          "Depends on Collapsible, Button and the motion component, which the registry installs with Trace.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting keep the shimmer of a running title still and open and close the details at once."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "trace",
+          "agent steps",
+          "reasoning",
+          "thinking",
+          "tool call",
+          "chain of thought",
+          "sources",
+          "citations",
+          "ai"
+        ],
+        "useWhen": [
+          "Use to show what an AI agent did while it answered: its reasoning, the tools it called and the sources it read, each as a line with a status.",
+          "Use for a step that expands to its details, such as the output of a tool call in a Code Block, or for a list of the links an answer used."
+        ]
+      }
+    },
+    {
+      "name": "attachment",
+      "title": "Attachment",
+      "description": "Show a file or an image attached to a message or a draft, with its upload state. Search terms: thumbnail, file chip, file part, chat.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/scroll-area.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/attachment/attachment.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/attachment/attachment.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/attachment/attachment.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/attachment/attachment.css"
+        },
+        {
+          "path": "packages/ui/src/components/attachment/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/attachment/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/attachment.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid as the dropzone of an upload form; the card shows a file that was picked and takes no drop.",
+          "Avoid for a file manager or a document list with folders, sorting or bulk actions."
+        ],
+        "description": "Show a file or an image attached to a message or a draft, with its upload state.",
+        "knownLimitations": [
+          "The card uploads nothing and reads no file. The application starts, retries and cancels the uploads and gives each card its state and its details in words.",
+          "A File Type Icon takes the type from the file name only; pass the thumbnail of an image as an img in AttachmentMedia.",
+          "AttachmentAction and AttachmentTrigger have no text, so each needs an aria-label that names the action and the file.",
+          "AttachmentGroup keeps its cards in one row that scrolls and does not wrap. A card that leaves it is inert while it fades, so move focus before removing one."
+        ],
+        "providerNotes": [
+          "Depends on Button, Scroll Area and the motion component, which the registry installs with the attachment.",
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting stop the shimmer and let cards join and leave a group at once."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "attachment",
+          "file",
+          "image",
+          "thumbnail",
+          "upload",
+          "file chip",
+          "file part",
+          "chat"
+        ],
+        "useWhen": [
+          "Use when a draft or a message carries files or images, each with its name, its details and actions such as remove, retry or download.",
+          "Use when the state of an upload, from waiting to done or failed, should show on the file itself."
+        ]
+      }
+    },
+    {
+      "name": "prompt-input",
+      "title": "Prompt Input",
+      "description": "A message field for chat and AI interfaces that sends on Enter and turns Send into Stop while a reply runs. Search terms: composer, chat input, message input.",
+      "dependencies": [
+        "lucide-react@1.18.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/form.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/motion.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/tooltip.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/prompt-input/prompt-input.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/prompt-input/prompt-input.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/prompt-input/prompt-input-keys.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/prompt-input/prompt-input-keys.ts"
+        },
+        {
+          "path": "packages/ui/src/components/prompt-input/prompt-input.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/prompt-input/prompt-input.css"
+        },
+        {
+          "path": "packages/ui/src/components/prompt-input/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/prompt-input/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/prompt-input.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a multi-line form field such as a comment or a description; use Textarea in a Field.",
+          "Avoid for a search box; use Input or Command."
+        ],
+        "description": "A message field for chat and AI interfaces that sends on Enter and turns Send into Stop while a reply runs.",
+        "knownLimitations": [
+          "The field sends nothing. onSubmit hands over the trimmed text, and the application owns the messages, the files, the model and the transport.",
+          "onSubmit receives the text only; keep the attached files in your own state and send them with it.",
+          "Send becomes Stop while status is submitted or streaming. The field stays editable then, and no message is sent until the status changes.",
+          "The model and effort pickers are Menus in the toolbar, not parts of the field; the application keeps the choices and sends them with the message.",
+          "The field grows with its draft where the browser supports field-sizing: content, and keeps its starting height elsewhere.",
+          "A card that leaves the attachments row is inert while it fades, so move focus to the field before removing it."
+        ],
+        "providerNotes": [
+          "Builds on Form, Input, Input Group, Button, Tooltip and the motion component, which the registry installs with it.",
+          "The tooltip of the attach button is the installed Tooltip. A TooltipProvider sets its delay; without one it opens after Base UI’s default delay."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "prompt-input",
+          "prompt",
+          "composer",
+          "chat input",
+          "message input",
+          "chat",
+          "ai",
+          "send",
+          "stop"
+        ],
+        "useWhen": [
+          "Use for the message field of a chat or an AI assistant, where Enter sends, Shift+Enter adds a line and Send becomes Stop while a reply runs.",
+          "Use when a message can carry attachments, or when the toolbar holds pickers such as the model."
+        ]
+      }
+    },
+    {
+      "name": "typeset",
+      "title": "Typeset",
+      "description": "Set rendered markdown, such as a chat answer or a document, in the kit's type, with a map for the components prop of a markdown renderer. Search terms: prose, typography, rich text, react-markdown, streamdown.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/1.7.0/base.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/button.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/code.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/native-table.json",
+        "https://ui.siteplane.io/registry/v/1.7.0/separator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/typeset/typeset.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/typeset/typeset.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/typeset/typeset.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/typeset/typeset.css"
+        },
+        {
+          "path": "packages/ui/src/components/typeset/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/typeset/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/typeset.md",
+      "categories": [
+        "Chat & AI"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for the labels and text of an interface, such as a card, a form or a dialog; kit components set their own type.",
+          "Avoid for text that people edit; Typeset only presents rendered markdown.",
+          "Avoid for a data table that sorts, selects or paginates; Table owns that, and a table in written text only presents its cells."
+        ],
+        "description": "Set rendered markdown, such as a chat answer or a document, in the kit's type, with a map for the components prop of a markdown renderer.",
+        "knownLimitations": [
+          "The kit has no markdown renderer: render markdown with react-markdown, Streamdown or another renderer that takes a components map, and pass typesetComponents.",
+          "The map covers paragraphs, headings, lists, links, quotes, rules, strong text, inline code, code fences and tables. Images, emphasis and strikethrough render as the renderer renders them.",
+          "A code fence highlights only once the app has turned on the optional code-highlight item; until then, and without it, a fence shows plain text.",
+          "A table takes no inline style from the renderer: the alignment of a column becomes the alignment of its cells, and the rest is dropped.",
+          "Which markdown and HTML is allowed, and how links and images are checked, is the renderer's."
+        ],
+        "providerNotes": [
+          "Depends on Code, Button, Separator and Native Table, which the registry installs with Typeset."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "typeset",
+          "markdown",
+          "prose",
+          "typography",
+          "rich text",
+          "react-markdown",
+          "streamdown"
+        ],
+        "useWhen": [
+          "Use to render the markdown of an AI answer, through typesetComponents in react-markdown or Streamdown, in the kit's type.",
+          "Use for written text with headings, lists, quotes, code and tables, such as a help article or a long answer, in the document density."
         ]
       }
     }

@@ -3943,6 +3943,15 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
     [data-pressed]
   ):not(:disabled, [aria-disabled="true"])
   > .sp-button-content
+  > svg:first-child,
+:root
+  .sp-sidebar-menu-item:has(> [data-sidebar="menu-action"][data-popup-open])
+  > [data-chassis][data-profile="navigation-row"]:not(
+    [data-active="true"],
+    :disabled,
+    [aria-disabled="true"]
+  )
+  > .sp-button-content
   > svg:first-child {
   color: var(--sp-rw-fg-secondary);
 }
@@ -3999,7 +4008,14 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   [data-chassis]:is(
     [data-profile="navigation-row"],
     [data-profile="navigation-sub-row"]
-  )[data-active="true"] {
+  )[data-active="true"],
+:root
+  .sp-sidebar-menu-item:has(> [data-sidebar="menu-action"][data-popup-open])
+  > [data-chassis][data-profile="navigation-row"]:not(
+    [data-active="true"],
+    :disabled,
+    [aria-disabled="true"]
+  ) {
   --sp-rw-button-text: var(--sp-rw-fg-primary);
   color: var(--sidebar-accent-foreground);
 }
@@ -4028,6 +4044,21 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   --sp-rw-button-interaction-rest: var(--sp-rw-interaction-selected);
   --sp-rw-button-interaction-hover: var(--sp-rw-interaction-selected);
   --sp-rw-button-interaction-pressed: var(--sp-rw-interaction-selected);
+}
+
+/* While the action of a row has its menu open, the row keeps its hover look,
+ * so the menu stays tied to its row when the pointer moves into it (Lukas, 29
+ * October 2026, as in the Claude app). The rest step takes the row's own hover
+ * step, and the text and the leading icon take their hover colors in the rules
+ * above. A current row keeps its selected fill. */
+:root
+  .sp-sidebar-menu-item:has(> [data-sidebar="menu-action"][data-popup-open])
+  > [data-chassis][data-profile="navigation-row"]:not(
+    [data-active="true"],
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  --sp-rw-button-interaction-rest: var(--sp-rw-button-interaction-hover);
 }
 
 :root [data-chassis][data-profile="compact-icon-action"] {
@@ -9168,7 +9199,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   box-shadow: none;
 }
 
-:root .sp-card[data-variant="message"] {
+/* The message surface: the border, the small corner at the start and no shadow.
+ * The outline Bubble shares this rule; its fill is bubble.css. */
+:root .sp-card[data-variant="message"],
+:root .sp-bubble[data-variant="outline"] > .sp-bubble-content {
   border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
   border-start-start-radius: var(--sp-rw-radius-xs);
   box-shadow: none;

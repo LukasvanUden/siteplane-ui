@@ -350,7 +350,53 @@ html[data-motion-reduce="true"] .sp-skeleton-motion,
   animation: none;
 }
 
+/* MotionShimmer: live text shows at 45 % of its colour while a band of the
+ * full colour sweeps across it. The text keeps its colour and only its fill
+ * turns transparent, so currentColor in the gradient is the text colour of
+ * any tone. The image is 2.5 times the text's width; moving its position from
+ * 100 % to 0 % carries the band from before the start to past the end. */
+.sp-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in oklab, currentColor 45%, transparent) 40%,
+    currentColor 50%,
+    color-mix(in oklab, currentColor 45%, transparent) 60%
+  );
+  background-position: 100% 0;
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: sp-shimmer calc(var(--motion-duration-loop) * 2)
+    var(--motion-ease-linear) infinite;
+}
+
+.sp-shimmer:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+  animation-direction: reverse;
+}
+
+@keyframes sp-shimmer {
+  to {
+    background-position: 0% 0;
+  }
+}
+
+/* The shimmer is a loop, so it stops in its own rule (M5): the text stands
+ * still at its full colour. */
+html[data-motion-reduce="true"] .sp-shimmer,
+:where([data-sp-motion="reduced"]) .sp-shimmer {
+  animation: none;
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .sp-shimmer {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
   .sp-floating-panel {
     transition-duration: 1ms;
   }

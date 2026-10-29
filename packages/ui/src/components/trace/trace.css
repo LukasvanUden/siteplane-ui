@@ -1,0 +1,55 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A Trace is the steps an agent took, as quiet rows of text: the tertiary
+   * text colour and the kit's 14 px body step. Zero specificity, so a
+   * className or a utility refines it. A row that does something, a
+   * CollapsibleTrigger or a TraceLink, is the kit's muted inline Button
+   * (rulebook T2): it rests in this colour and turns primary on hover, press
+   * and keyboard focus, and its line follows it because the line sets no
+   * colour of its own. */
+  :where(.sp-trace) {
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-14);
+    line-height: var(--sp-rw-line-21);
+  }
+
+  /* Work that failed reads in the destructive text tone, also while the
+   * pointer is over its row. The title says so in words: colour alone is
+   * never the status. */
+  .sp-trace-line[data-status="error"] {
+    color: var(--sp-rw-fg-destructive);
+  }
+
+  /* Work that has not started, such as a step of a plan. */
+  .sp-trace-line[data-status="pending"] {
+    opacity: 0.6;
+  }
+
+  /* An icon after the title is an indicator, such as the arrow of a link that
+   * leaves the page. It sits half the line's gap closer to the words. */
+  .sp-trace-title ~ .sp-trace-icon {
+    margin-inline-start: calc(var(--sp-rw-space-1) * -1);
+  }
+
+  /* The detail of a row hangs from a rail under the centre of the row's 16 px
+   * icon, with its text starting where the title starts (24 px). The rail is
+   * the hairline of the surface tokens, so it paints as thick as every other
+   * hairline at every pixel density; half of its width is taken off the
+   * inset on each side of it, which keeps the centre and the text where they
+   * are. The space below is smaller than the space above: the Trace's gap
+   * follows it. Logical properties mirror it in a right-to-left page. */
+  .sp-trace-collapsible-content {
+    min-width: 0;
+    margin-inline-start: calc(
+      var(--sp-rw-space-2) - var(--sp-rw-border-default) / 2
+    );
+    border-inline-start: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+    padding-block: var(--sp-rw-space-2) var(--sp-rw-space-1);
+    padding-inline: calc(var(--sp-rw-space-4) - var(--sp-rw-border-default) / 2)
+      var(--sp-rw-space-1);
+    color: var(--sp-rw-fg-tertiary);
+    overflow-wrap: anywhere;
+  }
+}

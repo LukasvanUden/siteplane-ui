@@ -1,0 +1,71 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A line in a conversation that is not a message: one row of quiet text
+   * with an optional icon, as wide as the thread. */
+  :where(.sp-marker) {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    width: 100%;
+    min-width: 0;
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-14);
+    line-height: var(--sp-rw-line-21);
+    text-align: start;
+  }
+
+  /* A bottom border under the row, in the color of the kit's dividers. */
+  .sp-marker[data-variant="border"] {
+    padding-block-end: var(--sp-rw-space-2);
+    border-block-end: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+  }
+
+  /* The content sits between two divider lines. The lines are the kit's
+   * Separator, which brings its color and thickness; they share the room the
+   * label leaves and give way first when it is long. */
+  .sp-marker[data-variant="separator"] {
+    gap: var(--sp-rw-space-3);
+    text-align: center;
+  }
+
+  .sp-marker > .sp-separator {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* The icon, the text and an action of a divider stay together between the
+   * lines, closer to one another than to the lines. */
+  :where(.sp-marker-center) {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* A decorative icon of 16 px (I3); a size class on the icon wins. Its box is
+   * one text line high at the start of the row, so beside text that wraps it
+   * stays on the first line, as an Alert's icon does. */
+  :where(.sp-marker-icon) {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    height: var(--sp-rw-line-21);
+  }
+
+  :where(.sp-marker-icon > svg:not([class*="size-"])) {
+    width: var(--sp-rw-control-icon);
+    height: var(--sp-rw-control-icon);
+  }
+
+  /* The text wraps long values instead of widening the thread (K5). */
+  :where(.sp-marker-content) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}

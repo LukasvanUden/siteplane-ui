@@ -1,0 +1,115 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The surface of a message. Bubble places it and BubbleContent draws it.
+   * A bubble is as wide as its text, up to 80% of the width it sits in, and
+   * ghost takes the full width (below). Placement follows `align`; inside a
+   * Message the turn gathers its bubbles at its own end as well (message.css).
+   *
+   * The proportions are those of a chat bubble: 8 px above and below the text,
+   * 16 px beside it, and the 16 px radius of a dialog. Their custom
+   * properties are the tuning points, set on a bubble or on any ancestor; the
+   * Message reads --sp-bubble-padding-inline too, so its header and footer
+   * start where the text starts. */
+  :where(.sp-bubble) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-rw-space-1);
+    width: fit-content;
+    max-width: 80%;
+    min-width: 0;
+  }
+
+  .sp-bubble[data-align="end"] {
+    align-self: flex-end;
+  }
+
+  .sp-bubble[data-variant="ghost"] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Every variant has the same box: the 1 px border is transparent unless a
+   * variant draws it, so the outline bubble is no larger than the filled ones.
+   * Long values wrap instead of widening the bubble (K5). */
+  :where(.sp-bubble-content) {
+    --sp-bubble-surface-radius: var(
+      --sp-bubble-radius,
+      var(--sp-rw-radius-dialog)
+    );
+
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    padding-block: var(--sp-bubble-padding-block, var(--sp-rw-space-2));
+    padding-inline: var(--sp-bubble-padding-inline, var(--sp-rw-space-4));
+    border: var(--sp-rw-border-default) solid transparent;
+    border-radius: var(--sp-bubble-surface-radius);
+    font-size: var(--sp-rw-font-14);
+    line-height: var(--sp-rw-line-21);
+    overflow-wrap: anywhere;
+  }
+
+  /* The accent fill, for the current person's own text. */
+  .sp-bubble[data-variant="default"] > .sp-bubble-content {
+    background: var(--sp-rw-bg-accent);
+    color: var(--sp-rw-fg-on-accent);
+  }
+
+  .sp-bubble[data-variant="muted"] > .sp-bubble-content {
+    background: var(--sp-rw-bg-muted);
+    color: var(--sp-rw-fg-primary);
+  }
+
+  .sp-bubble[data-variant="tinted"] > .sp-bubble-content {
+    background: var(--sp-rw-bg-accent-translucent);
+    color: var(--sp-rw-fg-primary);
+  }
+
+  /* The border, the small corner at the start and the missing shadow of the
+   * outline bubble are the Card's message surface: its rule in
+   * design-rework.css lists this bubble as a second selector. Only the fill
+   * and the text color are set here. */
+  .sp-bubble[data-variant="outline"] > .sp-bubble-content {
+    background: var(--sp-rw-bg-secondary);
+    color: var(--sp-rw-fg-primary);
+  }
+
+  /* An end bubble has its small corner at the end, on the sender's side. The
+   * Message's align counts as well as the bubble's own, so either one is
+   * enough. */
+  :root
+    .sp-bubble[data-variant="outline"][data-align="end"]
+    > .sp-bubble-content,
+  :root
+    .sp-message[data-align="end"]
+    .sp-bubble[data-variant="outline"]
+    > .sp-bubble-content {
+    border-start-start-radius: var(--sp-bubble-surface-radius);
+    border-start-end-radius: var(--sp-rw-radius-xs);
+  }
+
+  /* Ghost has no surface: the text sits on whatever is behind it, full width. */
+  .sp-bubble[data-variant="ghost"] > .sp-bubble-content {
+    width: 100%;
+    padding: 0;
+    border-width: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  /* A failure: the error tint of a Badge, with the error text color. */
+  .sp-bubble[data-variant="destructive"] > .sp-bubble-content {
+    background: var(--sp-rw-bg-destructive-translucent);
+    color: var(--sp-rw-fg-destructive);
+  }
+
+  /* Consecutive bubbles from the same sender. */
+  :where(.sp-bubble-group) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-rw-space-2);
+    width: 100%;
+    min-width: 0;
+  }
+}

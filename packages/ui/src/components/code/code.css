@@ -1,0 +1,132 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A highlighted token takes the colour of the theme that applies: the
+   * light-dark() pair follows the colour scheme (design-rework.css sets
+   * `color-scheme` for .dark and [data-theme="dark"]), so a change of theme
+   * needs no new render. A token in the block's own text colour has no span. */
+  :where(.sp-code-token) {
+    color: light-dark(var(--sp-code-token-light), var(--sp-code-token-dark));
+  }
+
+  :where(.sp-code-token[data-bold]) {
+    font-weight: var(--sp-rw-font-weight-strong);
+  }
+
+  :where(.sp-code-token[data-italic]) {
+    font-style: italic;
+  }
+
+  :where(.sp-code-token[data-underline]) {
+    text-decoration-line: underline;
+  }
+
+  /* The header row of a titled block: the title, and the reveal and copy
+   * actions at the end. It sits inside the block's <pre>, so it takes the
+   * sans type of the kit instead of the code's, and stays out of a
+   * selection. The insets and the gap below it are the block's utilities
+   * (code.tsx), as for the code under it. */
+  :where(.sp-code-block-header) {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    min-width: 0;
+    color: var(--sp-rw-fg-secondary);
+    font-family: var(--sp-rw-font-family-default);
+    font-size: var(--sp-rw-font-13);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-18);
+    white-space: normal;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* A long title is cut with an ellipsis and carries its text as a title
+   * attribute (rulebook K5); an icon in it is 16 px (I3). */
+  :where(.sp-code-block-title) {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :where(.sp-code-block-title > svg:not([class*="size-"])) {
+    flex-shrink: 0;
+    width: var(--sp-rw-control-icon);
+    height: var(--sp-rw-control-icon);
+  }
+
+  :where(.sp-code-block-actions) {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--sp-rw-space-1);
+    margin-inline-start: auto;
+  }
+
+  /* One line of a block that numbers or marks its lines. A line is a block of
+   * its own, so its fill reaches both edges of the block; an empty line holds
+   * a line break (code.tsx) and keeps its height. */
+  :where(.sp-code-block-line) {
+    position: relative;
+    display: block;
+  }
+
+  /* With numbers, the line is a grid of the gutter and the code. The gutter
+   * is as wide as the widest number (code.tsx sets --sp-code-gutter in ch, so
+   * every line has the same width), and a long line wraps in its own column,
+   * under its first row of code and not under its number. */
+  :where(.sp-code-block-line[data-numbered]) {
+    display: grid;
+    grid-template-columns: var(--sp-code-gutter, 2ch) minmax(0, 1fr);
+    column-gap: var(--sp-rw-space-3);
+  }
+
+  :where(.sp-code-block-line-number) {
+    color: var(--sp-rw-fg-tertiary);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  :where(.sp-code-block-line-content) {
+    min-width: 0;
+  }
+
+  /* Added, removed and highlighted lines: a fill from the kit's tokens, and
+   * for a change also a mark in the padding before the line, so the change is
+   * not told by colour alone. The mark is outside a selection and the copied
+   * value (the value is copied, not the lines). */
+  .sp-code-block-line[data-line-state="added"] {
+    background: var(--sp-rw-bg-positive-translucent);
+  }
+
+  .sp-code-block-line[data-line-state="removed"] {
+    background: var(--sp-rw-bg-destructive-translucent);
+  }
+
+  .sp-code-block-line[data-line-state="highlighted"] {
+    background: var(--sp-rw-bg-muted);
+  }
+
+  :where(.sp-code-block-line-mark) {
+    position: absolute;
+    inset-block-start: 0;
+    color: var(--sp-rw-fg-secondary);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .sp-code-block-line[data-line-state="added"] > .sp-code-block-line-mark {
+    color: var(--sp-rw-fg-positive);
+  }
+
+  .sp-code-block-line[data-line-state="removed"] > .sp-code-block-line-mark {
+    color: var(--sp-rw-fg-destructive);
+  }
+}

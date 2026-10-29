@@ -1,0 +1,160 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* One turn of a conversation. The turn is a grid of an avatar column and a
+   * content column. The two-column template applies only while a MessageAvatar
+   * is there, so a turn without one leaves no track and no gap (S11); an empty
+   * MessageAvatar keeps its column on purpose, so the earlier turns of a group
+   * line up with the turn that shows the avatar. `align="end"` mirrors the
+   * grid. The areas follow the writing direction, so a right-to-left page
+   * mirrors it once more.
+   *
+   * The custom properties are the tuning points of a turn. A className or a
+   * theme sets them on the turn or on the thread around it. The inset of the
+   * header and footer is the text inset of a Bubble, so both read the same
+   * property (--sp-bubble-padding-inline, set on an ancestor of the two). */
+  :where(.sp-message) {
+    --sp-message-avatar-gap: var(--sp-rw-space-2);
+    --sp-message-avatar-size: var(--sp-rw-space-8);
+    --sp-message-footer-size: var(--sp-rw-control-xs);
+    --sp-message-gap: var(--sp-rw-space-2);
+    --sp-message-inset: var(--sp-bubble-padding-inline, var(--sp-rw-space-4));
+
+    display: grid;
+    grid-template-areas: "content";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--sp-message-avatar-gap);
+    min-width: 0;
+  }
+
+  .sp-message:has(> .sp-message-avatar) {
+    grid-template-areas: "avatar content";
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .sp-message[data-align="end"]:has(> .sp-message-avatar) {
+    grid-template-areas: "content avatar";
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  /* Consecutive turns from the same sender. */
+  :where(.sp-message-group) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-rw-space-2);
+    min-width: 0;
+  }
+
+  /* The avatar anchors to the bottom of the content. The column is at least as
+   * wide as the default avatar, so an empty one still holds the place. The
+   * avatar is a grid item like the content, so the row is as high as the
+   * taller of the two: a turn shorter than its avatar grows to fit it, and the
+   * avatar never leaves the turn's box. */
+  :where(.sp-message-avatar) {
+    display: flex;
+    grid-area: avatar;
+    align-items: center;
+    align-self: end;
+    justify-content: center;
+    min-width: var(--sp-message-avatar-size);
+  }
+
+  /* With a footer, the avatar's slot reserves the footer's row and the gap
+   * above it below the avatar. The slot still ends at the bottom of the turn,
+   * so the avatar ends where the last bubble ends instead of at the footer.
+   * The footer row is at least --sp-message-footer-size high (below), which
+   * makes the reserved room exact for actions and for a line of text alike;
+   * taller footer content needs the property set to its height. The room is
+   * padding of the slot, which grid sizing counts. */
+  .sp-message:has(> .sp-message-content > .sp-message-footer:not(:empty))
+    > .sp-message-avatar {
+    padding-block-end: calc(
+      var(--sp-message-footer-size) + var(--sp-message-gap)
+    );
+  }
+
+  /* Beside an avatar the content also ends at the bottom of the row. When the
+   * avatar is the taller of the two, the content stays level with its bottom
+   * and the extra room is above it, so the avatar and the last bubble end
+   * together. */
+  .sp-message:has(> .sp-message-avatar) > .sp-message-content {
+    align-self: end;
+  }
+
+  /* The content column stacks the header, the bubbles and the footer with
+   * gap (S10). Long values wrap instead of widening the turn (K5). */
+  :where(.sp-message-content) {
+    display: flex;
+    flex-direction: column;
+    grid-area: content;
+    gap: var(--sp-message-gap);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* An end turn gathers its content at the end: bubbles, attachments and the
+   * footer hug that side, and a Bubble Group aligns its bubbles to it. The
+   * header stays at the start. */
+  .sp-message[data-align="end"] > .sp-message-content {
+    align-items: flex-end;
+  }
+
+  .sp-message[data-align="end"] .sp-bubble-group {
+    align-items: flex-end;
+  }
+
+  /* An Attachment Group fills its column so that a long row can scroll; in an
+   * end turn it is only as wide as its cards, so they hug the end like the
+   * bubble, and it still scrolls once the cards are wider than the column. */
+  .sp-message[data-align="end"] .sp-attachment-group {
+    width: fit-content;
+  }
+
+  .sp-message[data-align="end"] > .sp-message-content > .sp-message-header {
+    align-self: flex-start;
+  }
+
+  /* The header and the footer are quiet lines of 12 px in the tertiary text
+   * color. */
+  :where(.sp-message-header) {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    min-width: 0;
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-18);
+  }
+
+  :where(.sp-message-footer) {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-1);
+    max-width: 100%;
+    min-width: 0;
+    min-height: var(--sp-message-footer-size);
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-18);
+  }
+
+  .sp-message[data-align="end"] > .sp-message-content > .sp-message-footer {
+    justify-content: flex-end;
+  }
+
+  /* An empty header or footer, such as a footer whose actions are not there
+   * yet, leaves no row and no gap behind (S11). */
+  :where(.sp-message-header:empty),
+  :where(.sp-message-footer:empty) {
+    display: none;
+  }
+
+  /* Under a framed bubble the header and the footer start where the bubble's
+   * text starts. Unframed content, a ghost bubble, starts at the edge. */
+  .sp-message:has(.sp-bubble:not([data-variant="ghost"])) .sp-message-header,
+  .sp-message:has(.sp-bubble:not([data-variant="ghost"])) .sp-message-footer {
+    padding-inline: var(--sp-message-inset);
+  }
+}

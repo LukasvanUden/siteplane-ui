@@ -1,0 +1,25 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The toolbar under the field holds two groups: the controls that start the
+   * row and the ones that end it. A group may shrink below its controls, and
+   * the end group sits at the end of the row also when the start group is
+   * absent or the row wraps. The InputGroup's block addon owns the row's
+   * padding and gap. */
+  .sp-prompt-input-toolbar-group {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+  }
+
+  .sp-prompt-input-toolbar-group[data-align="end"] {
+    margin-inline-start: auto;
+  }
+
+  /* The attachments row shrinks with the field, so a row of cards scrolls
+   * inside it instead of widening the field. */
+  .sp-prompt-input-attachments {
+    min-width: 0;
+  }
+}

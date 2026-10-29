@@ -8,6 +8,22 @@ import { baseClass, slotClass } from "../../system/utils/slot-class";
 
 import "./scroll-area.css";
 
+export type ScrollAreaProps =
+  WithStringClassName<ScrollAreaPrimitive.Root.Props> & {
+    scrollFade?: boolean;
+    scrollbar?: "auto" | "hidden";
+    scrollbarGutter?: boolean;
+    fill?: boolean;
+    clampContentMinWidth?: boolean;
+    /**
+     * The ref of the viewport, the element that scrolls (slot
+     * `scroll-area-viewport`). `ref` goes to the root, which does not scroll.
+     * A component that follows or moves the scroll position, such as the
+     * Message Scroller, reads `scrollTop` and listens for `scroll` there.
+     */
+    viewportRef?: React.Ref<HTMLDivElement> | undefined;
+  };
+
 export function ScrollArea({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
@@ -18,14 +34,9 @@ export function ScrollArea({
   scrollbarGutter = false,
   fill = false,
   clampContentMinWidth = true,
+  viewportRef,
   ...props
-}: WithStringClassName<ScrollAreaPrimitive.Root.Props> & {
-  scrollFade?: boolean;
-  scrollbar?: "auto" | "hidden";
-  scrollbarGutter?: boolean;
-  fill?: boolean;
-  clampContentMinWidth?: boolean;
-}): React.ReactElement {
+}: ScrollAreaProps): React.ReactElement {
   // The root is presentational; the viewport is what joins the tab order, so
   // it carries the accessible name as a labelled region.
   const viewportLabelProps =
@@ -49,6 +60,7 @@ export function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         {...viewportLabelProps}
+        ref={viewportRef}
         className={cn(
           "sp-scroll-area-viewport",
           "h-full rounded-[inherit] outline-none data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain",

@@ -1,0 +1,30 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* NativeTable shares Table's visual styles (table.css) and adds only the row
+   * tones and row-heading treatment of its native semantics. */
+  .sp-table-row[data-tone="section"] {
+    background: color-mix(in oklab, var(--color-muted) 40%, transparent);
+    font-weight: var(--sp-rw-font-weight-strong);
+  }
+
+  .sp-table-row[data-tone="total"] {
+    background: color-mix(in oklab, var(--color-muted) 70%, transparent);
+    font-weight: var(--sp-rw-font-weight-strong);
+  }
+
+  /* The footer already paints the shared summary fill (table-shared); a total row
+   * inside it only adds weight instead of tinting the band a second time. */
+  .sp-table-footer > .sp-table-row[data-tone="total"] {
+    background: transparent;
+  }
+
+  .sp-table-row[data-tone="muted"] {
+    color: var(--sp-rw-fg-tertiary);
+  }
+
+  .sp-table-head:is([scope="row"], [scope="rowgroup"]) {
+    color: inherit;
+    font-weight: inherit;
+  }
+}

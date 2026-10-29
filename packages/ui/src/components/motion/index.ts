@@ -14,6 +14,7 @@ export {
   type FollowValueOptions,
 } from "./motion-follow-value";
 export { MotionNumber, type MotionNumberProps } from "./motion-number";
+export { MotionShimmer, type MotionShimmerProps } from "./motion-shimmer";
 export {
   useTweenedRows,
   useTweenedValue,

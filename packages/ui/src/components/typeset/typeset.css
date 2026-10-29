@@ -1,0 +1,121 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* Rendered markdown. The container sets the kit's body type and stacks its
+   * blocks with `gap` (S10), so a block adds its own space above itself and no
+   * block restyles the one before it while a reply streams: no rule below
+   * reads :last-child, :has() or :empty, which change as content arrives.
+   *
+   * Three custom properties tune it, as the density sets them: the size of the
+   * text, its leading (a line height) and the flow (the gap between blocks).
+   * The flow is a length from the size, so it does not change with the
+   * font-size of whatever it is read on. A caller overrides them in a style
+   * or with a utility class.
+   *
+   * Chat is the kit's own body type, 14 px on a 21 px line, with a tight
+   * rhythm for a message. Document is a size up with a roomier rhythm. */
+  :where(.sp-typeset) {
+    --sp-typeset-size: var(--sp-rw-font-size-default);
+    --sp-typeset-leading: var(--sp-rw-line-height-default);
+    --sp-typeset-flow: var(--sp-typeset-size);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-typeset-flow);
+    min-width: 0;
+    font-size: var(--sp-typeset-size);
+    line-height: var(--sp-typeset-leading);
+    /* Long values wrap (rulebook K5): a URL or an identifier never pushes the
+     * thread wider. */
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+
+  .sp-typeset[data-density="document"] {
+    --sp-typeset-size: var(--sp-rw-font-16);
+    --sp-typeset-leading: var(--sp-rw-line-27);
+    --sp-typeset-flow: calc(var(--sp-typeset-size) * 1.5);
+  }
+
+  /* Headings step up from the body size in the ratios of the kit's own type
+   * (20, 18, 16 and 14 px at the chat size), so they scale with the density.
+   * Titles take the title weight and the small ones the label weight, as
+   * the kit's text roles do (Theming). A heading has half a flow of extra
+   * space above it, in its own padding and not in a margin, so it belongs to
+   * what follows more than to what comes before; the first block has none. */
+  :where(.sp-typeset-heading) {
+    padding-block-start: calc(var(--sp-typeset-flow) * 0.5);
+    font-size: 1em;
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: 1.5;
+  }
+
+  :where(.sp-typeset-heading:first-child) {
+    padding-block-start: 0;
+  }
+
+  :where(.sp-typeset-heading[data-level="1"]) {
+    font-size: calc(20em / 14);
+    font-weight: var(--sp-rw-font-weight-title);
+  }
+
+  :where(.sp-typeset-heading[data-level="2"]) {
+    font-size: calc(18em / 14);
+    font-weight: var(--sp-rw-font-weight-title);
+  }
+
+  :where(.sp-typeset-heading[data-level="3"]) {
+    font-size: calc(16em / 14);
+    font-weight: var(--sp-rw-font-weight-title);
+  }
+
+  :where(.sp-typeset-strong) {
+    font-weight: var(--sp-rw-font-weight-strong);
+  }
+
+  /* A list keeps its marks (the list semantics stay) and takes the flow's
+   * smaller step between its items. Its mark is quieter than the text. */
+  :where(.sp-typeset-list) {
+    display: grid;
+    gap: var(--sp-rw-space-1-5);
+    padding-inline-start: 1.625em;
+    list-style-position: outside;
+    list-style-type: disc;
+  }
+
+  :where(.sp-typeset-list[data-ordered]) {
+    list-style-type: decimal;
+  }
+
+  :where(.sp-typeset-list-item .sp-typeset-list:not([data-ordered])) {
+    list-style-type: circle;
+  }
+
+  :where(.sp-typeset-list-item)::marker {
+    color: var(--sp-rw-fg-tertiary);
+  }
+
+  /* A list item is a list-item box, so it cannot be a grid, which would put
+   * each run of its text in a cell of its own. The blocks inside it (a second
+   * paragraph of a loose item, a nested list, a code block, a table) are
+   * spaced by the margin above them, the one place a margin is the tool;
+   * the owner of a block never sets its margin. */
+  :where(.sp-typeset-list-item > .sp-typeset-paragraph:not(:first-child)),
+  :where(.sp-typeset-list-item > .sp-typeset-list),
+  :where(.sp-typeset-list-item > .sp-typeset-quote),
+  :where(.sp-typeset-list-item > .sp-typeset-rule),
+  :where(.sp-typeset-list-item > .sp-code-block),
+  :where(.sp-typeset-list-item > .sp-table-container) {
+    margin-block-start: var(--sp-rw-space-1-5);
+  }
+
+  /* A quote is a bar at the start and quieter text. Its own blocks are
+   * stacked by the same flow. */
+  :where(.sp-typeset-quote) {
+    display: grid;
+    gap: var(--sp-typeset-flow);
+    padding-inline-start: var(--sp-rw-space-4);
+    border-inline-start: calc(var(--sp-rw-border-default) * 3) solid
+      var(--sp-rw-fg-quaternary);
+    color: var(--sp-rw-fg-secondary);
+  }
+}
