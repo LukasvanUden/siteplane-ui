@@ -3,18 +3,35 @@
 @layer siteplane {
   /* At rest the value and its edit trigger share one row, centred on each
    * other and 8 px apart, so the trigger's focus ring keeps 4 px clear of the
-   * text; the value takes what the row leaves. The defaults
-   * have no specificity, so the editing rules below and a className win. The
-   * Buttons and the field keep their own states and focus. While the sides
-   * switch, the parts at rest stay pinned against the row (holdPanePlace)
-   * while the field lays it out, and the row follows its height as a swap
-   * container does (motion.css). */
+   * text; the value takes what the row leaves. The value stands where the
+   * field's text stands (Lukas, 30 October 2026): the row is as tall as a
+   * one-line field of its size, so the frame that comes around the value
+   * stands where every field stands, flush with its label's start and 8 px
+   * under it. The defaults have no specificity, so the rules below and a
+   * className win. The Buttons and the field keep their own states and focus.
+   * While the sides switch, the parts at rest stay pinned against the row
+   * (holdPanePlace) while the field lays it out, and the row follows its
+   * height as a swap container does (motion.css). */
   :where(.sp-editable) {
     display: flex;
     width: 100%;
     min-width: 0;
+    min-height: var(--sp-rw-control-md);
     align-items: center;
     column-gap: var(--sp-rw-space-2);
+  }
+
+  /* The heights of the Input's sizes (design-rework.css, Input). */
+  .sp-editable[data-size="sm"] {
+    min-height: var(--sp-rw-control-sm);
+  }
+
+  .sp-editable[data-size="lg"] {
+    min-height: var(--sp-rw-control-lg);
+  }
+
+  .sp-editable[data-size="xl"] {
+    min-height: var(--sp-rw-control-xl);
   }
 
   /* While editing the field takes the row, and the optional Cancel and Save
@@ -40,8 +57,7 @@
     align-self: flex-start;
   }
 
-  /* The panes of the switch: the field's takes the room of the area and
-   * reaches outward around its text (margins the Editable sets), and a
+  /* The panes of the switch: the field's takes the room of the area, and a
    * trigger's is as large as its Button and, like a Button in a row, never
    * shrinks. */
   :where(.sp-editable-field-pane) {
@@ -58,10 +74,12 @@
   /* The value at rest: body text in the field's text colour, so it reads the
    * same as the field that edits it and the two texts take turns pixel for
    * pixel, on one line that ends with an ellipsis, as a dense row's value
-   * does (K5). */
+   * does (K5). It starts where the Input's text starts, at every size
+   * (design-rework.css, `--sp-input-padding-inline`). */
   :where(.sp-editable-preview) {
     min-width: 0;
     overflow: hidden;
+    padding-inline-start: var(--sp-rw-space-3);
     color: var(--sp-rw-fg-primary);
     font-size: var(--sp-rw-font-14);
     font-weight: var(--sp-rw-font-weight-default);
@@ -70,10 +88,31 @@
     white-space: nowrap;
   }
 
-  /* The text of a multi-line value wraps and keeps its line breaks. */
+  /* The text of a multi-line value wraps and keeps its line breaks, inside
+   * the insets of the Textarea's size (design-rework.css, Textarea), so it
+   * stands where the textarea's text stands. */
   .sp-editable-area:has(.sp-base-textarea) > .sp-editable-preview {
+    padding: var(--sp-rw-space-2) var(--sp-rw-space-3);
     overflow-wrap: anywhere;
     white-space: pre-wrap;
+  }
+
+  .sp-editable[data-size="sm"]
+    .sp-editable-area:has(.sp-base-textarea)
+    > .sp-editable-preview {
+    padding: var(--sp-rw-space-1) var(--sp-rw-space-2-5);
+  }
+
+  .sp-editable[data-size="lg"]
+    .sp-editable-area:has(.sp-base-textarea)
+    > .sp-editable-preview {
+    padding-block: var(--sp-rw-space-2-5);
+  }
+
+  .sp-editable[data-size="xl"]
+    .sp-editable-area:has(.sp-base-textarea)
+    > .sp-editable-preview {
+    padding: var(--sp-rw-space-3) var(--sp-rw-space-4);
   }
 
   /* An empty value shows the preview placeholder in the placeholder colour

@@ -81,7 +81,7 @@ finished components: https://ui.siteplane.io/pricing
 The components are free under the Siteplane UI License ([LICENSE](LICENSE)).
 Use them in any project, including client work. Selling them as part of a UI
 kit or template is not permitted.
-This repository mirrors release 1.8.0.
+This repository mirrors release 1.8.1.
 
 ## Contributing
 

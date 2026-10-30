@@ -251,8 +251,9 @@ export type EditableBox = {
  * How far the field must move so that its text stands where the value stood:
  * the start of its text on the start of the value, and a single line centred
  * on the value's line, the first line of a textarea on the value's first line.
- * The field's frame then reaches outward around the text by the same amounts,
- * as negative margins on every side.
+ * The value at rest stands where the field's text stands, so the distance is
+ * none; a field that a className changed moves by it, as margins on every
+ * side, so its text still never moves.
  */
 export function inPlaceAlignment(
   value: EditableBox,
@@ -263,6 +264,22 @@ export function inPlaceAlignment(
     ? value.top - field.text.top
     : value.top + value.height / 2 - (field.text.top + field.text.height / 2);
   return { x, y };
+}
+
+/**
+ * Calls `measure` whenever a web font of the document finishes loading, until
+ * the returned stop runs. A font that arrives late changes the width of the
+ * text it sets, and with it the place of what stands beside the text. A
+ * document without a font set listens to nothing.
+ */
+export function onFontsLoaded(
+  document: Document,
+  measure: () => void,
+): () => void {
+  const fonts = (document as { fonts?: FontFaceSet }).fonts;
+  if (!fonts?.addEventListener) return () => undefined;
+  fonts.addEventListener("loadingdone", measure);
+  return () => fonts.removeEventListener("loadingdone", measure);
 }
 
 /** Whether the system is an Apple one, where Cmd stands in for Ctrl. */

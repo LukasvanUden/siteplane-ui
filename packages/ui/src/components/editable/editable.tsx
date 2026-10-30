@@ -5,7 +5,10 @@ import * as React from "react";
 
 import { useTruncated } from "../../system/hooks/use-truncated";
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
-import type { SiteplaneControlSize } from "../../system/provider/siteplane-ui-provider";
+import {
+  type SiteplaneControlSize,
+  useResolvedControlSize,
+} from "../../system/provider/siteplane-ui-provider";
 import { focusRingRecipe } from "../../system/recipes/focus-ring.recipe";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
@@ -42,6 +45,7 @@ import {
   editableLeaveAction,
   finishEdit,
   inPlaceAlignment,
+  onFontsLoaded,
   isApplePlatform,
   isOutsideEditable,
   keepsFocusElsewhere,
@@ -160,6 +164,8 @@ type EditableContextValue = {
     field: React.RefObject<FieldCheckedControl | null>;
     /** The pane of the field, whose frame fades. */
     fieldPane: React.RefObject<HTMLSpanElement | null>;
+    /** Where the pencil stood at rest, against the Editable. */
+    pencilPlace: React.RefObject<PanePlace | null>;
     preview: React.RefObject<HTMLElement | null>;
     /** Where the value stood at rest, against the Editable. */
     previewPlace: React.RefObject<PanePlace | null>;
@@ -231,8 +237,9 @@ function useSwapPart<T extends HTMLElement>(
   const root = context.refs.root;
   // Where the part stands while it is in the flow, which is where it stays
   // when it leaves: measured after each commit, as a new value moves the edit
-  // trigger, and when the part or the Editable changes size. After the commit,
-  // so that the Editable's ref is set on the first one too.
+  // trigger, when the part or the Editable changes size, and when a web font
+  // finishes loading, which changes the width of the value beside it. After
+  // the commit, so that the Editable's ref is set on the first one too.
   React.useEffect(() => {
     const element = ref.current;
     const container = root.current;
@@ -243,21 +250,27 @@ function useSwapPart<T extends HTMLElement>(
     const element = ref.current;
     const container = root.current;
     if (!inFlow || !element || !container) return undefined;
-    if (typeof ResizeObserver === "undefined") return undefined;
-    const observer = new ResizeObserver(() => {
+    const measure = () => {
       place.current = placeOf(element, container);
-    });
+    };
+    const stopFonts = onFontsLoaded(element.ownerDocument, measure);
+    if (typeof ResizeObserver === "undefined") return stopFonts;
+    const observer = new ResizeObserver(measure);
     observer.observe(element);
     observer.observe(container);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      stopFonts();
+    };
   }, [inFlow, place, root]);
   // A pencil that returns beside a value of several lines stays where it
   // stands at rest while the row follows the shorter height of the closing
   // textarea: centred in the row, it would ride the height down. Its place
   // is measured in the commit that returns it, before the row's height is
   // held, so it is the place for the new value.
+  const pencil = side === "rest" && kind === "fade";
   const [entryPlace, setEntryPlace] = React.useState<PanePlace | null>(null);
-  const returning = side === "rest" && kind === "fade" && phase === "entering";
+  const returning = pencil && phase === "entering";
   React.useLayoutEffect(() => {
     if (!returning) {
       setEntryPlace(null);
@@ -271,8 +284,13 @@ function useSwapPart<T extends HTMLElement>(
     // Once for each return; the field's kind comes through its ref.
   }, [returning, root]);
   const pin = phase === "leaving" ? place.current : entryPlace;
-  // While it is pinned, the Editable is the box it is pinned against.
-  const held = pin !== null && (phase === "leaving" || returning);
+  const pinned = pin !== null && (phase === "leaving" || returning);
+  // The returning pencil holds its top in the row rather than being pinned
+  // out of it, so the value beside it lays out its lines at once in the width
+  // they have at rest. A leaving part is pinned in its box against the
+  // Editable.
+  const inRow = returning;
+  const held = pinned && !inRow;
   React.useLayoutEffect(() => {
     const container = root.current;
     if (!held || !container) return undefined;
@@ -287,8 +305,10 @@ function useSwapPart<T extends HTMLElement>(
     props: {
       ...swapAttributes(phase, context.swap.starting),
       ...(kind === "fade" ? { className: swapFadeClassName } : {}),
-      ...(held && pin
-        ? { style: { ...panePin(pin), ...(above ? { zIndex: 1 } : {}) } }
+      ...(pinned && pin
+        ? inRow
+          ? { style: { alignSelf: "flex-start", marginTop: pin.top } }
+          : { style: { ...panePin(pin), ...(above ? { zIndex: 1 } : {}) } }
         : above
           ? { style: { position: "relative", zIndex: 1 } }
           : {}),
@@ -317,6 +337,7 @@ function EditableSwapPane({
   children,
   context,
   leaveAtOnce = false,
+  placeRef,
   side,
   slot,
 }: {
@@ -324,6 +345,8 @@ function EditableSwapPane({
   context: EditableContextValue;
   /** Leaves at once instead of fading, as the pencil of an empty value. */
   leaveAtOnce?: boolean;
+  /** Keeps the pane's place where the Editable reads it, as the pencil's. */
+  placeRef?: React.RefObject<PanePlace | null>;
   side: EditableSide;
   slot: "editable-field-pane" | "editable-trigger-pane";
 }): React.ReactElement {
@@ -336,7 +359,7 @@ function EditableSwapPane({
     context,
     side,
     field ? "frame" : "fade",
-    undefined,
+    placeRef,
     leaveAtOnce,
   );
   const align = useInPlaceAlignment(context, ref, field);
@@ -363,10 +386,14 @@ function EditableSwapPane({
 }
 
 /**
- * The margins that put the field's text where the value stands: the frame
- * reaches outward around the text by the field's padding and the difference
- * in height, on every side, so the text keeps its place and nothing around it
- * moves. Measured in the commit that shows the field and set on the pane at
+ * The margins that put the field's text where the value stands. The value at
+ * rest already stands where the field's text stands (editable.css: the row
+ * keeps the field's height and the value its insets), so the margins are
+ * none; they only absorb a difference, such as a field a className changed,
+ * so the text never moves. A textarea also keeps the pencil's room at its
+ * end, the pencil's width and the row's gap, so its text wraps in the width
+ * the value wraps in beside the pencil at rest and the lines break the same
+ * way. Measured in the commit that shows the field and set on the pane at
  * once, before the Editable measures the height it follows and before
  * anything paints; React then keeps the same margins.
  */
@@ -375,17 +402,34 @@ function useInPlaceAlignment(
   ref: React.RefObject<HTMLSpanElement | null>,
   enabled: boolean,
 ): React.CSSProperties | undefined {
-  const [margins, setMargins] = React.useState({ x: 0, y: 0 });
+  const [margins, setMargins] = React.useState({ end: 0, x: 0, y: 0 });
   const latest = React.useRef(margins);
   const { editing, refs } = context;
   React.useLayoutEffect(() => {
     const pane = ref.current;
     const root = refs.root.current;
     const control = refs.field.current;
-    const value = refs.previewPlace.current;
-    if (!enabled || !editing || !pane || !root || !control || !value) return;
+    const place = refs.previewPlace.current;
+    const preview = refs.preview.current;
+    if (!enabled || !editing || !pane || !root || !control || !place) return;
     const multiline = control.localName === "textarea";
-    let next = latest.current;
+    const inset = preview ? getComputedStyle(preview) : null;
+    const value = inset
+      ? {
+          height: place.height - px(inset.paddingTop) - px(inset.paddingBottom),
+          left: place.left + px(inset.paddingLeft),
+          top: place.top + px(inset.paddingTop),
+          width: place.width - px(inset.paddingLeft) - px(inset.paddingRight),
+        }
+      : place;
+    const pencil = refs.pencilPlace.current;
+    const end =
+      multiline && pencil
+        ? pencil.width + px(getComputedStyle(root).columnGap)
+        : 0;
+    let next =
+      latest.current.end === end ? latest.current : { ...latest.current, end };
+    pane.style.marginRight = `${next.x + next.end}px`;
     // Layout rounds to fractions of a pixel, so a second pass settles it.
     for (let pass = 0; pass < 3; pass += 1) {
       const rootBox = root.getBoundingClientRect();
@@ -413,11 +457,11 @@ function useInPlaceAlignment(
         },
       });
       if (Math.abs(delta.x) < 0.05 && Math.abs(delta.y) < 0.05) break;
-      next = { x: next.x + delta.x, y: next.y + delta.y };
+      next = { end: next.end, x: next.x + delta.x, y: next.y + delta.y };
       Object.assign(pane.style, {
         marginBottom: `${next.y}px`,
         marginLeft: `${next.x}px`,
-        marginRight: `${next.x}px`,
+        marginRight: `${next.x + next.end}px`,
         marginTop: `${next.y}px`,
       });
     }
@@ -430,9 +474,14 @@ function useInPlaceAlignment(
   return {
     marginBottom: margins.y,
     marginLeft: margins.x,
-    marginRight: margins.x,
+    marginRight: margins.x + margins.end,
     marginTop: margins.y,
   };
+}
+
+/** A computed length in pixels. */
+function px(value: string): number {
+  return Number.parseFloat(value) || 0;
 }
 
 /**
@@ -541,6 +590,8 @@ export function Editable({
   ...props
 }: EditableProps): React.ReactElement {
   const fieldCheck = useFieldValueCheck();
+  // The size the field takes, which the row keeps at rest (editable.css).
+  const resolvedSize = useResolvedControlSize(size);
   const disabled = disabledProp || fieldCheck.disabled;
   const interactive = !disabled && !readOnly;
   const words = { ...defaultEditableLabels, ...labels };
@@ -575,6 +626,7 @@ export function Editable({
   const fieldPaneRef = React.useRef<HTMLSpanElement | null>(null);
   const previewRef = React.useRef<HTMLElement | null>(null);
   const previewPlaceRef = React.useRef<PanePlace | null>(null);
+  const pencilPlaceRef = React.useRef<PanePlace | null>(null);
   const editTriggerRef = React.useRef<HTMLButtonElement | null>(null);
   const submitTriggerRef = React.useRef<HTMLButtonElement | null>(null);
   const cancelTriggerRef = React.useRef<HTMLButtonElement | null>(null);
@@ -790,10 +842,9 @@ export function Editable({
 
   // The switch: the side that takes over lays out the row at once and the
   // side that leaves stays pinned in its box, so the Editable's height follows
-  // from the start (the kit's height follow), and nothing clips: the frame
-  // reaches outward past the row. The frame's fade plays meanwhile, and the
-  // switch ends once it and the pencil's fade have run, timed from the motion
-  // tokens.
+  // from the start (the kit's height follow), and nothing clips the frame.
+  // The frame's fade plays meanwhile, and the switch ends once it and the
+  // pencil's fade have run, timed from the motion tokens.
   const follow = useHeightFollower(rootRef);
   const frameFade = React.useRef<Animation | null>(null);
   React.useLayoutEffect(() => {
@@ -911,6 +962,7 @@ export function Editable({
       editTrigger: editTriggerRef,
       field: fieldRef,
       fieldPane: fieldPaneRef,
+      pencilPlace: pencilPlaceRef,
       preview: previewRef,
       previewPlace: previewPlaceRef,
       root: rootRef,
@@ -937,6 +989,7 @@ export function Editable({
         data-editing={editing ? "" : undefined}
         data-invalid={invalid ? "" : undefined}
         data-readonly={readOnly ? "" : undefined}
+        data-size={resolvedSize}
         data-slot="editable"
         ref={setRootRef}
         {...props}
@@ -1197,6 +1250,7 @@ export function EditableEditTrigger({
     <EditableSwapPane
       context={context}
       leaveAtOnce={context.empty && !context.placeholder.preview}
+      placeRef={context.refs.pencilPlace}
       side="rest"
       slot="editable-trigger-pane"
     >

@@ -89,17 +89,32 @@ export function keyframeTiming(
 }
 
 /**
+ * Handles the end of an animation the kit may cancel. A cancelled Web
+ * Animation rejects its `finished` with an AbortError ("The animation was
+ * canceled"); the kit cancels on purpose, on a change of course and on
+ * unmount, so the rejection is expected. Browsers stay silent about it, while
+ * a test runner such as Vitest reports it as unhandled. An animation without
+ * `finished`, as some test doubles are, passes through.
+ */
+export function handleAnimationEnd<T extends Animation>(animation: T): T {
+  const finished = animation.finished as Promise<Animation> | undefined;
+  finished?.catch(() => undefined);
+  return animation;
+}
+
+/**
  * Starts a keyframe animation that shows its first keyframe in the frame the
  * commit renders and plays from the frame after (`inSecondFrame`). The Web
  * Animations API runs it: translate, scale and opacity on the compositor,
- * height on the main thread.
+ * height on the main thread. Every animation the kit creates starts here, so
+ * the end of each is handled (`handleAnimationEnd`).
  */
 export function playFromSecondFrame(
   element: Element,
   keyframes: Keyframe[],
   options: KeyframeAnimationOptions,
 ): Animation {
-  const animation = element.animate(keyframes, options);
+  const animation = handleAnimationEnd(element.animate(keyframes, options));
   animation.pause();
   inSecondFrame(() => {
     // An animation that was cancelled or replaced meanwhile stays so.
