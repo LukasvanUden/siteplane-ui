@@ -112,6 +112,9 @@ export function Textarea(ownProps: TextareaProps): React.ReactElement {
       data-text-size={textSize}
       data-unstyled={unstyled || undefined}
       data-variant={variant}
+      // A hidden textarea hides its whole control, so no empty field surface
+      // stays on the page; the textarea itself stays in the form.
+      hidden={props.hidden}
       style={lineStyle}
     >
       <FieldPrimitive.Control

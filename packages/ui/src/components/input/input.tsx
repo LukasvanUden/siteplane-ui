@@ -161,6 +161,9 @@ export function Input(inputProps: InputProps): React.ReactElement {
       data-text-size={textSize}
       data-unstyled={unstyled || undefined}
       data-variant={variant}
+      // A hidden input hides its whole control, so no empty field surface
+      // stays on the page; the input itself stays in the form.
+      hidden={nativeInputProps.hidden}
     >
       {externalElement ? (
         // The surrounding behavior owner already supplies id, labelling,

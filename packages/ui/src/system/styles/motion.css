@@ -101,8 +101,9 @@
  * height meanwhile: a container held taller than its content would stretch
  * the lines of a wrapping row or a grid's rows. Zero specificity, so a
  * consumer's utility wins (P6); with reduced motion nothing follows (M5). A
- * swap moves its height over the whole swap, everything else over the expand
- * duration. */
+ * container whose content swaps (swapContainerClassName: MotionSwap,
+ * Editable) moves its height over the whole swap, everything else over the
+ * expand duration. */
 :where(.sp-height-follow) {
   align-content: start;
   transition-property: height;
@@ -110,7 +111,7 @@
   transition-timing-function: var(--motion-ease-standard);
 }
 
-:where(.sp-height-follow.sp-motion-swap) {
+:where(.sp-height-follow.sp-swap-container) {
   transition-duration: var(--motion-duration-base);
 }
 

@@ -164,11 +164,21 @@ export function DashboardShellMain({
   flush = false,
   ...props
 }: DashboardShellMainProps): React.ReactElement {
+  // It scrolls on its own only where the shell is the viewport's height
+  // (design-rework.css, "Dashboard Shell sticky header"). Elsewhere the page
+  // scrolls, and a scroll container here would hold every sticky bar or table
+  // header inside it to a box that never scrolls.
   return (
     <div
-      className={cn("min-h-0 flex-1 overflow-auto", !flush && "p-4", className)}
+      className={cn(
+        slotClass("dashboard-shell-main", props),
+        "min-h-0 flex-1",
+        !flush && "p-4",
+        className,
+      )}
       data-dashboard-shell="main"
       data-flush={flush || undefined}
+      data-slot="dashboard-shell-main"
       {...props}
     />
   );

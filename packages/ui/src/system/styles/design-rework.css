@@ -967,18 +967,30 @@
 }
 
 /* InputGroup addons: the text cursor, a mark centred in a tight line box,
- * their place by alignment, and the inline and block padding of an addon above
- * or below the control. */
+ * 8 px between what an addon holds, their place by alignment, and the inline
+ * and block padding of an addon above or below the control. */
 :where(.sp-input-group-addon) {
   align-items: center;
+  gap: var(--sp-rw-space-2);
   cursor: text;
   line-height: 1;
 }
 
+/* Field actions side by side stand 4 px apart (Lukas, 29 October 2026): in an
+ * addon that holds field actions alone, such as a show and a copy button,
+ * and in the actions of a CodeBlock (sp-field-actions). An addon keeps its
+ * 8 px between any other content, such as an icon, a text or a Kbd. */
+:where(.sp-input-group-addon:not(:has(> :not([data-profile="field-action"])))),
+:where(.sp-field-actions) {
+  column-gap: var(--sp-rw-space-1);
+}
+
 /* Beside a textarea, an inline addon centres its mark on the first text line
- * (I5), not on the middle of the growing field: it starts at the textarea's
- * top padding, which follows the textarea's size (textarea.css and the
- * Textarea rules below), and takes the field's text line. */
+ * (I5), not on the middle of the growing field: it takes the group's height,
+ * as an addon with a divider does, starts at the textarea's top padding,
+ * which follows the textarea's size (textarea.css and the Textarea rules
+ * below), and takes the field's text line. Without the height of the group an
+ * addon without a divider sat in the middle of a field of several lines. */
 :where(
   .sp-base-input-group:has(> .sp-textarea-control)
     > .sp-input-group-addon:is(
@@ -987,6 +999,7 @@
     )
 ) {
   align-items: flex-start;
+  align-self: stretch;
   padding-block-start: calc(var(--spacing) * 2 - 1px);
   line-height: inherit;
 }
@@ -1728,6 +1741,28 @@ html[data-motion-reduce="true"]
 @media (width >= 64rem) {
   :where(.sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="lg"]) {
     height: 100svh;
+  }
+}
+
+/* Only there does the main area scroll on its own. Below the breakpoint, and
+ * at every width without stickyHeader, the page scrolls and the main area is
+ * no scroll container, so a sticky bar or table header in it sticks to the
+ * viewport. Table keeps its own horizontal scroller. */
+@media (width >= 48rem) {
+  :where(
+    .sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="md"]
+      .sp-dashboard-shell-main
+  ) {
+    overflow: auto;
+  }
+}
+
+@media (width >= 64rem) {
+  :where(
+    .sp-sidebar-wrapper[data-sticky-header][data-mobile-breakpoint="lg"]
+      .sp-dashboard-shell-main
+  ) {
+    overflow: auto;
   }
 }
 

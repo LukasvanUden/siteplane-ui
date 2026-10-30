@@ -15,7 +15,7 @@ import { useReducedMotionPreference } from "../../system/motion/use-reduced-moti
 import { useSiteplaneNonce } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
-import { useHeightFollower } from "./motion-follow";
+import { swapContainerClassName, useHeightFollower } from "./motion-follow";
 import {
   GlideOnChange,
   leavingProps,
@@ -496,9 +496,11 @@ export function MotionSwap({
         </MotionSwapPane>
       </PopLayoutPresence>
     ),
-    // The leaving pane is taken out of the flow and positioned from here.
+    // The leaving pane is taken out of the flow and positioned from here, and
+    // the height follows over the whole swap.
     className: cn(
       slotClass("motion-swap", props, render),
+      swapContainerClassName,
       "relative",
       className,
     ),

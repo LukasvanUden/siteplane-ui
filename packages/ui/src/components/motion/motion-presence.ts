@@ -231,35 +231,83 @@ export function usePresenceMotion(
     reduced: boolean;
   },
 ): void {
-  const running = React.useRef<Animation | null>(null);
-  const was = React.useRef<boolean | null>(null);
+  const state = React.useRef<PresenceMotionState>({ running: null, was: null });
   const gone = React.useRef(onGone);
   gone.current = onGone;
 
   React.useLayoutEffect(() => {
-    const element = ref.current;
-    const first = was.current === null;
-    const wasPresent = was.current;
-    was.current = present;
-    if (!element) return;
-    const current = running.current;
-    if (reduced || typeof element.animate !== "function") {
-      current?.cancel();
-      running.current = null;
-      unclip(element);
-      if (!present) gone.current?.();
-      return;
-    }
-    if (present && (first ? !appear : wasPresent)) return;
-    const animation = playPresence(element, kind, present, current, () => {
-      if (running.current !== animation) return;
-      running.current = null;
-      if (!present) gone.current?.();
-    });
-    running.current = animation;
+    updatePresence(
+      state.current,
+      ref.current,
+      { appear, kind, present, reduced },
+      () => gone.current?.(),
+    );
   }, [appear, kind, present, reduced, ref]);
 
-  React.useEffect(() => () => running.current?.cancel(), []);
+  React.useEffect(() => {
+    const presence = state.current;
+    return () => stopPresence(presence);
+  }, []);
+}
+
+/** What `usePresenceMotion` keeps between the updates of an element. */
+export type PresenceMotionState = {
+  running: Animation | null;
+  /** Whether the element was present at its last update, null before the first. */
+  was: boolean | null;
+};
+
+/**
+ * One update of `usePresenceMotion`: plays the presence when the element
+ * appears, comes back or leaves, and does nothing for an element at rest.
+ */
+export function updatePresence(
+  state: PresenceMotionState,
+  element: HTMLElement | null,
+  {
+    appear,
+    kind,
+    present,
+    reduced,
+  }: {
+    appear: boolean;
+    kind: PresenceKind;
+    present: boolean;
+    reduced: boolean;
+  },
+  onGone: () => void,
+): void {
+  const first = state.was === null;
+  const wasPresent = state.was;
+  state.was = present;
+  if (!element) return;
+  const current = state.running;
+  if (reduced || typeof element.animate !== "function") {
+    current?.cancel();
+    state.running = null;
+    unclip(element);
+    if (!present) onGone();
+    return;
+  }
+  if (present && (first ? !appear : wasPresent)) return;
+  const animation = playPresence(element, kind, present, current, () => {
+    if (state.running !== animation) return;
+    state.running = null;
+    if (!present) onGone();
+  });
+  state.running = animation;
+}
+
+/**
+ * Stops the presence of an element that unmounts. React's Strict Mode runs
+ * this between the two mounts of a component in development: the cancel stops
+ * the motion before its end, where the element is unclipped, so the state
+ * starts over and the second mount plays the presence again and unclips it.
+ */
+export function stopPresence(state: PresenceMotionState): void {
+  state.running?.cancel();
+  state.running = null;
+  state.was = null;
 }
 
 /**

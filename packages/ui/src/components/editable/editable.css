@@ -1,0 +1,106 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* At rest the value and its edit trigger share one row, centred on each
+   * other and 8 px apart, so the trigger's focus ring keeps 4 px clear of the
+   * text; the value takes what the row leaves. The defaults
+   * have no specificity, so the editing rules below and a className win. The
+   * Buttons and the field keep their own states and focus. While the sides
+   * switch, the parts at rest stay pinned against the row (holdPanePlace)
+   * while the field lays it out, and the row follows its height as a swap
+   * container does (motion.css). */
+  :where(.sp-editable) {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    column-gap: var(--sp-rw-space-2);
+  }
+
+  /* While editing the field takes the row, and the optional Cancel and Save
+   * stand beside it at its top, so a taller textarea, a hint or an error
+   * under the field moves nothing beside it. */
+  .sp-editable[data-editing] {
+    align-items: flex-start;
+  }
+
+  :where(.sp-editable-area) {
+    display: flex;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .sp-editable-area[data-editing] {
+    flex: 1 1 auto;
+  }
+
+  /* A value of several lines stays at the top of the row, also while the row
+   * follows the height of a textarea that closes, so its text never moves. */
+  .sp-editable-area:has(.sp-base-textarea) {
+    align-self: flex-start;
+  }
+
+  /* The panes of the switch: the field's takes the room of the area and
+   * reaches outward around its text (margins the Editable sets), and a
+   * trigger's is as large as its Button and, like a Button in a row, never
+   * shrinks. */
+  :where(.sp-editable-field-pane) {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  :where(.sp-editable-trigger-pane) {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  /* The value at rest: body text in the field's text colour, so it reads the
+   * same as the field that edits it and the two texts take turns pixel for
+   * pixel, on one line that ends with an ellipsis, as a dense row's value
+   * does (K5). */
+  :where(.sp-editable-preview) {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--sp-rw-fg-primary);
+    font-size: var(--sp-rw-font-14);
+    font-weight: var(--sp-rw-font-weight-default);
+    line-height: var(--sp-rw-line-21);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The text of a multi-line value wraps and keeps its line breaks. */
+  .sp-editable-area:has(.sp-base-textarea) > .sp-editable-preview {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  /* An empty value shows the preview placeholder in the placeholder colour
+   * of the field. */
+  .sp-editable-preview[data-placeholder-shown] {
+    color: var(--sp-rw-fg-tertiary);
+  }
+
+  /* A preview that starts editing on a press or on focus shows the text
+   * cursor; with activationMode="none" it is plain text. */
+  .sp-editable-preview[data-activation] {
+    cursor: text;
+  }
+
+  /* While the sides switch only the value's text paints, above the frame
+   * that fades: the field's own text and placeholder wait, transparent, and
+   * take over in one frame once the switch is over. */
+  .sp-editable-field-pane[data-switching] .sp-input,
+  .sp-editable-field-pane[data-switching] .sp-textarea,
+  .sp-editable-field-pane[data-switching] .sp-input::placeholder,
+  .sp-editable-field-pane[data-switching] .sp-textarea::placeholder {
+    color: transparent;
+  }
+
+  /* The control lays out no box: the panes of its triggers are items of the
+   * row, spaced by its gap. */
+  :where(.sp-editable-control) {
+    display: contents;
+  }
+}

@@ -260,11 +260,13 @@ export function CodeBlock({
   const masked = mask && !revealed;
   const hasActions = copyable || mask;
   // The 24px field actions keep their glyph as far from the top edge as from
-  // the end edge; the code text stops just before them.
+  // the end edge; the code text stops just before them. They stand 4 px apart,
+  // as field actions side by side do in an InputGroup addon (sp-field-actions,
+  // design-rework.css).
   const isSmall = size === "sm";
   const sizeKey = isSmall ? "sm" : "md";
   const actionClassName = cn(
-    "absolute flex gap-1",
+    "sp-field-actions absolute flex",
     isSmall ? "end-1" : "end-2",
     mask ? "top-1/2 -translate-y-1/2" : isSmall ? "top-1" : "top-2",
   );

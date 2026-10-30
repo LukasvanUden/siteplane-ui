@@ -26,12 +26,13 @@ import "./input-group.css";
 const inputGroupInteractiveSelector =
   "button, a, input, select, textarea, [contenteditable='true'], [role='button'], [role='combobox'], [role='listbox'], [role='spinbutton'], [data-slot='select-trigger']";
 
-// An addon's cursor, line height, its order and padding by alignment, and the
-// first-line alignment beside a textarea are the kit base (design-rework.css).
-// The addon spaces the icons it holds; design-rework.css sizes them, but not
-// the icon of a Button in it, which the Button's own icon rule sizes.
+// An addon's cursor, line height, its order and padding by alignment, the
+// first-line alignment beside a textarea and the space between what it holds
+// are the kit base (design-rework.css): 8 px, and 4 px between field actions
+// side by side. design-rework.css sizes the icons it holds, but not the icon
+// of a Button in it, which the Button's own icon rule sizes.
 const inputGroupAddonVariants = cva(
-  "flex h-auto select-none justify-center gap-2 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
+  "flex h-auto select-none justify-center not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
   {
     defaultVariants: {
       align: "inline-start",

@@ -27,12 +27,25 @@ export type FollowOptions = {
    * followed instead of popping into place at the end.
    */
   enter?: Element | null;
+  /**
+   * Whether the container clips what it holds to the height it shows while
+   * it follows (the default). An Editable does not: its field's frame grows
+   * outward past the row, and every side of it stays in sight.
+   */
+  clip?: boolean;
 };
 
 export type HeightFollow = { stop: () => void };
 
 /** The class of the follow rule (motion.css), while a container follows. */
 export const heightFollowClassName = "sp-height-follow";
+
+/**
+ * The class of a container whose content swaps, such as a MotionSwap or an
+ * Editable: its height follows over the whole swap, the base duration
+ * (motion.css), where other follows take the expand duration (rulebook M8).
+ */
+export const swapContainerClassName = "sp-swap-container";
 
 /** A follow that runs, with the height it heads for. */
 type Running = HeightFollow & { target: () => number };
@@ -90,7 +103,7 @@ const nothing: HeightFollow = { stop: () => undefined };
 export function followHeight(
   container: HTMLElement,
   from: number | null,
-  { enter }: FollowOptions = {},
+  { clip = true, enter }: FollowOptions = {},
 ): HeightFollow {
   follows.get(container)?.stop();
   if (from === null || typeof requestAnimationFrame === "undefined") {
@@ -129,7 +142,7 @@ export function followHeight(
     pinned = true;
     pinnedAt = height;
     container.classList.add(heightFollowClassName);
-    container.style.overflowY = "clip";
+    if (clip) container.style.overflowY = "clip";
     container.style.height = `${height}px`;
   };
   const release = () => {
@@ -351,8 +364,11 @@ export function holdPanePlace(container: HTMLElement): () => void {
   };
 }
 
-/** The pane's place against the padding box of its container. */
-function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
+/**
+ * The pane's place against the padding box of its container, where `panePin`
+ * keeps it while it leaves.
+ */
+export function placeOf(pane: HTMLElement, container: HTMLElement): PanePlace {
   const box = pane.getBoundingClientRect();
   const containerBox = container.getBoundingClientRect();
   return {

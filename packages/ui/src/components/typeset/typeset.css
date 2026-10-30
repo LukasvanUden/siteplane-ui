@@ -118,4 +118,13 @@
       var(--sp-rw-fg-quaternary);
     color: var(--sp-rw-fg-secondary);
   }
+
+  /* A table scrolls sideways in its own container, so a long value cannot
+   * push the thread wider (K5) and its cells keep words whole: they wrap
+   * between words only, as Native Table's do outside Typeset. Before, they
+   * took the wrap anywhere from the container above, and on a phone a name
+   * broke mid-word (Lukas, 30 October 2026). */
+  :where(.sp-typeset .sp-table-container) {
+    overflow-wrap: normal;
+  }
 }
