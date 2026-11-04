@@ -1,18 +1,31 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
+  /* The field reads the theme's colours where it is, as every part does: it
+   * declares no copy of a theme token (3 November 2026). */
   .sp-textarea-control {
-    --sp-semantic-color-background: var(--color-white);
-    --sp-semantic-color-border: rgb(0 0 0 / 8%);
-    --sp-semantic-color-destructive: var(--color-red-500);
-    --sp-semantic-color-foreground: var(--color-neutral-800);
-    --sp-semantic-color-input: rgb(0 0 0 / 10%);
-    --sp-semantic-color-ring: var(--color-neutral-400);
-    --input: rgb(0 0 0 / 10%);
-    --ring: var(--color-neutral-400);
-    --textarea-resize-handle-color: var(--input);
-    --textarea-resize-handle-color-focus: var(--ring);
-    --textarea-surface-subtle: rgb(0 0 0 / 4%);
+    /* The grip in the corner is a hint, not a control to look for: it takes
+     * the colour of the field's own edge, the control rim's 16 % of
+     * --sp-rw-control-interaction, at rest and on hover,
+     * and three fifths of the kit's muted icon
+     * colour while the field has keyboard focus (Lukas, 2 November 2026; from
+     * 31 October it took three fifths at rest and the full colour on focus). */
+    --textarea-resize-handle-color: color-mix(
+      in oklab,
+      var(--sp-rw-control-interaction) 16%,
+      transparent
+    );
+    --textarea-resize-handle-color-focus: color-mix(
+      in oklab,
+      var(--sp-rw-fg-quaternary) 60%,
+      transparent
+    );
+  }
+
+  /* resize="none" keeps the textarea at the height its content and its lines
+   * give it, without the grip (design-rework.css draws the vertical one). */
+  .sp-textarea-control[data-resize="none"] .sp-textarea {
+    resize: none;
   }
 
   .sp-base-textarea[data-profile="input-group"] {
@@ -23,21 +36,13 @@
     display: none;
   }
 
-  /* The resize grip is the kit base of every textarea (design-rework.css). */
+  /* The padding and the least height of its size are the kit base of every
+   * textarea, the same as outside a group. A textarea in an InputGroup grows
+   * with its content and has no grip: the
+   * group's addons, such as a composer's actions, sit where the grip would. */
   .sp-base-textarea[data-profile="input-group"] .sp-textarea {
-    min-height: calc(var(--spacing) * 20.5);
     border-radius: 0;
-    padding-block: calc(var(--spacing) * 2 - 1px);
-  }
-
-  @media (width < 40rem) {
-    .sp-base-textarea[data-profile="input-group"] .sp-textarea {
-      min-height: calc(var(--spacing) * 23.5);
-    }
-  }
-
-  .sp-textarea-control:not([data-unstyled]):has(:disabled) {
-    background-color: var(--textarea-surface-subtle);
+    resize: none;
   }
 
   textarea.sp-textarea:focus-visible {
@@ -118,33 +123,7 @@
         right 6px bottom 6px / 4.75px 4.75px no-repeat;
   }
 
-  .dark .sp-textarea-control,
-  [data-theme="dark"] .sp-textarea-control {
-    --sp-semantic-color-background: color-mix(
-      in srgb,
-      var(--color-neutral-950) 95%,
-      var(--color-white)
-    );
-    --sp-semantic-color-border: rgb(255 255 255 / 6%);
-    --sp-semantic-color-destructive: color-mix(
-      in srgb,
-      var(--color-red-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-foreground: var(--color-neutral-100);
-    --sp-semantic-color-input: rgb(255 255 255 / 8%);
-    --sp-semantic-color-ring: var(--color-neutral-500);
-    --input: rgb(255 255 255 / 8%);
-    --ring: var(--color-neutral-500);
-    --textarea-surface-subtle: rgb(255 255 255 / 4%);
-  }
-
-  :is(.dark, [data-theme="dark"])
-    .sp-textarea-control:not([data-unstyled]):has(:disabled) {
-    background-color: color-mix(
-      in oklab,
-      var(--sp-semantic-color-input) 32%,
-      transparent
-    );
-  }
+  /* A disabled textarea takes the grey fill of every disabled field from the
+   * one block in design-rework.css ("A disabled field lays the subtle fill"),
+   * in Light and Dark. */
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import { ChevronsUpDownIcon, XIcon } from "lucide-react";
+import { CaretUpDownIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 import { useFormReset } from "../../system/form/use-form-reset";
+import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 
 import {
   type SiteplaneControlSize,
@@ -14,6 +15,7 @@ import {
   type FormControlSurface,
   surfaceClassNames,
 } from "../../system/styles/surface";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
 import { Button } from "../button";
@@ -21,6 +23,7 @@ import { Separator } from "../separator";
 import { Input } from "../input";
 import { KitInput } from "../input/input-internal";
 import { ExternalInputOwner } from "../input/input";
+import { PopupListMotion } from "../motion/motion-follow";
 import { ScrollArea } from "../scroll-area";
 import type {
   KitAutocompleteInputProps,
@@ -77,6 +80,7 @@ export function AutocompleteInput(
     showClear = false,
     startAddon,
     size,
+    style,
     unstyled = false,
     profile = "combobox",
     variant = "default",
@@ -84,23 +88,32 @@ export function AutocompleteInput(
     clearProps,
     ...props
   } = inputProps as KitAutocompleteInputProps;
+  const messages = useSiteplaneMessages("autocomplete");
   const visualSize = typeof size === "number" ? undefined : size;
   const nativeSize = typeof size === "number" ? size : undefined;
   const resolvedSize = useResolvedControlSize(visualSize);
 
   return (
     <AutocompletePrimitive.InputGroup
+      // The field fills its container, like Input. The group is the field's
+      // root: it takes `className` and `style`, as every field does (Lukas,
+      // 4 November 2026), so a margin moves the input and the parts beside it
+      // together.
       className={cn(
-        "sp-autocomplete-input-group",
-        "relative w-full min-w-0 text-foreground",
-        profile !== "command" && "not-has-[>*.w-full]:w-fit",
+        "sp-autocomplete-input-group sp-field-scale relative w-full min-w-0 text-foreground",
+        className,
       )}
+      // The group is on the field scale of its size, so the parts beside the
+      // input take the field's inline padding and icon, as in a Combobox
+      // (design-rework.css).
+      data-size={resolvedSize}
       data-slot="autocomplete-input-group"
+      style={style}
     >
       {startAddon && (
         <div
           aria-hidden="true"
-          className="sp-autocomplete-start-addon pointer-events-none absolute inset-y-0 start-px z-10 flex items-center [&_svg]:-mx-0.5"
+          className="sp-autocomplete-start-addon pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center"
           data-slot="autocomplete-start-addon"
         >
           {startAddon}
@@ -109,7 +122,7 @@ export function AutocompleteInput(
       {/* Autocomplete.Input already connects the input to Field. */}
       <ExternalInputOwner>
         <AutocompletePrimitive.Input
-          className={cn(slotClass("autocomplete-input", props), className)}
+          className={slotClass("autocomplete-input", props)}
           data-inset-end={showTrigger || showClear ? "" : undefined}
           data-inset-start={startAddon ? "" : undefined}
           data-size={resolvedSize}
@@ -132,7 +145,7 @@ export function AutocompleteInput(
       {showTrigger && (
         <AutocompleteTrigger
           {...triggerProps}
-          aria-label={triggerProps?.["aria-label"] ?? "Show suggestions"}
+          aria-label={triggerProps?.["aria-label"] ?? messages.showSuggestions}
           className={cn(
             "absolute top-1/2 -translate-y-1/2 has-[+[data-slot=autocomplete-clear]]:hidden",
             triggerProps?.className,
@@ -140,44 +153,37 @@ export function AutocompleteInput(
           disabled={disabled || triggerProps?.disabled}
           render={
             triggerProps?.render ?? (
-              <Button
-                profile="field-action"
-                size={resolvedSize === "xl" ? "icon-sm" : "icon-xs"}
-                variant="ghost"
-              />
+              <Button profile="field-action" shape="square" variant="ghost" />
             )
           }
         >
           <AutocompletePrimitive.Icon
+            aria-hidden="true"
             className="sp-autocomplete-icon"
             data-slot="autocomplete-icon"
           >
-            <ChevronsUpDownIcon className="size-4" />
+            <CaretUpDownIcon aria-hidden="true" />
           </AutocompletePrimitive.Icon>
         </AutocompleteTrigger>
       )}
       {showClear && (
         <AutocompleteClear
           {...clearProps}
-          aria-label={clearProps?.["aria-label"] ?? "Clear input"}
-          // end-1 replaces AutocompleteClear's own end-0.5 in the merge, so
-          // the clear sits 4 px in, like the trigger.
+          aria-label={clearProps?.["aria-label"] ?? messages.clear}
+          // The field's place for its actions replaces AutocompleteClear's own
+          // end-0.5 in the merge, so the clear sits where the trigger does.
           className={cn(
-            "absolute end-1 top-1/2 -translate-y-1/2 has-[+[data-slot=autocomplete-clear]]:hidden",
+            "absolute end-(--sp-rw-field-action-end) top-1/2 -translate-y-1/2 has-[+[data-slot=autocomplete-clear]]:hidden",
             clearProps?.className,
           )}
           disabled={disabled || clearProps?.disabled}
           render={
             clearProps?.render ?? (
-              <Button
-                profile="field-action"
-                size={resolvedSize === "xl" ? "icon-sm" : "icon-xs"}
-                variant="ghost"
-              />
+              <Button profile="field-action" shape="square" variant="ghost" />
             )
           }
         >
-          <XIcon className="size-3" />
+          <XIcon aria-hidden="true" />
         </AutocompleteClear>
       )}
     </AutocompletePrimitive.InputGroup>
@@ -218,7 +224,9 @@ export function AutocompletePopup({
             className={cn(
               slotClass("autocomplete-popup", props),
               surfaceClassNames.floatingOverlay,
-              "flex max-h-[min(var(--available-height),23rem)] min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col text-foreground before:rounded-[inherit]",
+              // Its surface, text and cap are the popup rules of
+              // design-rework.css that Select and Combobox share.
+              "flex min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col before:rounded-[inherit]",
               className,
             )}
             data-slot="autocomplete-popup"
@@ -248,7 +256,13 @@ export function AutocompleteItem(
       className={cn(
         slotClass("autocomplete-item", props),
         baseClass("autocomplete-item", props),
-        "flex cursor-pointer select-none items-center outline-none data-disabled:pointer-events-none data-disabled:opacity-(--sp-rw-disabled-opacity-action) [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "flex select-none items-center outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // An Autocomplete option takes a Select option's sizes, its icons
+        // included (design-rework.css); a Command row keeps its own icon
+        // sizes. The colour of the icons is the one rule of every list row,
+        // tertiary and primary while highlighted (design-rework.css).
+        profile === "command" &&
+          "[&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4",
         // Rulebook I5: a leading icon sits on the first line of a label that
         // wraps. Such a row lays out as one grid track centred in the
         // min-height, so a one-line label stays centred, and the icon's box
@@ -275,7 +289,7 @@ export function AutocompleteSeparator({
     <AutocompletePrimitive.Separator
       className={cn(
         slotClass("autocomplete-separator", props),
-        "mx-2 my-1 last:hidden",
+        "last:hidden",
         className,
       )}
       data-slot="autocomplete-separator"
@@ -308,11 +322,7 @@ export function AutocompleteGroupLabel({
 }: WithStringClassName<AutocompletePrimitive.GroupLabel.Props>): React.ReactElement {
   return (
     <AutocompletePrimitive.GroupLabel
-      className={cn(
-        slotClass("autocomplete-group-label", props),
-        "px-2 py-1.5 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs",
-        className,
-      )}
+      className={cn(slotClass("autocomplete-group-label", props), className)}
       data-slot="autocomplete-group-label"
       {...props}
     />
@@ -327,7 +337,7 @@ export function AutocompleteEmpty({
     <AutocompletePrimitive.Empty
       className={cn(
         slotClass("autocomplete-empty", props),
-        "not-empty:p-2 text-center text-base text-muted-foreground sm:text-sm",
+        "not-empty:p-2 text-center text-muted-foreground",
         className,
       )}
       data-slot="autocomplete-empty"
@@ -361,18 +371,40 @@ export function AutocompleteList({
   className,
   ...props
 }: WithStringClassName<AutocompletePrimitive.List.Props>): React.ReactElement {
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotionPreference();
+  const filtered = AutocompletePrimitive.useFilteredItems();
   return (
-    <ScrollArea scrollbarGutter scrollFade>
-      <AutocompletePrimitive.List
-        className={cn(
-          slotClass("autocomplete-list", props),
-          "not-empty:scroll-py-1 not-empty:p-1 in-data-has-overflow-y:pe-3",
-          className,
-        )}
-        data-slot="autocomplete-list"
-        {...props}
+    <>
+      <ScrollArea
+        ref={scrollAreaRef}
+        scrollbarGutter
+        scrollFade
+        // The input holds the focus and the arrow keys move through the
+        // options, so the list is no tab stop between the input and the rest
+        // of the popup.
+        tabbable={false}
+      >
+        <AutocompletePrimitive.List
+          className={cn(
+            slotClass("autocomplete-list", props),
+            "not-empty:scroll-py-1 not-empty:p-1",
+            className,
+          )}
+          data-slot="autocomplete-list"
+          {...props}
+        />
+      </ScrollArea>
+      {/* An option that the search takes out of the list fades and closes
+          its row, the rows below glide, and the popup, or the Command's
+          panel, follows its height, as in every list of a popup that filters
+          (rulebook M6, M7). */}
+      <PopupListMotion
+        change={[filtered, props.children]}
+        reduced={reduced}
+        scrollArea={() => scrollAreaRef.current}
       />
-    </ScrollArea>
+    </>
   );
 }
 
@@ -396,7 +428,7 @@ export function AutocompleteClear({
       }
       {...props}
     >
-      <XIcon className="size-3" />
+      <XIcon aria-hidden="true" />
     </AutocompletePrimitive.Clear>
   );
 }

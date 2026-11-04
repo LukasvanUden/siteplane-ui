@@ -2,18 +2,17 @@
 
 import { Toast } from "@base-ui/react/toast";
 import {
-  CircleAlertIcon,
-  CircleCheckIcon,
+  WarningCircleIcon,
+  CheckCircleIcon,
   InfoIcon,
-  TriangleAlertIcon,
-  XIcon,
-} from "lucide-react";
+  WarningIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import { useSiteplaneMotionPreset } from "../../system/motion/siteplane-motion-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
-import { Button } from "../button";
-import { KitButton } from "../button/button-internal";
+import { Button, CloseButton } from "../button";
 import { Spinner } from "../spinner";
 import { useToastStack } from "./toast-stack";
 import { toastDismissClassName, toastSurfaceClassName } from "./toast-surface";
@@ -22,10 +21,10 @@ import "./toast.css";
 
 // A loading toast shows the kit Spinner instead of an icon of its own.
 const TOAST_ICONS = {
-  error: CircleAlertIcon,
+  error: WarningCircleIcon,
   info: InfoIcon,
-  success: CircleCheckIcon,
-  warning: TriangleAlertIcon,
+  success: CheckCircleIcon,
+  warning: WarningIcon,
 } as const;
 
 /**
@@ -81,6 +80,7 @@ function Toasts({
   portalProps?:
     WithStringClassName<React.ComponentProps<typeof Toast.Portal>> | undefined;
 }): React.ReactElement {
+  const messages = useSiteplaneMessages("toast");
   const { toasts } = Toast.useToastManager();
   const swipeDirection = getSwipeDirection(position);
   // Stacks of other providers at this position take the edge first when they
@@ -103,6 +103,9 @@ function Toasts({
       {...portalProps}
     >
       <Toast.Viewport
+        // Base UI names the region "Notifications" in English; the kit's
+        // message replaces it.
+        aria-label={messages.region}
         ref={setViewport}
         className={cn(
           "sp-toast-viewport",
@@ -204,7 +207,14 @@ function Toasts({
                         data-slot="toast-icon"
                       >
                         {Icon ? (
-                          <Icon className="sp-spinner-motion in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning" />
+                          // A success glyph takes the success text's green
+                          // and a warning glyph the warning text's amber-brown,
+                          // as every glyph of the tone and the Alert's (rulebook
+                          // C4).
+                          <Icon
+                            aria-hidden="true"
+                            className="in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success-foreground in-data-[type=warning]:text-warning-foreground"
+                          />
                         ) : (
                           <Spinner aria-hidden="true" className="opacity-80" />
                         )}
@@ -248,12 +258,8 @@ function ToastCloseButton({ label }: { label: string }): React.ReactElement {
       aria-label={label}
       className={cn("sp-toast-close", toastDismissClassName)}
       data-slot="toast-close"
-      render={
-        <KitButton profile="overlay-dismiss" shape="square" variant="ghost" />
-      }
-    >
-      <XIcon />
-    </Toast.Close>
+      render={<CloseButton size="2xs" />}
+    />
   );
 }
 
@@ -269,7 +275,10 @@ export type ToastPosition =
   | "bottom-right";
 
 export interface ToastProviderProps extends Toast.Provider.Props {
-  /** The accessible name of each toast's dismiss button. Default: "Dismiss toast" */
+  /**
+   * The accessible name of each toast's dismiss button: the `toast.dismiss`
+   * message by default, "Dismiss toast" in English.
+   */
   dismissLabel?: string;
   position?: ToastPosition;
   portalProps?: WithStringClassName<React.ComponentProps<typeof Toast.Portal>>;
@@ -277,11 +286,13 @@ export interface ToastProviderProps extends Toast.Provider.Props {
 
 export function ToastProvider({
   children,
-  dismissLabel = "Dismiss toast",
+  dismissLabel: dismissLabelProp,
   position = "bottom-right",
   portalProps,
   ...props
 }: ToastProviderProps): React.ReactElement {
+  const messages = useSiteplaneMessages("toast");
+  const dismissLabel = dismissLabelProp ?? messages.dismiss;
   const manager = "toastManager" in props ? props.toastManager : toastManager;
   return (
     <Toast.Provider toastManager={toastManager} {...props}>

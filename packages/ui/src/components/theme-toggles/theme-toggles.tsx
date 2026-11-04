@@ -1,21 +1,24 @@
 "use client";
 
 import { type ComponentProps, type ReactElement, useId } from "react";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "@phosphor-icons/react/dist/ssr";
 
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { Toggle } from "../toggle";
 import { KitToggle } from "../toggle/toggle-internal";
 
 import "./theme-toggles.css";
 
+// Both toggles render a borderless, square icon toggle, so they set Toggle's
+// variant and padding themselves and take neither.
 type ThemeToggleInputProps = Omit<
   ComponentProps<typeof Toggle>,
-  "children" | "pressed" | "size"
+  "children" | "padding" | "pressed" | "size" | "variant"
 > & {
   /**
    * `true` means dark mode: unpressed shows the sun, pressed shows the moon.
@@ -23,43 +26,24 @@ type ThemeToggleInputProps = Omit<
    * `onPressedChange`.
    */
   pressed?: boolean;
-  /** @deprecated Use `pressed`. */
-  checked?: boolean;
-  /** @deprecated Use `defaultPressed`. */
-  defaultChecked?: boolean;
-  /** @deprecated Use `onPressedChange`. */
-  onCheckedChange?: (checked: boolean) => void;
   size?: SiteplaneControlSize;
 };
-
-/** Calls `onPressedChange` and the deprecated `onCheckedChange` alias. */
-function pressedChangeHandler(
-  onPressedChange: ThemeToggleInputProps["onPressedChange"],
-  onCheckedChange: ThemeToggleInputProps["onCheckedChange"],
-): ThemeToggleInputProps["onPressedChange"] {
-  if (!onCheckedChange) return onPressedChange;
-  return (pressed, eventDetails) => {
-    onPressedChange?.(pressed, eventDetails);
-    onCheckedChange(pressed);
-  };
-}
 
 export type SunMoonMorphToggleProps = ThemeToggleInputProps;
 
 export function SunMoonMorphToggle({
-  "aria-label": ariaLabel = "Dark mode",
-  checked,
+  "aria-label": ariaLabelProp,
   className,
-  defaultChecked,
-  defaultPressed = defaultChecked ?? false,
+  defaultPressed = false,
   disabled,
   id: idProp,
-  onCheckedChange,
   onPressedChange,
-  pressed = checked,
+  pressed,
   size,
   ...props
 }: SunMoonMorphToggleProps): ReactElement {
+  const messages = useSiteplaneMessages("themeToggles");
+  const ariaLabel = ariaLabelProp ?? messages.darkMode;
   const generatedId = useId();
   const id = idProp ?? `sp-sun-moon-${generatedId.replaceAll(":", "")}`;
   const maskId = `${id}-mask`;
@@ -82,7 +66,7 @@ export function SunMoonMorphToggle({
         defaultPressed={defaultPressed}
         disabled={disabled}
         id={id}
-        onPressedChange={pressedChangeHandler(onPressedChange, onCheckedChange)}
+        onPressedChange={onPressedChange}
         padding="icon"
         profile="theme"
         pressed={pressed}
@@ -153,19 +137,18 @@ export function SunMoonMorphToggle({
 export type LayeredThemeToggleProps = ThemeToggleInputProps;
 
 export function LayeredThemeToggle({
-  "aria-label": ariaLabel = "Dark mode",
-  checked,
+  "aria-label": ariaLabelProp,
   className,
-  defaultChecked,
-  defaultPressed = defaultChecked ?? false,
+  defaultPressed = false,
   disabled,
   id: idProp,
-  onCheckedChange,
   onPressedChange,
-  pressed = checked,
+  pressed,
   size,
   ...props
 }: LayeredThemeToggleProps): ReactElement {
+  const messages = useSiteplaneMessages("themeToggles");
+  const ariaLabel = ariaLabelProp ?? messages.darkMode;
   const resolvedSize = useResolvedControlSize(size);
 
   return (
@@ -185,7 +168,7 @@ export function LayeredThemeToggle({
         defaultPressed={defaultPressed}
         disabled={disabled}
         id={idProp}
-        onPressedChange={pressedChangeHandler(onPressedChange, onCheckedChange)}
+        onPressedChange={onPressedChange}
         padding="icon"
         profile="theme"
         pressed={pressed}

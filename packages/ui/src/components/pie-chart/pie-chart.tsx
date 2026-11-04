@@ -1,5 +1,9 @@
 "use client";
 import * as React from "react";
+import {
+  useFormatLocale,
+  useSiteplaneMessages,
+} from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { ChartEmptyState } from "../chart/chart-cartesian";
@@ -38,6 +42,19 @@ import {
 // rounding of shares that fill it: no track is drawn for it.
 const trackMinimum = 0.001;
 
+/**
+ * The named sizes of a ring, by the diameter
+ * of the chart: 120, 160, 200, 240 and 280 px. The default is `sm`, 200 px.
+ */
+export type PieChartSize = "xxs" | "xs" | "sm" | "md" | "lg";
+const pieChartSizes: Record<PieChartSize, number> = {
+  xxs: 120,
+  xs: 160,
+  sm: 200,
+  md: 240,
+  lg: 280,
+};
+
 export type PieChartDatum = {
   id: string;
   label: string;
@@ -66,11 +83,15 @@ export type PieChartProps = {
    * last share never takes the color of the first, where the ring closes.
    */
   palette?: ChartPalette;
-  size?: number;
+  /**
+   * The diameter of the chart, a size name (`xxs` 120 px to `lg` 280 px) or a
+   * number of px. The default is `sm`, 200 px.
+   */
+  size?: number | PieChartSize;
   className?: string;
   /** Writes a value in the tooltip and in what screen readers read for each share. A number in the format of `locale` by default. */
   formatValue?: (value: number) => string;
-  /** The locale of the numbers. */
+  /** The locale of the numbers: the SiteplaneLocaleProvider's unless set, en-US without one. */
   locale?: string;
   emptyLabel?: string;
   /**
@@ -100,7 +121,7 @@ export type PieChartProps = {
    * full at 20 px. Screen readers read it in full. It rolls to a new value.
    */
   centerValue?: number;
-  /** A caption under `centerValue`, such as Tickets: one line of 12 px muted text that ends in an ellipsis when the hole is too narrow for it. */
+  /** A caption above `centerValue`, such as Tickets, as in every ring chart: one line of 12 px muted text, 4 px above the figure, that ends in an ellipsis when the hole is too narrow for it. */
   centerLabel?: string;
   /** How `centerValue` is written, as Intl.NumberFormat options in `locale`, such as a currency. The chart adds compact notation when the figure needs it. */
   centerFormat?: Intl.NumberFormatOptions;
@@ -118,6 +139,12 @@ export type PieChartProps = {
    * reaches up to 10 px beyond the box of the chart.
    */
   popOut?: boolean;
+  /**
+   * Rolls the value in the tooltip to the next share's, digit by digit
+   * (MotionNumber), as the other charts' `rollingNumbers` does. Off by
+   * default: it changes at once. `centerValue` rolls either way.
+   */
+  rollingNumbers?: boolean;
 };
 /**
  * One share of the ring, or one wedge of the pie. While it is the highlighted
@@ -193,11 +220,12 @@ const figureStepClassName: Record<PieCenterStep, string> = {
 };
 
 /**
- * A figure in the hole of the donut, with an optional caption under it: in the
- * largest step it fits in, in full or in compact notation (`pieCenterFit`),
- * which the chart picks from its size and the text alone, so that the server
- * and the client agree. A compact figure is read in full. The caption stays on
- * one line and ends in an ellipsis where the hole narrows (rulebook K5).
+ * A figure in the hole of the donut, with an optional caption above it, as in
+ * every ring chart of the kit (Lukas, 3 November 2026): in the largest step it
+ * fits in, in full or in compact notation (`pieCenterFit`), which the chart
+ * picks from its size and the text alone, so that the server and the client
+ * agree. A compact figure is read in full. The caption stays on one line and
+ * ends in an ellipsis where the hole narrows (rulebook K5).
  */
 function PieCenterFigure({
   caption,
@@ -218,6 +246,19 @@ function PieCenterFigure({
   const text = fit.compact ? short : full;
   return (
     <>
+      {caption ? (
+        <span
+          className={cn(
+            slotClass("pie-chart-center-label"),
+            "mb-1 truncate text-xs leading-none text-muted-foreground",
+          )}
+          data-slot="pie-chart-center-label"
+          style={{ maxWidth: `${fit.captionWidth}%` }}
+          title={caption}
+        >
+          {caption}
+        </span>
+      ) : null}
       <span
         className={cn(
           slotClass("pie-chart-center-value"),
@@ -239,19 +280,6 @@ function PieCenterFigure({
           </>
         )}
       </span>
-      {caption ? (
-        <span
-          className={cn(
-            slotClass("pie-chart-center-label"),
-            "mt-1 truncate text-xs leading-none text-muted-foreground",
-          )}
-          data-slot="pie-chart-center-label"
-          style={{ maxWidth: `${fit.captionWidth}%` }}
-          title={caption}
-        >
-          {caption}
-        </span>
-      ) : null}
     </>
   );
 }
@@ -261,11 +289,11 @@ export function PieChart({
   label,
   "aria-describedby": describedBy,
   palette = "brand",
-  size = 200,
+  size: sizeProp = "sm",
   className,
   formatValue: givenFormat,
-  locale = CHART_DEFAULT_LOCALE,
-  emptyLabel = "No data",
+  locale: localeProp,
+  emptyLabel: emptyLabelProp,
   labels,
   variant = "donut",
   center,
@@ -274,9 +302,16 @@ export function PieChart({
   centerFormat,
   legend = true,
   popOut = false,
+  rollingNumbers = false,
 }: PieChartProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const emptyLabel = emptyLabelProp ?? messages.noData;
+  // The chart's own locale, else the provider's, else en-US.
+  const locale = useFormatLocale(localeProp, CHART_DEFAULT_LOCALE);
   const chart = React.useRef<SVGSVGElement>(null);
-  const words = chartLabels(labels);
+  const size =
+    typeof sizeProp === "number" ? sizeProp : pieChartSizes[sizeProp];
+  const words = chartLabels(labels, messages);
   // Numbers as the other charts write them: in the format of the locale.
   const formatValue = givenFormat ?? chartNumberFormatter(locale);
   const pie = variant === "pie";
@@ -415,8 +450,12 @@ export function PieChart({
         content={
           selected && (
             <>
-              <strong>
-                <MotionNumber value={formatValue(selected.value)} />
+              <strong className="tabular-nums">
+                {rollingNumbers ? (
+                  <MotionNumber value={formatValue(selected.value)} />
+                ) : (
+                  formatValue(selected.value)
+                )}
               </strong>
               <div>{selected.label}</div>
             </>

@@ -1,8 +1,14 @@
 "use client";
 
-import { ArrowUpIcon, PaperclipIcon, SquareIcon } from "lucide-react";
+import {
+  ArrowUpIcon,
+  PaperclipIcon,
+  SquareIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+import type { PromptInputLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { useRelativeControlSize } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
@@ -28,24 +34,7 @@ import "./prompt-input.css";
 
 export type { PromptInputStatus, PromptInputSubmitOnEnter };
 
-/** The words the Prompt Input speaks. Each can be replaced through `labels`. */
-export type PromptInputLabels = {
-  /** The name of the field for assistive technology. */
-  textarea: string;
-  /** The name of the button that sends the draft. */
-  send: string;
-  /** The name of the button that stops a reply that is running. */
-  stop: string;
-  /** The name and the tooltip of the button that picks files. */
-  attach: string;
-};
-
-const defaultPromptInputLabels: PromptInputLabels = {
-  attach: "Attach files",
-  send: "Send message",
-  stop: "Stop",
-  textarea: "Message",
-};
+export type { PromptInputLabels };
 
 type PromptInputContextValue = {
   allowEmpty: boolean;
@@ -128,7 +117,8 @@ export function PromptInput({
   const controlled = value !== undefined;
   const draft = controlled ? value : uncontrolledDraft;
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const text = { ...defaultPromptInputLabels, ...labels };
+  const messages = useSiteplaneMessages("promptInput");
+  const text = { ...messages, ...labels };
   const state = submitState(status, draft, allowEmpty);
 
   const setValue = (next: string) => {
@@ -344,7 +334,7 @@ export function PromptInputAttachButton({
             />
           }
         >
-          {children ?? <PaperclipIcon />}
+          {children ?? <PaperclipIcon aria-hidden="true" />}
         </TooltipTrigger>
         <TooltipPopup>{prompt.labels.attach}</TooltipPopup>
       </Tooltip>
@@ -385,7 +375,7 @@ export type PromptInputSubmitProps = DistributiveOmit<
  * Send, or Stop while a reply runs. Send is the filled round button with the
  * ArrowUp icon and submits the form; it can be pressed once the draft has
  * something in it. Stop shows a Square, stays pressable and calls `onStop`.
- * The icons fade through each other (rulebook M8), and the button is never
+ * The icons switch at once (rulebook M8), and the button is never
  * the Button's `loading`, which would disable it. Any Button prop, such as
  * `variant`, `shape` or `size`, replaces the default look.
  */
@@ -396,7 +386,7 @@ export function PromptInputSubmit({
   ...props
 }: PromptInputSubmitProps): React.ReactElement {
   const prompt = usePromptInput("PromptInputSubmit");
-  const size = useRelativeControlSize("md");
+  const size = useRelativeControlSize("xs");
   const state = submitState(prompt.status, prompt.value, prompt.allowEmpty);
   const stop = state.kind === "stop";
 
@@ -431,7 +421,7 @@ export function PromptInputSubmit({
         swapKey={state.kind}
       >
         {stop ? (
-          <SquareIcon aria-hidden="true" fill="currentColor" />
+          <SquareIcon aria-hidden="true" weight="fill" />
         ) : (
           <ArrowUpIcon aria-hidden="true" />
         )}

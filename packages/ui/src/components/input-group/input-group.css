@@ -3,45 +3,96 @@
 @layer siteplane {
   /* The field scope. Every InputGroup carries data-variant; the rules below
    * name it, also beside a variant value, so their specificity stays in step
-   * with each other. */
+   * with each other. A segment's focus fill is the accent's translucent fill
+   * (rulebook C1). The group reads the theme's colours where it is: it
+   * declares no copy of a theme token, so its addons' text takes the theme's
+   * values (3 November 2026). */
   .sp-base-input-group[data-variant] {
-    --input-group-surface-subtle: rgb(0 0 0 / 4%);
-    --input-segment-background: color-mix(
-      in srgb,
-      var(--color-blue-500) 16%,
-      transparent
-    );
+    --input-segment-background: var(--sp-rw-bg-accent-translucent);
     --input-segment-padding-block: calc(var(--spacing) * 0.5);
     --input-segment-padding-inline: var(--spacing);
-    --sp-semantic-color-background: var(--color-white);
-    --sp-semantic-color-border: rgb(0 0 0 / 8%);
-    --sp-semantic-color-destructive: var(--color-red-500);
-    --sp-semantic-color-foreground: var(--color-neutral-800);
-    --sp-semantic-color-input: rgb(0 0 0 / 10%);
-    --sp-semantic-color-muted-foreground: color-mix(
-      in srgb,
-      var(--color-neutral-500) 90%,
-      var(--color-black)
-    );
-    --sp-semantic-color-ring: var(--color-neutral-400);
   }
 
   /* InputGroup exposes only composite context. Public child profiles decide how
-   * these signals map onto their own internal control anatomy. */
+   * these signals map onto their own internal control anatomy. The group is on
+   * the field scale of its own size (design-rework.css): its addons start
+   * their content at the field's inline padding, where a leading icon of the
+   * scale's size stands (rulebook I3), and a textarea's group at the area
+   * padding of a field of several lines (14 px at md). */
   .sp-base-input-group {
     --sp-composite-control-height: initial;
     --sp-composite-control-padding-block-end: initial;
     --sp-composite-control-padding-block-start: initial;
     --sp-composite-control-padding-inline-end: initial;
     --sp-composite-control-padding-inline-start: initial;
+    --input-group-padding-inline: var(--sp-rw-field-padding-inline);
   }
 
+  .sp-base-input-group:has(> .sp-textarea-control) {
+    --input-group-padding-inline: var(--sp-rw-field-area-padding-inline);
+  }
+
+  /* The text starts 8 px after an addon at its start and ends 8 px before one
+   * at its end (I3; it was 6 px). */
   .sp-base-input-group:has(> .sp-input-group-addon[data-align="inline-start"]) {
-    --sp-composite-control-padding-inline-start: calc(var(--spacing) * 1.5);
+    --sp-composite-control-padding-inline-start: var(--sp-rw-space-2);
   }
 
   .sp-base-input-group:has(> .sp-input-group-addon[data-align="inline-end"]) {
-    --sp-composite-control-padding-inline-end: calc(var(--spacing) * 1.5);
+    --sp-composite-control-padding-inline-end: var(--sp-rw-space-2);
+  }
+
+  /* Past an addon's divider the text keeps the field's own inline padding. An
+   * addon without a divider between the text and the divider, such as a
+   * spinner before a Button segment, keeps the text 8 px from itself, as
+   * above. */
+  .sp-base-input-group:has(
+      > .sp-input-group-addon[data-align="inline-start"][data-divider]
+    ):not(
+      :has(
+        > .sp-input-group-addon[data-align="inline-start"]:not([data-divider])
+      )
+    ) {
+    --sp-composite-control-padding-inline-start: var(
+      --input-group-padding-inline
+    );
+  }
+
+  .sp-base-input-group:has(
+      > .sp-input-group-addon[data-align="inline-end"][data-divider]
+    ):not(
+      :has(> .sp-input-group-addon[data-align="inline-end"]:not([data-divider]))
+    ) {
+    --sp-composite-control-padding-inline-end: var(
+      --input-group-padding-inline
+    );
+  }
+
+  /* Beside a field action the text keeps 8 px to its glyph: the gap gives up
+   * the 4 px that the action's 24 px box keeps around its 16 px glyph, as the
+   * addon does on its outer side (design-rework.css). The inner item is
+   * counted without the focus guards Base UI puts around the trigger of an
+   * open popover or menu, as there. */
+  .sp-base-input-group:has(
+    > .sp-input-group-addon[data-align="inline-start"]:not([data-divider])
+      > [data-profile="field-action"]:nth-last-child(
+        1 of :not([data-base-ui-focus-guard])
+      )
+  ) {
+    --sp-composite-control-padding-inline-start: calc(
+      var(--sp-rw-space-2) - (var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2
+    );
+  }
+
+  .sp-base-input-group:has(
+    > .sp-input-group-addon[data-align="inline-end"]:not([data-divider])
+      > [data-profile="field-action"]:nth-child(
+        1 of :not([data-base-ui-focus-guard])
+      )
+  ) {
+    --sp-composite-control-padding-inline-end: calc(
+      var(--sp-rw-space-2) - (var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2
+    );
   }
 
   .sp-base-input-group:has(
@@ -89,46 +140,16 @@
     );
   }
 
-  .dark .sp-base-input-group[data-variant],
-  [data-theme="dark"] .sp-base-input-group[data-variant] {
-    --input-group-surface-subtle: rgb(255 255 255 / 4%);
-    --sp-semantic-color-background: color-mix(
-      in srgb,
-      var(--color-neutral-950) 95%,
-      var(--color-white)
-    );
-    --sp-semantic-color-border: rgb(255 255 255 / 6%);
-    --sp-semantic-color-destructive: color-mix(
-      in srgb,
-      var(--color-red-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-foreground: var(--color-neutral-100);
-    --sp-semantic-color-input: rgb(255 255 255 / 8%);
-    --sp-semantic-color-muted-foreground: color-mix(
-      in srgb,
-      var(--color-neutral-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-ring: var(--color-neutral-500);
-  }
-
   .sp-base-input-group[data-variant][data-variant="soft"] {
-    background-color: var(--input-group-surface-subtle);
+    background-color: var(--sp-semantic-color-surface-subtle);
   }
 
   .sp-base-input-group[data-variant][data-variant="soft"]:focus-within {
     background-color: var(--sp-semantic-color-background);
   }
 
-  /* Disabled with its own control, not with a disabled action inside it
-   * (design-rework.css, the field disabled rule). */
-  .sp-base-input-group[data-variant]:has(
-      :is(input:not([type="hidden"]), textarea):disabled,
-      [role="spinbutton"][aria-disabled="true"]
-    ) {
-    background-color: var(--input-group-surface-subtle);
-  }
+  /* A disabled group lays the subtle fill of every disabled field, from the
+   * one rule in design-rework.css (the field disabled rules). */
 
   .sp-base-input-group[data-variant]:has(:autofill) {
     background-color: color-mix(
@@ -151,15 +172,17 @@
     cursor: text;
   }
 
-  .sp-input-segment > input {
+  /* A segment of a value, such as the month of an expiry date: its text is
+   * centred in a box of its width, with the caret in the kit's caret colour,
+   * as in every field. The segment's control names the input-group profile,
+   * which ranks these rules above the profile's own padding and flex. */
+  .sp-base-input[data-profile="input-group"].sp-input-segment > input {
     background-clip: content-box;
-    border-radius: calc(
-      var(--radius-md) + var(--input-segment-padding-block)
-    ) !important;
-    caret-color: var(--color-primary);
+    border-radius: calc(var(--radius-md) + var(--input-segment-padding-block));
+    caret-color: var(--sp-rw-fg-primary);
     cursor: text;
-    padding-block: var(--input-segment-padding-block) !important;
-    padding-inline: var(--input-segment-padding-inline) !important;
+    padding-block: var(--input-segment-padding-block);
+    padding-inline: var(--input-segment-padding-inline);
     text-align: center;
   }
 
@@ -167,19 +190,22 @@
     background-color: var(--input-segment-background);
   }
 
-  .sp-input-segment > input[data-segment-width="2-digit"] {
-    flex: none !important;
-    width: calc(var(--spacing) * 8) !important;
+  .sp-base-input[data-profile="input-group"].sp-input-segment
+    > input[data-segment-width="2-digit"] {
+    flex: none;
+    width: calc(var(--spacing) * 8);
   }
 
-  .sp-input-segment > input[data-segment-width="4-digit"] {
-    flex: none !important;
-    width: calc(var(--spacing) * 12) !important;
+  .sp-base-input[data-profile="input-group"].sp-input-segment
+    > input[data-segment-width="4-digit"] {
+    flex: none;
+    width: calc(var(--spacing) * 12);
   }
 
-  .sp-input-segment > input[data-segment-width="fill"] {
-    flex: 1 1 0% !important;
-    width: auto !important;
+  .sp-base-input[data-profile="input-group"].sp-input-segment
+    > input[data-segment-width="fill"] {
+    flex: 1 1 0%;
+    width: auto;
   }
 
   .sp-input-segment > input[data-segment-inset-start="true"] {
@@ -188,5 +214,286 @@
 
   .sp-input-segment > input::selection {
     background-color: transparent;
+  }
+
+  /* Date and time fields: Date Field, Time Field, Date Range Picker, Date Time
+   * Picker and the date input of a Calendar or a picker's panel. One set of
+   * rules for every date and time field. A field is a field of its size (its
+   * field scale, design-rework.css): as tall as the Input, Select and Button
+   * of the same size, 36, 40, 44 and 48 px, with its digits starting at the
+   * field's inline padding (Lukas, 30 October
+   * 2026): 12 px up to md, 14 px at lg and 16 px at xl. The segments keep
+   * their own padding inside the field's (--input-segment-inset). A field
+   * narrower than its segments, such as one capped by its container, a width
+   * utility or a flex row that lets it shrink, keeps everything in its own
+   * box (rulebook K5): the segment row gives way and clips the segments, the
+   * buttons and the status icons at the end stay, and the field clips what
+   * is left. A clipped segment that takes the focus scrolls into the row. */
+  .sp-date-field-control,
+  .sp-time-field-control,
+  .sp-date-range-control,
+  .sp-date-time-picker-control {
+    --input-segment-inset: calc(
+      var(--sp-rw-field-padding-inline) - var(--input-segment-padding-inline)
+    );
+    max-width: 100%;
+    height: var(--sp-rw-field-height);
+    overflow: hidden;
+  }
+
+  /* The segment row fills the field, so whatever ends the field stands at its
+   * end. It reads in the locale's direction (its dir), whatever the page's. */
+  .sp-date-field-input,
+  .sp-time-field-input,
+  .sp-date-range-picker-segments,
+  .sp-date-time-picker-segments {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    align-self: stretch;
+    min-width: 0;
+    overflow: hidden;
+    outline: none;
+  }
+
+  /* The insets of the segments belong to the field, which takes the page's
+   * direction: it pads its start, and its end where nothing ends it, so a
+   * field as wide as its segments is balanced. A button at the end, the help
+   * icon of a tooltip and the alert icon of an invalid field end their 16 px
+   * glyph at the inline padding, in the 24 px box of a field action, and the
+   * digits end 8 px before the glyph, as at an Input's trailing icon (the
+   * status and addon rules of the group). The Date Time Picker always ends
+   * with its time button. A centred Time Field keeps no inset. */
+  .sp-date-field-control,
+  .sp-time-field-control:not(.sp-time-field-control-center),
+  .sp-date-range-control,
+  .sp-date-time-picker-control {
+    padding-inline: var(--input-segment-inset);
+  }
+
+  .sp-date-field-control:has(> .sp-input-group-addon[data-align="inline-end"]),
+  .sp-date-field-control:has(> .sp-field-status[data-help]),
+  .sp-date-field-control[data-invalid]:has(> .sp-field-status[data-alert]),
+  .sp-time-field-control:not(.sp-time-field-control-center):has(
+      > .sp-input-group-addon[data-align="inline-end"]
+    ),
+  .sp-time-field-control:not(.sp-time-field-control-center):has(
+      > .sp-field-status[data-help]
+    ),
+  .sp-time-field-control[data-invalid]:not(.sp-time-field-control-center):has(
+      > .sp-field-status[data-alert]
+    ),
+  .sp-date-range-control:has(> .sp-input-group-addon[data-align="inline-end"]),
+  .sp-date-range-control:has(> .sp-field-status[data-help]),
+  .sp-date-range-control[data-invalid]:has(> .sp-field-status[data-alert]),
+  .sp-date-time-picker-control:has(
+    > .sp-input-group-addon[data-align="inline-end"]
+  ) {
+    padding-inline-end: 0;
+  }
+
+  /* The leading icon of a Date Field or a Time Field is a regular addon at the
+   * field's start; the first segment's text starts where an input's text
+   * starts after the same icon. */
+  .sp-date-field-control:has(> .sp-date-field-icon-addon),
+  .sp-time-field-control:has(> .sp-time-field-icon-addon):not(
+      .sp-time-field-control-center
+    ) {
+    padding-inline-start: 0;
+  }
+
+  .sp-date-field-control > .sp-date-field-icon-addon,
+  .sp-time-field-control:not(.sp-time-field-control-center)
+    > .sp-time-field-icon-addon {
+    margin-inline-end: calc(
+      var(--sp-composite-control-padding-inline-start) -
+        var(--input-segment-padding-inline)
+    );
+  }
+
+  /* Date and time segments: the day, the month and the year, the hour, the
+   * minute and the day period, and the literals between them, in Date Field,
+   * Time Field, Date Range Picker, Date Time Picker and the date input of a
+   * Calendar. One rule for every date and time field. A segment is as wide as
+   * its text and its padding, in every locale, so the value reads as one run
+   * of text, "mm/dd/yyyy" and "tt.mm.jjjj" alike, with the separators at the
+   * same distance from the text on both sides (3 November 2026; a box of a
+   * minimum width centred narrow placeholders such as "tt" and "jjjj" in it,
+   * and the gaps differed). The digits keep their width: React Aria writes a
+   * leading zero while a number is typed, and the digits are tabular. */
+  .sp-date-segment,
+  .sp-time-segment {
+    outline: none;
+  }
+
+  .sp-date-segment:not([data-type="literal"]),
+  .sp-time-segment:not([data-type="literal"]) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(var(--radius-md) + var(--input-segment-padding-block));
+    background-clip: content-box;
+    caret-color: var(--sp-rw-fg-primary);
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+    padding-block: var(--input-segment-padding-block);
+    padding-inline: var(--input-segment-padding-inline);
+    text-align: center;
+  }
+
+  /* A disabled segment shows the not-allowed cursor over its text, as the
+   * text of every disabled field does (rulebook T8): the segments of a date
+   * or time field and the segment of a value such as an expiry date. They
+   * kept the text cursor (coherence audit A11, 3 November 2026). */
+  .sp-date-segment[aria-disabled="true"]:not([data-type="literal"]),
+  .sp-time-segment[aria-disabled="true"]:not([data-type="literal"]),
+  .sp-base-input[data-profile="input-group"].sp-input-segment > input:disabled {
+    cursor: not-allowed;
+  }
+
+  /* A separator cancels the padding of the segments beside it and keeps its
+   * white space. Each literal is a flex item of its own, whose spaces would
+   * collapse at its edges: the space before AM or PM vanished, and a cs-CZ or
+   * hu-HU date, "01. 10. 2026", read "01.10.2026" (3 November 2026). */
+  .sp-date-segment[data-literal-kind="separator"],
+  .sp-time-segment[data-literal-kind="separator"] {
+    margin-inline: calc(var(--spacing) * -1);
+    white-space: pre;
+  }
+
+  .sp-date-segment[data-focused]:not([data-type="literal"]),
+  .sp-time-segment[data-focused]:not([data-type="literal"]) {
+    background-color: var(--input-segment-background);
+  }
+
+  .sp-date-segment[data-placeholder]:not([data-type="literal"]),
+  .sp-time-segment[data-placeholder]:not([data-type="literal"]) {
+    color: var(--color-muted-foreground);
+  }
+
+  .sp-date-segment::selection,
+  .sp-time-segment::selection {
+    background-color: transparent;
+  }
+
+  /* The status of the field (FieldStatus): the help icon of `tooltip`, and the
+   * alert icon of an invalid field in its place, right after the text, before
+   * the addons at the end, in a plain Input as in an InputGroup. Each stands
+   * in the 24 px box of a field action, so the 16 px glyph ends at the field's
+   * inline padding (I4), and the text ends 8 px before the glyph (rulebook
+   * I3). It shows while it has help or the field is invalid: an Input whose
+   * input is invalid (aria-invalid, which an invalid Field sets), or a group
+   * that holds an invalid control or is marked invalid (data-invalid, as a
+   * date field marks its group). A group whose end holds a reveal action, the
+   * field action that toggles (aria-pressed) a password's text, and a group
+   * around a password show no alert icon. The alert icon is decorative and
+   * takes no pointer input. */
+  .sp-field-status {
+    display: none;
+    flex: none;
+    align-items: center;
+    align-self: center;
+    order: 9999;
+    margin-inline-end: calc(
+      var(--input-group-padding-inline, var(--sp-rw-field-padding-inline)) -
+        (var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2
+    );
+  }
+
+  .sp-field-status[data-help],
+  .sp-base-input-group:is([data-invalid], :has([aria-invalid="true"])):not(
+      :has(
+        > .sp-input-group-addon > [data-profile="field-action"][aria-pressed],
+        input[type="password"]
+      )
+    )
+    > .sp-field-status[data-alert] {
+    display: flex;
+  }
+
+  .sp-input-invalid-icon {
+    flex: none;
+    box-sizing: content-box;
+    width: var(--sp-rw-space-4);
+    height: var(--sp-rw-space-4);
+    padding: calc((var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2);
+    color: var(--color-destructive-foreground);
+    pointer-events: none;
+  }
+
+  .sp-field-status > .sp-input-invalid-icon {
+    display: none;
+  }
+
+  .sp-base-input-group:is([data-invalid], :has([aria-invalid="true"])):not(
+      :has(
+        > .sp-input-group-addon > [data-profile="field-action"][aria-pressed],
+        input[type="password"]
+      )
+    )
+    > .sp-field-status[data-alert]
+    > .sp-input-invalid-icon {
+    display: block;
+  }
+
+  /* While the alert icon shows, the help icon gives way to it: the status's
+   * own and that of an InputGroupTooltip, which keeps no room and takes no
+   * focus, so a consumer passes the same help text in every state. */
+  .sp-base-input-group:is([data-invalid], :has([aria-invalid="true"])):not(
+      :has(
+        > .sp-input-group-addon > [data-profile="field-action"][aria-pressed],
+        input[type="password"]
+      )
+    )
+    > .sp-field-status[data-alert]
+    > .sp-input-group-tooltip {
+    display: none;
+  }
+
+  .sp-base-input-group:is([data-invalid], :has([aria-invalid="true"])):not(
+      :has(
+        > .sp-input-group-addon > [data-profile="field-action"][aria-pressed],
+        input[type="password"]
+      )
+    ):has(> .sp-field-status[data-alert])
+    > .sp-input-group-addon:has(> .sp-input-group-tooltip) {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  /* A status followed by an addon at the end stands 4 px from it, as field
+   * actions side by side do (an InputGroupTooltip it replaces excepted). The
+   * exception is a :not() of its own: a :has() inside a :has() is invalid, so
+   * browsers dropped the whole rule and the status stood 8 px from the addon
+   * (4 November 2026). */
+  .sp-field-status:has(+ .sp-input-group-addon[data-align="inline-end"]):not(
+      :has(+ .sp-input-group-addon > .sp-input-group-tooltip)
+    ) {
+    margin-inline-end: var(--sp-rw-space-1);
+  }
+
+  /* Beside a textarea the status centres on the first text line, as an addon
+   * does there. */
+  .sp-base-input-group:has(> .sp-textarea-control) > .sp-field-status {
+    align-self: flex-start;
+    margin-block-start: calc(
+      var(--sp-rw-space-3) + (1lh - var(--sp-rw-space-6)) / 2
+    );
+  }
+
+  /* The text ends 8 px before the glyph of a status that shows: the gap gives
+   * up the 4 px the 24 px box keeps around the glyph, as beside a field
+   * action. A plain Input shows its status by the same rules (input.css). */
+  .sp-base-input-group:has(> .sp-field-status[data-help]),
+  .sp-base-input-group:is([data-invalid], :has([aria-invalid="true"])):not(
+      :has(
+        > .sp-input-group-addon > [data-profile="field-action"][aria-pressed],
+        input[type="password"]
+      )
+    ):has(> .sp-field-status[data-alert]) {
+    --sp-composite-control-padding-inline-end: calc(
+      var(--sp-rw-space-2) - (var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2
+    );
   }
 }

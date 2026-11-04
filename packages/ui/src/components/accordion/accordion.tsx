@@ -1,7 +1,7 @@
 "use client";
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { ChevronDownIcon } from "lucide-react";
+import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
 import type React from "react";
 
 import { cn, type WithStringClassName } from "../../system/utils/cn";
@@ -55,7 +55,7 @@ export function AccordionTrigger({
               align="between"
               multiline
               profile="accordion-trigger"
-              variant="text"
+              variant="link"
               width="full"
             />
           )
@@ -63,7 +63,8 @@ export function AccordionTrigger({
         {...props}
       >
         <span className="min-w-0 flex-1 wrap-anywhere">{children}</span>
-        <ChevronDownIcon
+        <CaretDownIcon
+          aria-hidden="true"
           className="sp-accordion-indicator sp-accordion-motion pointer-events-none shrink-0"
           data-slot="accordion-indicator"
         />

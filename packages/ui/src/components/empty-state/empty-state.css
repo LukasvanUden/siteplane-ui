@@ -1,0 +1,336 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The decoration of an Empty: the rings behind
+   * the media, the avatars on rings, the row of avatars around the media and
+   * the drifting grid of avatars. All of it is decoration: it takes no layout
+   * space, sits behind the text and the actions of the Empty, which isolates
+   * its own stacking order so that nothing reaches behind the surface that
+   * holds it, and is hidden from assistive technology. */
+  :where(.sp-empty) {
+    isolation: isolate;
+  }
+
+  :where(.sp-empty-media) {
+    position: relative;
+  }
+
+  /* The rings: concentric circles, 1 px lines in the edge tone, fading out
+   * towards the edge of the square. The rings are a mask, so the colour is the
+   * theme's hairline colour. They start 48 px from the centre, the room of a
+   * featured icon, and step by 24, 32 or 48 px at sm, md and lg. */
+  :root .sp-empty-pattern {
+    --sp-empty-pattern-size: calc(var(--sp-rw-space) * 120);
+    --sp-empty-pattern-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27480%27%20height%3D%27480%27%20viewBox%3D%270%200%20480%20480%27%20fill%3D%27none%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27f%27%20cx%3D%270%27%20cy%3D%270%27%20r%3D%271%27%20gradientUnits%3D%27userSpaceOnUse%27%20gradientTransform%3D%27translate%28240%20240%29%20rotate%2890%29%20scale%28240%20240%29%27%3E%3Cstop%2F%3E%3Cstop%20offset%3D%271%27%20stop-opacity%3D%270%27%2F%3E%3C%2FradialGradient%3E%3Cmask%20id%3D%27m%27%20style%3D%27mask-type%3Aalpha%27%20maskUnits%3D%27userSpaceOnUse%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27480%27%20height%3D%27480%27%3E%3Crect%20width%3D%27480%27%20height%3D%27480%27%20fill%3D%27url%28%23f%29%27%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Cg%20mask%3D%27url%28%23m%29%27%20stroke%3D%27%23000%27%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%2747.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%2779.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%27111.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%27143.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%27175.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%27207.5%27%2F%3E%3Ccircle%20cx%3D%27240%27%20cy%3D%27240%27%20r%3D%27239.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: var(--sp-empty-pattern-size);
+    height: var(--sp-empty-pattern-size);
+    pointer-events: none;
+    background-color: var(--sp-rw-border-translucent);
+    translate: -50% -50%;
+    -webkit-mask-image: var(--sp-empty-pattern-image);
+    mask-image: var(--sp-empty-pattern-image);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+
+  :root .sp-empty-pattern[data-size="sm"] {
+    --sp-empty-pattern-size: calc(var(--sp-rw-space) * 84);
+    --sp-empty-pattern-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27336%27%20height%3D%27336%27%20viewBox%3D%270%200%20336%20336%27%20fill%3D%27none%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27f%27%20cx%3D%270%27%20cy%3D%270%27%20r%3D%271%27%20gradientUnits%3D%27userSpaceOnUse%27%20gradientTransform%3D%27translate%28168%20168%29%20rotate%2890%29%20scale%28168%20168%29%27%3E%3Cstop%2F%3E%3Cstop%20offset%3D%271%27%20stop-opacity%3D%270%27%2F%3E%3C%2FradialGradient%3E%3Cmask%20id%3D%27m%27%20style%3D%27mask-type%3Aalpha%27%20maskUnits%3D%27userSpaceOnUse%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27336%27%20height%3D%27336%27%3E%3Crect%20width%3D%27336%27%20height%3D%27336%27%20fill%3D%27url%28%23f%29%27%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Cg%20mask%3D%27url%28%23m%29%27%20stroke%3D%27%23000%27%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%2747.5%27%2F%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%2771.5%27%2F%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%2795.5%27%2F%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%27119.5%27%2F%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%27143.5%27%2F%3E%3Ccircle%20cx%3D%27168%27%20cy%3D%27168%27%20r%3D%27167.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  }
+
+  :root .sp-empty-pattern[data-size="lg"] {
+    --sp-empty-pattern-size: calc(var(--sp-rw-space) * 192);
+    --sp-empty-pattern-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27768%27%20height%3D%27768%27%20viewBox%3D%270%200%20768%20768%27%20fill%3D%27none%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27f%27%20cx%3D%270%27%20cy%3D%270%27%20r%3D%271%27%20gradientUnits%3D%27userSpaceOnUse%27%20gradientTransform%3D%27translate%28384%20384%29%20rotate%2890%29%20scale%28384%20384%29%27%3E%3Cstop%2F%3E%3Cstop%20offset%3D%271%27%20stop-opacity%3D%270%27%2F%3E%3C%2FradialGradient%3E%3Cmask%20id%3D%27m%27%20style%3D%27mask-type%3Aalpha%27%20maskUnits%3D%27userSpaceOnUse%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27768%27%20height%3D%27768%27%3E%3Crect%20width%3D%27768%27%20height%3D%27768%27%20fill%3D%27url%28%23f%29%27%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Cg%20mask%3D%27url%28%23m%29%27%20stroke%3D%27%23000%27%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%2747.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%2795.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27143.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27191.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27239.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27287.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27335.5%27%2F%3E%3Ccircle%20cx%3D%27384%27%20cy%3D%27384%27%20r%3D%27383.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  }
+
+  /* Avatars on rings: a square of 480 px, centred on the media, that fades out
+   * from its middle. The rings are 96 to 352 px across; an avatar sits on a
+   * ring at an angle, clockwise from the top, so its place is its ring's
+   * radius turned by its angle (sin and cos of it), and no avatar carries a
+   * style of its own. */
+  :root .sp-empty-avatar-radius {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: calc(var(--sp-rw-space) * 120);
+    height: calc(var(--sp-rw-space) * 120);
+    pointer-events: none;
+    translate: -50% -50%;
+    -webkit-mask-image: radial-gradient(circle, #000 10%, transparent 70%);
+    mask-image: radial-gradient(circle, #000 10%, transparent 70%);
+  }
+
+  :root .sp-empty-avatar-ring {
+    --sp-empty-ring-radius: calc(var(--sp-rw-space) * 12);
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--sp-empty-ring-radius) * 2);
+    height: calc(var(--sp-empty-ring-radius) * 2);
+    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    border-radius: var(--sp-rw-radius-full);
+    translate: -50% -50%;
+  }
+
+  :root .sp-empty-avatar-ring[data-ring="2"] {
+    --sp-empty-ring-radius: calc(var(--sp-rw-space) * 20);
+  }
+
+  :root .sp-empty-avatar-ring[data-ring="3"] {
+    --sp-empty-ring-radius: calc(var(--sp-rw-space) * 28);
+  }
+
+  :root .sp-empty-avatar-ring[data-ring="4"] {
+    --sp-empty-ring-radius: calc(var(--sp-rw-space) * 36);
+  }
+
+  :root .sp-empty-avatar-ring[data-ring="5"] {
+    --sp-empty-ring-radius: calc(var(--sp-rw-space) * 44);
+  }
+
+  :root .sp-empty-avatar-slot {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 20);
+    --sp-empty-slot-angle: 0deg;
+    --sp-empty-slot-size: var(--sp-rw-space-8);
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    translate: calc(
+        -50% + sin(var(--sp-empty-slot-angle)) * var(--sp-empty-slot-ring)
+      )
+      calc(-50% - cos(var(--sp-empty-slot-angle)) * var(--sp-empty-slot-ring));
+  }
+
+  :root .sp-empty-avatar-slot > .sp-avatar {
+    width: var(--sp-empty-slot-size);
+    height: var(--sp-empty-slot-size);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="1"] {
+    --sp-empty-slot-angle: 330deg;
+  }
+
+  :root .sp-empty-avatar-slot[data-index="2"] {
+    --sp-empty-slot-angle: 56deg;
+  }
+
+  :root .sp-empty-avatar-slot[data-index="3"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 36);
+    --sp-empty-slot-angle: 82deg;
+    --sp-empty-slot-size: var(--sp-rw-space-7);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="4"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 36);
+    --sp-empty-slot-angle: 299deg;
+    --sp-empty-slot-size: var(--sp-rw-space-7);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="5"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 36);
+    --sp-empty-slot-angle: 241deg;
+    --sp-empty-slot-size: var(--sp-rw-space-7);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="6"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 44);
+    --sp-empty-slot-angle: 64deg;
+    --sp-empty-slot-size: var(--sp-rw-space-6);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="7"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 44);
+    --sp-empty-slot-angle: 270deg;
+    --sp-empty-slot-size: var(--sp-rw-space-6);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="8"] {
+    --sp-empty-slot-ring: calc(var(--sp-rw-space) * 36);
+    --sp-empty-slot-angle: 112deg;
+    --sp-empty-slot-size: var(--sp-rw-space-7);
+  }
+
+  :root .sp-empty-avatar-slot[data-index="9"] {
+    --sp-empty-slot-angle: 249deg;
+  }
+
+  /* A row of avatars around the media: 24, 20 or 16 px between the groups and
+   * the children in an lg, md or sm Empty, 16 px (12 px at sm) between the
+   * avatars, fading out towards the edges. Each avatar steps up towards the
+   * children, by the step it carries: 40, 44 and 48 px, and 32, 36, 40 and
+   * 44 px at sm. */
+  :root .sp-empty-avatar-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-rw-space-6);
+    margin: calc(var(--sp-rw-space-1) * -1);
+    padding: var(--sp-rw-space-1);
+    -webkit-mask-image: radial-gradient(circle, #000 5%, transparent 105%);
+    mask-image: radial-gradient(circle, #000 5%, transparent 105%);
+  }
+
+  :root .sp-empty[data-size="md"] .sp-empty-avatar-row {
+    gap: var(--sp-rw-space-5);
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-row {
+    gap: var(--sp-rw-space-4);
+  }
+
+  :root .sp-empty-avatar-group {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-4);
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-group {
+    gap: var(--sp-rw-space-3);
+  }
+
+  :root .sp-empty-avatar-group > .sp-avatar {
+    --sp-empty-row-size: var(--sp-rw-space-10);
+
+    width: var(--sp-empty-row-size);
+    height: var(--sp-empty-row-size);
+  }
+
+  :root .sp-empty-avatar-group > .sp-avatar[data-step="1"] {
+    --sp-empty-row-size: var(--sp-rw-space-11);
+  }
+
+  :root .sp-empty-avatar-group > .sp-avatar[data-step="2"] {
+    --sp-empty-row-size: var(--sp-rw-space-12);
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-group > .sp-avatar {
+    --sp-empty-row-size: var(--sp-rw-space-8);
+  }
+
+  :root
+    .sp-empty[data-size="sm"]
+    .sp-empty-avatar-group
+    > .sp-avatar[data-step="1"] {
+    --sp-empty-row-size: var(--sp-rw-space-9);
+  }
+
+  :root
+    .sp-empty[data-size="sm"]
+    .sp-empty-avatar-group
+    > .sp-avatar[data-step="2"] {
+    --sp-empty-row-size: var(--sp-rw-space-10);
+  }
+
+  :root
+    .sp-empty[data-size="sm"]
+    .sp-empty-avatar-group
+    > .sp-avatar[data-step="3"] {
+    --sp-empty-row-size: var(--sp-rw-space-11);
+  }
+
+  /* Two rows of avatars that drift in opposite directions: each row is two
+   * strips side by side, and each strip runs one strip's width to the start,
+   * so the second takes the place of the first without a seam. A loop takes
+   * 240 loop steps of the motion scale (four minutes at its default), the
+   * second row half a loop ahead. With reduced motion nothing drifts, and the
+   * second row rests half a strip along. */
+  :root .sp-empty-avatar-grid {
+    display: flex;
+    max-width: calc(var(--sp-rw-space) * 128);
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-rw-space-3);
+    margin: calc(var(--sp-rw-space-1) * -1);
+    padding: var(--sp-rw-space-1);
+    overflow-x: clip;
+    -webkit-mask-image: radial-gradient(circle, #000 10%, transparent 100%);
+    mask-image: radial-gradient(circle, #000 10%, transparent 100%);
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-grid {
+    gap: var(--sp-rw-space-2);
+  }
+
+  :root .sp-empty-avatar-lane {
+    display: flex;
+  }
+
+  :root .sp-empty-avatar-strip {
+    display: flex;
+    width: auto;
+    max-width: none;
+    flex-shrink: 0;
+    gap: var(--sp-rw-space-3);
+    padding-inline-start: var(--sp-rw-space-3);
+    animation: sp-empty-avatar-drift calc(var(--motion-duration-loop) * 240)
+      var(--motion-ease-linear) infinite;
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-strip {
+    gap: var(--sp-rw-space-2);
+    padding-inline-start: var(--sp-rw-space-2);
+  }
+
+  :root .sp-empty-avatar-lane[data-lane="1"] > .sp-empty-avatar-strip {
+    animation-delay: calc(var(--motion-duration-loop) * -120);
+    animation-direction: reverse;
+  }
+
+  :root .sp-empty-avatar-strip > .sp-avatar {
+    --sp-empty-grid-size: var(--sp-rw-space-12);
+
+    width: var(--sp-empty-grid-size);
+    height: var(--sp-empty-grid-size);
+  }
+
+  :root .sp-empty[data-size="md"] .sp-empty-avatar-strip > .sp-avatar {
+    --sp-empty-grid-size: var(--sp-rw-space-10);
+  }
+
+  :root .sp-empty[data-size="sm"] .sp-empty-avatar-strip > .sp-avatar {
+    --sp-empty-grid-size: var(--sp-rw-space-8);
+  }
+
+  @keyframes sp-empty-avatar-drift {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  html[data-motion-reduce="true"] .sp-empty-avatar-strip,
+  [data-sp-motion="reduced"] .sp-empty-avatar-strip {
+    animation: none;
+  }
+
+  html[data-motion-reduce="true"]
+    .sp-empty-avatar-lane[data-lane="1"]
+    > .sp-empty-avatar-strip,
+  [data-sp-motion="reduced"]
+    .sp-empty-avatar-lane[data-lane="1"]
+    > .sp-empty-avatar-strip {
+    transform: translateX(-50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root .sp-empty-avatar-strip {
+      animation: none;
+    }
+
+    :root .sp-empty-avatar-lane[data-lane="1"] > .sp-empty-avatar-strip {
+      transform: translateX(-50%);
+    }
+  }
+}

@@ -1,9 +1,11 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { PencilSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import { useTruncated } from "../../system/hooks/use-truncated";
+import type { EditableLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import {
   type SiteplaneControlSize,
@@ -30,8 +32,8 @@ import {
   inSecondFrame,
   keyframeTiming,
   measureSwapTiming,
+  panelSwitchClassName,
   playFromSecondFrame,
-  swapFadeClassName,
 } from "../motion/motion-presence";
 import { Textarea, type TextareaProps } from "../textarea";
 import {
@@ -61,21 +63,7 @@ import "./editable.css";
 
 export type { EditableActivationMode, EditableSubmitMode };
 
-/** The words of an Editable's triggers. */
-export type EditableLabels = {
-  /** The name of the edit trigger, which shows the pencil alone. */
-  edit: string;
-  /** The text of the submit trigger. */
-  submit: string;
-  /** The text of the cancel trigger. */
-  cancel: string;
-};
-
-const defaultEditableLabels: EditableLabels = {
-  cancel: "Cancel",
-  edit: "Edit",
-  submit: "Save",
-};
+export type { EditableLabels };
 
 /**
  * The placeholder of the field and of the preview of an empty value: one text
@@ -136,7 +124,10 @@ export type EditableProps = Omit<
   finalFocusEl?: (() => HTMLElement | null) | undefined;
   /** The control size of the field and of the optional Save and Cancel. */
   size?: SiteplaneControlSize | undefined;
-  /** Replaces the English words of the triggers. */
+  /**
+   * Replaces words of the triggers for this Editable, merged with the
+   * messages of SiteplaneLocaleProvider (English by default).
+   */
   labels?: Partial<EditableLabels> | undefined;
 };
 
@@ -191,14 +182,15 @@ function useEditableContext(part: string): EditableContextValue {
 }
 
 /**
- * How a part takes its turn: `fade` with the kit's swap fade (the pencil and
- * the optional Save and Cancel), `frame` with the fade of the field's frame
- * that the Editable plays (the field, whose own text waits meanwhile) and
- * `text`, never faded, above the field while they switch (the value): the
- * one text that paints until the switch is over. The value shows the field's
- * text colour, so the two texts take turns in one frame, pixel for pixel.
+ * How a part takes its turn: `switch` at once, with the kit's content switch
+ * (the pencil and the optional Save and Cancel), `frame` with the fade of the
+ * field's frame that the Editable plays (the field, whose own text waits
+ * meanwhile) and `text`, never faded, above the field while they switch (the
+ * value): the one text that paints until the switch is over. The value shows
+ * the field's text colour, so the two texts take turns in one frame, pixel
+ * for pixel.
  */
-type SwapPartKind = "fade" | "frame" | "text";
+type SwapPartKind = "frame" | "switch" | "text";
 
 /**
  * A part of one side of the switch (rulebook M8, its Editable note). The value
@@ -268,7 +260,7 @@ function useSwapPart<T extends HTMLElement>(
   // textarea: centred in the row, it would ride the height down. Its place
   // is measured in the commit that returns it, before the row's height is
   // held, so it is the place for the new value.
-  const pencil = side === "rest" && kind === "fade";
+  const pencil = side === "rest" && kind === "switch";
   const [entryPlace, setEntryPlace] = React.useState<PanePlace | null>(null);
   const returning = pencil && phase === "entering";
   React.useLayoutEffect(() => {
@@ -304,7 +296,7 @@ function useSwapPart<T extends HTMLElement>(
     phase,
     props: {
       ...swapAttributes(phase, context.swap.starting),
-      ...(kind === "fade" ? { className: swapFadeClassName } : {}),
+      ...(kind === "switch" ? { className: panelSwitchClassName } : {}),
       ...(pinned && pin
         ? inRow
           ? { style: { alignSelf: "flex-start", marginTop: pin.top } }
@@ -328,10 +320,10 @@ function withPin(
 /**
  * The pane of a part that switches: the field's (`editable-field-pane`), whose
  * frame comes and goes around the text, and the pane of the pencil and of the
- * optional Save and Cancel (`editable-trigger-pane`), which fade with the
- * kit's swap fade. The fade sits on the pane rather than on the kit component
- * it holds, because a Button and a field surface keep transitions of their
- * own, for their states.
+ * optional Save and Cancel (`editable-trigger-pane`), which switch at once
+ * with the kit's content switch (rulebook M8). The switch sits on the pane
+ * rather than on the kit component it holds, because a Button and a field
+ * surface keep transitions of their own, for their states.
  */
 function EditableSwapPane({
   children,
@@ -358,7 +350,7 @@ function EditableSwapPane({
   } = useSwapPart<HTMLSpanElement>(
     context,
     side,
-    field ? "frame" : "fade",
+    field ? "frame" : "switch",
     placeRef,
     leaveAtOnce,
   );
@@ -594,7 +586,8 @@ export function Editable({
   const resolvedSize = useResolvedControlSize(size);
   const disabled = disabledProp || fieldCheck.disabled;
   const interactive = !disabled && !readOnly;
-  const words = { ...defaultEditableLabels, ...labels };
+  const messages = useSiteplaneMessages("editable");
+  const words = { ...messages, ...labels };
   const placeholders =
     typeof placeholder === "string"
       ? { edit: placeholder, preview: placeholder }
@@ -815,7 +808,7 @@ export function Editable({
   });
 
   // Focus returns in the frame after the commit that ends the edit: the edit
-  // trigger shows again by then, also while it still fades in, and a press
+  // trigger shows again by then, and a press
   // outside has moved focus to what it pressed, which keeps it. Editing again
   // before that frame leaves focus in the field.
   React.useLayoutEffect(() => {
@@ -843,8 +836,10 @@ export function Editable({
   // The switch: the side that takes over lays out the row at once and the
   // side that leaves stays pinned in its box, so the Editable's height follows
   // from the start (the kit's height follow), and nothing clips the frame.
-  // The frame's fade plays meanwhile, and the switch ends once it and the
-  // pencil's fade have run, timed from the motion tokens.
+  // The pencil and the optional triggers switch at once; the frame's fade
+  // plays meanwhile, and the switch ends with the swap's base duration, by
+  // which the frame's fade and the height have run, timed from the motion
+  // tokens.
   const follow = useHeightFollower(rootRef);
   const frameFade = React.useRef<Animation | null>(null);
   React.useLayoutEffect(() => {
@@ -982,6 +977,9 @@ export function Editable({
       <div
         className={cn(
           slotClass("editable", props),
+          // The value at rest and the field that edits it share the field
+          // scale of the size (design-rework.css, editable.css).
+          "sp-field-scale",
           swapContainerClassName,
           className,
         )}
@@ -1260,7 +1258,7 @@ export function EditableEditTrigger({
         }
         data-slot="editable-edit-trigger"
         disabled={!context.interactive}
-        size="icon-sm"
+        size="icon-2xs"
         variant="ghost"
         {...props}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1269,7 +1267,7 @@ export function EditableEditTrigger({
         }}
         ref={setRef}
       >
-        {children ?? <PencilIcon aria-hidden="true" />}
+        {children ?? <PencilSimpleIcon aria-hidden="true" />}
       </Button>
     </EditableSwapPane>
   );

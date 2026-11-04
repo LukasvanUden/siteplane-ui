@@ -1,30 +1,19 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  .sp-input-control:not([data-unstyled]) {
-    --sp-input-segment-background: color-mix(
-      in srgb,
-      var(--color-blue-500) 16%,
-      transparent
-    );
-    --sp-input-segment-padding-block: calc(var(--spacing) * 0.5);
-    --sp-input-segment-padding-inline: var(--spacing);
-    --sp-input-surface-subtle: rgb(0 0 0 / 4%);
-    --sp-semantic-color-background: var(--color-white);
-    --sp-semantic-color-border: rgb(0 0 0 / 8%);
-    --sp-semantic-color-destructive: var(--color-red-500);
-    --sp-semantic-color-foreground: var(--color-neutral-800);
-    --sp-semantic-color-input: rgb(0 0 0 / 10%);
-    --sp-semantic-color-muted-foreground: color-mix(
-      in srgb,
-      var(--color-neutral-500) 90%,
-      var(--color-black)
-    );
-    --sp-semantic-color-ring: var(--color-neutral-400);
-  }
-
+  /* The field reads the theme's colours where it is, as every part does: it
+   * declares no copy of a theme token, so its placeholder, its addons and its
+   * fills take the theme's values (3 November 2026). */
   .sp-base-input[data-profile="input-group"] {
     display: contents;
+  }
+
+  /* The native input fills its field, also one that a host gave a slot of its
+   * own (the Sidebar's and the Toolbar's); a segment of an InputGroup keeps
+   * its own width (input-group.css). */
+  :where(.sp-input),
+  :where(.sp-input-control > input) {
+    width: 100%;
   }
 
   .sp-base-input[data-profile="input-group"]::before {
@@ -32,25 +21,14 @@
   }
 
   /* Embedded Combobox inputs keep the public Input layout contract while the
-   * surrounding popup owns the visible surface and focus treatment. */
+   * surrounding popup owns the visible surface and focus treatment. The input
+   * is as high as a field of its size (the field scale). */
   .sp-base-input[data-profile="combobox"][data-profile-mode="embedded"] {
     position: relative;
     display: inline-flex;
     width: 100%;
     min-width: 0;
-    height: var(--sp-rw-control-md);
-  }
-
-  .sp-base-input[data-profile="combobox"][data-profile-mode="embedded"][data-size="sm"] {
-    height: var(--sp-rw-control-sm);
-  }
-
-  .sp-base-input[data-profile="combobox"][data-profile-mode="embedded"][data-size="lg"] {
-    height: var(--sp-rw-control-lg);
-  }
-
-  .sp-base-input[data-profile="combobox"][data-profile-mode="embedded"][data-size="xl"] {
-    height: var(--sp-rw-control-xl);
+    height: var(--sp-rw-field-height);
   }
 
   .sp-base-input[data-profile="input-group"] .sp-input {
@@ -61,48 +39,20 @@
     padding-block-end: var(--sp-composite-control-padding-block-end, 0);
     padding-inline-start: var(
       --sp-composite-control-padding-inline-start,
-      var(--sp-input-padding-inline, calc(var(--spacing) * 3))
+      var(--sp-rw-field-padding-inline)
     );
     padding-inline-end: var(
       --sp-composite-control-padding-inline-end,
-      var(--sp-input-padding-inline, calc(var(--spacing) * 3))
+      var(--sp-rw-field-padding-inline)
     );
-  }
-
-  .dark .sp-input-control:not([data-unstyled]),
-  [data-theme="dark"] .sp-input-control:not([data-unstyled]) {
-    --sp-input-surface-subtle: rgb(255 255 255 / 4%);
-    --sp-semantic-color-background: color-mix(
-      in srgb,
-      var(--color-neutral-950) 95%,
-      var(--color-white)
-    );
-    --sp-semantic-color-border: rgb(255 255 255 / 6%);
-    --sp-semantic-color-destructive: color-mix(
-      in srgb,
-      var(--color-red-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-foreground: var(--color-neutral-100);
-    --sp-semantic-color-input: rgb(255 255 255 / 8%);
-    --sp-semantic-color-muted-foreground: color-mix(
-      in srgb,
-      var(--color-neutral-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-ring: var(--color-neutral-500);
   }
 
   .sp-input-control:not([data-unstyled])[data-variant="soft"] {
-    background-color: var(--sp-input-surface-subtle);
+    background-color: var(--sp-semantic-color-surface-subtle);
   }
 
   .sp-input-control:not([data-unstyled])[data-variant="soft"]:focus-within {
     background-color: var(--sp-semantic-color-background);
-  }
-
-  .sp-input-control:not([data-unstyled]):has(:disabled) {
-    background-color: var(--sp-input-surface-subtle);
   }
 
   .sp-input-control:not([data-unstyled]):has(:autofill) {
@@ -138,51 +88,26 @@
     caret-color: var(--sp-rw-fg-primary);
   }
 
-  .sp-input-hide-picker::-webkit-calendar-picker-indicator {
-    display: none;
+  /* The alert icon of an invalid Input is the status of the field
+   * (FieldStatus, input-group.css), as in an InputGroup: it shows while the
+   * input is invalid (aria-invalid, which an invalid Field sets), and the text
+   * ends 8 px before its glyph, which ends at the field's inline padding. */
+  .sp-input-control:has(> .sp-input[aria-invalid="true"])
+    > .sp-field-status[data-alert] {
+    display: flex;
   }
 
-  .sp-date-input {
-    --input-segment-background: var(--sp-input-segment-background);
-    --input-segment-padding-block: var(--sp-input-segment-padding-block);
-    --input-segment-padding-inline: var(--sp-input-segment-padding-inline);
+  .sp-input-control:has(> .sp-input[aria-invalid="true"])
+    > .sp-field-status[data-alert]
+    > .sp-input-invalid-icon {
+    display: block;
   }
 
-  .sp-date-input::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-  }
-
-  .sp-date-input::-webkit-datetime-edit-day-field,
-  .sp-date-input::-webkit-datetime-edit-month-field,
-  .sp-date-input::-webkit-datetime-edit-year-field {
-    border-radius: var(--radius-md);
-    padding-block: var(--input-segment-padding-block);
-    padding-inline: var(--input-segment-padding-inline);
-  }
-
-  .sp-date-input::-webkit-datetime-edit-day-field:focus,
-  .sp-date-input::-webkit-datetime-edit-month-field:focus,
-  .sp-date-input::-webkit-datetime-edit-year-field:focus {
-    background-color: var(--input-segment-background);
-  }
-
-  /* One rule per selector: Chrome rejects a ::selection after another
-   * pseudo-element, and one selector it rejects drops a whole list, so the
-   * input's own selection rule stands alone. */
-  .sp-date-input::selection {
-    background-color: transparent;
-  }
-
-  .sp-date-input::-webkit-datetime-edit-day-field::selection {
-    background-color: transparent;
-  }
-
-  .sp-date-input::-webkit-datetime-edit-month-field::selection {
-    background-color: transparent;
-  }
-
-  .sp-date-input::-webkit-datetime-edit-year-field::selection {
-    background-color: transparent;
+  .sp-input-control:has(> .sp-field-status[data-alert])
+    > .sp-input[aria-invalid="true"] {
+    padding-inline-end: calc(
+      var(--sp-rw-space-2) - (var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2
+    );
   }
 
   /* Embedded search headers: Input owns sizing, typography and native states. */

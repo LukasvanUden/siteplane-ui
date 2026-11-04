@@ -1,11 +1,10 @@
 "use client";
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
-import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
 import {
-  siteplaneUIDefaults,
+  type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
@@ -20,46 +19,39 @@ import type { KitSwitchProps } from "./switch-internal";
 
 import "./switch.css";
 
-export const switchVariants = cva(
-  "sp-switch-motion inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 cursor-pointer items-center p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input not-data-disabled:data-unchecked:hover:bg-input/80 dark:not-data-disabled:data-unchecked:hover:bg-white/12",
-  {
-    defaultVariants: { size: siteplaneUIDefaults.controlSize },
-    variants: {
-      size: {
-        md: "[--thumb-size:--spacing(5)] sm:[--thumb-size:--spacing(4)]",
-        lg: "[--thumb-size:--spacing(6)] rounded-xl sm:[--thumb-size:--spacing(5)] sm:rounded-lg",
-        sm: "[--thumb-size:--spacing(4)] sm:[--thumb-size:--spacing(3.5)]",
-        xl: "[--thumb-size:--spacing(7)] sm:[--thumb-size:--spacing(6)]",
-      },
-    },
-  },
-);
-
-// The thumb starts at the track's inline start and travels toward its end
-// when checked: in a right-to-left page it starts on the right and travels
-// left, and it stretches from its leading edge there too.
-export const switchThumbClassName =
-  "pointer-events-none block aspect-square h-full origin-left rounded-[inherit] bg-background shadow-sm/5 will-change-transform in-[[data-foundation=switch][data-checked]]:origin-[var(--thumb-size)_50%] in-[[data-foundation=switch][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-[calc(100%-var(--thumb-size))_50%] rtl:in-[[data-foundation=switch][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]";
-
-// The standalone control draws its track and thumb, their sizes and the
-// thumb's travel from design-rework.css ([data-slot="switch"]); the utilities
-// above style the menu tracks only. Both tracks take one edge from that
-// stylesheet, the standalone control's 3:1 edge, which a menu track finds by
-// its switch-track slot. Every thumb stretches from its leading edge while the
-// switch or its label is pressed, in either direction (design-rework.css).
+// The standalone control and the track of a menu row's switch draw their
+// track and thumb, their sizes and the thumb's travel from the same rules in
+// design-rework.css; the utilities here only lay the parts out. The track of a
+// menu row is the chassis in its default variant at the step of the row's
+// line, 36x20 beside the menu rows' 20 px line and 44x24 in a touch-size
+// DrawerMenu (Lukas, 2 November 2026), and takes the standalone control's 3:1
+// edge by its switch-track slot. The thumb starts
+// at the track's inline start and travels toward its end when checked: in a
+// right-to-left page it starts on the right and travels left, and it stretches
+// from its leading edge there too, while the switch or its label is pressed.
 const switchControlClassName =
   "sp-switch-motion inline-flex shrink-0 cursor-pointer items-center data-disabled:cursor-not-allowed";
 
-const switchControlThumbClassName =
+export const switchThumbClassName =
   "pointer-events-none block aspect-square origin-left will-change-transform in-[[data-foundation=switch][data-checked]]:origin-right rtl:origin-right rtl:in-[[data-foundation=switch][data-checked]]:origin-left";
 
-export const switchMenuTrackClassName =
-  "col-start-2 in-[[data-foundation=switch][data-checked]]:bg-primary in-[[data-foundation=switch][data-unchecked]]:bg-input";
+/** The track of a switch row in a menu; the row's checked state drives it. */
+export const switchTrackClassName =
+  "sp-switch-track sp-switch-motion col-start-2";
 
-export interface SwitchProps
-  extends
-    Omit<WithStringClassName<SwitchPrimitive.Root.Props>, "size">,
-    VariantProps<typeof switchVariants> {}
+export interface SwitchProps extends Omit<
+  WithStringClassName<SwitchPrimitive.Root.Props>,
+  "size"
+> {
+  /** The control size, which the track and its label follow. */
+  size?: SiteplaneControlSize | undefined;
+  /**
+   * `slim` draws the track without padding, as tall as the thumb, which
+   * covers its edge. The thumb keeps its size and travel. A switch row of a
+   * menu draws the default track.
+   */
+  variant?: "default" | "slim" | undefined;
+}
 
 export function Switch(switchProps: SwitchProps): React.ReactElement {
   // Menu and drawer rows pass the internal menu-item profile through
@@ -69,6 +61,7 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
     className,
     profile = "control",
     size,
+    variant = "default",
     ...props
   } = switchProps as KitSwitchProps;
   const resolvedSize = useResolvedControlSize(size);
@@ -86,9 +79,13 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
         className,
       )}
       data-foundation="switch"
+      // A menu row ends with its switch, as a check row ends with its check
+      // (I8).
+      data-indicator-position={profile === "menu-item" ? "end" : undefined}
       data-profile={profile}
       data-size={resolvedSize}
       data-slot="switch"
+      data-variant={profile === "menu-item" ? undefined : variant}
       {...props}
     >
       {profile === "menu-item" ? (
@@ -98,11 +95,7 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
           </span>
           <span
             aria-hidden="true"
-            className={cn(
-              "sp-switch-track",
-              switchVariants({ size: resolvedSize }),
-              switchMenuTrackClassName,
-            )}
+            className={switchTrackClassName}
             data-slot="switch-track"
           >
             <SwitchPrimitive.Thumb
@@ -113,7 +106,7 @@ export function Switch(switchProps: SwitchProps): React.ReactElement {
         </>
       ) : (
         <SwitchPrimitive.Thumb
-          className={cn("sp-switch-thumb", switchControlThumbClassName)}
+          className={cn("sp-switch-thumb", switchThumbClassName)}
           data-slot="switch-thumb"
         />
       )}

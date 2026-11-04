@@ -11,6 +11,7 @@ import { useFormReset } from "../../system/form/use-form-reset";
 import { useMediaQuery } from "../../system/hooks/use-media-query";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
+import { FieldHelp, hasFieldHelp } from "../input-group/field-status";
 import { MotionReveal } from "../motion";
 import { Tooltip, TooltipPopup } from "../tooltip";
 import {
@@ -51,8 +52,13 @@ function fieldHoldsFocus(field: HTMLElement): boolean {
 
 /**
  * The space between a Field's label, control, description and error is
- * `--field-gap` (8 px). FieldError reads the same value, so the space it adds
- * opens and closes with the error instead of appearing in one step.
+ * `--field-gap` (6 px; 0 px at sm and 2 px from md
+ * when the label holds a checkbox, radio or switch, so its hint follows the
+ * label). FieldError reads the same value, so the space
+ * it adds opens and closes with the error instead of appearing in one step.
+ * The description and the error write the hint text of the size of the
+ * Field's control, which every field names on its root (sp-field-scale,
+ * design-rework.css).
  *
  * `labelPlacement="floating"` draws the label inside the control: at rest it
  * stands in for the placeholder, and it glides to the top once the field has
@@ -163,7 +169,9 @@ export function Field({
             // min-w-0: in a grid or flex form a Field never grows past its
             // track for a long value, such as a Select's nowrap trigger.
             slotClass("field", props),
-            "flex min-w-0 flex-col items-start gap-(--field-gap) [--field-gap:calc(var(--spacing)*2)]",
+            // The gap is --field-gap, a kit default of 6 px that a Field whose
+            // label holds a choice control refines (design-rework.css).
+            "flex min-w-0 flex-col items-start gap-(--field-gap)",
             className,
           )}
           data-label-placement={
@@ -231,18 +239,36 @@ function FieldFormReset({
 }
 
 /**
- * A label above a field sits on the 16 px line; one beside a checkbox, radio
- * or switch (holding it, next to it or leading the text column next to it)
- * takes the 21 px body line, since such labels are sentences and wrap (S13).
+ * A label above a field is 14 px on a 20 px line;
+ * one beside a checkbox, radio or switch (holding it, next to it or leading the
+ * text column next to it) takes the type of the control, since such labels are
+ * sentences and wrap (S13).
  * Label and FieldLabel share that rule in design-rework.css. A label of text
  * alone lays out as a block, so a required asterisk follows its last word when
  * it wraps.
  */
 export function FieldLabel({
   className,
+  tooltip,
+  tooltipLabel,
   ...props
-}: WithStringClassName<FieldPrimitive.Label.Props>): React.ReactElement {
-  return (
+}: WithStringClassName<FieldPrimitive.Label.Props> & {
+  /**
+   * Help for the field: a help icon after the label text, and after the
+   * required asterisk, that shows it in a tooltip on hover and keyboard focus,
+   * the help icon of the field's own status. It stands beside the label
+   * element, so it is no part of the field's name, and it keeps working in a
+   * disabled field. A floating label shows none; give its control the help.
+   */
+  tooltip?: React.ReactNode;
+  /**
+   * The accessible name of the help icon of `tooltip`, such as "Billing email
+   * help". Defaults to "More information".
+   */
+  tooltipLabel?: string | undefined;
+}): React.ReactElement {
+  const placement = useFieldLabelPlacement();
+  const label = (
     <FieldPrimitive.Label
       className={cn(
         slotClass("field-label", props),
@@ -252,6 +278,15 @@ export function FieldLabel({
       data-slot="field-label"
       {...props}
     />
+  );
+  if (!hasFieldHelp(tooltip) || placement === "floating") return label;
+  return (
+    <span className="sp-field-label-row" data-slot="field-label-row">
+      {label}
+      <FieldHelp aria-label={tooltipLabel} slot="field-label-help">
+        {tooltip}
+      </FieldHelp>
+    </span>
   );
 }
 
@@ -268,6 +303,11 @@ export function FieldItem({
   );
 }
 
+/**
+ * The hint of a Field. Its start padding (design-rework.css) puts it under the
+ * label text when the label holds a choice control (S13), and holds an icon
+ * that leads it beside the text, centred on the first line (I5).
+ */
 export function FieldDescription({
   className,
   ...props
@@ -275,9 +315,8 @@ export function FieldDescription({
   return (
     <FieldPrimitive.Description
       className={cn(
-        // Under the label text when the label holds a choice control (S13).
         slotClass("field-description", props),
-        "ps-[var(--field-choice-indent,0px)] text-muted-foreground",
+        "text-muted-foreground",
         className,
       )}
       data-slot="field-description"
@@ -299,6 +338,9 @@ export type FieldErrorVariant = "inline" | "tooltip";
  * `variant="tooltip"` shows the same message in a bubble beside the control
  * instead, so nothing below it moves. It is the default in a floating Field,
  * and `inline` everywhere else.
+ *
+ * An icon that leads the message, such as WarningCircleIcon, stands beside
+ * the text as in FieldDescription (design-rework.css).
  */
 export function FieldError({
   className,
@@ -338,9 +380,11 @@ export function FieldError({
             element itself always is. */}
         <FieldPrimitive.Error
           className={cn(
-            // Under the label text when the label holds a choice control (S13).
+            // Its text and its start padding are the description's, which
+            // follow the size of the Field's control and its choice indent
+            // (design-rework.css).
             slotClass("field-error", props),
-            "ps-[var(--field-choice-indent,0px)] pt-(--field-gap) text-destructive-foreground text-xs",
+            "pt-(--field-gap) text-destructive-foreground",
             className,
           )}
           data-slot="field-error"

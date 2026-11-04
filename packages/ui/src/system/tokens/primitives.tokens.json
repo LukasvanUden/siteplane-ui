@@ -34,13 +34,13 @@
       "background-light": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.9699, 0, 107]
+          "components": [0.9851, 0, 107]
         }
       },
       "background-dark": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.1957, 0, 0]
+          "components": [0.17, 0, 0]
         }
       },
       "foreground-dark": {
@@ -122,27 +122,30 @@
         }
       },
       "green-100": {
-        "$value": { "colorSpace": "oklch", "components": [0.94, 0.045, 145] }
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.951, 0.0445, 150.9]
+        }
       },
       "green-400": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.765, 0.177, 163.223]
+          "components": [0.778, 0.193, 157.5]
         }
       },
       "green-500": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.696, 0.17, 162.48]
+          "components": [0.71, 0.195, 156]
         }
       },
       "green-600": {
-        "$value": { "colorSpace": "oklch", "components": [0.54, 0.145, 145] }
+        "$value": { "colorSpace": "oklch", "components": [0.584, 0.17, 147.1] }
       },
       "green-700": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.508, 0.118, 165.612]
+          "components": [0.518, 0.136, 157.8]
         }
       },
       "amber-100": {
@@ -164,10 +167,7 @@
         "$value": { "colorSpace": "oklch", "components": [0.61, 0.14, 70] }
       },
       "amber-700": {
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0.555, 0.163, 48.998]
-        }
+        "$value": { "colorSpace": "oklch", "components": [0.52, 0.112, 70] }
       },
       "black-alpha-40": {
         "$value": {

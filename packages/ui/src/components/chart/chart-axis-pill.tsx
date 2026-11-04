@@ -7,7 +7,8 @@
  * the rule for the labels (a label within reach of the pill goes) are adapted
  * from bklit UI's date ticker (tooltip/date-ticker.tsx, MIT) and the labels of
  * its x axis (x-axis.tsx). The pill itself is the Badge, its digits roll through
- * MotionNumber, and its glide is the follow motion.
+ * MotionNumber when the chart asks for it (`rollingNumbers`), and its glide is
+ * the follow motion.
  *
  * MIT License
  *
@@ -107,18 +108,22 @@ export function useCoveredLabels<L extends { position: number; text: string }>(
 /**
  * The pill: the label of the active item in the inverse Badge, on the axis, at
  * the item. It is not drawn until it is first shown. It appears where the item
- * is and glides after it from then on, its digits rolling to the next label's;
- * it fades in and out with the active item and waits where it was while it goes.
+ * is and glides after it from then on, its label changing to the next one at
+ * once, or with `rolling` its digits rolling to the next label's; it fades in
+ * and out with the active item and waits where it was while it goes.
  */
 export function ChartAxisPill({
   container,
   layout,
+  rolling = false,
   side,
   spot,
 }: {
   /** The element whose motion tokens set the glide: the chart. */
   container?: React.RefObject<Element | null>;
   layout: CartesianLayout;
+  /** Rolls the digits of the label to the next one's (the chart's `rollingNumbers`). */
+  rolling?: boolean;
   /** The axis the pill sits on: the bottom of a chart with categories along it, the left side of a horizontal Bar Chart. */
   side: "bottom" | "left";
   /** Null while nothing is active. */
@@ -184,9 +189,12 @@ export function ChartAxisPill({
               }
         }
       >
-        {/* The md Badge sets its text at the 12 px of the labels it covers. */}
-        <Badge size="md" variant="inverse">
-          <MotionNumber key={arrivals} value={text} />
+        {/* The sm Badge sets its text at the 12 px of the labels it covers;
+            the label, or the number that counts, sits in a span of its own. */}
+        <Badge size="sm" variant="inverse">
+          <span>
+            {rolling ? <MotionNumber key={arrivals} value={text} /> : text}
+          </span>
         </Badge>
       </followed.div>
     </div>

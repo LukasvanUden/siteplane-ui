@@ -1,6 +1,6 @@
 "use client";
 
-import { XIcon } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import {
@@ -9,30 +9,12 @@ import {
   type CopyIconPhase,
   useCopyIconPhase,
 } from "../action-icons";
+import type { CopyButtonLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { Button, type ButtonProfile, type ButtonProps } from "../button";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../tooltip";
 
-/** The words a CopyButton shows and speaks. */
-export type CopyButtonLabels = {
-  /** The name and the tooltip of a button that shows the icon alone. */
-  copy: string;
-  /**
-   * The name, the tooltip and the announcement while the check confirms a
-   * copy; a button with text shows it in place of its label.
-   */
-  copied: string;
-  /**
-   * The same for a copy that failed: the clipboard is missing or refuses, or
-   * the value could not be read.
-   */
-  copyFailed: string;
-};
-
-const defaultCopyButtonLabels: CopyButtonLabels = {
-  copy: "Copy",
-  copied: "Copied",
-  copyFailed: "Copy unavailable",
-};
+export type { CopyButtonLabels };
 
 /**
  * The text to copy, or a function that returns it, also one that loads it
@@ -183,8 +165,9 @@ export function useCopyToClipboard({
   onCopy,
   onCopyError,
 }: UseCopyToClipboardOptions = {}): CopyToClipboardState {
-  const copiedLabel = labels?.copied ?? defaultCopyButtonLabels.copied;
-  const failedLabel = labels?.copyFailed ?? defaultCopyButtonLabels.copyFailed;
+  const messages = useSiteplaneMessages("copyButton");
+  const copiedLabel = labels?.copied ?? messages.copied;
+  const failedLabel = labels?.copyFailed ?? messages.copyFailed;
   const { copyPhase, isShowingCheck, playCopyFeedback } = useCopyIconPhase({
     announce,
     announcement: copiedLabel,
@@ -253,7 +236,10 @@ export type CopyButtonProps = DistributiveOmit<
    * `aria-label`, with a tooltip.
    */
   children?: React.ReactNode;
-  /** Replaces the English words of the button. */
+  /**
+   * Replaces words of this button, merged with the messages of
+   * SiteplaneLocaleProvider (English by default).
+   */
   labels?: Partial<CopyButtonLabels> | undefined;
   /** Called with the text once it is on the clipboard. */
   onCopy?: ((value: string) => void) | undefined;
@@ -275,11 +261,11 @@ export type CopyButtonProps = DistributiveOmit<
  * icon that turns into a check after a copy. By default it shows the icon
  * alone as the muted inline action (rulebook T2),
  * with a tooltip that says "Copy" and then "Copied"; with children it is a
- * text button whose label says "Copied" while the check shows. The shared
- * live region says every copy, and a copy that fails names the failure, with
- * a cross on a button that shows the icon alone. Button props pass through,
- * such as `variant`, `size` and `profile`; `profile="field-action"` places it
- * inside a field.
+ * text button whose label stays while the icon turns into the check, so its
+ * width never changes (Lukas, 31 October 2026). The shared live region says
+ * every copy, and a copy that fails names the failure there, with a cross in
+ * place of the icon. Button props pass through, such as `variant`, `size` and
+ * `profile`; `profile="field-action"` places it inside a field.
  */
 export function CopyButton({
   "aria-label": ariaLabel,
@@ -297,7 +283,8 @@ export function CopyButton({
   variant,
   ...props
 }: CopyButtonProps): React.ReactElement {
-  const text = { ...defaultCopyButtonLabels, ...labels };
+  const messages = useSiteplaneMessages("copyButton");
+  const text = { ...messages, ...labels };
   const { copy, copied, failed, phase } = useCopyToClipboard({
     labels: text,
     onCopy,
@@ -312,7 +299,7 @@ export function CopyButton({
     ? {
         profile: "inline",
         profileTone: profileTone ?? "muted",
-        variant: variant ?? "text",
+        variant: variant ?? "link",
       }
     : {
         ...(profile
@@ -325,17 +312,23 @@ export function CopyButton({
     : copied
       ? text.copied
       : (ariaLabel ?? text.copy);
+  // Of the Copy Buttons only the ghost one flashes its border when a press
+  // ends, as the ghost Button does (Lukas, 20 October 2026; Button's
+  // flashesBorder).
+  const flashes =
+    (look.profile ?? "default") === "default" && look.variant === "ghost";
   const button = (
     <Button
       data-slot="copy-button"
       {...props}
       {...look}
+      data-flash={flashes ? undefined : false}
       {...(shape ? { shape } : iconOnly ? { shape: "square" as const } : {})}
       // The bare glyph keeps the 24 px target of the field action.
       {...(size != null
         ? { size }
         : iconOnly && inline
-          ? { size: "icon-xs" as const }
+          ? { size: "icon-2xs" as const }
           : {})}
       aria-label={iconOnly ? name : ariaLabel}
       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -343,18 +336,15 @@ export function CopyButton({
         if (!event.defaultPrevented) void copy(value);
       }}
     >
-      {failed && iconOnly ? (
-        <XIcon aria-hidden="true" className="sp-copy-fail sp-icon-pop size-4" />
+      {/* The cross takes the copy icon's box, the glyph of the Button's
+          size, and a label stays as it is, so the Button keeps its width; the
+          live region says the outcome. */}
+      {failed ? (
+        <XIcon aria-hidden="true" className="sp-copy-fail sp-icon-pop" />
       ) : (
         <CopyRedrawIcon phase={phase} />
       )}
-      {iconOnly
-        ? null
-        : failed
-          ? text.copyFailed
-          : copied
-            ? text.copied
-            : children}
+      {iconOnly ? null : children}
     </Button>
   );
   if (!iconOnly || tooltip === false) return button;

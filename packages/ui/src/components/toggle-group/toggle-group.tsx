@@ -48,18 +48,22 @@ export function ToggleGroup({
 
   return (
     <ToggleGroupPrimitive
+      // The items' gap is the kit's, 2 px in a default group and the 4 px of
+      // a Toolbar's items inside a Toolbar (design-rework.css).
       className={cn(
         slotClass("toggle-group", props),
         "flex",
         width === "full" ? "w-full" : "w-fit",
         wrap && "flex-wrap",
         orientation === "vertical" && "flex-col",
-        variant === "default" && "gap-0.5",
         className,
       )}
       data-size={resolvedSize}
       data-slot="toggle-group"
       data-variant={variant}
+      // An outline group that wraps draws the edges of its rows
+      // (design-rework.css, "A wrapping outline ToggleGroup").
+      data-wrap={wrap ? "" : undefined}
       multiple={multiple}
       orientation={orientation}
       {...props}
@@ -83,7 +87,8 @@ export function ToggleGroupItem({
 }: WithStringClassName<TogglePrimitive.Props> & {
   grow?: boolean;
   maxWidth?: "label";
-  padding?: "default" | "comfortable";
+  /** `icon` is for an item that is one icon. */
+  padding?: "default" | "icon";
 }): React.ReactElement {
   const context = React.useContext(ToggleGroupContext);
 
@@ -94,6 +99,7 @@ export function ToggleGroupItem({
         maxWidth === "label" && "max-w-40",
         className,
       )}
+      data-grow={grow ? "" : undefined}
       data-size={context.size}
       data-variant={context.variant}
       padding={padding}

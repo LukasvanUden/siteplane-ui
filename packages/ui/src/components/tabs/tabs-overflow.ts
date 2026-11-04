@@ -117,8 +117,20 @@ export function useTabsOverflow(
     observeTabs();
     // A selection made outside the list, or a click on a tab at its edge,
     // brings the selected tab into view; tabs that join are measured too.
+    // The selection indicator is positioned by custom properties in its style,
+    // which Base UI writes after the tabs have changed size, and an indicator
+    // that lags a tab that shrank, such as after a font loads, reaches past
+    // the list's end for a moment and makes it scroll. Nothing else changes
+    // when the indicator catches up, so its style is measured too: the list
+    // stood marked as overflowing, with its scroll buttons, while its tabs fit.
+    const isIndicator = (node: Node) =>
+      node instanceof HTMLElement && node.dataset.slot === "tab-indicator";
     const mutations = new MutationObserver((records) => {
+      let changed = false;
       for (const record of records) {
+        if (record.attributeName === "style" && !isIndicator(record.target))
+          continue;
+        changed = true;
         if (record.type === "childList") observeTabs();
         const tab = record.target;
         if (
@@ -128,10 +140,10 @@ export function useTabsOverflow(
         )
           reveal(tab, true);
       }
-      measure();
+      if (changed) measure();
     });
     mutations.observe(list, {
-      attributeFilter: ["aria-selected"],
+      attributeFilter: ["aria-selected", "style"],
       attributes: true,
       childList: true,
       subtree: true,

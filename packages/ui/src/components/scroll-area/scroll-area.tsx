@@ -11,6 +11,13 @@ import "./scroll-area.css";
 export type ScrollAreaProps =
   WithStringClassName<ScrollAreaPrimitive.Root.Props> & {
     scrollFade?: boolean;
+    /**
+     * Whether a scrollable viewport joins the tab order, as Base UI makes it
+     * so that the keyboard can scroll it. A list that another control drives,
+     * such as the options of a Combobox whose input holds the focus, sets it
+     * to `false`: Tab then moves on to the next control and not to the list.
+     */
+    tabbable?: boolean;
     scrollbar?: "auto" | "hidden";
     scrollbarGutter?: boolean;
     fill?: boolean;
@@ -30,6 +37,7 @@ export function ScrollArea({
   className,
   children,
   scrollFade = false,
+  tabbable = true,
   scrollbar = "auto",
   scrollbarGutter = false,
   fill = false,
@@ -60,6 +68,7 @@ export function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         {...viewportLabelProps}
+        {...(tabbable ? {} : { tabIndex: -1 })}
         ref={viewportRef}
         className={cn(
           "sp-scroll-area-viewport",

@@ -4,19 +4,37 @@
  * one footer treatment and one cell alignment rule.
  */
 
+import {
+  type SiteplaneControlSize,
+  useResolvedControlSize,
+  useResolvedDensity,
+} from "../../system/provider/siteplane-ui-provider";
+
 export type TableAlign = "center" | "end" | "start";
+
+/**
+ * The sizes of a table: the provider's control sizes and `xs`, the compact
+ * table. A provider never gives `xs`, since its sizes start at sm, so a table
+ * takes it from its own `size` prop or from the provider's compact density.
+ */
+export type TableSize = "xs" | SiteplaneControlSize;
 
 /** Summary rows: a top contour on the subtle surface at medium weight. */
 export const tableFooterClassName =
   "border-t bg-surface-subtle font-medium [&>tr]:last:border-b-0";
 
 /**
- * The size scale that table.css reads on the container: the heading row's
- * height and the cells' block padding, 32/4 px at sm, 36/6 at default, 40/8 at
- * lg and 48/12 at xl.
+ * The size of a table: its own `size`, else `xs` under the compact density
+ * (the provider's, as ResourceList and FilterBar read it), else the provider's
+ * control size. `size="xs"` stays an explicit choice. table.css reads the size
+ * from the container's `data-size`: the heading row's height, the rows' height
+ * and the cells' block padding follow it for Table and NativeTable alike.
  */
-export const tableContainerSizeClassName =
-  "[--table-cell-padding-block:var(--sp-rw-space-1-5)] [--table-head-height:var(--sp-rw-space-9)] data-[size=sm]:[--table-cell-padding-block:var(--sp-rw-space-1)] data-[size=sm]:[--table-head-height:var(--sp-rw-space-8)] data-[size=lg]:[--table-cell-padding-block:var(--sp-rw-space-2)] data-[size=lg]:[--table-head-height:var(--sp-rw-space-10)] data-[size=xl]:[--table-cell-padding-block:var(--sp-rw-space-3)] data-[size=xl]:[--table-head-height:var(--sp-rw-space-12)]";
+export function useResolvedTableSize(size: TableSize | undefined): TableSize {
+  const controlSize = useResolvedControlSize(size);
+  const density = useResolvedDensity(undefined);
+  return size === undefined && density === "compact" ? "xs" : controlSize;
+}
 
 /**
  * Logical alignment follows the writing direction; end-aligned cells hold

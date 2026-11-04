@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { useSiteplaneUI } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
@@ -13,7 +14,6 @@ import { ScrollArea, type ScrollAreaProps } from "../scroll-area";
 import {
   MessageScrollableContext,
   MessageScrollerContext,
-  defaultMessageScrollerLabels,
   useMessageScrollerContext,
   type MessageScrollerLabels,
 } from "./message-scroller-context";
@@ -53,7 +53,10 @@ export type MessageScrollerProps = Omit<ScrollAreaProps, "viewportRef"> & {
    * row does or the turn already fits.
    */
   defaultScrollPosition?: ScrollPosition | undefined;
-  /** Replaces the English words of the scroller. */
+  /**
+   * Replaces words of this scroller, merged with the messages of
+   * SiteplaneLocaleProvider (English by default).
+   */
   labels?: Partial<MessageScrollerLabels> | undefined;
   /** Whether the row the reader looks at stays in place when older rows are added above it. */
   preserveScrollOnPrepend?: boolean | undefined;
@@ -98,8 +101,9 @@ export function MessageScroller({
   scrollPreviousItemPeek = 64,
   ...props
 }: MessageScrollerProps): React.ReactElement {
+  const messages = useSiteplaneMessages("messageScroller");
   const text: MessageScrollerLabels = {
-    ...defaultMessageScrollerLabels,
+    ...messages,
     ...labels,
   };
   const [scrollable, setScrollable] = React.useState<Scrollable>(noScrollable);

@@ -13,6 +13,7 @@ import {
   linearIndicatorClassNames,
   linearIndicatorSizeClassNames,
 } from "../../system/styles/surface";
+import { useFormatLocale } from "../../system/locale/messages-context";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 
@@ -38,11 +39,6 @@ const meterValueVariants = cva(linearIndicatorClassNames.value, {
 const MeterSizeContext = React.createContext<SiteplaneControlSize | null>(null);
 
 export type MeterTone = "accent" | "success" | "warning" | "error";
-/**
- * @deprecated The earlier names of two tones: `default` is `accent` and
- * `destructive` is `error`.
- */
-export type MeterDeprecatedTone = "default" | "destructive";
 
 export interface MeterProps
   extends
@@ -51,22 +47,21 @@ export interface MeterProps
   /**
    * Colours the filled part with a status tone, for example by strength.
    * `accent`, the default, keeps the progress fill; the fill's value
-   * transition also carries a change of tone. `default` and `destructive` are
-   * the deprecated earlier names of `accent` and `error`.
+   * transition also carries a change of tone.
    */
-  tone?: MeterTone | MeterDeprecatedTone | undefined;
+  tone?: MeterTone | undefined;
 }
 
 export function Meter({
   className,
   children,
-  locale = METER_DEFAULT_LOCALE,
+  locale: localeProp,
   size,
   tone = "accent",
   ...props
 }: MeterProps): React.ReactElement {
-  const resolvedTone: MeterTone =
-    tone === "default" ? "accent" : tone === "destructive" ? "error" : tone;
+  // Its own locale, else the provider's, else en-US.
+  const locale = useFormatLocale(localeProp, METER_DEFAULT_LOCALE);
   const resolvedSize = useResolvedControlSize(size);
   // At its minimum a meter is empty and shows no fill; above it, the fill keeps
   // a minimum width so a small value stays visible.
@@ -83,7 +78,7 @@ export function Meter({
         data-empty={empty || undefined}
         data-size={resolvedSize}
         data-slot="meter"
-        data-tone={resolvedTone === "accent" ? undefined : resolvedTone}
+        data-tone={tone === "accent" ? undefined : tone}
         locale={locale}
         {...props}
       >

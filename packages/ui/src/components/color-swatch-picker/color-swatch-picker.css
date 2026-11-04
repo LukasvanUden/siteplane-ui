@@ -14,26 +14,20 @@
 
   /* One size, shape and ring per swatch scope. A scope is a ColorSwatchPicker or
    * the wrapper of a ColorPicker whose trigger is a swatch, so both draw the same
-   * swatch box (`sp-color-swatch-item`) from the same rules. */
+   * swatch box (`sp-color-swatch-item`) from the same rules. A swatch is 36 px
+   * with a 16 px check at the default sm, the size lg had before the control
+   * ladder moved to 4 px steps (Lukas, 30 October 2026). */
   .sp-color-swatch-scope {
-    --sp-swatch-size: 2rem;
-    --sp-swatch-check: 0.875rem;
+    --sp-swatch-size: 2.25rem;
+    --sp-swatch-check: 1rem;
     --sp-swatch-radius: 999px;
   }
 
-  .sp-color-swatch-scope[data-size="sm"] {
-    --sp-swatch-size: 1.75rem;
-    --sp-swatch-check: 0.75rem;
-  }
-
-  .sp-color-swatch-scope[data-size="lg"] {
-    --sp-swatch-size: 2.25rem;
-    --sp-swatch-check: 1rem;
-  }
-
-  /* A ColorPicker whose trigger is a swatch takes the same 40 px at xl as the
-   * palette it ends, so a row of swatches and its custom color match at every
-   * size. */
+  /* From md on a swatch is 40 px, the largest swatch: a ColorPicker whose
+   * trigger is a swatch takes the same 40 px at xl as the palette it ends, so a
+   * row of swatches and its custom color match at every size (S1). */
+  .sp-color-swatch-scope[data-size="md"],
+  .sp-color-swatch-scope[data-size="lg"],
   .sp-color-swatch-scope[data-size="xl"] {
     --sp-swatch-size: 2.5rem;
     --sp-swatch-check: 1.125rem;
@@ -45,16 +39,6 @@
 
   .sp-color-swatch-scope[data-radius="sm"] {
     --sp-swatch-radius: var(--sp-primitive-dimension-radius-sm);
-  }
-
-  /* Compact swatches sit closer together, so a palette and its neighbours fit one
-   * row. A ring stands 4px outside its swatch and keeps a wider gap. */
-  .sp-color-swatch-picker[data-size="sm"] {
-    gap: var(--sp-rw-space-2);
-  }
-
-  .sp-color-swatch-picker[data-size="sm"][data-indicator="ring"] {
-    gap: var(--sp-rw-space-3);
   }
 
   .sp-color-swatch-item {

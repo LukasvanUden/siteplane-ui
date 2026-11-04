@@ -1,7 +1,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { Check, Lock } from "lucide-react";
+import { CheckIcon, LockIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+// A Server Component: only the hidden status of a done or blocked step, the
+// kit's text, is a client leaf (KitText), which reads the provider's messages.
+import { KitText } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { KitButton } from "../button/button-internal";
@@ -41,13 +44,7 @@ const stepIndicatorVariants = cva(
 type StepperItemStatus = VariantProps<typeof stepIndicatorVariants>["status"];
 
 // Done and blocked markers are icons only, so the title carries their status
-// as visually hidden text.
-const defaultStatusLabels: Partial<
-  Record<NonNullable<StepperItemStatus>, string>
-> = {
-  blocked: "blocked",
-  done: "completed",
-};
+// as visually hidden text, the `stepper` messages of the provider.
 
 // A step is the marker and its text, then the body, with the connector to the
 // next step running down under the marker, at the step's inline start: on the
@@ -62,9 +59,9 @@ export interface StepperItemProps
     VariantProps<typeof stepIndicatorVariants> {
   title: React.ReactNode;
   /**
-   * Supporting text under the title. Text that changes cross-fades; give a
-   * description element a `key` to cross-fade between elements, or keep the
-   * same `key` to update it in place.
+   * Supporting text under the title. Text that changes switches at once while
+   * the height follows; give a description element a `key` to switch between
+   * elements, or keep the same `key` to update it in place.
    */
   description?: React.ReactNode;
   index?: number;
@@ -118,7 +115,7 @@ export interface StepperButtonItemProps
     Omit<React.ComponentProps<"button">, "title">,
     VariantProps<typeof stepIndicatorVariants> {
   title: React.ReactNode;
-  /** See `StepperItem`: text that changes cross-fades. */
+  /** See `StepperItem`: text that changes switches at once. */
   description?: React.ReactNode;
   index?: number;
   /**
@@ -126,8 +123,6 @@ export interface StepperButtonItemProps
    * `status`.
    */
   active?: boolean;
-  /** @deprecated Use `active`. */
-  current?: boolean;
   statusLabel?: string;
   /**
    * The content of the step, shown under its text and outside the button, so
@@ -144,13 +139,11 @@ export function StepperButtonItem({
   title,
   description,
   index,
-  active: activeProp,
-  current,
+  active = false,
   statusLabel,
   children,
   ...props
 }: StepperButtonItemProps): React.ReactElement {
-  const active = activeProp ?? current ?? false;
   // The title and its status name the button; the marker number and the
   // description would otherwise run into one long name.
   const titleId = React.useId();
@@ -172,7 +165,7 @@ export function StepperButtonItem({
         )}
         data-slot="stepper-button-item"
         profile="step-trigger"
-        variant="text"
+        variant="link"
         {...props}
       >
         <StepperIndicator index={index} status={status} />
@@ -192,7 +185,7 @@ export function StepperButtonItem({
 
 /**
  * The marker's content: a number, or a check or lock for a done or blocked
- * step. A new content cross-fades in the same place.
+ * step. A new content switches at once in the same place.
  */
 function StepperIndicator({
   index,
@@ -203,9 +196,9 @@ function StepperIndicator({
 }) {
   const content =
     status === "done" ? (
-      <Check />
+      <CheckIcon aria-hidden="true" />
     ) : status === "blocked" ? (
-      <Lock />
+      <LockIcon aria-hidden="true" />
     ) : index != null ? (
       index
     ) : null;
@@ -257,8 +250,16 @@ function StepperContent({
   title: React.ReactNode;
   titleId?: string | undefined;
 }) {
+  // The status of the step: the app's statusLabel, or for a done or blocked
+  // step the `stepper` message, read by the client leaf.
   const hiddenStatus =
-    statusLabel ?? (status ? defaultStatusLabels[status] : undefined);
+    statusLabel !== undefined ? (
+      statusLabel ? (
+        ` (${statusLabel})`
+      ) : null
+    ) : status === "done" || status === "blocked" ? (
+      <KitText after=")" before=" (" group="stepper" name={status} />
+    ) : null;
 
   return (
     <div className="min-w-0 flex-1 pt-0.5">
@@ -273,7 +274,7 @@ function StepperContent({
             className="sp-stepper-status sr-only"
             data-slot="stepper-status"
           >
-            {` (${hiddenStatus})`}
+            {hiddenStatus}
           </span>
         ) : null}
       </div>

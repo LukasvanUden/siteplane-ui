@@ -152,8 +152,8 @@ export function TypesetListItem({
 }
 
 /**
- * A link, in the kit's link look: the inline link Button, underlined in the
- * text colour, which fades on hover and press and keeps the kit's focus ring.
+ * A link, in the kit's link look: the inline link Button, in the accent text
+ * colour, underlined on hover and press, with the kit's focus ring.
  */
 export function TypesetLink({
   children,
@@ -374,8 +374,9 @@ export const typesetComponents = {
   strong: (props: MarkdownProps<"strong">) => (
     <TypesetStrong {...withoutNode(props)} />
   ),
+  // Prose tables are compact whatever the control size: the xs table.
   table: (props: MarkdownProps<"table">) => (
-    <NativeTable hoverable={false} {...withoutNodeAndStyle(props)} />
+    <NativeTable hoverable={false} size="xs" {...withoutNodeAndStyle(props)} />
   ),
   tbody: (props: MarkdownProps<"tbody">) => (
     <NativeTableBody {...withoutNodeAndStyle(props)} />

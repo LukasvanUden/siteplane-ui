@@ -1,10 +1,12 @@
 "use client";
 
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MoreHorizontalIcon,
-} from "lucide-react";
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  DotsThreeIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import {
@@ -12,6 +14,8 @@ import {
   useResolvedControlSize,
   useSiteplaneUI,
 } from "../../system/provider/siteplane-ui-provider";
+import type { PaginationLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import {
@@ -31,43 +35,35 @@ const paginationIconSizeByControlSize = {
   React.ComponentProps<typeof Button>["size"]
 >;
 
-/**
- * The words of a Pagination. `labels` on Pagination replaces them, merged with
- * the English defaults: pass the translation of each one for an application in
- * another language.
- */
-export type PaginationLabels = {
-  /** The name of the navigation landmark: "pagination" by default. */
-  navigation: string;
-  /** The text of PaginationPrevious: "Previous" by default. */
-  previous: string;
-  /** The accessible name of PaginationPrevious: "Go to previous page" by default. */
-  previousPage: string;
-  /** The text of PaginationNext: "Next" by default. */
-  next: string;
-  /** The accessible name of PaginationNext: "Go to next page" by default. */
-  nextPage: string;
-  /** The hidden text of PaginationEllipsis: "More pages" by default. */
-  morePages: string;
-};
+export type { PaginationLabels };
 
-const defaultPaginationLabels: PaginationLabels = {
-  navigation: "pagination",
-  previous: "Previous",
-  previousPage: "Go to previous page",
-  next: "Next",
-  nextPage: "Go to next page",
-  morePages: "More pages",
-};
-
+// Outside a Pagination the parts read the messages themselves (null here).
 const PaginationContext = React.createContext<{
   labels: PaginationLabels;
   variant: NonNullable<PaginationProps["variant"]>;
-}>({ labels: defaultPaginationLabels, variant: "default" });
+} | null>(null);
+
+/** The words and the variant of the Pagination around a part. */
+function usePagination(): {
+  labels: PaginationLabels;
+  variant: NonNullable<PaginationProps["variant"]>;
+} {
+  const messages = useSiteplaneMessages("pagination");
+  return (
+    React.useContext(PaginationContext) ?? {
+      labels: messages,
+      variant: "default",
+    }
+  );
+}
 
 export interface PaginationProps extends React.ComponentProps<"nav"> {
   animate?: boolean | undefined;
-  /** Replaces the English words of the parts, such as Previous and Next. */
+  /**
+   * Replaces words of the parts for this Pagination, such as Previous and
+   * Next, merged with the messages of SiteplaneLocaleProvider (English by
+   * default).
+   */
   labels?: Partial<PaginationLabels> | undefined;
   variant?: "default" | "ghost" | undefined;
 }
@@ -80,9 +76,10 @@ export function Pagination({
   variant = "default",
   ...props
 }: PaginationProps): React.ReactElement {
+  const messages = useSiteplaneMessages("pagination");
   const labels = React.useMemo(
-    () => ({ ...defaultPaginationLabels, ...labelsProp }),
-    [labelsProp],
+    () => ({ ...messages, ...labelsProp }),
+    [labelsProp, messages],
   );
   const context = React.useMemo(() => ({ labels, variant }), [labels, variant]);
   return (
@@ -112,10 +109,10 @@ export function PaginationContent({
 }: React.ComponentProps<"ul">): React.ReactElement {
   const listRef = React.useRef<HTMLUListElement>(null);
   React.useImperativeHandle(ref, () => listRef.current as HTMLUListElement);
-  // The active fill sits under the current page's link. As Base UI and Radix
-  // place an indicator, it is measured in one effect with observers created
-  // once: when the list mounts, when it resizes, and when the current page or
-  // the links change. Each pass reads both boxes before it writes.
+  // The active fill sits under the current page's link. It is measured in one
+  // effect with observers created once: when the list mounts, when it resizes,
+  // and when the current page or the links change. Each pass reads both boxes
+  // before it writes.
   React.useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
@@ -165,11 +162,12 @@ export function PaginationContent({
       changeObserver.disconnect();
     };
   }, []);
+  // The items sit 2 px apart.
   return (
     <ul
       className={cn(
         slotClass("pagination-content", props),
-        "relative z-0 flex flex-row items-center gap-1 before:pointer-events-none before:absolute before:top-0 before:left-0 before:-z-1 before:h-(--pagination-active-height) before:w-(--pagination-active-width) before:translate-x-(--pagination-active-left) before:translate-y-(--pagination-active-top) before:opacity-0 data-[active-indicator]:before:opacity-100",
+        "relative z-0 flex flex-row items-center gap-0.5 before:pointer-events-none before:absolute before:top-0 before:left-0 before:-z-1 before:h-(--pagination-active-height) before:w-(--pagination-active-width) before:translate-x-(--pagination-active-left) before:translate-y-(--pagination-active-top) before:opacity-0 data-[active-indicator]:before:opacity-100",
         className,
       )}
       data-slot="pagination-content"
@@ -194,8 +192,6 @@ export function PaginationItem(
 type PaginationActiveProps = {
   /** Marks the current page: `aria-current="page"` and the active fill. */
   active?: boolean;
-  /** @deprecated Use `active`. */
-  isActive?: boolean;
 };
 
 export type PaginationLinkProps = ButtonStandardProps & PaginationActiveProps;
@@ -207,18 +203,10 @@ export function PaginationLink(
 ): React.ReactElement {
   // Previous and Next pass the internal responsive-navigation profile through
   // KitPaginationLink, the same function with the wider props type.
-  const {
-    active: activeProp,
-    className,
-    disabled,
-    isActive,
-    size,
-    render,
-    ...props
-  } = linkProps as KitPaginationLinkProps;
+  const { active, className, disabled, size, render, ...props } =
+    linkProps as KitPaginationLinkProps;
   const { controlSize } = useSiteplaneUI();
   const resolvedSize = size ?? paginationIconSizeByControlSize[controlSize];
-  const active = activeProp ?? isActive;
   return (
     <KitButton
       aria-current={active ? "page" : undefined}
@@ -240,74 +228,160 @@ const KitPaginationLink = PaginationLink as (
   props: KitPaginationLinkProps,
 ) => React.ReactElement;
 
-// Previous points to the inline start and Next to the inline end, so their
-// chevrons mirror in a right-to-left page.
-export function PaginationPrevious({
+const linkVariants: ReadonlySet<string> = new Set([
+  "link",
+  "link-accent",
+  "link-destructive",
+]);
+
+/**
+ * Previous and Next. In the default Pagination they are links of their own,
+ * the link Button with an arrow and its word, at the two ends of the row
+ * (Lukas, 2 November 2026); in the ghost
+ * Pagination they are square icon Buttons with a caret beside the pages. A
+ * `variant` makes them another Button, such as `default` for raised ones: a
+ * Button other than a link shows its word from 640 px and turns square below,
+ * and a link shows its arrow alone there. Previous points to the inline start
+ * and Next to the inline end, so their glyphs mirror in a right-to-left page.
+ */
+function PaginationDirection({
   className,
+  direction,
   size,
+  variant,
   ...props
-}: PaginationDirectionalProps): React.ReactElement {
+}: PaginationDirectionalProps & {
+  direction: "previous" | "next";
+}): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
-  const { labels, variant } = React.useContext(PaginationContext);
-  return (
+  const { labels, variant: paginationVariant } = usePagination();
+  const compact = paginationVariant === "ghost";
+  const resolvedVariant = variant ?? (compact ? "ghost" : "link");
+  const previous = direction === "previous";
+  const Glyph = compact
+    ? previous
+      ? CaretLeftIcon
+      : CaretRightIcon
+    : previous
+      ? ArrowLeftIcon
+      : ArrowRightIcon;
+  const glyph = (
+    <Glyph
+      aria-hidden="true"
+      className="in-data-[profile-mode=compact]:m-0 rtl:-scale-x-100"
+    />
+  );
+  const word = (
+    <span className="max-sm:hidden in-data-[profile-mode=compact]:hidden">
+      {previous ? labels.previous : labels.next}
+    </span>
+  );
+  const children = previous ? [glyph, word] : [word, glyph];
+  const shared = {
+    "aria-label": previous ? labels.previousPage : labels.nextPage,
+    className,
+    "data-direction": direction,
+    size: resolvedSize,
+    variant: resolvedVariant,
+  };
+  // A link keeps the link's own geometry and states (rulebook T9); any other
+  // Button takes the responsive navigation profile.
+  return linkVariants.has(resolvedVariant) ? (
+    <KitPaginationLink {...shared} {...props}>
+      {children[0]}
+      {children[1]}
+    </KitPaginationLink>
+  ) : (
     <KitPaginationLink
-      aria-label={labels.previousPage}
-      className={className}
+      {...shared}
       profile="responsive-navigation"
-      profileMode={variant === "ghost" ? "compact" : "responsive"}
-      size={resolvedSize}
+      profileMode={compact ? "compact" : "responsive"}
       {...props}
     >
-      <ChevronLeftIcon className="in-data-[profile-mode=compact]:m-0 rtl:-scale-x-100" />
-      <span className="max-sm:hidden in-data-[profile-mode=compact]:hidden">
-        {labels.previous}
-      </span>
+      {children[0]}
+      {children[1]}
     </KitPaginationLink>
   );
 }
 
-export function PaginationNext({
-  className,
-  size,
-  ...props
-}: PaginationDirectionalProps): React.ReactElement {
-  const resolvedSize = useResolvedControlSize(size);
-  const { labels, variant } = React.useContext(PaginationContext);
-  return (
-    <KitPaginationLink
-      aria-label={labels.nextPage}
-      className={className}
-      profile="responsive-navigation"
-      profileMode={variant === "ghost" ? "compact" : "responsive"}
-      size={resolvedSize}
-      {...props}
-    >
-      <span className="max-sm:hidden in-data-[profile-mode=compact]:hidden">
-        {labels.next}
-      </span>
-      <ChevronRightIcon className="in-data-[profile-mode=compact]:m-0 rtl:-scale-x-100" />
-    </KitPaginationLink>
-  );
+export function PaginationPrevious(
+  props: PaginationDirectionalProps,
+): React.ReactElement {
+  return <PaginationDirection {...props} direction="previous" />;
 }
 
+export function PaginationNext(
+  props: PaginationDirectionalProps,
+): React.ReactElement {
+  return <PaginationDirection {...props} direction="next" />;
+}
+
+// The ellipsis is the square of a page link of its size
+// (36 px at the default sm), with the glyph of the Button beside it; both are
+// the stylesheet's, keyed on the size (design-rework.css, "Pagination").
 export function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">): React.ReactElement {
-  const { labels } = React.useContext(PaginationContext);
+  const { labels } = usePagination();
+  const { controlSize } = useSiteplaneUI();
+  // The dots are decoration; the words after them say that pages are left
+  // out, so the ellipsis itself stays in the accessibility tree.
   return (
     <span
-      aria-hidden
       className={cn(
         slotClass("pagination-ellipsis", props),
-        "flex min-w-7 justify-center",
+        "flex shrink-0 items-center justify-center",
         className,
       )}
+      data-size={controlSize}
       data-slot="pagination-ellipsis"
       {...props}
     >
-      <MoreHorizontalIcon className="size-5 sm:size-4" />
+      <DotsThreeIcon aria-hidden="true" />
       <span className="sr-only">{labels.morePages}</span>
+    </span>
+  );
+}
+
+/**
+ * Where the reader stands: "Page 3 of 10", in the secondary text with the two
+ * numbers a step heavier. It is the status of a compact bar that has no page
+ * links, such as the one a table card shows on a phone or beside a page size
+ * Select, and takes its words from `labels.pageStatus`. The current page may
+ * be an element instead of a number, such as an Input to jump to a page.
+ */
+export function PaginationStatus({
+  className,
+  page,
+  total,
+  ...props
+}: React.ComponentProps<"span"> & {
+  /** The current page, from 1, or an element that stands for it. */
+  page: React.ReactNode;
+  /** The number of pages. */
+  total: React.ReactNode;
+}): React.ReactElement {
+  const { labels } = usePagination();
+  return (
+    <span
+      className={cn(slotClass("pagination-status", props), className)}
+      data-slot="pagination-status"
+      {...props}
+    >
+      {labels.pageStatus.split(/(\{page\}|\{total\})/).map((part, index) =>
+        part === "{page}" || part === "{total}" ? (
+          <span
+            className="sp-pagination-status-value"
+            data-slot="pagination-status-value"
+            key={index}
+          >
+            {part === "{page}" ? page : total}
+          </span>
+        ) : (
+          part
+        ),
+      )}
     </span>
   );
 }

@@ -187,14 +187,14 @@ export function AttachmentAction({
   const look: ButtonProps =
     orientation === "vertical"
       ? { variant: "default" }
-      : { profile: "inline", profileTone: "muted", variant: "text" };
+      : { profile: "inline", profileTone: "muted", variant: "link" };
 
   return (
     <Button
       className={className}
       data-slot="attachment-action"
       shape="square"
-      size="icon-xs"
+      size="icon-2xs"
       {...look}
       {...props}
     />

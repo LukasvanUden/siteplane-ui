@@ -1,19 +1,23 @@
 "use client";
 
-import { type CalendarDate, type DateValue } from "@internationalized/date";
-import { CalendarDaysIcon } from "lucide-react";
+import {
+  type CalendarDate,
+  type DateValue,
+  Time,
+  toCalendarDateTime,
+} from "@internationalized/date";
+import { CalendarBlankIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 import {
   DateField as DateFieldPrimitive,
   type DateFieldState,
   DateInput as DateInputPrimitive,
-  DateSegment as DateSegmentPrimitive,
   useLocale,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
-import { normalizeFormattedText } from "../../system/locale/formatted-text";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -46,6 +50,8 @@ import { Input } from "../input";
 import { ExternalInputOwner } from "../input/input";
 import { InputGroup, InputGroupAddon } from "../input-group";
 import { Popover, PopoverPopup, PopoverTrigger } from "../popover";
+import { timeSegmentPart } from "../time-field/time-field";
+import { DateFieldSegment } from "./date-input-group";
 
 import "./date-field.css";
 
@@ -59,10 +65,16 @@ export interface DateFieldProps {
   defaultValue?: Date;
   disabled?: boolean;
   form?: string;
+  /**
+   * `minute` adds hour and minute segments after the date, in the locale's
+   * hour cycle, and the value keeps its time. Default: `day`.
+   */
+  granularity?: "day" | "minute";
   iconMode?: "action-end" | "decorative-start" | "none";
   /**
-   * The error a required field shows while its date is incomplete, such as
-   * after a segment is cleared. Default: "Enter a complete date."
+   * The error a required field shows while its value is incomplete, such as
+   * after a segment is cleared. Default: "Enter a complete date.", or "Enter a
+   * complete date and time." with `granularity="minute"`.
    */
   incompleteLabel?: string;
   insetStart?: boolean;
@@ -77,35 +89,110 @@ export interface DateFieldProps {
   profile?: "default" | "input-group";
   readOnly?: boolean;
   required?: boolean;
+  /**
+   * While the field is invalid, an alert icon stands at the end of the field,
+   * before the calendar button, where the help icon of `tooltip` stands,
+   * which gives way to it, as in an Input (the InputGroup's status). It is
+   * decorative: the Field ties the error message to the field. `false` turns
+   * it off. Default: `true`.
+   */
+  showInvalidIcon?: boolean;
   size?: SiteplaneControlSize;
   textSize?: FormControlTextSize;
+  /**
+   * Help text that a help icon at the end of the field shows in a tooltip,
+   * as Input's `tooltip` does. With the calendar button the help icon sits
+   * before it.
+   */
+  tooltip?: React.ReactNode;
   value?: Date | null;
   variant?: FormControlVariant;
+  /**
+   * `full` fills the container, like Input. `fit` is as wide as the segments
+   * and the calendar button. Default: `full`.
+   */
+  width?: "fit" | "full";
 }
 
-const dateFieldActionSizes = {
-  md: "icon-xs",
-  lg: "icon-xs",
-  sm: "icon-2xs",
-  xl: "icon-sm",
-} as const satisfies Record<
-  SiteplaneControlSize,
-  "icon-2xs" | "icon-xs" | "icon-sm"
->;
+type DateFieldGranularity = NonNullable<DateFieldProps["granularity"]>;
 
-function toCalendarDate(value: Date | null | undefined): CalendarDate | null {
-  return value ? fromNativeDate(value) : null;
+/** A day as a value of the field: the day, or its midnight with a time. */
+function atGranularity(
+  day: CalendarDate,
+  granularity: DateFieldGranularity,
+): DateValue {
+  return granularity === "minute" ? toCalendarDateTime(day) : day;
+}
+
+/** The field's value of a native date: its day, and its time with a time. */
+function toFieldValue(
+  value: Date | null | undefined,
+  granularity: DateFieldGranularity,
+): DateValue | null {
+  if (!value) return null;
+  const day = fromNativeDate(value);
+  return granularity === "minute"
+    ? toCalendarDateTime(day, new Time(value.getHours(), value.getMinutes()))
+    : day;
 }
 
 function toOptionalNativeDate(
   value: DateValue | null | undefined,
 ): Date | undefined {
-  return value ? toNativeDate(value) : undefined;
+  if (!value) return undefined;
+  const date = toNativeDate(value);
+  if ("hour" in value) date.setHours(value.hour, value.minute);
+  return date;
 }
 
+function padded(value: number, digits = 2): string {
+  return String(value).padStart(digits, "0");
+}
+
+/** The form value: `YYYY-MM-DD`, and `YYYY-MM-DDTHH:mm` with a time. */
 function formatDateFieldValue(value: DateValue | null): string {
   if (!value) return "";
-  return `${String(value.year).padStart(4, "0")}-${String(value.month).padStart(2, "0")}-${String(value.day).padStart(2, "0")}`;
+  const day = `${padded(value.year, 4)}-${padded(value.month)}-${padded(value.day)}`;
+  return "hour" in value
+    ? `${day}T${padded(value.hour)}:${padded(value.minute)}`
+    : day;
+}
+
+/**
+ * The Calendar's month bounds as bounds of the field. With a time they run
+ * from the start of the first allowed day to 23:59 on the last, so a time on
+ * the last day stays in range.
+ */
+function fieldBounds(
+  calendarProps: CalendarOptions | undefined,
+  granularity: DateFieldGranularity,
+): { maxValue?: DateValue; minValue?: DateValue } {
+  const { maxValue, minValue } = calendarMonthBounds(calendarProps ?? {});
+  return {
+    ...(maxValue === undefined
+      ? {}
+      : {
+          maxValue:
+            granularity === "minute"
+              ? toCalendarDateTime(maxValue, new Time(23, 59))
+              : maxValue,
+        }),
+    ...(minValue === undefined
+      ? {}
+      : { minValue: atGranularity(minValue, granularity) }),
+  };
+}
+
+/**
+ * The time the segments show, the placeholder's midnight where they show
+ * none. React Aria formats the segments from `dateValue` in UTC, so its UTC
+ * fields are the time on screen.
+ */
+function shownTime(state: DateFieldState): Time {
+  return new Time(
+    state.dateValue.getUTCHours(),
+    state.dateValue.getUTCMinutes(),
+  );
 }
 
 export function DateField(props: DateFieldProps): React.ReactElement {
@@ -129,20 +216,31 @@ function DateFieldRoot({
   defaultValue,
   disabled,
   form,
+  granularity = "day",
   iconMode = "action-end",
-  incompleteLabel = "Enter a complete date.",
+  incompleteLabel: incompleteLabelProp,
   insetStart = false,
   name,
   onValueChange,
-  openPickerLabel = "Open date calendar",
+  openPickerLabel: openPickerLabelProp,
   profile = "default",
   readOnly,
   required,
+  showInvalidIcon = true,
   size,
   textSize,
+  tooltip,
   value,
   variant = "default",
+  width = "full",
 }: DateFieldProps): React.ReactElement {
+  const messages = useSiteplaneMessages("dateField");
+  const incompleteLabel =
+    incompleteLabelProp ??
+    (granularity === "minute"
+      ? messages.incompleteDateTime
+      : messages.incompleteDate);
+  const openPickerLabel = openPickerLabelProp ?? messages.openCalendar;
   const controlled = value !== undefined;
   const resolvedSize = useResolvedControlSize(size);
   const field = useFieldControlBridge({
@@ -158,21 +256,21 @@ function DateFieldRoot({
       ? isInvalidAriaValue(ariaInvalid)
       : field.invalid || undefined;
   // A cleared segment empties the field's value.
-  const segmented = useSegmentedValue<CalendarDate>({
+  const segmented = useSegmentedValue<DateValue>({
     controlled,
-    defaultValue: toCalendarDate(defaultValue),
+    defaultValue: toFieldValue(defaultValue, granularity),
     incompleteMessage: incompleteLabel,
     onValueChange: (nextValue) =>
       onValueChange?.(toOptionalNativeDate(nextValue)),
     required,
     serialize: formatDateFieldValue,
-    value: toCalendarDate(value),
+    value: toFieldValue(value, granularity),
   });
 
   // React Aria's optional props reject `undefined` under
   // exactOptionalPropertyTypes, so unset values are omitted.
   return (
-    <DateFieldPrimitive<CalendarDate>
+    <DateFieldPrimitive<DateValue>
       {...(field.describedBy === undefined
         ? {}
         : { "aria-describedby": field.describedBy })}
@@ -190,8 +288,9 @@ function DateFieldRoot({
       data-slot="date-field"
       {...(controlled
         ? { value: segmented.ownerValue }
-        : { defaultValue: toCalendarDate(defaultValue) })}
-      granularity="day"
+        : { defaultValue: toFieldValue(defaultValue, granularity) })}
+      // The locale's hour cycle, with its day period where it uses one.
+      granularity={granularity}
       isDateUnavailable={(date) =>
         isCalendarDayDisabled(toNativeDate(date), calendarProps?.disabled)
       }
@@ -201,11 +300,17 @@ function DateFieldRoot({
         : { isInvalid: controlledInvalid })}
       {...(readOnly === undefined ? {} : { isReadOnly: readOnly })}
       {...(required === undefined ? {} : { isRequired: required })}
-      {...calendarMonthBounds(calendarProps ?? {})}
-      // Typed segments start from the calendar's today, `todayDate` when set.
+      {...fieldBounds(calendarProps, granularity)}
+      // Typed segments start from the calendar's today, `todayDate` when set,
+      // at midnight with a time.
       {...(calendarProps?.todayDate === undefined
         ? {}
-        : { placeholderValue: fromNativeDate(calendarProps.todayDate) })}
+        : {
+            placeholderValue: atGranularity(
+              fromNativeDate(calendarProps.todayDate),
+              granularity,
+            ),
+          })}
       onChange={segmented.onOwnerChange}
       shouldForceLeadingZeros
       validate={segmented.validate}
@@ -220,6 +325,7 @@ function DateFieldRoot({
           defaultValue={defaultValue}
           field={field}
           form={form}
+          granularity={granularity}
           iconMode={iconMode}
           insetStart={insetStart}
           openPickerLabel={openPickerLabel}
@@ -228,8 +334,11 @@ function DateFieldRoot({
           required={required}
           resolvedSize={resolvedSize}
           segmented={segmented}
+          showInvalidIcon={showInvalidIcon}
           textSize={textSize}
+          tooltip={tooltip}
           variant={variant}
+          width={width}
         />
       )}
     </DateFieldPrimitive>
@@ -245,6 +354,7 @@ function DateFieldContent({
   defaultValue,
   field,
   form,
+  granularity,
   iconMode,
   insetStart,
   openPickerLabel,
@@ -253,8 +363,11 @@ function DateFieldContent({
   required,
   resolvedSize,
   segmented,
+  showInvalidIcon,
   textSize,
+  tooltip,
   variant,
+  width,
 }: {
   calendarProps: CalendarOptions | undefined;
   className: string | undefined;
@@ -264,6 +377,7 @@ function DateFieldContent({
   defaultValue: Date | undefined;
   field: FieldControlBridge;
   form: string | undefined;
+  granularity: DateFieldGranularity;
   iconMode: "action-end" | "decorative-start" | "none";
   insetStart: boolean;
   openPickerLabel: string;
@@ -271,19 +385,25 @@ function DateFieldContent({
   readOnly: boolean | undefined;
   required: boolean | undefined;
   resolvedSize: SiteplaneControlSize;
-  segmented: SegmentedValue<CalendarDate>;
+  segmented: SegmentedValue<DateValue>;
+  showInvalidIcon: boolean;
   textSize: FormControlTextSize | undefined;
+  tooltip: React.ReactNode;
   variant: FormControlVariant;
+  width: "fit" | "full";
 }): React.ReactElement {
+  const messages = useSiteplaneMessages("dateField");
   const [open, setOpen] = React.useState(false);
+  const popupRef = React.useRef<HTMLDivElement>(null);
   const segmentsRef = React.useRef<HTMLDivElement>(null);
   const hiddenInputRef = useFormReset<HTMLInputElement>(form, () => {
-    if (!controlled) dateFieldState.setValue(toCalendarDate(defaultValue));
+    if (!controlled)
+      dateFieldState.setValue(toFieldValue(defaultValue, granularity));
   });
   // A cleared segment leaves the field without a value, although React Aria
   // still holds the last complete date.
   const cleared = hasClearedSegment(dateFieldState);
-  const ownerValue = dateFieldState.value as CalendarDate | null;
+  const ownerValue = dateFieldState.value;
   const fieldValue = cleared ? null : ownerValue;
   const serializedValue = formatDateFieldValue(fieldValue);
   React.useLayoutEffect(() => {
@@ -322,44 +442,43 @@ function DateFieldContent({
       ref={segmentsRef}
     >
       {(segment) => (
-        <DateSegmentPrimitive
-          className="sp-date-field-segment sp-date-segment"
-          data-literal-kind={
-            segment.type === "literal" && /[./-]/.test(segment.text)
-              ? "separator"
+        // The hour, the minute, the day period and the literals before them,
+        // the comma after the date included, are the Time Field's segments
+        // (time-field.tsx).
+        <DateFieldSegment
+          segment={segment}
+          timePart={
+            granularity === "minute"
+              ? timeSegmentPart(segment, dateFieldState.segments)
               : undefined
           }
-          data-slot="date-field-segment"
-          segment={segment}
-        >
-          {/* React Aria builds the segments with formatToParts, whose spaces
-              differ between the server's ICU and the browser's (Node writes a
-              narrow no-break space before the "г." of a bg-BG date, Chrome a
-              plain one); the segment shows the text both agree on, or the
-              prerendered field fails hydration (React error #418). */}
-          {({ text }) => normalizeFormattedText(text)}
-        </DateSegmentPrimitive>
+        />
       )}
     </DateInputPrimitive>
   );
   const control = (
     <InputGroup
       aria-label={undefined}
-      // As wide as the segments by default, like the Date Time Picker; a width
-      // utility in className, such as w-full, replaces it. The default width
-      // never shrinks below the segments in a flex row (shrink-0 while w-max).
+      // The field fills its container, like Input. width="fit" makes it as
+      // wide as the segments, like the Date Time Picker, and never narrower
+      // than them in a flex row. A width utility in className replaces either.
       className={cn(
-        "sp-date-field-control w-max [&.w-max]:shrink-0",
+        "sp-date-field-control",
+        width === "fit" && "w-max shrink-0",
         className,
       )}
       data-icon-mode={iconMode}
       data-invalid={invalid || undefined}
       data-readonly={(readOnly && !field.disabled) || undefined}
-      data-size={resolvedSize}
       data-slot="date-field-control"
-      // The segments take the field text scale, as Input does: 14 px, or
-      // 16 px at xl; textSize sets one size for every control size.
-      textSize={textSize ?? (resolvedSize === "xl" ? "base" : undefined)}
+      // The group is the field of the size: its height, its padding, its
+      // icons and its text, 14 px at sm and 16 px from md (the field scale);
+      // textSize sets one text at every size. It shows the help icon of
+      // `tooltip` and the alert icon of an invalid field after the segments.
+      showInvalidIcon={showInvalidIcon}
+      size={resolvedSize}
+      textSize={textSize}
+      tooltip={tooltip}
       variant={variant}
     >
       {iconMode === "decorative-start" ? (
@@ -368,7 +487,10 @@ function DateFieldContent({
           aria-hidden="true"
           className="sp-date-field-icon-addon pointer-events-none"
         >
-          <CalendarDaysIcon
+          {/* The calendar of every date field and picker trigger, one
+              glyph for the date (A9, 3 November 2026). */}
+          <CalendarBlankIcon
+            aria-hidden="true"
             className="sp-date-field-decorative-icon"
             data-slot="date-field-decorative-icon"
           />
@@ -384,11 +506,11 @@ function DateFieldContent({
                 aria-label={openPickerLabel}
                 disabled={field.disabled || readOnly}
                 profile="field-action"
-                size={dateFieldActionSizes[resolvedSize]}
+                shape="square"
               />
             }
           >
-            <CalendarDaysIcon aria-hidden="true" />
+            <CalendarBlankIcon aria-hidden="true" />
           </PopoverTrigger>
         </InputGroupAddon>
       ) : null}
@@ -406,15 +528,33 @@ function DateFieldContent({
             align="end"
             className="sp-date-field-popover"
             data-slot="date-field-popover"
+            // The calendar opens with the focus on its day, the selected one
+            // or today, as the calendar of every date picker does, so the
+            // arrow keys move through the days at once (A5, 3 November 2026;
+            // it opened on its Previous month button). Without a day Base UI
+            // keeps its own first focus.
+            initialFocus={() =>
+              popupRef.current?.querySelector<HTMLElement>(
+                '[role="grid"] [tabindex="0"]',
+              ) ?? true
+            }
+            ref={popupRef}
             sideOffset={6}
             viewportPadding="compact"
           >
             <Calendar
               {...calendarProps}
-              aria-label="Choose date"
+              aria-label={messages.calendar}
               data-slot="date-field-calendar"
               onValueChange={(nextValue) => {
-                dateFieldState.setValue(fromNativeDate(nextValue));
+                const day = fromNativeDate(nextValue);
+                // With a time the picked day keeps the time the segments
+                // show, or midnight while they show none.
+                dateFieldState.setValue(
+                  granularity === "minute"
+                    ? toCalendarDateTime(day, shownTime(dateFieldState))
+                    : day,
+                );
                 setOpen(false);
               }}
               value={toOptionalNativeDate(dateFieldState.value) ?? null}

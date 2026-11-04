@@ -12,10 +12,11 @@ import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
 import type { KitToggleProps } from "./toggle-internal";
 
-// The kit stylesheet owns the Toggle's cursor and its disabled fade
-// (design-rework.css), so a cursor or opacity utility in `className` wins.
+// The kit stylesheet owns the Toggle's cursor, its disabled fade and the text
+// colour of its states, pressed included (design-rework.css), so a cursor,
+// opacity or colour utility in `className` wins.
 export const toggleVariants = cva(
-  "shrink-0 select-none justify-center whitespace-nowrap before:pointer-events-none before:absolute pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 data-pressed:text-accent-foreground [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg]:-mx-0.5 [&_svg]:shrink-0",
+  "shrink-0 select-none justify-center whitespace-nowrap before:pointer-events-none before:absolute pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg]:shrink-0",
   {
     defaultVariants: {
       size: siteplaneUIDefaults.controlSize,

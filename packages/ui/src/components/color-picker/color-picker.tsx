@@ -25,6 +25,8 @@ import {
   useResolvedControlSize,
   useResolvedRadius,
 } from "../../system/provider/siteplane-ui-provider";
+import type { ColorPickerLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { Button, type ButtonProps } from "../button/button";
@@ -42,40 +44,7 @@ import { ExternalInputOwner, Input } from "../input/input";
 
 import "./color-picker.css";
 
-/** The accessible names of the controls in the picker's popover. */
-export type ColorPickerLabels = {
-  /** The popover's dialog. */
-  controls: string;
-  /** The saturation and brightness area. */
-  saturation: string;
-  /** The hue slider. */
-  hue: string;
-  /** The hex value field. */
-  hex: string;
-  /** The copy button. */
-  copy: string;
-  /** The copy button while its check confirms a copy. */
-  copied: string;
-  /** The copy button and its announcement when the clipboard refuses. */
-  copyFailed: string;
-  /** The red, green and blue channel fields. */
-  red: string;
-  green: string;
-  blue: string;
-};
-
-const defaultColorPickerLabels: ColorPickerLabels = {
-  controls: "Color controls",
-  saturation: "Color saturation and brightness",
-  hue: "Color hue",
-  hex: "Hex color value",
-  copy: "Copy hex value",
-  copied: "Copied hex value",
-  copyFailed: "Copy unavailable",
-  red: "R color channel",
-  green: "G color channel",
-  blue: "B color channel",
-};
+export type { ColorPickerLabels };
 
 /**
  * The props the picker supports. The form value is a hidden input the picker
@@ -122,7 +91,8 @@ export interface ColorPickerProps {
   /**
    * `swatch` shows the trigger as a bare swatch of the current color, drawn
    * like a ColorSwatchPicker swatch, for a color row that ends in a custom
-   * color. The default is an outlined button with the color and its hex value.
+   * color. The default is a raised button with the color and its hex value,
+   * on the surface of a Select trigger.
    */
   variant?: "default" | "swatch";
   /** `swatch` only: the swatch is the chosen color of its row. */
@@ -168,7 +138,8 @@ export function ColorPicker({
   });
   const disabled = field.disabled;
   const name = field.name;
-  const text = { ...defaultColorPickerLabels, ...labels };
+  const messages = useSiteplaneMessages("colorPicker");
+  const text = { ...messages, ...labels };
   const rootRef = React.useRef<HTMLSpanElement>(null);
   const resolvedSize = useResolvedControlSize(size);
   const radius = useResolvedRadius<SiteplaneRadius>(undefined);
@@ -199,12 +170,14 @@ export function ColorPicker({
         const current = color.toString("hex").toLowerCase();
         const triggerAriaLabel = field.labelledBy
           ? undefined
-          : (ariaLabel ?? `Choose color ${current.toUpperCase()}`);
+          : (ariaLabel ?? messages.chooseColor(current.toUpperCase()));
 
         return (
           <span
+            // The picker names its size on the field scale, so a Field's hint
+            // follows it (design-rework.css).
             className={cn(
-              "sp-base-color-picker",
+              "sp-base-color-picker sp-field-scale",
               "contents",
               swatch && "sp-color-swatch-scope",
             )}
@@ -255,9 +228,17 @@ export function ColorPicker({
                   aria-labelledby={field.labelledBy}
                   className={cn(
                     "sp-color-picker-trigger",
-                    showValue && "sp-color-picker-trigger-with-value",
+                    // A trigger that shows the value is a field of its size,
+                    // as the date pickers' trigger is: the field's text,
+                    // weight and inline padding (design-rework.css), and the
+                    // text of its size on a touch screen too.
+                    showValue &&
+                      "sp-color-picker-trigger-with-value sp-field-scale",
                     className,
                   )}
+                  // A picker trigger reads as a field, which flashes no
+                  // border when a press ends (Button's flashesBorder).
+                  data-flash={false}
                   data-show-value={showValue || undefined}
                   data-slot="color-picker"
                   disabled={disabled}
@@ -267,7 +248,10 @@ export function ColorPicker({
                   style={style}
                   tabIndex={tabIndex}
                   type="button"
-                  variant="outline"
+                  // A trigger that opens a picker rests raised, on the Select
+                  // trigger's surface (design-rework.css; Lukas, 4 November
+                  // 2026). It was the outline Button.
+                  variant="default"
                 >
                   <ColorSwatchPrimitive
                     aria-hidden="true"

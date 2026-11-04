@@ -5,86 +5,33 @@
     display: inline-flex;
   }
 
-  /* The bars sit two thirds of the way from their earlier 2 to 2.75 px toward
-   * the 4/3 px stroke lucide draws at the Button's 16 px icon size, which is
-   * about 1.56 to 1.81 px. Browsers snap each bar to whole device pixels, so
-   * those fractions drew the middle bar thicker than the outer ones. The bars
-   * therefore use the nearest half pixels, 1.5 px up to default and 2 px for
-   * lg and xl; with the half-pixel gaps, every bar and every step between
-   * bars is a whole device pixel on 2x screens, and all three bars draw
-   * equally thick. The open state moves the outer bars by gap plus bar
-   * height, so they still cross on the middle bar. */
+  /* At rest the bars are the List glyph that a Button of the same size shows,
+   * Phosphor's three lines in the Regular weight: each three quarters of the
+   * glyph long, a quarter of it apart, with Phosphor's 16-unit stroke in its
+   * 256-unit box. The glyph is the Button's own, the glyph ladder's (I3), which
+   * gives every size of the morph 20 px, so the bars are 15 px long and 5 px
+   * apart, whole pixels, and Phosphor's stroke is 1.25 px. A bar and the step
+   * from one bar to the next keep whole device pixels, so the browser snaps all
+   * three bars to the same rows and paints them equally thick; at a fractional
+   * step the middle bar came out thicker or thinner than the others (Lukas,
+   * 7 October 2026). The stroke is the whole device pixels at or below
+   * Phosphor's, 1 px on 1x, 2x and 3x screens: the glyph's softened edges paint
+   * about two device pixels of ink on a 2x screen, as much as a 1 px bar, where
+   * the 1.5 px above it read half again as heavy. The open state moves the
+   * outer bars by the step, so they cross on the middle bar. They drew 24 to
+   * 27.5 px bars with a 2 px stroke, wider and heavier than the glyph of every
+   * other Button (Lukas, 3 November 2026). */
   .sp-menu-icon-morph-root .sp-menu-icon-bars {
-    --sp-menu-icon-gap: 0.28125rem;
-    --sp-menu-icon-bar-height: 0.09375rem;
-    --sp-menu-icon-width: 1.40625rem;
-    --sp-menu-icon-pos-y-bar-one: 0;
-    --sp-menu-icon-pos-y-bar-three: 0;
+    --sp-menu-icon-glyph: var(--sp-rw-button-icon, var(--sp-rw-space-5));
+    --sp-menu-icon-device-pixel: 1px;
+    --sp-menu-icon-width: calc(var(--sp-menu-icon-glyph) * 0.75);
+    --sp-menu-icon-pitch: calc(var(--sp-menu-icon-glyph) / 4);
+    --sp-menu-icon-bar-height: calc(var(--sp-menu-icon-glyph) / 16);
+    --sp-menu-icon-pos-y-bar-one: 0px;
+    --sp-menu-icon-pos-y-bar-three: 0px;
     --sp-menu-icon-scale-bar: 1;
     --sp-menu-icon-rotate-bar-one: 0deg;
     --sp-menu-icon-rotate-bar-three: 0deg;
-  }
-
-  .sp-menu-icon-morph-root[data-size="sm"] .sp-menu-icon-bars {
-    --sp-menu-icon-gap: 0.25rem;
-    --sp-menu-icon-bar-height: 0.09375rem;
-    --sp-menu-icon-width: 1.25rem;
-  }
-
-  .sp-menu-icon-morph-root[data-size="md"] .sp-menu-icon-bars {
-    --sp-menu-icon-gap: 0.28125rem;
-    --sp-menu-icon-bar-height: 0.09375rem;
-    --sp-menu-icon-width: 1.40625rem;
-  }
-
-  .sp-menu-icon-morph-root[data-size="lg"] .sp-menu-icon-bars {
-    --sp-menu-icon-gap: 0.3125rem;
-    --sp-menu-icon-bar-height: 0.125rem;
-    --sp-menu-icon-width: 1.5625rem;
-  }
-
-  .sp-menu-icon-morph-root[data-size="xl"] .sp-menu-icon-bars {
-    --sp-menu-icon-gap: 0.34375rem;
-    --sp-menu-icon-bar-height: 0.125rem;
-    --sp-menu-icon-width: 1.71875rem;
-  }
-
-  @media (min-width: 640px) {
-    .sp-menu-icon-morph-root .sp-menu-icon-bars {
-      --sp-menu-icon-gap: 0.25rem;
-      --sp-menu-icon-bar-height: 0.09375rem;
-      --sp-menu-icon-width: 1.25rem;
-    }
-
-    .sp-menu-icon-morph-root[data-size="sm"] .sp-menu-icon-bars {
-      --sp-menu-icon-gap: 0.21875rem;
-      --sp-menu-icon-bar-height: 0.09375rem;
-      --sp-menu-icon-width: 1.125rem;
-    }
-
-    .sp-menu-icon-morph-root[data-size="md"] .sp-menu-icon-bars {
-      --sp-menu-icon-gap: 0.25rem;
-      --sp-menu-icon-bar-height: 0.09375rem;
-      --sp-menu-icon-width: 1.25rem;
-    }
-
-    .sp-menu-icon-morph-root[data-size="lg"] .sp-menu-icon-bars {
-      --sp-menu-icon-gap: 0.3125rem;
-      --sp-menu-icon-bar-height: 0.125rem;
-      --sp-menu-icon-width: 1.5rem;
-    }
-
-    .sp-menu-icon-morph-root[data-size="xl"] .sp-menu-icon-bars {
-      --sp-menu-icon-gap: 0.3125rem;
-      --sp-menu-icon-bar-height: 0.125rem;
-      --sp-menu-icon-width: 1.5625rem;
-    }
-  }
-
-  .sp-menu-icon-morph-root .sp-menu-icon-bars {
-    --sp-menu-icon-pitch: calc(
-      var(--sp-menu-icon-gap) + var(--sp-menu-icon-bar-height)
-    );
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,21 +39,31 @@
     gap: calc(var(--sp-menu-icon-pitch) - var(--sp-menu-icon-bar-height));
   }
 
-  /* The bars start a whole pixel apart, so the browser snaps all three to the
-   * same rows and paints them equally thick at every line weight; at a
-   * fractional distance the middle bar came out thicker or thinner than the
-   * others. */
+  @media (-webkit-device-pixel-ratio >= 2), (resolution >= 2x) {
+    .sp-menu-icon-morph-root .sp-menu-icon-bars {
+      --sp-menu-icon-device-pixel: 0.5px;
+    }
+  }
+
+  @media (-webkit-device-pixel-ratio >= 3), (resolution >= 3x) {
+    .sp-menu-icon-morph-root .sp-menu-icon-bars {
+      --sp-menu-icon-device-pixel: calc(1px / 3);
+    }
+  }
+
   @supports (top: round(1.5px, 1px)) {
     .sp-menu-icon-morph-root .sp-menu-icon-bars {
-      --sp-menu-icon-pitch: round(
-        calc(var(--sp-menu-icon-gap) + var(--sp-menu-icon-bar-height)),
-        1px
+      --sp-menu-icon-width: round(calc(var(--sp-menu-icon-glyph) * 0.75), 1px);
+      --sp-menu-icon-pitch: round(calc(var(--sp-menu-icon-glyph) / 4), 1px);
+      --sp-menu-icon-bar-height: round(
+        down,
+        calc(var(--sp-menu-icon-glyph) / 16),
+        var(--sp-menu-icon-device-pixel)
       );
     }
   }
 
   .sp-menu-icon-morph-root .sp-menu-icon-bar {
-    position: relative;
     display: block;
     height: var(--sp-menu-icon-bar-height);
     width: var(--sp-menu-icon-width);
@@ -115,29 +72,37 @@
   }
 
   /* The bars move on the navigation easing, the curve of the navigation
-   * motion (M1). */
+   * motion (M1), by transforms alone, so the browser draws every frame between
+   * whole pixels and they glide: the outer bars by translate and rotate, the
+   * middle one by scale. Opening, the middle bar shrinks away while the outer
+   * bars slide onto it, and they start to turn half a micro step after they
+   * start to slide, so they turn into the X as they arrive, never resting on
+   * the middle bar as one thick bar first. Closing runs the same way back: the
+   * outer bars turn back first, slide apart half a micro step later, and the
+   * middle bar grows back as they leave (Lukas, 3 November 2026: the morph
+   * must be fluid). */
   .sp-menu-icon-morph-root .sp-menu-icon-bar-one {
-    top: var(--sp-menu-icon-pos-y-bar-one);
-    transform: rotate(var(--sp-menu-icon-rotate-bar-one));
-    transition:
-      top var(--motion-duration-base) var(--motion-ease-navigation)
-        var(--motion-duration-micro),
-      transform var(--motion-duration-micro) var(--motion-ease-navigation);
+    translate: 0 var(--sp-menu-icon-pos-y-bar-one);
+    rotate: var(--sp-menu-icon-rotate-bar-one);
   }
 
   .sp-menu-icon-morph-root .sp-menu-icon-bar-two {
-    transform: scaleX(var(--sp-menu-icon-scale-bar));
-    transition: transform var(--motion-duration-overlay)
-      var(--motion-ease-navigation) var(--motion-duration-micro);
+    scale: var(--sp-menu-icon-scale-bar) 1;
+    transition: scale var(--motion-duration-fast) var(--motion-ease-navigation)
+      var(--motion-duration-micro);
   }
 
   .sp-menu-icon-morph-root .sp-menu-icon-bar-three {
-    bottom: var(--sp-menu-icon-pos-y-bar-three);
-    transform: rotate(var(--sp-menu-icon-rotate-bar-three));
+    translate: 0 calc(var(--sp-menu-icon-pos-y-bar-three) * -1);
+    rotate: var(--sp-menu-icon-rotate-bar-three);
+  }
+
+  .sp-menu-icon-morph-root .sp-menu-icon-bar-one,
+  .sp-menu-icon-morph-root .sp-menu-icon-bar-three {
     transition:
-      bottom var(--motion-duration-base) var(--motion-ease-navigation)
-        var(--motion-duration-micro),
-      transform var(--motion-duration-micro) var(--motion-ease-navigation);
+      translate var(--motion-duration-base) var(--motion-ease-navigation)
+        calc(var(--motion-duration-micro) / 2),
+      rotate var(--motion-duration-base) var(--motion-ease-navigation);
   }
 
   .sp-menu-icon-morph-root
@@ -152,20 +117,20 @@
 
   .sp-menu-icon-morph-root
     .sp-menu-icon-morph[data-state="open"]
-    .sp-menu-icon-bar-one {
-    transition:
-      top var(--motion-duration-base) var(--motion-ease-navigation),
-      transform var(--motion-duration-base) var(--motion-ease-navigation)
-        var(--motion-duration-micro);
+    .sp-menu-icon-bar-two {
+    transition: scale var(--motion-duration-fast) var(--motion-ease-navigation);
   }
 
   .sp-menu-icon-morph-root
     .sp-menu-icon-morph[data-state="open"]
+    .sp-menu-icon-bar-one,
+  .sp-menu-icon-morph-root
+    .sp-menu-icon-morph[data-state="open"]
     .sp-menu-icon-bar-three {
     transition:
-      bottom var(--motion-duration-base) var(--motion-ease-navigation),
-      transform var(--motion-duration-base) var(--motion-ease-navigation)
-        var(--motion-duration-micro);
+      translate var(--motion-duration-base) var(--motion-ease-navigation),
+      rotate var(--motion-duration-base) var(--motion-ease-navigation)
+        calc(var(--motion-duration-micro) / 2);
   }
 
   /* The open-state transitions are more specific, so each switch uses !important. */

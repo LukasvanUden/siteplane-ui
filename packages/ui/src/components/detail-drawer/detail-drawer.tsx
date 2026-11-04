@@ -29,9 +29,11 @@ export const DetailDrawerTrigger: typeof DrawerTrigger = DrawerTrigger;
 export const DetailDrawerClose: typeof DrawerClose = DrawerClose;
 
 /**
- * The popup of the drawer, a straight side panel at most 448 px wide. It is
- * the Drawer's popup, so its name ends in `Popup` like the popup of every
- * other overlay.
+ * The popup of the drawer, a straight side panel at most 400 px wide with the
+ * look of a Sheet: it floats on the Sheet's shadow, draws no edge line of its
+ * own, and its plain header leaves the space under it to the body
+ * (design-rework.css). It is the Drawer's popup, so its name ends in `Popup`
+ * like the popup of every other overlay.
  */
 export function DetailDrawerPopup({
   children,
@@ -40,7 +42,7 @@ export function DetailDrawerPopup({
 }: React.ComponentProps<typeof DrawerPopup>): React.ReactElement {
   return (
     <DrawerPopup
-      className={cn("max-w-md", className)}
+      className={cn("max-w-100", className)}
       data-pattern="detail-drawer-content"
       variant="straight"
       {...props}
@@ -92,9 +94,3 @@ export function DetailDrawerFooter({
     />
   );
 }
-
-/**
- * @deprecated `DetailDrawerContent` is the earlier name of `DetailDrawerPopup`,
- * the same part; it keeps working until 2.0.
- */
-export const DetailDrawerContent: typeof DetailDrawerPopup = DetailDrawerPopup;

@@ -1,8 +1,10 @@
 "use client";
 
-import { ChevronRightIcon } from "lucide-react";
+import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+import type { TraceLinkLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { Button } from "../button";
@@ -27,12 +29,13 @@ export type TraceStatus = "running" | "error" | "pending";
  * the colours at rest, on hover, press and keyboard focus, the focus outline
  * and the 44 px touch target. The Button's inline profile draws no box, so the
  * row has the height of its line; it is laid out as a flex row that is only as
- * wide as its words, and a long title ends with an ellipsis (K5). A text
- * Button underlines on hover; a step is not text in running prose, so it does
- * not.
+ * wide as its words, and a long title ends with an ellipsis (K5). A link
+ * underlines on hover and press; a step is no text in running prose, so its
+ * row turns the underline off with the link's switch (sp-trace-row,
+ * trace.css).
  */
 const traceRowClassName =
-  "flex w-fit max-w-full min-w-0 gap-1 text-start no-underline";
+  "sp-trace-row flex w-fit max-w-full min-w-0 gap-1 text-start";
 
 const TraceStatusContext = React.createContext<TraceStatus | undefined>(
   undefined,
@@ -93,6 +96,14 @@ export interface TraceLineProps extends React.ComponentProps<"span"> {
  * One step. It is a span, so it is valid inside the button or the link that
  * makes it do something, and it is neither a button nor a tab stop on its own.
  * Its status reaches its title through context.
+ *
+ * Its parts stand in a row of columns, each as wide as its content. A line
+ * too narrow for them shares its width out evenly, and no part takes more
+ * than its content needs: the icon keeps its size, and so does a short
+ * description, while the title gives way first and ends with an ellipsis. A
+ * long description, such as a long hostname, ends with an ellipsis as well
+ * once the title is no wider than it, so the line never widens the thread
+ * (K5).
  */
 export function TraceLine({
   className,
@@ -104,7 +115,7 @@ export function TraceLine({
       <span
         className={cn(
           slotClass("trace-line", props),
-          "flex w-fit max-w-full min-w-0 items-center gap-2",
+          "grid w-fit max-w-full min-w-0 auto-cols-[minmax(auto,max-content)] grid-flow-col items-center gap-2",
           className,
         )}
         data-slot="trace-line"
@@ -172,9 +183,10 @@ export function TraceTitle({
 
 /**
  * Secondary text after the title, such as a duration, a count or a hostname.
- * It is one text step smaller than the title. A short value stays whole; a
- * long one, such as a long hostname, ends with an ellipsis like the title and
- * carries its full text in `title`, so the row never widens the thread (K5).
+ * It is one text step smaller than the title. On a narrow row the title gives
+ * way first (TraceLine), so a short value stays whole; a long one, such as a
+ * long hostname, ends with an ellipsis like the title and carries its full
+ * text in `title`, so the row never widens the thread (K5).
  */
 export function TraceDescription({
   children,
@@ -236,12 +248,13 @@ export function TraceCollapsibleTrigger({
       // CollapsibleTrigger stamps its own profile on what it renders; the row
       // keeps the inline profile of its Button.
       data-profile="inline"
-      render={<Button profile="inline" profileTone="muted" variant="text" />}
+      render={<Button profile="inline" profileTone="muted" variant="link" />}
       {...props}
     >
       {children}
       <TraceIcon>
-        <ChevronRightIcon
+        <CaretRightIcon
+          aria-hidden="true"
           className="sp-collapsible-chevron"
           data-slot="collapsible-chevron"
           data-turn="quarter"
@@ -276,18 +289,13 @@ export function TraceCollapsibleContent({
   );
 }
 
-/** The words a TraceLink speaks to assistive technology. */
-export type TraceLinkLabels = {
-  /** Read after the title of a link that opens in a new tab. */
-  newTab: string;
-};
-
-const defaultTraceLinkLabels: TraceLinkLabels = {
-  newTab: "(opens in a new tab)",
-};
+export type { TraceLinkLabels };
 
 export interface TraceLinkProps extends React.ComponentProps<"a"> {
-  /** Replaces the English words a screen reader hears. */
+  /**
+   * Replaces the words a screen reader hears for this link, merged with the
+   * messages of SiteplaneLocaleProvider (English by default).
+   */
   labels?: Partial<TraceLinkLabels> | undefined;
 }
 
@@ -303,7 +311,8 @@ export function TraceLink({
   labels,
   ...props
 }: TraceLinkProps): React.ReactElement {
-  const text = { ...defaultTraceLinkLabels, ...labels };
+  const messages = useSiteplaneMessages("trace");
+  const text = { ...messages, ...labels };
   return (
     <Button
       className={cn(traceRowClassName, className)}
@@ -311,7 +320,7 @@ export function TraceLink({
       profile="inline"
       profileTone="muted"
       render={<a {...props} />}
-      variant="text"
+      variant="link"
     >
       {children}
       {props.target === "_blank" ? (

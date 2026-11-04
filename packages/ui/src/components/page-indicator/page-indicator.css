@@ -1,0 +1,107 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A PageIndicator shows which of a few pages is current, as a row of dots or
+   * a line of segments. md: 8 px dots 12 px
+   * apart, or 6 px segments 8 px apart; lg: 10 px dots 16 px apart, or 8 px
+   * segments 12 px apart. A row of dots is as wide as its dots; a line takes
+   * the width of its container and its segments share it. The defaults sit at
+   * zero specificity, so the size and variant rules refine them (P6). */
+  :where(.sp-page-indicator) {
+    --sp-page-indicator-mark: var(--sp-rw-space-2);
+    --sp-page-indicator-gap: var(--sp-rw-space-3);
+    --sp-page-indicator-reach: var(--sp-rw-space-2);
+
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: var(--sp-page-indicator-gap);
+  }
+
+  :root .sp-page-indicator[data-size="lg"] {
+    --sp-page-indicator-mark: var(--sp-rw-space-2-5);
+    --sp-page-indicator-gap: var(--sp-rw-space-4);
+    --sp-page-indicator-reach: var(--sp-rw-space-3);
+  }
+
+  :root .sp-page-indicator[data-variant="line"] {
+    --sp-page-indicator-mark: var(--sp-rw-space-1-5);
+    --sp-page-indicator-gap: var(--sp-rw-space-2);
+
+    width: 100%;
+  }
+
+  :root .sp-page-indicator[data-variant="line"][data-size="lg"] {
+    --sp-page-indicator-mark: var(--sp-rw-space-2);
+    --sp-page-indicator-gap: var(--sp-rw-space-3);
+  }
+
+  /* Framed, the marks sit on a pill of the dialog surface at 90 % with an
+   * 8 px blur, for an indicator on an image. Its padding is the reach of the
+   * targets, 8 px at md and 12 px at lg, so they end at its edge. */
+  :root .sp-page-indicator[data-framed] {
+    border-radius: var(--sp-rw-radius-full);
+    padding: var(--sp-page-indicator-reach);
+    background: color-mix(in oklab, var(--sp-rw-bg-secondary) 90%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Each page is the public Button as a square inline action, the bare mark in
+   * a larger target (T3). Its box is that target: the mark with half the gap
+   * on each side, and the reach above and below it, 8 px at md and 12 px at
+   * lg. An equal negative margin keeps the marks where the gap puts them, as
+   * the Stepper's trigger keeps its marker, so the targets reach past the row
+   * without moving it. Keyboard focus draws the kit outline around the mark
+   * through the rules that the square inline action shares with the field
+   * action, and the Button owns the cursor and the states. */
+  :root .sp-page-indicator-item[data-chassis][data-size] {
+    width: calc(var(--sp-page-indicator-mark) + var(--sp-page-indicator-gap));
+    height: calc(
+      var(--sp-page-indicator-mark) + var(--sp-page-indicator-reach) * 2
+    );
+    margin-block: calc(var(--sp-page-indicator-reach) * -1);
+    margin-inline: calc(var(--sp-page-indicator-gap) / -2);
+    border-radius: var(--sp-rw-radius-full);
+    padding-block: var(--sp-page-indicator-reach);
+    padding-inline: calc(var(--sp-page-indicator-gap) / 2);
+  }
+
+  /* A segment takes an equal share of the line. */
+  :root
+    .sp-page-indicator[data-variant="line"]
+    > .sp-page-indicator-item[data-chassis][data-size] {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+
+  :root
+    .sp-page-indicator[data-variant="line"]
+    > .sp-page-indicator-item
+    > .sp-button-content {
+    flex: 1 1 0;
+  }
+
+  /* A mark rests in the track colour of Progress, and the current page takes
+   * its fill, which fades over the slow step as the carousel dots of the
+   * modal block do. */
+  :root .sp-page-indicator-mark {
+    width: var(--sp-page-indicator-mark);
+    height: var(--sp-page-indicator-mark);
+    flex: none;
+    border-radius: var(--sp-rw-radius-full);
+    background: var(--sp-rw-progress-track);
+    transition: background-color var(--motion-duration-slow)
+      var(--motion-ease-state);
+  }
+
+  :root .sp-page-indicator[data-variant="line"] .sp-page-indicator-mark {
+    width: auto;
+    flex: 1 1 0;
+  }
+
+  :root .sp-page-indicator-item[data-current] .sp-page-indicator-mark {
+    background: var(--sp-rw-progress-fill);
+  }
+}

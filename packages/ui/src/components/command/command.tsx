@@ -7,12 +7,12 @@ import {
   DialogPrimitive as CommandDialogPrimitive,
 } from "../dialog";
 import { KitDialogPopup } from "../dialog/dialog-internal";
-import { Kbd } from "../kbd";
-import { Separator } from "../separator";
+import { menuShortcutClassName } from "../menu/menu-shared";
 import {
   type SiteplaneControlSize,
   useSiteplaneUI,
 } from "../../system/provider/siteplane-ui-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import {
@@ -44,9 +44,10 @@ export {
 export function CommandDialogPopup(
   props: React.ComponentProps<typeof DialogPopup>,
 ): React.ReactElement {
+  const messages = useSiteplaneMessages("command");
   return (
     <KitDialogPopup
-      aria-label="Command palette"
+      aria-label={messages.label}
       showCloseButton={false}
       profile="command"
       data-slot="command-dialog-popup"
@@ -74,15 +75,16 @@ export const Command: typeof Autocomplete = <ItemValue,>({
 };
 
 /**
- * The search row follows the control size, as the results below it do: 40, 44,
- * 48 and 60 px from sm to xl, the palette's 48 px at the default lg (Lukas,
- * 13 October 2026).
+ * The search row follows the control size, as the results below it do: 48, 60,
+ * 64 and 68 px from sm to xl. The default sm keeps the palette's 48 px, md the
+ * 60 px that xl had, and lg and xl go on in steps of 4 px (Lukas, 13 October
+ * 2026; renamed for the 4 px control ladder on 30 October 2026).
  */
 const commandInputHeights = {
-  sm: "h-10",
-  md: "h-11",
-  lg: "h-12",
-  xl: "h-15",
+  sm: "h-12",
+  md: "h-15",
+  lg: "h-16",
+  xl: "h-17",
 } as const satisfies Record<SiteplaneControlSize, string>;
 
 export function CommandInput({
@@ -93,6 +95,7 @@ export function CommandInput({
 }: React.ComponentProps<typeof AutocompleteInput>): React.ReactElement {
   // The row follows the provider; a size given to the input sizes its text.
   const { controlSize } = useSiteplaneUI();
+  const messages = useSiteplaneMessages("command");
   return (
     <div
       className={cn(
@@ -104,7 +107,7 @@ export function CommandInput({
       data-slot="command-input"
     >
       <KitAutocompleteInput
-        aria-label="Search commands"
+        aria-label={messages.search}
         className={className}
         placeholder={placeholder}
         size={size ?? controlSize}
@@ -112,7 +115,6 @@ export function CommandInput({
         unstyled
         {...props}
       />
-      <Separator className="absolute inset-x-0 bottom-0" />
     </div>
   );
 }
@@ -199,13 +201,13 @@ export function CommandItem({
   className,
   ...props
 }: React.ComponentProps<typeof AutocompleteItem>): React.ReactElement {
-  // The rows follow the control size (design-rework.css); an xl row writes in
-  // 16 px, so its icon grows to 18 px.
+  // The rows follow the control size (design-rework.css); a row from md on
+  // writes in 16 px, so its icon grows to 18 px.
   const { controlSize } = useSiteplaneUI();
   return (
     <KitAutocompleteItem
       className={cn(
-        controlSize === "xl" && "sm:[&_svg:not([class*='size-'])]:size-4.5",
+        controlSize !== "sm" && "sm:[&_svg:not([class*='size-'])]:size-4.5",
         className,
       )}
       data-size={controlSize}
@@ -222,26 +224,42 @@ export function CommandSeparator({
 }: React.ComponentProps<typeof AutocompleteSeparator>): React.ReactElement {
   return (
     <AutocompleteSeparator
-      className={cn("my-2", className)}
+      className={className}
       data-slot="command-separator"
       {...props}
     />
   );
 }
 
+/**
+ * The shortcut of a result: the text of a menu row's shortcut, 12/18 at the
+ * label weight in the muted colour at 72 %, 4 px inside the row's end, as
+ * MenuShortcut writes it (menu-shared.tsx). The footer's key legend keeps the
+ * Kbd keycaps.
+ */
 export function CommandShortcut({
   className,
   ...props
 }: React.ComponentProps<"kbd">): React.ReactElement {
   return (
-    <Kbd
-      className={cn("ms-auto", className)}
-      data-command-shortcut=""
+    <kbd
+      className={cn(
+        slotClass("command-shortcut", props),
+        menuShortcutClassName,
+        className,
+      )}
+      data-slot="command-shortcut"
       {...props}
     />
   );
 }
 
+/**
+ * The band under the results: the popup footer of design-rework.css that the
+ * Menu and the Combobox share, a hairline over 12 px of room, its parts at
+ * the two ends of the row, 12 px apart, in 14/20 text in the quaternary
+ * colour.
+ */
 export function CommandFooter({
   className,
   children,
@@ -249,15 +267,10 @@ export function CommandFooter({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn(
-        slotClass("command-footer", props),
-        "relative flex shrink-0 items-center justify-between gap-2 px-5 py-3 text-muted-foreground text-xs",
-        className,
-      )}
+      className={cn(slotClass("command-footer", props), "shrink-0", className)}
       data-slot="command-footer"
       {...props}
     >
-      <Separator className="absolute inset-x-0 top-0" />
       {children}
     </div>
   );

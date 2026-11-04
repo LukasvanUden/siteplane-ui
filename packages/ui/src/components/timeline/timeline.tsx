@@ -1,6 +1,9 @@
 import { cva } from "class-variance-authority";
 import type * as React from "react";
 
+// A Server Component: only TimelineNow's word, the kit's text, is a client
+// leaf (KitText), which reads the provider's messages.
+import { KitText } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { MotionItem, MotionList } from "../motion";
@@ -72,12 +75,6 @@ const timelineDotVariants = cva(
 /** The marker color: the kit's status values, `accent` and `neutral`. */
 export type TimelineTone =
   "accent" | "error" | "info" | "neutral" | "success" | "warning";
-/**
- * @deprecated The earlier marker prop. Use `tone`; its `default` is now
- * `neutral`.
- */
-export type TimelineItemVariant =
-  "accent" | "default" | "error" | "info" | "success" | "warning";
 
 export type TimelineMarkerShape = "bar" | "diamond" | "dot" | "ring";
 const timelineMarkerShapeClassNames = {
@@ -94,11 +91,6 @@ export interface TimelineItemProps extends Omit<
 > {
   /** The marker color. Defaults to `neutral`. */
   tone?: TimelineTone | undefined;
-  /**
-   * @deprecated Use `tone`, the kit's name where color is the whole
-   * variation; `variant="default"` is `tone="neutral"`.
-   */
-  variant?: TimelineItemVariant | null | undefined;
   marker?: React.ReactNode;
   markerLabel?: string;
   markerShape?: TimelineMarkerShape;
@@ -106,16 +98,13 @@ export interface TimelineItemProps extends Omit<
 
 export function TimelineItem({
   className,
-  tone,
-  variant,
+  tone = "neutral",
   marker,
   markerLabel,
   markerShape = "dot",
   children,
   ...props
 }: TimelineItemProps): React.ReactElement {
-  const resolvedTone: TimelineTone =
-    tone ?? (variant === "default" ? "neutral" : (variant ?? "neutral"));
   return (
     // The item is the clipping box while it enters and leaves, so it carries no
     // padding or margin; the list adds the space to the next event inside it.
@@ -142,7 +131,7 @@ export function TimelineItem({
             aria-label={markerLabel}
             className={cn(
               "sp-timeline-marker",
-              timelineDotVariants({ tone: resolvedTone }),
+              timelineDotVariants({ tone }),
               timelineMarkerShapeClassNames[markerShape],
               marker && "grid size-5 place-items-center rounded-full ring-2",
               // Icons take the surface color on a filled marker, so they keep
@@ -175,11 +164,11 @@ export function TimelineItem({
 
 export interface TimelineNowProps extends Omit<
   TimelineItemProps,
-  "children" | "marker" | "markerLabel" | "markerShape" | "tone" | "variant"
+  "children" | "marker" | "markerLabel" | "markerShape" | "tone"
 > {
   /**
    * The text of the marker, shown beside its dot and read by assistive
-   * technology. Defaults to "Now"; pass the word in the page's language.
+   * technology: the `timeline.now` message by default, "Now" in English.
    */
   label?: string;
 }
@@ -192,7 +181,7 @@ export interface TimelineNowProps extends Omit<
  * present moves past an event, the marker glides to its new place.
  */
 export function TimelineNow({
-  label = "Now",
+  label,
   ...props
 }: TimelineNowProps): React.ReactElement {
   return (
@@ -206,7 +195,7 @@ export function TimelineNow({
         className={slotClass("timeline-now-label")}
         data-slot="timeline-now-label"
       >
-        {label}
+        {label ?? <KitText group="timeline" name="now" />}
       </span>
     </TimelineItem>
   );

@@ -28,7 +28,7 @@
  * SOFTWARE.
  */
 
-/** The distance between the item and the card, in px: bklit's, so a card sits as far from the crosshair as theirs. */
+/** The distance between the item and the card, in px. */
 export const CHART_TOOLTIP_OFFSET = 16;
 
 export type ChartPoint2D = { x: number; y: number };

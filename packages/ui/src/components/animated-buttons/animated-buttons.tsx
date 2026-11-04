@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, LogOutIcon } from "lucide-react";
+import {
+  CaretLeftIcon,
+  CaretRightIcon,
+  SignOutIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import {
   type CSSProperties,
   type PointerEvent,
@@ -18,6 +22,7 @@ import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 
 import "./animated-buttons.css";
@@ -165,7 +170,7 @@ function SweepArrow({
   direction: "next" | "previous";
   standalone: boolean;
 }): ReactElement {
-  const Glyph = direction === "previous" ? ChevronLeft : ChevronRight;
+  const Glyph = direction === "previous" ? CaretLeftIcon : CaretRightIcon;
   return (
     <span
       aria-hidden="true"
@@ -266,21 +271,23 @@ export type ExpandingArrowButtonProps = Omit<
   label?: ReactNode;
   size?: SiteplaneControlSize;
   /**
-   * `text` is the bare arrow and label. `default` sets them on the default
+   * `link` is the bare arrow and label. `default` sets them on the default
    * Button's surface, with its fill, hairline rim, depth and states.
    */
-  variant?: "text" | "default";
+  variant?: "link" | "default";
 };
 
 // `type` stays in `props`: Button sets type="button" only when it renders a
 // native button, so a `render` link does not receive it.
 export function ExpandingArrowButton({
   className,
-  label = "Learn more",
+  label: labelProp,
   size,
-  variant = "text",
+  variant = "link",
   ...props
 }: ExpandingArrowButtonProps): ReactElement {
+  const messages = useSiteplaneMessages("animatedButtons");
+  const label = labelProp === undefined ? messages.learnMore : labelProp;
   const resolvedSize = useResolvedControlSize(size);
 
   return (
@@ -317,12 +324,14 @@ export type ExpandingLogoutButtonProps = Omit<
 export function ExpandingLogoutButton({
   "aria-label": ariaLabel,
   className,
-  label = "Log out",
+  label: labelProp,
   size,
   style,
   variant = "destructive",
   ...props
 }: ExpandingLogoutButtonProps): ReactElement {
+  const messages = useSiteplaneMessages("animatedButtons");
+  const label = labelProp ?? messages.logOut;
   const resolvedSize = useResolvedControlSize(size);
 
   return (
@@ -354,7 +363,7 @@ export function ExpandingLogoutButton({
           variant={variant === "destructive" ? "outline-destructive" : variant}
         >
           <span aria-hidden="true" className="sp-expanding-logout-sign">
-            <LogOutIcon aria-hidden="true" focusable="false" />
+            <SignOutIcon aria-hidden="true" focusable="false" />
           </span>
           <span className="sp-expanding-logout-label">{label}</span>
         </KitButton>

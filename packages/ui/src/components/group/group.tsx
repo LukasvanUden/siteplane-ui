@@ -81,7 +81,10 @@ export function GroupText({
   const defaultProps = {
     className: cn(
       slotClass("group-text", props, render),
-      "relative inline-flex items-center gap-2 whitespace-nowrap bg-muted not-dark:bg-clip-padding px-[calc(--spacing(3)-1px)] text-base text-muted-foreground outline-none transition-shadow duration-(--motion-duration-fast) ease-(--motion-ease-state) sm:text-sm dark:bg-input/64 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 [&_svg]:shrink-0",
+      // Its text, inline padding and icon are the field scale of the input
+      // beside it, and its fill is the kit's: a cell among other controls,
+      // none in a field (design-rework.css, GroupText).
+      "relative inline-flex items-center gap-2 whitespace-nowrap text-muted-foreground outline-none transition-shadow duration-(--motion-duration-fast) ease-(--motion-ease-state) [&_svg]:shrink-0",
       className,
     ),
     "data-slot": "group-text",

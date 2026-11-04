@@ -25,8 +25,6 @@ export type ResourceListIndicatorTone =
   | "neutral"
   | "success"
   | "warning";
-/** @deprecated `muted` is the earlier name of `neutral`. */
-export type ResourceListIndicatorDeprecatedTone = "muted";
 export type ResourceListIndicatorShape = "bar" | "diamond" | "dot" | "ring";
 
 export interface ResourceListProps extends useRender.ComponentProps<"div"> {
@@ -63,17 +61,65 @@ export interface ResourceListIndicatorProps extends useRender.ComponentProps<"sp
   shape?: ResourceListIndicatorShape;
   /**
    * The mark's color: a status value, `neutral` (the default) or a chart
-   * color. `muted` is the deprecated earlier name of `neutral`.
+   * color.
    */
-  tone?: ResourceListIndicatorTone | ResourceListIndicatorDeprecatedTone;
+  tone?: ResourceListIndicatorTone;
 }
 
+// The tone is one custom property, `--resource-list-tone`, as a Timeline
+// marker carries its colour: the dot, the diamond, the bar and an icon's disc
+// fill with it, and the ring draws it as its 2 px edge around a clear middle
+// (D7, 3 November 2026: the ring took the tone as a fill and the row's text
+// colour as its edge). The dot is 8 px, the status dot of the kit (BadgeDot),
+// and neutral is its full muted grey (D6, 3 November 2026; it was a 6 px dot
+// and 30 % of the grey).
 const resourceListIndicatorShapeClassNames = {
-  bar: "h-4 w-1 rounded-full",
-  diamond: "size-2 rotate-45 rounded-[2px]",
-  dot: "size-1.5 rounded-full",
-  ring: "size-2.5 rounded-full border-2 border-current bg-transparent",
+  bar: "h-4 w-1 rounded-full bg-(--resource-list-tone)",
+  diamond: "size-2 rotate-45 rounded-[2px] bg-(--resource-list-tone)",
+  dot: "size-2 rounded-full bg-(--resource-list-tone)",
+  ring: "size-2.5 rounded-full border-2 border-(--resource-list-tone) bg-transparent",
 } as const satisfies Record<ResourceListIndicatorShape, string>;
+
+const resourceListIndicatorToneClassNames = {
+  "chart-1": "[--resource-list-tone:--theme(--color-chart-1)]",
+  "chart-2": "[--resource-list-tone:--theme(--color-chart-2)]",
+  "chart-3": "[--resource-list-tone:--theme(--color-chart-3)]",
+  "chart-4": "[--resource-list-tone:--theme(--color-chart-4)]",
+  "chart-5": "[--resource-list-tone:--theme(--color-chart-5)]",
+  error: "[--resource-list-tone:--theme(--color-destructive)]",
+  info: "[--resource-list-tone:--theme(--color-info)]",
+  neutral: "[--resource-list-tone:--theme(--color-muted-foreground)]",
+  success: "[--resource-list-tone:--theme(--color-success)]",
+  warning: "[--resource-list-tone:--theme(--color-warning)]",
+} as const satisfies Record<ResourceListIndicatorTone, string>;
+
+// The ring and an icon's disc take the solid fills of a dark Featured Icon,
+// the fills that carry a white glyph (Lukas, 4 November 2026, coherence D8:
+// they took the dot's fill, where the success and warning rings and glyphs
+// fell under 3:1 on the page): the status fills, the accent for info and the
+// inverse fill for neutral, and on the disc the glyph takes the text that
+// reads on its fill (--resource-list-ink). The chart colours keep their fill.
+const resourceListIndicatorSolidToneClassNames = {
+  "chart-1":
+    "[--resource-list-tone:--theme(--color-chart-1)] [--resource-list-ink:--theme(--color-primary-foreground)]",
+  "chart-2":
+    "[--resource-list-tone:--theme(--color-chart-2)] [--resource-list-ink:--theme(--color-primary-foreground)]",
+  "chart-3":
+    "[--resource-list-tone:--theme(--color-chart-3)] [--resource-list-ink:--theme(--color-primary-foreground)]",
+  "chart-4":
+    "[--resource-list-tone:--theme(--color-chart-4)] [--resource-list-ink:--theme(--color-primary-foreground)]",
+  "chart-5":
+    "[--resource-list-tone:--theme(--color-chart-5)] [--resource-list-ink:--theme(--color-primary-foreground)]",
+  error:
+    "[--resource-list-tone:var(--sp-rw-bg-destructive)] [--resource-list-ink:var(--sp-rw-fg-emphasis)]",
+  info: "[--resource-list-tone:var(--sp-rw-bg-accent)] [--resource-list-ink:var(--sp-rw-fg-on-accent)]",
+  neutral:
+    "[--resource-list-tone:var(--sp-rw-bg-inverse)] [--resource-list-ink:var(--sp-rw-fg-inverse)]",
+  success:
+    "[--resource-list-tone:var(--sp-rw-bg-positive)] [--resource-list-ink:var(--sp-rw-fg-emphasis)]",
+  warning:
+    "[--resource-list-tone:var(--sp-rw-bg-attention)] [--resource-list-ink:var(--sp-rw-fg-emphasis)]",
+} as const satisfies Record<ResourceListIndicatorTone, string>;
 
 /** Rows read this to know they are in a list, which animates them (rulebook M6, M7). */
 const ResourceListContext = React.createContext(false);
@@ -288,10 +334,9 @@ export function ResourceListIndicator({
   label,
   render,
   shape = "dot",
-  tone: toneProp = "neutral",
+  tone = "neutral",
   ...props
 }: ResourceListIndicatorProps): React.ReactElement {
-  const tone = toneProp === "muted" ? "neutral" : toneProp;
   const defaultProps = {
     "aria-hidden": label ? undefined : true,
     "aria-label": label,
@@ -306,18 +351,11 @@ export function ResourceListIndicator({
       slotClass("resource-list-indicator", props, render),
       "inline-flex shrink-0 items-center justify-center",
       icon
-        ? "size-5 rounded-full text-primary-foreground [&>svg]:size-3"
+        ? "size-5 rounded-full bg-(--resource-list-tone) text-(--resource-list-ink) [&>svg]:size-3"
         : resourceListIndicatorShapeClassNames[shape],
-      tone === "success" && "bg-success",
-      tone === "neutral" && "bg-muted-foreground/30",
-      tone === "warning" && "bg-warning",
-      tone === "error" && "bg-destructive",
-      tone === "info" && "bg-info",
-      tone === "chart-1" && "bg-chart-1",
-      tone === "chart-2" && "bg-chart-2",
-      tone === "chart-3" && "bg-chart-3",
-      tone === "chart-4" && "bg-chart-4",
-      tone === "chart-5" && "bg-chart-5",
+      icon || shape === "ring"
+        ? resourceListIndicatorSolidToneClassNames[tone]
+        : resourceListIndicatorToneClassNames[tone],
       className,
     ),
     role: label ? "img" : undefined,

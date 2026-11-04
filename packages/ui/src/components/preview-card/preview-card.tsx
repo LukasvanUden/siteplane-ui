@@ -52,8 +52,11 @@ export function PreviewCardPopup({
           <PreviewCardPrimitive.Popup
             className={cn(
               slotClass("preview-card-popup", props),
+              // The frame carries the open and close motion; its corners,
+              // fill, edge and depth are the Popover's surface rule
+              // (design-rework.css), as a Popover's are.
               surfaceClassNames.floatingOverlay,
-              "flex w-64 origin-(--transform-origin) text-balance rounded-lg p-4 text-sm before:rounded-[inherit]",
+              "flex w-64 origin-(--transform-origin) text-balance p-4 text-sm before:rounded-[inherit]",
               className,
             )}
             data-slot="preview-card-popup"

@@ -1,6 +1,36 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
+  /* Separate layout (the default). The slots stand 6 px apart at sm and 8 px
+   * from md (Lukas, 30 October 2026); their
+   * size is the slot rule's in design-rework.css. A gap utility in className
+   * replaces the gap. */
+  .sp-otp-field[data-layout="separate"] {
+    gap: var(--sp-rw-space-1-5);
+  }
+
+  .sp-otp-field[data-layout="separate"]:not([data-size="sm"]) {
+    gap: var(--sp-rw-space-2);
+  }
+
+  /* Display slots (`display`) stand 12 px apart, 8 px at sm
+   * (Lukas, 2 November 2026). */
+  .sp-otp-field[data-layout="separate"][data-display] {
+    gap: var(--sp-rw-space-3);
+  }
+
+  .sp-otp-field[data-layout="separate"][data-display="sm"] {
+    gap: var(--sp-rw-space-2);
+  }
+
+  /* A slot holds its input and is as large as it. Its text is the field text
+   * of the size (the slot rule in design-rework.css). */
+  .sp-otp-field-slot {
+    position: relative;
+    display: flex;
+    min-width: 0;
+  }
+
   /* Joined layout (layout="joined").
    *
    * The root is an InputGroup, so the field surface and its invalid state come
@@ -10,60 +40,61 @@
    * - The current slot, the focused one, takes the focus ring of a separate slot,
    *   inside the field. The field itself takes no focus ring (design-rework.css),
    *   so the ring marks the slot and not the whole field.
-   * - There is no caret and no highlight fill, as in a separate slot.
+   * - There is no highlight fill, as in a separate slot, and the current slot
+   *   shows the caret while it is empty.
    * - The other slots stay bare cells in the surface of the field.
-   * - A disabled field keeps its surface and fades, like the separate slots.
+   * - A disabled field lays the subtle fill of every disabled field under its
+   *   fade, as the separate slots do (design-rework.css; Lukas, 4 November
+   *   2026: it kept its surface and only faded).
    * - An autofilled slot shows the field's autofill tint, as an Input does. */
-
-  /* An xl Input has the larger surface radius; the joined field follows it. */
-  .sp-otp-field[data-layout="joined"][data-size="xl"] {
-    border-radius: var(--sp-rw-radius-surface);
-  }
 
   /* A slot inside the field. The `[data-size]` term ranks this above the
    * per-size rules that give a separate slot its own box: the slot takes its
    * share of the field, and its ring runs flush along the edge of the field. */
-  :root .sp-otp-field[data-layout="joined"][data-size] > .sp-otp-field-input {
-    flex: 1 1 auto;
+  :root .sp-otp-field[data-layout="joined"][data-size] > .sp-otp-field-slot {
+    flex: 1 1 0;
+  }
+
+  :root
+    .sp-otp-field[data-layout="joined"][data-size]
+    > .sp-otp-field-slot
+    > .sp-otp-field-input {
+    width: 100%;
     min-width: 0;
-    border-radius: 0;
+    border-radius: inherit;
     background: none;
   }
 
   /* The first and the last slot follow the corners of the field. */
   :root
     .sp-otp-field[data-layout="joined"][data-size]
-    > .sp-otp-field-input:first-of-type {
+    > .sp-otp-field-slot:first-of-type {
     border-start-start-radius: inherit;
     border-end-start-radius: inherit;
   }
 
   :root
     .sp-otp-field[data-layout="joined"][data-size]
-    > .sp-otp-field-input:last-of-type {
+    > .sp-otp-field-slot:last-of-type {
     border-start-end-radius: inherit;
     border-end-end-radius: inherit;
   }
 
   /* Only the focused slot is drawn. Its ring comes from the rule that gives a
-   * separate slot its ring (design-rework.css): the focus ring, or the invalid
-   * contour of an invalid field. */
+   * separate slot its ring (design-rework.css): the focus ring, in the error
+   * colour in an invalid field. */
   :root
     .sp-otp-field[data-layout="joined"][data-size]
+    > .sp-otp-field-slot
     > .sp-otp-field-input:not(:focus-visible) {
     box-shadow: none;
   }
 
   :root
     .sp-otp-field[data-layout="joined"][data-size]
+    > .sp-otp-field-slot
     > .sp-otp-field-input:disabled {
     cursor: not-allowed;
-  }
-
-  /* The InputGroup darkens a disabled field with a subtle fill. A disabled OTP
-   * Field keeps its surface and only fades, in both layouts. */
-  :root .sp-otp-field[data-layout="joined"]:has(.sp-otp-field-input:disabled) {
-    background-color: transparent;
   }
 
   /* A browser paints an autofilled slot with its own colour, `!important` in
@@ -72,6 +103,7 @@
    * the character covers it, and keeps the kit text colour (input.css). */
   :root
     .sp-otp-field[data-layout="joined"][data-size]
+    > .sp-otp-field-slot
     > .sp-otp-field-input:autofill {
     -webkit-background-clip: text;
     background-clip: text;
@@ -79,14 +111,17 @@
   }
 
   /* One divider precedes every slot. Only the dividers that follow another slot
-   * show, so the first slot and the slot after a separator start without one. */
+   * show, so the first slot and the slot after a separator start without one.
+   * A divider is a line inside the field, in the colour of every divider in a
+   * field, the field's own edge (design-rework.css); it took the colour of a
+   * separator between regions. */
   .sp-otp-field[data-layout="joined"]
     > .sp-separator[data-orientation="vertical"] {
     display: none;
   }
 
   .sp-otp-field[data-layout="joined"]
-    > .sp-otp-field-input
+    > .sp-otp-field-slot
     + .sp-separator[data-orientation="vertical"] {
     display: block;
     flex: none;
@@ -94,16 +129,17 @@
     width: var(--sp-rw-border-default);
     height: var(--sp-rw-space-4);
     border-radius: 0;
+    background-color: var(--sp-field-divider-color);
     transition: opacity var(--motion-duration-fast) var(--motion-ease-state);
   }
 
   /* The dividers on both sides of the current slot give way to its ring. */
   .sp-otp-field[data-layout="joined"]
     > .sp-separator[data-orientation="vertical"]:has(
-      + .sp-otp-field-input:focus-visible
+      + .sp-otp-field-slot > .sp-otp-field-input:focus-visible
     ),
   .sp-otp-field[data-layout="joined"]
-    > .sp-otp-field-input:focus-visible
+    > .sp-otp-field-slot:has(> .sp-otp-field-input:focus-visible)
     + .sp-separator[data-orientation="vertical"] {
     opacity: 0;
   }

@@ -3,6 +3,7 @@ export * from "./chart-data";
 export * from "./chart-format";
 export * from "./chart-model";
 export * from "./chart-palette";
+export * from "./chart-ring";
 export * from "./chart-scales";
 export * from "./chart-stack";
 export * from "./chart-types";

@@ -1,21 +1,22 @@
 "use client";
 
 import { type DateValue } from "@internationalized/date";
-import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import {
-  Button as DatePickerButtonPrimitive,
+  CalendarContext,
   DatePicker as DatePickerPrimitive,
   type DatePickerState,
   Dialog as DatePickerDialogPrimitive,
   Group as DatePickerGroupPrimitive,
   Popover as DatePickerPopoverPrimitive,
   useLocale,
+  useSlottedContext,
 } from "react-aria-components";
 
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
 import { normalizeFormattedText } from "../../system/locale/formatted-text";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -26,7 +27,6 @@ import {
   type FormControlTextSize,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
-import { Button } from "../button";
 import { Calendar } from "../calendar";
 import {
   calendarMonthBounds,
@@ -40,6 +40,11 @@ import {
   useFieldControlProxy,
 } from "../field/field-control-bridge";
 import { ExternalInputOwner, Input } from "../input/input";
+import {
+  DatePickerFooter,
+  DatePickerPanel,
+  DatePickerTrigger,
+} from "./date-picker-panel";
 
 import "./date-picker.css";
 
@@ -50,6 +55,14 @@ export type DatePickerProps = {
   "aria-labelledby"?: string | undefined;
   calendarProps?: CalendarOptions;
   className?: string;
+  /**
+   * Keeps the popover open while a date is picked, until it is confirmed: the
+   * calendar shows a date input and a Today button above its days, and a
+   * footer holds Cancel and Apply. Apply sets the picked date and closes the
+   * popover; Cancel, Escape and a press outside close it and keep the date as
+   * it was.
+   */
+  confirm?: boolean;
   defaultValue?: Date;
   disabled?: boolean;
   /** The id of the form the date belongs to, like DateField. */
@@ -65,11 +78,16 @@ export type DatePickerProps = {
   /** The control size, like the other date and time fields. */
   size?: SiteplaneControlSize;
   /**
-   * The trigger text: unset is 14 px, or 16 px at `xl`; `sm` and `base` set
-   * 14 px and 16 px at every size.
+   * The trigger text: unset is 14 px at `sm` and 16 px from `md`, as in the
+   * other date fields; `sm` and `base` set 14 px and 16 px at every size.
    */
   textSize?: FormControlTextSize;
   value?: Date | null;
+  /**
+   * `fit` is as wide as the trigger's date or placeholder. `full` fills the
+   * container, like Input. Default: `fit`.
+   */
+  width?: "fit" | "full";
 };
 
 function toCalendarDate(value: Date | null | undefined) {
@@ -104,22 +122,28 @@ export function DatePicker(props: DatePickerProps): React.ReactElement {
 function DatePickerRoot({
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
-  "aria-label": ariaLabel = "Choose date",
+  "aria-label": ariaLabelProp,
   "aria-labelledby": ariaLabelledBy,
   calendarProps,
   className,
+  confirm = false,
   defaultValue,
   disabled,
   form,
   formatValue,
   name,
   onValueChange,
-  placeholder = "Choose date",
+  placeholder: placeholderProp,
   required,
   size,
   textSize,
   value,
+  width = "fit",
 }: DatePickerProps): React.ReactElement {
+  const messages = useSiteplaneMessages("datePicker");
+  const ariaLabel = ariaLabelProp ?? messages.label;
+  const placeholder =
+    placeholderProp === undefined ? messages.placeholder : placeholderProp;
   const controlled = value !== undefined;
   const groupRef = React.useRef<HTMLDivElement>(null);
   const field = useFieldControlBridge({
@@ -191,7 +215,8 @@ function DatePickerRoot({
         if (nextValue) setMissing(false);
         onValueChange?.(toOptionalNativeDate(nextValue));
       }}
-      shouldCloseOnSelect
+      // A picker that confirms keeps its popover open until Apply.
+      shouldCloseOnSelect={!confirm}
     >
       {({ state }) => {
         const nativeValue = toOptionalNativeDate(state.value);
@@ -204,36 +229,33 @@ function DatePickerRoot({
         return (
           <>
             <DatePickerGroupPrimitive
-              className={cn("inline-flex max-w-full", className)}
+              // As wide as its date by default; width="full" fills the
+              // container, like Input.
+              className={cn(
+                width === "full" ? "flex w-full" : "inline-flex",
+                "max-w-full",
+                className,
+              )}
               ref={groupRef}
             >
-              <Button
-                className="w-full justify-start"
-                data-invalid={invalid || undefined}
+              <DatePickerTrigger
                 data-slot="date-picker-trigger"
-                data-text-size={textSize}
                 disabled={field.disabled}
-                render={<DatePickerButtonPrimitive />}
+                empty={!nativeValue}
+                invalid={invalid}
                 size={size}
-                variant="outline"
+                textSize={textSize}
+                valueSlot="date-picker-value"
               >
-                <CalendarIcon aria-hidden="true" />
-                <span
-                  className={cn(
-                    "sp-date-picker-value",
-                    !nativeValue && "text-muted-foreground",
-                  )}
-                  data-slot="date-picker-value"
-                >
-                  {label}
-                </span>
-              </Button>
+                {label}
+              </DatePickerTrigger>
             </DatePickerGroupPrimitive>
             <DatePickerPopoverPrimitive
               className={cn(
                 surfaceClassNames.floatingOverlay,
                 "sp-date-picker-popover",
               )}
+              data-panel={confirm || undefined}
               data-slot="date-picker-popover"
               offset={4}
               placement="bottom start"
@@ -243,11 +265,19 @@ function DatePickerRoot({
                   className="sp-date-picker-dialog outline-none"
                   data-slot="date-picker-dialog"
                 >
-                  <Calendar
-                    {...calendarProps}
-                    aria-label={ariaLabel}
-                    data-slot="date-picker-calendar"
-                  />
+                  {confirm ? (
+                    <DatePickerConfirmPanel
+                      ariaLabel={ariaLabel}
+                      calendarProps={calendarProps}
+                      state={state}
+                    />
+                  ) : (
+                    <Calendar
+                      {...calendarProps}
+                      aria-label={ariaLabel}
+                      data-slot="date-picker-calendar"
+                    />
+                  )}
                 </DatePickerDialogPrimitive>
               </SiteplaneUIPortalScope>
             </DatePickerPopoverPrimitive>
@@ -270,6 +300,62 @@ function DatePickerRoot({
         );
       }}
     </DatePickerPrimitive>
+  );
+}
+
+/**
+ * The popover of a picker that confirms (`confirm`): the calendar holds the
+ * picked date apart from the picker's own until Apply sets it, so Cancel, or
+ * a popover closed any other way, keeps the date as it was. The picked date
+ * starts as the picker's date each time the popover opens. The calendar shows
+ * a date input and Today above its days, and Cancel and Apply share the
+ * footer in two equal halves.
+ */
+function DatePickerConfirmPanel({
+  ariaLabel,
+  calendarProps,
+  state,
+}: {
+  ariaLabel: string;
+  calendarProps: CalendarOptions | undefined;
+  state: DatePickerState;
+}): React.ReactElement {
+  // The picker hands its calendar its date, its bounds and the focus on open
+  // through React Aria's calendar context; the panel keeps all of it but the
+  // date, which it holds itself until Apply.
+  const pickerCalendar = useSlottedContext(CalendarContext);
+  const [picked, setPicked] = React.useState<DateValue | null>(state.value);
+
+  return (
+    <DatePickerPanel
+      footer={
+        <DatePickerFooter
+          actionLayout="fill"
+          onApply={() => {
+            state.setValue(picked);
+            state.setOpen(false);
+          }}
+          onCancel={() => state.setOpen(false)}
+        />
+      }
+    >
+      <CalendarContext.Provider
+        value={{
+          ...pickerCalendar,
+          onChange: (next: DateValue | readonly DateValue[] | null) =>
+            setPicked(Array.isArray(next) ? (next[0] ?? null) : next),
+          value: picked,
+        }}
+      >
+        <Calendar
+          {...calendarProps}
+          aria-label={ariaLabel}
+          data-slot="date-picker-calendar"
+          showDateInput
+          showToday
+        />
+      </CalendarContext.Provider>
+    </DatePickerPanel>
   );
 }
 

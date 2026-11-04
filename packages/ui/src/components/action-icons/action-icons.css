@@ -9,6 +9,14 @@
    * is a zero-specificity rule of this layer, so the phases below refine it
    * without raising their importance; at rest the copy glyph keeps the
    * Button's opacity. */
+  /* The copy icon is the glyph of the Button it sits in, the glyph ladder's
+   * --sp-rw-button-icon (design-rework.css), and 16 px outside a Button; its
+   * two glyphs fill it. */
+  :where(.sp-copy) {
+    width: var(--sp-rw-button-icon, var(--sp-rw-control-icon));
+    height: var(--sp-rw-button-icon, var(--sp-rw-control-icon));
+  }
+
   .sp-copy-check {
     opacity: 0;
     transition: opacity var(--motion-duration-fast) var(--motion-ease-linear);

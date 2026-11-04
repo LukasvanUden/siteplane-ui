@@ -1,0 +1,113 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A badge group is a Badge (the pill block, the tints, the link behaviour in
+   * design-rework.css) around a Badge, the addon, and a message:
+   * a 4 px frame around the addon, 8 px between the addon and the
+   * message and an icon 4 px after the message. Only the sizes the pill block
+   * does not have are named here: the group is as high as its addon and 4 px
+   * above and below it (30 px at md around a 22 px addon, 32 px at lg around a
+   * 24 px one), is as wide as its content and no wider than its space (a flex
+   * column does not stretch it, and the Badge's max-width stays), and sets its
+   * own type. Every rule names the Badge foundation
+   * and the group, so it stands above the pill block whichever stylesheet
+   * comes later. */
+  :root .sp-base-badge.sp-badge-group {
+    --sp-badge-group-lead: var(--sp-rw-space-1);
+    --sp-badge-group-trail: var(--sp-rw-space-2);
+    --sp-badge-group-message-gap: var(--sp-rw-space-2);
+    --sp-badge-group-icon-gap: var(--sp-rw-space-1);
+    --sp-badge-group-dot-gap: var(--sp-rw-space-1-5);
+
+    width: max-content;
+    height: auto;
+    min-width: 0;
+    gap: 0;
+    padding-block: calc(var(--sp-rw-space-1) - var(--sp-rw-border-default));
+    padding-inline-start: calc(
+      var(--sp-badge-group-lead) - var(--sp-rw-border-default)
+    );
+    padding-inline-end: calc(
+      var(--sp-badge-group-trail) - var(--sp-rw-border-default)
+    );
+  }
+
+  :root .sp-base-badge.sp-badge-group[data-size="md"] {
+    --sp-pill-font: var(--sp-rw-font-12);
+    --sp-pill-line: var(--sp-rw-line-18);
+  }
+
+  :root .sp-base-badge.sp-badge-group[data-size="lg"] {
+    --sp-pill-font: var(--sp-rw-font-14);
+    --sp-pill-line: var(--sp-rw-line-20);
+    --sp-badge-group-dot-gap: var(--sp-rw-space-2);
+  }
+
+  /* The addon at the start has the frame at its start and the end of the group
+   * 8 px after the message or the icon; with neither, 4 px, as at its start.
+   * At the end the message starts 12 px in, or 10 px where the modern dot
+   * leads it, and the addon has the 4 px frame at its end. */
+  :root
+    .sp-base-badge.sp-badge-group[data-addon-position="start"]:not(
+      [data-message],
+      [data-icon]
+    ) {
+    --sp-badge-group-trail: var(--sp-rw-space-1);
+  }
+
+  :root .sp-base-badge.sp-badge-group[data-addon-position="end"] {
+    --sp-badge-group-lead: var(--sp-rw-space-3);
+    --sp-badge-group-trail: var(--sp-rw-space-1);
+  }
+
+  :root
+    .sp-base-badge.sp-badge-group[data-addon-position="end"][data-appearance="modern"][data-size="md"] {
+    --sp-badge-group-lead: var(--sp-rw-space-2-5);
+  }
+
+  /* The modern group is a white rounded rectangle, one provider radius, which
+   * its addon's own corner (6 px) is concentric with; a theme that rounds
+   * every badge (--sp-rw-radius-badge) rounds it too. Its text is the
+   * secondary colour and its icon the tertiary one. */
+  :root .sp-base-badge.sp-badge-group[data-appearance="modern"] {
+    --sp-badge-radius: var(--radius);
+    color: var(--sp-rw-fg-secondary);
+  }
+
+  /* The addon takes the group's text colour, which is the tint's on the light
+   * group, and stands 8 px from the message it joins. */
+  :root .sp-base-badge.sp-badge-group > .sp-badge-group-addon {
+    color: inherit;
+  }
+
+  :root
+    .sp-base-badge.sp-badge-group[data-message][data-addon-position="start"]
+    > .sp-badge-group-addon {
+    margin-inline-end: var(--sp-badge-group-message-gap);
+  }
+
+  :root
+    .sp-base-badge.sp-badge-group[data-message][data-addon-position="end"]
+    > .sp-badge-group-addon {
+    margin-inline-start: var(--sp-badge-group-message-gap);
+  }
+
+  /* The icon after the message is 16 px and 4 px from it. At the end it is the
+   * addon's, a 12 px icon like any Badge icon. */
+  :root .sp-base-badge.sp-badge-group > svg:not([class*="size-"]) {
+    width: var(--sp-rw-space-4);
+    height: var(--sp-rw-space-4);
+    margin-inline-start: var(--sp-badge-group-icon-gap);
+  }
+
+  :root .sp-base-badge.sp-badge-group[data-appearance="modern"] > svg {
+    color: var(--sp-rw-fg-tertiary);
+  }
+
+  /* The dot that leads a group with its addon at the end: 8 px, 6 px or 8 px
+   * before the message, with no margin of its own at its start. */
+  :root .sp-base-badge.sp-badge-group > .sp-badge-dot {
+    margin: 0;
+    margin-inline-end: var(--sp-badge-group-dot-gap);
+  }
+}

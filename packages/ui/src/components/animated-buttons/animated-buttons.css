@@ -9,9 +9,11 @@
     initial-value: 0px;
   }
 
-  /* Fill Sweep */
+  /* Fill Sweep. Its corners are the Button's control radius (S1), as the
+   * radius of every animated Button is; a provider at the xl radius makes it
+   * a pill. */
   .sp-fill-sweep-button-root {
-    --sp-fill-sweep-radius: var(--radius-lg);
+    --sp-fill-sweep-radius: var(--sp-rw-radius-control);
     --sp-fill-sweep-duration: var(--motion-duration-moderate);
     --sp-fill-sweep-inset: 0px;
     /* The full fill reaches one radius past the end edge, so its rounded
@@ -70,9 +72,21 @@
     }
   }
 
+  /* The control the tile of the running arrow fits in: the height of the
+   * Button's size on the control ladder, at every size. */
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-size="xs"], [data-size="icon-xs"]) {
+    --sp-fill-sweep-control: var(--sp-rw-control-xs);
+  }
+
   .sp-fill-sweep-button-root
     .sp-fill-sweep-button:is([data-size="sm"], [data-size="icon-sm"]) {
     --sp-fill-sweep-control: var(--sp-rw-control-sm);
+  }
+
+  .sp-fill-sweep-button-root
+    .sp-fill-sweep-button:is([data-size="md"], [data-size="icon-md"]) {
+    --sp-fill-sweep-control: var(--sp-rw-control-md);
   }
 
   .sp-fill-sweep-button-root
@@ -460,17 +474,20 @@
   }
 
   /* Expanding Arrow. The circle is the height of the control size at every
-   * viewport, like a Button of that size (S1); the arrow scales with it. */
+   * viewport, like a Button of that size (S1); the arrow scales with it. The
+   * default sm draws the arrow and the 14 px label that lg had before the
+   * control ladder moved to 4 px steps, and md, lg and xl the arrow and the
+   * 16 px label of xl, the largest (Lukas, 30 October 2026). */
   .sp-expanding-arrow-button-root {
-    --sp-expanding-arrow-circle-size: var(--sp-rw-control-md);
-    --sp-expanding-arrow-left: 0.4rem;
-    --sp-expanding-arrow-line-width: 0.75rem;
-    --sp-expanding-arrow-line-height: 0.125rem;
-    --sp-expanding-arrow-head-size: 0.4rem;
+    --sp-expanding-arrow-circle-size: var(--sp-rw-control-sm);
+    --sp-expanding-arrow-left: 0.45rem;
+    --sp-expanding-arrow-line-width: 0.84375rem;
+    --sp-expanding-arrow-line-height: var(--sp-rw-space-0-5);
+    --sp-expanding-arrow-head-size: 0.45rem;
     --sp-expanding-arrow-head-right: 0.0625rem;
-    --sp-expanding-arrow-hover-x: 0.625rem;
-    --sp-expanding-arrow-text-size: 0.875rem;
-    --sp-expanding-arrow-radius: var(--radius-lg);
+    --sp-expanding-arrow-hover-x: var(--sp-rw-space-3);
+    --sp-expanding-arrow-text-size: var(--sp-rw-font-14);
+    --sp-expanding-arrow-radius: var(--sp-rw-radius-control);
     display: inline-flex;
   }
 
@@ -478,38 +495,26 @@
     --sp-expanding-arrow-radius: var(--radius-4xl);
   }
 
-  .sp-expanding-arrow-button-root[data-size="sm"] {
-    --sp-expanding-arrow-circle-size: var(--sp-rw-control-sm);
-    --sp-expanding-arrow-left: 0.35rem;
-    --sp-expanding-arrow-line-width: 0.65625rem;
-    --sp-expanding-arrow-head-size: 0.35rem;
-    --sp-expanding-arrow-hover-x: 0.5625rem;
-    --sp-expanding-arrow-text-size: 0.8125rem;
+  .sp-expanding-arrow-button-root[data-size="md"],
+  .sp-expanding-arrow-button-root[data-size="lg"],
+  .sp-expanding-arrow-button-root[data-size="xl"] {
+    --sp-expanding-arrow-left: 0.6rem;
+    --sp-expanding-arrow-line-width: var(--sp-rw-space-4-5);
+    --sp-expanding-arrow-head-size: 0.6rem;
+    --sp-expanding-arrow-hover-x: var(--sp-rw-space-4);
+    --sp-expanding-arrow-text-size: var(--sp-rw-font-16);
   }
 
   .sp-expanding-arrow-button-root[data-size="md"] {
     --sp-expanding-arrow-circle-size: var(--sp-rw-control-md);
-    --sp-expanding-arrow-left: 0.4rem;
-    --sp-expanding-arrow-line-width: 0.75rem;
-    --sp-expanding-arrow-head-size: 0.4rem;
-    --sp-expanding-arrow-hover-x: 0.625rem;
   }
 
   .sp-expanding-arrow-button-root[data-size="lg"] {
     --sp-expanding-arrow-circle-size: var(--sp-rw-control-lg);
-    --sp-expanding-arrow-left: 0.45rem;
-    --sp-expanding-arrow-line-width: 0.84375rem;
-    --sp-expanding-arrow-head-size: 0.45rem;
-    --sp-expanding-arrow-hover-x: 0.75rem;
   }
 
   .sp-expanding-arrow-button-root[data-size="xl"] {
     --sp-expanding-arrow-circle-size: var(--sp-rw-control-xl);
-    --sp-expanding-arrow-left: 0.6rem;
-    --sp-expanding-arrow-line-width: 1.125rem;
-    --sp-expanding-arrow-head-size: 0.6rem;
-    --sp-expanding-arrow-hover-x: 1rem;
-    --sp-expanding-arrow-text-size: 1rem;
   }
 
   /* Over a surface the fill paints above the Button's finish and below its
@@ -531,7 +536,7 @@
   /* On a surface the fill starts flush in its corner, so it takes the
    * surface's radius and fits it at rest and filled. */
   .sp-expanding-arrow-button-root
-    .sp-expanding-arrow-button:not([data-variant="text"])
+    .sp-expanding-arrow-button:not([data-chassis="link"])
     .sp-expanding-arrow-circle {
     border-radius: inherit;
   }
@@ -575,10 +580,11 @@
     min-height: var(--sp-expanding-arrow-circle-size);
     padding: 0
       calc(var(--sp-expanding-arrow-left) + var(--sp-expanding-arrow-hover-x)) 0
-      calc(var(--sp-expanding-arrow-circle-size) + 0.5rem);
+      calc(var(--sp-expanding-arrow-circle-size) + var(--sp-rw-space-2));
     color: var(--sp-rw-fg-primary);
     font-size: var(--sp-expanding-arrow-text-size);
-    font-weight: var(--sp-rw-font-weight-default);
+    /* The label of a pressable control takes the Button's weight. */
+    font-weight: var(--sp-rw-font-weight-button);
     line-height: 1.6;
     text-align: center;
     transition: color var(--motion-duration-slow) var(--motion-ease-soft-in-out);
@@ -625,19 +631,21 @@
 
   /* Expanding Logout. The closed button is the square of the control size at
    * every viewport, like a Button of that size (S1); the icon and the open
-   * width scale with it. */
+   * width scale with it. The default sm takes the icon, the widths and the
+   * 14 px label that lg had before the control ladder moved to 4 px steps, and
+   * md, lg and xl those of xl, the largest (Lukas, 30 October 2026). */
   .sp-expanding-logout-button-root {
-    --sp-expanding-logout-closed-size: var(--sp-rw-control-md);
-    --sp-expanding-logout-min-open-width: 6rem;
-    --sp-expanding-logout-icon-size: 0.875rem;
+    --sp-expanding-logout-closed-size: var(--sp-rw-control-sm);
+    --sp-expanding-logout-min-open-width: 6.625rem;
+    --sp-expanding-logout-icon-size: 0.9375rem;
     --sp-expanding-logout-duration: var(--motion-duration-slow);
-    --sp-expanding-logout-open-buffer: 1rem;
+    --sp-expanding-logout-open-buffer: var(--sp-rw-space-5);
     --sp-expanding-logout-sign-hover-width: 30%;
-    --sp-expanding-logout-sign-padding-left: 0.75rem;
+    --sp-expanding-logout-sign-padding-left: var(--sp-rw-space-3-5);
     --sp-expanding-logout-text-hover-width: 70%;
-    --sp-expanding-logout-text-padding-right: 0.375rem;
-    --sp-expanding-logout-text-size: 0.875rem;
-    --sp-expanding-logout-radius: var(--radius-lg);
+    --sp-expanding-logout-text-padding-right: var(--sp-rw-space-1-75);
+    --sp-expanding-logout-text-size: var(--sp-rw-font-14);
+    --sp-expanding-logout-radius: var(--sp-rw-radius-control);
     display: inline-flex;
   }
 
@@ -645,42 +653,27 @@
     --sp-expanding-logout-radius: var(--radius-4xl);
   }
 
-  .sp-expanding-logout-button-root[data-size="sm"] {
-    --sp-expanding-logout-closed-size: var(--sp-rw-control-sm);
-    --sp-expanding-logout-min-open-width: 5.5rem;
-    --sp-expanding-logout-icon-size: 0.75rem;
-    --sp-expanding-logout-open-buffer: 0.875rem;
-    --sp-expanding-logout-sign-padding-left: 0.625rem;
-    --sp-expanding-logout-text-padding-right: 0.3125rem;
-    --sp-expanding-logout-text-size: 0.8125rem;
+  .sp-expanding-logout-button-root[data-size="md"],
+  .sp-expanding-logout-button-root[data-size="lg"],
+  .sp-expanding-logout-button-root[data-size="xl"] {
+    --sp-expanding-logout-min-open-width: 8.5rem;
+    --sp-expanding-logout-icon-size: var(--sp-rw-space-4-5);
+    --sp-expanding-logout-open-buffer: var(--sp-rw-space-8);
+    --sp-expanding-logout-sign-padding-left: var(--sp-rw-space-5);
+    --sp-expanding-logout-text-padding-right: var(--sp-rw-space-2-5);
+    --sp-expanding-logout-text-size: var(--sp-rw-font-16);
   }
 
   .sp-expanding-logout-button-root[data-size="md"] {
     --sp-expanding-logout-closed-size: var(--sp-rw-control-md);
-    --sp-expanding-logout-min-open-width: 6rem;
-    --sp-expanding-logout-icon-size: 0.875rem;
-    --sp-expanding-logout-open-buffer: 1rem;
-    --sp-expanding-logout-sign-padding-left: 0.75rem;
-    --sp-expanding-logout-text-padding-right: 0.375rem;
   }
 
   .sp-expanding-logout-button-root[data-size="lg"] {
     --sp-expanding-logout-closed-size: var(--sp-rw-control-lg);
-    --sp-expanding-logout-min-open-width: 6.625rem;
-    --sp-expanding-logout-icon-size: 0.9375rem;
-    --sp-expanding-logout-open-buffer: 1.25rem;
-    --sp-expanding-logout-sign-padding-left: 0.875rem;
-    --sp-expanding-logout-text-padding-right: 0.4375rem;
   }
 
   .sp-expanding-logout-button-root[data-size="xl"] {
     --sp-expanding-logout-closed-size: var(--sp-rw-control-xl);
-    --sp-expanding-logout-min-open-width: 8.5rem;
-    --sp-expanding-logout-icon-size: 1.125rem;
-    --sp-expanding-logout-open-buffer: 2rem;
-    --sp-expanding-logout-sign-padding-left: 1.25rem;
-    --sp-expanding-logout-text-padding-right: 0.625rem;
-    --sp-expanding-logout-text-size: 1rem;
   }
 
   /* The open width fits the label: its length in characters, which the button
@@ -728,7 +721,8 @@
     opacity: 0;
     color: currentColor;
     font-size: var(--sp-expanding-logout-text-size);
-    font-weight: 600;
+    /* The label of a pressable control takes the Button's weight. */
+    font-weight: var(--sp-rw-font-weight-button);
     transition-property: opacity, width, padding-right;
     transition-duration: var(--sp-expanding-logout-duration);
     transition-timing-function: var(--motion-ease-soft-in-out);

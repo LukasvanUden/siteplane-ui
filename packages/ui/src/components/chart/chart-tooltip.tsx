@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import { focusRingRecipe } from "../../system/recipes/focus-ring.recipe";
 import { cn } from "../../system/utils/cn";
@@ -14,7 +15,6 @@ import {
 } from "../motion";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../tooltip";
 import { useLastValue } from "./chart-cartesian";
-import { CHART_DEFAULT_LABELS } from "./chart-format";
 import type { ChartInteraction } from "./chart-interaction";
 import { ChartLabelSwatch } from "./chart-legend";
 import {
@@ -37,7 +37,7 @@ export type ChartTooltipProps = {
   anchorFor: (key: string) => { x: number; y: number } | null;
   /** `start` puts the top of the card at the point (a crosshair that runs from the top of the plot down), `center` its middle. */
   align?: ChartTooltipAlign;
-  /** What the card stays inside: the chart, as bklit's card does, or the window, for a ring that has no room beside it. */
+  /** What the card stays inside: the chart, or the window, for a ring that has no room beside it. */
   boundary?: "chart" | "viewport";
   /** What the card shows for the active item. Nothing closes it. */
   content: React.ReactNode;
@@ -106,7 +106,7 @@ export function ChartPlotPlaceholder({
   describedBy,
   height,
   label,
-  roleDescription = CHART_DEFAULT_LABELS.roleDescription,
+  roleDescription: roleDescriptionProp,
 }: Pick<
   ChartTooltipProps,
   "className" | "description" | "describedBy" | "label" | "roleDescription"
@@ -114,6 +114,8 @@ export function ChartPlotPlaceholder({
   /** The height of the plot in px: the height of its SVG once it is drawn. */
   height: number;
 }): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const roleDescription = roleDescriptionProp ?? messages.roleDescription;
   const descriptionId = React.useId();
   return (
     <>
@@ -144,12 +146,12 @@ export function ChartPlotPlaceholder({
   );
 }
 
-// What a card guesses its size to be until it is measured: bklit's.
+// What a card guesses its size to be until it is measured.
 const guessedCard: ChartCardSize = { height: 80, width: 180 };
 // How long the card stays stepped back while it changes sides: a third of the
 // time the floating panel takes to fade, which is long enough for its opacity
 // transition to take it most of the way out of sight and no longer, so that it
-// is back in plain sight within about 200 ms, as bklit's is. A time, and not a
+// is back in plain sight within about 200 ms. A time, and not a
 // count of frames, so that it looks the same on every display.
 const dipDuration = "--motion-duration-moderate";
 const dipShare = 1 / 3;
@@ -190,12 +192,15 @@ export function ChartTooltip({
   announcement,
   description,
   describedBy,
-  roleDescription = CHART_DEFAULT_LABELS.roleDescription,
-  keyboardHint = CHART_DEFAULT_LABELS.keyboardHint,
+  roleDescription: roleDescriptionProp,
+  keyboardHint: keyboardHintProp,
   children,
   className,
   style,
 }: ChartTooltipProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const roleDescription = roleDescriptionProp ?? messages.roleDescription;
+  const keyboardHint = keyboardHintProp ?? messages.keyboardHint;
   const tooltipId = React.useId();
   const descriptionId = React.useId();
   const hintId = React.useId();
@@ -247,7 +252,7 @@ export function ChartTooltip({
   const flipped = useLastValue(place ? place.flipped : null) ?? false;
 
   // A card that changes sides dips in opacity while it crosses its item, so that
-  // it is not in plain sight there, as the card of bklit UI does when it flips.
+  // it is not in plain sight there.
   // The tooltip stays open (M4): the card is told to step back, and the kit's own
   // opacity transition on the floating panel takes it out and back.
   const [dipping, setDipping] = React.useState(false);
@@ -460,6 +465,9 @@ function ChartTooltipCard({
   );
 }
 
+// The value keeps its place at the end of its row, in the label weight.
+const tooltipValueClassName = "ms-auto ps-4 font-(--sp-rw-font-weight-label)";
+
 export type ChartTooltipRow = {
   key: string;
   label: string;
@@ -482,15 +490,20 @@ export function chartTooltipText(
 
 /**
  * The card of a chart with several series: a heading, then one row per series
- * with its dot, its name and its value. The values roll to the next item's. A
- * name too long for the card wraps, and its dot and its value stay on its
- * first line (rulebook I5).
+ * with its dot, its name and its value. The values change to the next item's
+ * at once; with `rolling` they roll to them, digit by digit, which about
+ * doubles the work of the page while the pointer moves across the plot (each
+ * digit is a wheel of its own). A name too long for the card wraps, and its
+ * dot and its value stay on its first line (rulebook I5).
  */
 export function ChartTooltipContent({
   heading,
+  rolling = false,
   rows,
 }: {
   heading?: React.ReactNode;
+  /** Rolls the values to the next item's (the chart's `rollingNumbers`). */
+  rolling?: boolean;
   rows: readonly ChartTooltipRow[];
 }): React.ReactElement {
   return (
@@ -505,10 +518,20 @@ export function ChartTooltipContent({
         <div className="flex items-start gap-2" key={row.key}>
           <ChartLabelSwatch color={row.color} />
           <span className="min-w-0 text-muted-foreground">{row.label}</span>
-          <MotionNumber
-            className="ms-auto ps-4 font-(--sp-rw-font-weight-label)"
-            value={row.value}
-          />
+          {rolling ? (
+            <MotionNumber className={tooltipValueClassName} value={row.value} />
+          ) : (
+            <span
+              className={cn(
+                "sp-chart-tooltip-value",
+                tooltipValueClassName,
+                "whitespace-nowrap tabular-nums",
+              )}
+              data-slot="chart-tooltip-value"
+            >
+              {row.value}
+            </span>
+          )}
         </div>
       ))}
     </div>

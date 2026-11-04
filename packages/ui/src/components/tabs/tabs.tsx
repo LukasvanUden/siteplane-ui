@@ -3,7 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { useRender } from "@base-ui/react/use-render";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import {
@@ -19,7 +19,8 @@ import { panelSwitchClassName } from "../motion/motion-presence";
 import { layoutSize, railIndicatorGeometry } from "./tabs-geometry";
 import { useTabsOverflow } from "./tabs-overflow";
 
-export type TabsVariant = "default" | "pill" | "underline";
+export type TabsVariant =
+  "default" | "pill" | "underline" | "ghost" | "minimal";
 const TabsSizeContext = React.createContext<SiteplaneControlSize | null>(null);
 const TabsVariantContext = React.createContext<TabsVariant>("default");
 
@@ -112,6 +113,11 @@ export function TabsRail({
 }): React.ReactElement {
   const railRef = React.useRef<HTMLDivElement>(null);
   const indicatorRef = React.useRef<HTMLDivElement>(null);
+  // The rail takes the size of its tabs, and from md it keeps 6 px around
+  // them instead of 4 px, as a list does (design-rework.css).
+  const resolvedSize = useResolvedControlSize(
+    React.useContext(TabsSizeContext),
+  );
   // As with Base UI's indicator in a list, the rail's indicator stays hidden
   // until it has a place, and the active tab paints the same selection until
   // then (design-rework.css, "pending"). The server HTML shows the selection
@@ -163,6 +169,7 @@ export function TabsRail({
         className,
       )}
       data-indicator={placed ? undefined : "pending"}
+      data-size={resolvedSize}
       data-slot="tabs-rail"
       data-variant={variant}
       {...props}
@@ -185,6 +192,14 @@ export interface TabsListProps extends Omit<
   WithStringClassName<TabsPrimitive.List.Props>,
   "size"
 > {
+  /**
+   * `default` and `pill` seat the tabs in a track, with no gap between them,
+   * and slide the selection from tab to tab; `minimal` is the same track
+   * without its inset, the tabs 2 px apart and flush with its edge;
+   * `underline` draws a line under the current tab;
+   * `ghost` has no track, and the current tab keeps the fill of a current
+   * navigation row.
+   */
   variant?: TabsVariant;
   embedded?: boolean;
   /**
@@ -194,6 +209,12 @@ export interface TabsListProps extends Omit<
    * the start.
    */
   divider?: boolean;
+  /**
+   * A horizontal list fills the width of its container and shares it among
+   * its tabs: they are equally wide, and none is narrower than its label.
+   * Tabs that do not fit scroll as in any list.
+   */
+  fullWidth?: boolean;
   size?: SiteplaneControlSize;
 }
 
@@ -221,7 +242,7 @@ function TabsScrollButton({
   /** More tabs wait in its direction. */
   visible: boolean;
 }): React.ReactElement {
-  const Icon = direction === "start" ? ChevronLeftIcon : ChevronRightIcon;
+  const Icon = direction === "start" ? CaretLeftIcon : CaretRightIcon;
   return (
     <span
       aria-hidden="true"
@@ -240,7 +261,7 @@ function TabsScrollButton({
         size={`icon-${size}`}
         tabIndex={-1}
         type="button"
-        variant="text"
+        variant="link"
       >
         <Icon aria-hidden="true" className="rtl:-scale-x-100" />
       </Button>
@@ -251,6 +272,7 @@ function TabsScrollButton({
 export function TabsList({
   divider = false,
   embedded = false,
+  fullWidth = false,
   variant = "default",
   size,
   className,
@@ -290,15 +312,19 @@ export function TabsList({
             visible={overflow?.start ?? false}
           />
           <TabsPrimitive.List
+            // Its width is a kit rule, as wide as its tabs or, with fullWidth,
+            // as wide as its container (design-rework.css); a width utility in
+            // className still wins.
             className={cn(
               slotClass("tabs-list", props),
-              "scrollbar-none relative isolate flex w-fit max-w-full items-center overflow-x-auto overflow-y-hidden data-[orientation=vertical]:flex-col data-[orientation=vertical]:overflow-visible",
+              "scrollbar-none relative isolate flex max-w-full items-center overflow-x-auto overflow-y-hidden data-[orientation=vertical]:flex-col data-[orientation=vertical]:overflow-visible",
               className,
             )}
             data-size={resolvedSize}
             data-slot="tabs-list"
             data-divider={divider || undefined}
             data-embedded={embedded || undefined}
+            data-full-width={fullWidth || undefined}
             data-variant={variant}
             ref={setListRef}
             {...props}
@@ -309,7 +335,7 @@ export function TabsList({
                 without an inline script, and the indicator takes over in place
                 once it shows. The indicator leads the list, so that rule reaches
                 the tabs as its siblings. */}
-            {!embedded && (
+            {!embedded && variant !== "ghost" && (
               <TabsPrimitive.Indicator
                 className="sp-tab-indicator pointer-events-none absolute z-0"
                 data-slot="tab-indicator"
@@ -366,7 +392,7 @@ export function TabsTab({
             profile="tabs-tab"
             profileMode={variant}
             size={resolvedSize}
-            variant="text"
+            variant={variant === "ghost" ? "ghost" : "link"}
           />
         )
       }

@@ -1,9 +1,12 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  /* Sun Moon Morph */
+  /* Sun Moon Morph. The icon is 27 px, 25 px from 640 px, at the default sm,
+   * the size lg had before the control ladder moved to 4 px steps, and from md
+   * on the 31 and 27 px that xl had, the largest icon (Lukas, 30 October
+   * 2026). */
   .sp-sun-moon-morph-toggle-root {
-    --sp-sun-moon-icon-size: 1.5625rem;
+    --sp-sun-moon-icon-size: 1.6875rem;
     display: inline-flex;
   }
 
@@ -13,39 +16,19 @@
     place-items: center;
   }
 
-  .sp-sun-moon-morph-toggle-root[data-size="sm"] {
-    --sp-sun-moon-icon-size: 1.375rem;
-  }
-
-  .sp-sun-moon-morph-toggle-root[data-size="md"] {
-    --sp-sun-moon-icon-size: 1.5625rem;
-  }
-
-  .sp-sun-moon-morph-toggle-root[data-size="lg"] {
-    --sp-sun-moon-icon-size: 1.6875rem;
-  }
-
+  .sp-sun-moon-morph-toggle-root[data-size="md"],
+  .sp-sun-moon-morph-toggle-root[data-size="lg"],
   .sp-sun-moon-morph-toggle-root[data-size="xl"] {
     --sp-sun-moon-icon-size: 1.9375rem;
   }
 
   @media (min-width: 640px) {
     .sp-sun-moon-morph-toggle-root {
-      --sp-sun-moon-icon-size: 1.375rem;
-    }
-
-    .sp-sun-moon-morph-toggle-root[data-size="sm"] {
-      --sp-sun-moon-icon-size: 1.25rem;
-    }
-
-    .sp-sun-moon-morph-toggle-root[data-size="md"] {
-      --sp-sun-moon-icon-size: 1.375rem;
-    }
-
-    .sp-sun-moon-morph-toggle-root[data-size="lg"] {
       --sp-sun-moon-icon-size: 1.5625rem;
     }
 
+    .sp-sun-moon-morph-toggle-root[data-size="md"],
+    .sp-sun-moon-morph-toggle-root[data-size="lg"],
     .sp-sun-moon-morph-toggle-root[data-size="xl"] {
       --sp-sun-moon-icon-size: 1.6875rem;
     }
@@ -159,9 +142,11 @@
     }
   }
 
-  /* Layered */
+  /* Layered. The icon is 24 px, 22 px from 640 px, at the default sm, the size
+   * lg had before the control ladder moved to 4 px steps, and from md on the
+   * 26 and 24 px that xl had, the largest icon (Lukas, 30 October 2026). */
   .sp-layered-theme-toggle-root {
-    --sp-layered-theme-icon-size: 1.375rem;
+    --sp-layered-theme-icon-size: 1.5rem;
     display: inline-flex;
   }
 
@@ -172,39 +157,19 @@
     line-height: 1;
   }
 
-  .sp-layered-theme-toggle-root[data-size="sm"] {
-    --sp-layered-theme-icon-size: 1.25rem;
-  }
-
-  .sp-layered-theme-toggle-root[data-size="md"] {
-    --sp-layered-theme-icon-size: 1.375rem;
-  }
-
-  .sp-layered-theme-toggle-root[data-size="lg"] {
-    --sp-layered-theme-icon-size: 1.5rem;
-  }
-
+  .sp-layered-theme-toggle-root[data-size="md"],
+  .sp-layered-theme-toggle-root[data-size="lg"],
   .sp-layered-theme-toggle-root[data-size="xl"] {
     --sp-layered-theme-icon-size: 1.625rem;
   }
 
   @media (min-width: 640px) {
     .sp-layered-theme-toggle-root {
-      --sp-layered-theme-icon-size: 1.25rem;
-    }
-
-    .sp-layered-theme-toggle-root[data-size="sm"] {
-      --sp-layered-theme-icon-size: 1.125rem;
-    }
-
-    .sp-layered-theme-toggle-root[data-size="md"] {
-      --sp-layered-theme-icon-size: 1.25rem;
-    }
-
-    .sp-layered-theme-toggle-root[data-size="lg"] {
       --sp-layered-theme-icon-size: 1.375rem;
     }
 
+    .sp-layered-theme-toggle-root[data-size="md"],
+    .sp-layered-theme-toggle-root[data-size="lg"],
     .sp-layered-theme-toggle-root[data-size="xl"] {
       --sp-layered-theme-icon-size: 1.5rem;
     }

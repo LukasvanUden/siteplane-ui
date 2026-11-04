@@ -2,16 +2,19 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
+import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
+import { OverflowGlyph } from "../../system/styles/overflow-glyph";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 
 export function Breadcrumb(props: React.ComponentProps<"nav">) {
+  const messages = useSiteplaneMessages("breadcrumb");
   return (
     <nav
-      aria-label="breadcrumb"
+      aria-label={messages.label}
       data-slot="breadcrumb"
       {...props}
       className={cn(slotClass("breadcrumb", props), props.className)}
@@ -57,6 +60,12 @@ export function BreadcrumbItem({
   );
 }
 
+/**
+ * A step of the trail back to a parent page. It is navigation, not a link in
+ * text: it rests in the muted colour and takes the foreground on hover, by
+ * colour alone, with no underline.
+ * A link in a sentence or of its own is the link Button (rulebook T9).
+ */
 export function BreadcrumbLink({
   className,
   render,
@@ -132,18 +141,26 @@ export function BreadcrumbSeparator({
       role="presentation"
       {...props}
     >
-      {children ?? <ChevronRightIcon className="rtl:-scale-x-100" />}
+      {children ?? (
+        <CaretRightIcon aria-hidden="true" className="rtl:-scale-x-100" />
+      )}
     </li>
   );
 }
 
+/**
+ * The levels a trail leaves out. The dots are the overflow dots of every
+ * "more" trigger of the kit (OverflowGlyph, 20 px). They are hidden from
+ * assistive technology, which reads "More" in their place; inside a menu
+ * trigger, the trigger's `aria-label` names the button instead.
+ */
 export function BreadcrumbEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">) {
+  const messages = useSiteplaneMessages("breadcrumb");
   return (
     <span
-      aria-hidden="true"
       className={cn(
         // Inside a menu trigger the ellipsis keeps the muted link color and,
         // like the links, turns to the foreground color on hover or while open.
@@ -152,11 +169,10 @@ export function BreadcrumbEllipsis({
         className,
       )}
       data-slot="breadcrumb-ellipsis"
-      role="presentation"
       {...props}
     >
-      <MoreHorizontalIcon className="size-4 opacity-100" />
-      <span className="sr-only">More</span>
+      <OverflowGlyph className="opacity-100" />
+      <span className="sr-only">{messages.more}</span>
     </span>
   );
 }

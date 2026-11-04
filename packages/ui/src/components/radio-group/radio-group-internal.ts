@@ -1,5 +1,6 @@
 import type * as React from "react";
 
+import type { ChoiceIndicatorPosition } from "../../system/styles/choice-menu-item";
 import {
   Radio,
   RadioGroup,
@@ -19,11 +20,11 @@ export type KitRadioGroupProps = RadioGroupProps & { profile?: RadioProfile };
 export type KitRadioProps = RadioProps & {
   profile?: RadioProfile;
   /**
-   * In the menu-item profile: where the row shows its check, in the leading
-   * slot (`start`) or at the end of an identity row (`end`), as MenuRadioItem
+   * In the menu-item profile: where the row shows its check, at the end of
+   * the row (the default) or in the leading slot (`start`), as MenuRadioItem
    * does.
    */
-  indicatorPosition?: "start" | "end" | undefined;
+  indicatorPosition?: ChoiceIndicatorPosition | undefined;
 };
 
 /** RadioGroup with the kit's composition profile; the same component. */

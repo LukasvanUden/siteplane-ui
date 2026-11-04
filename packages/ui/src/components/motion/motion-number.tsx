@@ -12,6 +12,7 @@ import {
 import * as React from "react";
 
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
+import { useFormatLocale } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import {
@@ -45,8 +46,9 @@ export interface MotionNumberProps extends Omit<
    */
   value: number | string;
   /**
-   * The locale a number is formatted in, as `Intl.NumberFormat` takes it.
-   * `en-US` by default, so that the server and the client always agree.
+   * The locale a number is formatted in, as `Intl.NumberFormat` takes it:
+   * the SiteplaneLocaleProvider's unless set, and `en-US` without one, so
+   * that the server and the client always agree.
    */
   locales?: Intl.LocalesArgument;
   /** `Intl.NumberFormat` options for a number: currency, percent, compact notation, signs, units. */
@@ -307,11 +309,16 @@ function Glyph({
 export function MotionNumber({
   className,
   format,
-  locales = defaultNumberLocales,
+  locales: localesProp,
   render,
   value,
   ...props
 }: MotionNumberProps): React.ReactElement {
+  // Its own locales, else the provider's locale, else en-US.
+  const locales = useFormatLocale<Intl.LocalesArgument>(
+    localesProp,
+    defaultNumberLocales,
+  );
   const reduced = useReducedMotionPreference();
   const model = useNumberModel(value, locales, format);
   // Places that mount after the first render animate in.

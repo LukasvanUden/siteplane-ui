@@ -10,10 +10,7 @@ import {
   siteplaneUIDefaults,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
-import {
-  formControlSurfaceClassNames,
-  surfaceClassNames,
-} from "../../system/styles/surface";
+import { surfaceClassNames } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { wrapTextRuns } from "../../system/utils/text-runs";
@@ -22,7 +19,6 @@ import type {
   KitButtonProfile,
   KitButtonProfileMode,
   KitButtonProfileTone,
-  SelectTriggerButtonMode,
 } from "./button-internal";
 
 import "./button.css";
@@ -37,7 +33,9 @@ export const buttonVariants = cva(
     variants: {
       // The icon and label of each size come from the control scale in
       // design-rework.css (--sp-rw-button-icon and the size's text); the
-      // ::before layer takes the chassis radius at every size.
+      // ::before layer takes the chassis radius at every size. `close-xs` is
+      // the CloseButton's own 28 px step (design-rework.css, close profile),
+      // not a size of the public Button.
       size: {
         md: "",
         "icon-md": "",
@@ -46,35 +44,40 @@ export const buttonVariants = cva(
         "icon-xl": "",
         "icon-xs": "",
         "icon-2xs": "",
+        "close-xs": "",
         lg: "",
         sm: "",
         xl: "",
         xs: "",
       },
+      // Every variant's look is design-rework.css's: its chassis and skin, the
+      // spinner of a loading Button in the text colour (currentColor), and the
+      // link's underline and its press dim (the link block there). Lukas, 30
+      // October 2026; the text variant was the link and is
+      // gone (31 October 2026).
       variant: {
-        default:
-          "*:data-[slot=button-loading-indicator]:text-secondary-foreground",
-        accent:
-          "*:data-[slot=button-loading-indicator]:text-primary-foreground",
-        destructive: "*:data-[slot=button-loading-indicator]:text-white",
+        default: "",
+        accent: "",
+        destructive: "",
         "frosted-accent": "backdrop-blur-md",
         // The shared glass surface draws the fill, edge, shadow, sheen, blur
         // and text colour; the Button keeps its geometry, focus and
         // interaction layer.
         glass: "",
-        "ghost-destructive":
-          "*:data-[slot=button-loading-indicator]:text-destructive-foreground",
-        inverse:
-          "*:data-[slot=button-loading-indicator]:text-primary-foreground",
-        "outline-destructive":
-          "*:data-[slot=button-loading-indicator]:text-foreground",
-        ghost: "*:data-[slot=button-loading-indicator]:text-foreground",
-        // A link is underlined at rest; a text Button underlines on hover
-        // and press (design-rework.css). Lukas, 16 October 2026.
-        link: "underline underline-offset-4 *:data-[slot=button-loading-indicator]:text-foreground",
+        // The white destructive Button: the default Button with the
+        // destructive text, rim and tint (Lukas, 30 October 2026).
+        "default-destructive": "",
+        "ghost-destructive": "",
+        inverse: "",
+        "outline-destructive": "",
+        ghost: "",
+        link: "",
+        // The link in the text colour of its skin, as the default link does
+        // (design-rework.css).
+        "link-accent": "",
+        "link-destructive": "",
         "muted-accent": "",
-        outline: "*:data-[slot=button-loading-indicator]:text-foreground",
-        text: "not-aria-disabled:data-pressed:opacity-80 *:data-[slot=button-loading-indicator]:text-foreground",
+        outline: "",
       },
     },
   },
@@ -83,6 +86,7 @@ export const buttonVariants = cva(
 const buttonVariantBindings = {
   accent: { chassis: "solid", skin: "accent" },
   default: { chassis: "solid", skin: "neutral" },
+  "default-destructive": { chassis: "solid", skin: "destructive" },
   destructive: { chassis: "solid", skin: "destructive" },
   "frosted-accent": { chassis: "frosted", skin: "accent" },
   ghost: { chassis: "ghost", skin: "neutral" },
@@ -90,10 +94,11 @@ const buttonVariantBindings = {
   glass: { chassis: "frosted", skin: "neutral" },
   inverse: { chassis: "solid", skin: "inverse" },
   link: { chassis: "link", skin: "neutral" },
+  "link-accent": { chassis: "link", skin: "accent" },
+  "link-destructive": { chassis: "link", skin: "destructive" },
   "muted-accent": { chassis: "muted", skin: "accent" },
   outline: { chassis: "outline", skin: "neutral" },
   "outline-destructive": { chassis: "outline", skin: "destructive" },
-  text: { chassis: "text", skin: "neutral" },
 } as const;
 
 const solidEffectLayers = [
@@ -108,6 +113,7 @@ const solidEffectLayers = [
 const buttonVariantEffectLayers = {
   accent: solidEffectLayers,
   default: solidEffectLayers,
+  "default-destructive": solidEffectLayers,
   destructive: solidEffectLayers,
   "frosted-accent": [
     "drop-shadow",
@@ -121,14 +127,15 @@ const buttonVariantEffectLayers = {
   glass: ["interaction"],
   inverse: solidEffectLayers,
   link: [],
+  "link-accent": [],
+  "link-destructive": [],
   "muted-accent": ["interaction"],
   outline: ["interaction", "rim"],
   "outline-destructive": ["interaction", "rim"],
-  text: [],
 } as const;
 
 // A profile can add a layer its variant does not render. The navigation-link
-// profile keeps the layerless text variant but draws the current destination's
+// profile keeps the layerless link variant but draws the current destination's
 // persistent fill through the same interaction layer the Sidebar rows use.
 const buttonProfileEffectLayers: Partial<
   Record<KitButtonProfile, readonly string[]>
@@ -136,16 +143,71 @@ const buttonProfileEffectLayers: Partial<
   "navigation-link": ["interaction"],
 };
 
+// The Buttons that flash their border when a press ends (design-rework.css,
+// "Border flash"). Lukas left these out on 20 October 2026: Tabs and Select,
+// whose ::before draws the dome and the underline; a Link on its own; Icon
+// Morphs, Accordion and Collapsible; the Sidebar's trigger and rail
+// (its other Buttons take 0 % from the Sidebar's own tokens); the Copy Button
+// except the ghost one; and every icon or symbol without a ghost hover: the
+// field and inline actions, the Stepper's step headers, the Navigation Menu,
+// the Number Field's steppers and the picker triggers outside the calendar.
+// The profiles below leave it out by themselves; a part whose Button has the
+// default profile, such as a picker trigger, a Number Field stepper or a Copy
+// Button that is not the ghost one, opts out with `data-flash={false}`.
+const flashLeftOutProfiles: ReadonlySet<string> = new Set([
+  "accordion-trigger",
+  "collapsible-trigger",
+  "field-action",
+  "inline",
+  "morph-trigger",
+  "navigation-link",
+  "select-trigger",
+  "sidebar-rail",
+  "step-trigger",
+  "tabs-tab",
+]);
+
+function flashesBorder({
+  chassis,
+  flash,
+  profile,
+  sidebar,
+}: {
+  chassis: string;
+  flash: boolean | undefined;
+  profile: string;
+  sidebar: unknown;
+}): boolean {
+  if (flash === false) return false;
+  if (flashLeftOutProfiles.has(profile) || sidebar === "trigger") return false;
+  return !(profile === "default" && chassis === "link");
+}
+
+/** Every size the chassis draws, the CloseButton's own step included. */
+type ButtonChassisSize = NonNullable<
+  VariantProps<typeof buttonVariants>["size"]
+>;
+
 export interface ButtonBaseProps extends useRender.ComponentProps<"button"> {
   variant?: VariantProps<typeof buttonVariants>["variant"];
-  size?: VariantProps<typeof buttonVariants>["size"];
+  size?: Exclude<ButtonChassisSize, "close-xs"> | null | undefined;
   /**
    * `square` is the icon-only box and inherits the matching square size.
    * `pill` rounds the control fully at every size; the size keeps its height
    * and padding, and the variant and its states keep their styling.
    */
   shape?: "default" | "square" | "pill";
+  /**
+   * A loading Button is busy, not unavailable: it blocks activation and keeps
+   * its focus and its fill. The spinner takes the middle of the Button and the
+   * label keeps its room, unless `showTextWhileLoading` is set.
+   */
   loading?: boolean;
+  /**
+   * Keeps the label visible while `loading`, with the spinner before it where
+   * a leading icon stands, and hides the Button's own icons.
+   */
+  showTextWhileLoading?: boolean;
   align?: "center" | "start" | "between";
   multiline?: boolean;
   width?: "auto" | "fit" | "full";
@@ -156,27 +218,34 @@ export interface ButtonBaseProps extends useRender.ComponentProps<"button"> {
  * internal profiles (`button-internal.ts`); those are not public API.
  *
  * - `avatar` makes an Avatar child the trigger itself: circular interaction
- *   surface and focus ring, at the matching square icon size.
+ *   surface and focus ring, at the matching square icon size. The portrait
+ *   fills it, with or without a presence dot; an Avatar that names its own
+ *   size keeps it, centred in the circle.
  * - `field-action` is the icon-only action inside a field: show or hide a
  *   secret, copy, clear, open a picker. It renders the bare glyph, muted at
  *   rest and primary on hover, press and open, with no fill; the keyboard
- *   focus outline hugs the glyph. A square one defaults to the 24px `icon-xs`
- *   target. A press keeps focus inside the field in every engine
+ *   focus outline hugs the glyph. A square one names `icon-xs` and keeps its own
+ *   24px target, which the profile sets whatever the ladder gives that size.
+ *   A press keeps focus inside the field in every engine
  *   (`focusFieldActionOnPress`).
- * - `inline` is an action inside running text; it takes `profileTone`.
+ * - `inline` is an action inside running text; its link takes the accent text
+ *   colour, and `profileTone` changes it.
  * - `navigation-link` is a navigation trigger or destination.
  */
 export type ButtonProfile =
   "default" | "avatar" | "field-action" | "inline" | "navigation-link";
 
 /**
- * The tones of the `inline` profile. `muted` rests in the tertiary text
- * colour, for a secondary inline action. `accent` takes the accent text colour
- * at rest and on interaction, for a link that stands out beside neutral ones.
- * `destructive` rests like any link and takes the destructive text colour on
- * hover and press, for an action that removes something.
+ * The tones of the `inline` profile, whose link takes the accent text colour
+ * without one, in a sentence as on its own beside text, such as View report at
+ * the foot of a card. `muted` rests in the tertiary text colour, for a
+ * secondary inline action. `accent` names that default. `neutral` keeps the
+ * text colour, for a link that sits with text but is no part of a sentence and
+ * that the accent would overstate, such as a Back link above a title.
+ * `destructive` rests in the text colour and takes the destructive text colour
+ * on hover and press, for an action that removes something.
  */
-export type ButtonProfileTone = "muted" | "accent" | "destructive";
+export type ButtonProfileTone = "muted" | "accent" | "neutral" | "destructive";
 
 export interface ButtonDefaultProfileProps extends ButtonBaseProps {
   profile?: Exclude<ButtonProfile, "inline">;
@@ -193,18 +262,23 @@ export type ButtonStandardProps = ButtonDefaultProfileProps | InlineButtonProps;
 export type ButtonProps = ButtonStandardProps;
 
 /** Every prop the implementation reads, internal profiles included. */
-type ButtonImplementationProps = ButtonBaseProps & {
+type ButtonImplementationProps = Omit<ButtonBaseProps, "size"> & {
+  /** `false` leaves the Button out of the border flash (flashesBorder). */
+  "data-flash"?: boolean | undefined;
   profile?: KitButtonProfile;
   profileMode?: KitButtonProfileMode;
   profileTone?: KitButtonProfileTone;
+  size?: ButtonChassisSize | null | undefined;
 };
 
-const selectTriggerProfileModeClassNames = {
-  default: formControlSurfaceClassNames.default,
-  elevated: formControlSurfaceClassNames.elevated,
-  ghost: "",
-  inset: formControlSurfaceClassNames.inset,
-} as const satisfies Record<SelectTriggerButtonMode, string>;
+/** The text sizes of the control ladder, which a square Button turns square. */
+const controlLadderSizes: ReadonlySet<string> = new Set([
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+]);
 
 // `focusVisible` is not in TypeScript's FocusOptions yet; every current engine
 // reads it.
@@ -263,6 +337,8 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
   // (button-internal.ts), the same function with the wider props type.
   const {
     "aria-disabled": ariaDisabledProp,
+    // Read here and never forwarded: the attribute is the Button's own.
+    "data-flash": flashProp,
     align = "center",
     className,
     variant,
@@ -271,6 +347,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
     render,
     children,
     loading = false,
+    showTextWhileLoading = false,
     multiline = false,
     onClick,
     onClickCapture,
@@ -283,10 +360,31 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
     disabled: disabledProp,
     ...props
   } = buttonProps as ButtonImplementationProps;
-  const isDisabled: boolean = Boolean(loading || disabledProp);
+  // A loading Button is not disabled: it stays in the tab order and keeps its
+  // look, and the aria-disabled guards below block its activation.
+  const isDisabled: boolean = Boolean(disabledProp);
   const isAriaDisabled: boolean = Boolean(
-    isDisabled || ariaDisabledProp === true || ariaDisabledProp === "true",
+    isDisabled ||
+    loading ||
+    ariaDisabledProp === true ||
+    ariaDisabledProp === "true",
   );
+  const loadingBesideText = loading && showTextWhileLoading;
+  // The spinner only shows the busy state that aria-busy already announces, so
+  // it stays out of the accessible name: a status region inside the Button
+  // would read "Loading Saving" where the label alone says "Saving".
+  const loadingIndicator = loading ? (
+    <Spinner
+      aria-hidden="true"
+      aria-label={undefined}
+      className={cn(
+        "pointer-events-none size-[var(--sp-rw-button-icon,1rem)] shrink-0",
+        loadingBesideText && "static",
+      )}
+      data-slot="button-loading-indicator"
+      role={undefined}
+    />
+  ) : null;
   const renderElement = React.isValidElement<ButtonRenderCaptureProps>(render)
     ? render
     : undefined;
@@ -305,18 +403,16 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
       ? "icon-xs"
       : size,
   );
+  // A square Button takes the icon size of its step on the control ladder; a
+  // size of its own, an icon size or the CloseButton's step, stays as it is.
   const resolvedSize =
     (shape === "square" || (profile === "avatar" && size == null)) &&
-    !inheritedSize.startsWith("icon")
+    controlLadderSizes.has(inheritedSize)
       ? (`icon-${inheritedSize}` as
           "icon-xs" | "icon-sm" | "icon-md" | "icon-lg" | "icon-xl")
       : inheritedSize;
   const resolvedVariant =
     variant ?? (profile === "field-action" ? "ghost" : "default");
-  const selectTriggerProfileMode =
-    profile === "select-trigger"
-      ? (profileMode as SelectTriggerButtonMode | undefined)
-      : undefined;
   const { chassis, skin } = buttonVariantBindings[resolvedVariant];
   const variantLayers = buttonVariantEffectLayers[
     resolvedVariant
@@ -401,17 +497,18 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
         {/* An empty, unstyled span (a label left empty) takes no slot, so it
             adds no content gap beside the icon. */}
         <span
-          className="sp-button-content [&>span:empty:not([class],[style],[data-slot])]:hidden"
+          className={cn(
+            "sp-button-content [&>span:empty:not([class],[style],[data-slot])]:hidden",
+            // The spinner stands in the place of the Button's own icons.
+            loadingBesideText &&
+              "[&>svg:not([data-slot=button-loading-indicator])]:hidden",
+          )}
           data-slot="button-content"
         >
+          {loadingBesideText ? loadingIndicator : null}
           {content}
         </span>
-        {loading && (
-          <Spinner
-            className="pointer-events-none"
-            data-slot="button-loading-indicator"
-          />
-        )}
+        {loadingBesideText ? null : loadingIndicator}
       </>
     ),
     className: cn(
@@ -421,19 +518,28 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
       "sp-button-motion",
       // A multiline Button's height follows its lines, and one line stays on
       // the control scale: both are design-rework.css's ([data-multiline]).
-      selectTriggerProfileMode &&
-        selectTriggerProfileModeClassNames[selectTriggerProfileMode],
+      // A Select trigger's surface is its profile's, by its mode, there too.
       width === "fit" && "w-fit",
       className,
     ),
+    "aria-busy": loading || undefined,
     "aria-disabled": isAriaDisabled || undefined,
     "data-align": align === "center" ? undefined : align,
     "data-loading": loading ? "" : undefined,
+    "data-loading-text": loadingBesideText ? "" : undefined,
     "data-multiline": multiline ? "" : undefined,
     "data-profile": profile,
     "data-profile-mode": profileMode,
     "data-profile-tone": profileTone,
     "data-chassis": chassis,
+    "data-flash": flashesBorder({
+      chassis,
+      flash: flashProp,
+      profile,
+      sidebar: (props as Record<string, unknown>)["data-sidebar"],
+    })
+      ? ""
+      : undefined,
     "data-shape": shape,
     "data-size": resolvedSize,
     "data-skin": skin,

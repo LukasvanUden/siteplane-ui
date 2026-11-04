@@ -7,6 +7,7 @@ import {
   type FileIconProps,
   type IconType,
 } from "react-file-icon";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 
 /** The heights of the icon box in px; the width follows (see `boxClassNames`). */
@@ -42,7 +43,7 @@ type FileTypeIconTone = "error" | "success" | "warning" | "accent" | "neutral";
 
 // The label takes the kit's solid status and brand fills, the fills of the
 // destructive and accent Badge, with white text, so a brand override reaches
-// it: PDFs red, sheets green, slides and archives orange, documents and media
+// it: PDFs red, sheets green, slides and archives amber, documents and media
 // the accent, code and unknown files neutral.
 const tones: Partial<Record<IconType, FileTypeIconTone>> = {
   acrobat: "error",
@@ -98,6 +99,7 @@ export function FileTypeIcon({
   size = 40,
   className,
 }: FileTypeIconProps): React.ReactElement {
+  const messages = useSiteplaneMessages("fileTypeIcon");
   const basename = name.split(/[\\/]/).pop() ?? name;
   const suffix = (
     extension ??
@@ -139,7 +141,7 @@ export function FileTypeIcon({
         extension={
           suffix.length <= 5 && /^[a-z0-9]+$/.test(suffix)
             ? suffix.toUpperCase()
-            : "FILE"
+            : messages.unknown
         }
         color="var(--sp-semantic-color-muted)"
         foldColor="var(--sp-semantic-color-border)"

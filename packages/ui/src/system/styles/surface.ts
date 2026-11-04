@@ -12,7 +12,9 @@ const floatingOverlaySurface = "sp-floating-surface";
 
 export const surfaceClassNames = {
   iconWell: "sp-icon-well",
-  contained: "rounded-lg border bg-background",
+  // A framed surface, such as the Task Calendar's: its border is the one
+  // surface edge, the sp-contained-surface rule in design-rework.css (B7).
+  contained: "sp-contained-surface rounded-lg bg-background",
   edgeOverlay: `relative ${floatingOverlaySurface} before:pointer-events-none before:absolute before:inset-0`,
   // The popup of Dialog and AlertDialog. Its motion (sp-dialog-motion),
   // its scale and its slide on small screens (sp-dialog-mobile-stick)
@@ -32,8 +34,9 @@ export const surfaceClassNames = {
     "relative inline-flex w-full ring-ring/24 has-focus-visible:has-aria-invalid:ring-destructive/16 dark:has-aria-invalid:ring-destructive/24",
   formControlSoft:
     "relative inline-flex w-full ring-ring/24 focus-within:has-aria-invalid:ring-destructive/16 dark:has-aria-invalid:ring-destructive/24",
+  // An OTP slot. Its text is the slot rule of its size in design-rework.css.
   formControlCell:
-    "relative min-w-0 text-center text-base ring-ring/24 focus-visible:z-10 focus-visible:ring-ring/24 disabled:cursor-not-allowed aria-invalid:focus-visible:ring-destructive/16 sm:text-sm dark:aria-invalid:focus-visible:ring-destructive/24",
+    "relative min-w-0 text-center ring-ring/24 focus-visible:z-10 focus-visible:ring-ring/24 disabled:cursor-not-allowed aria-invalid:focus-visible:ring-destructive/16 dark:aria-invalid:focus-visible:ring-destructive/24",
   // The InputGroup's focus and invalid rings are the shared field rules'
   // box-shadows in design-rework.css, so it sets no ring colour.
   formControlComposite: "relative inline-flex w-full min-w-0 items-center",
@@ -71,52 +74,48 @@ export const linearIndicatorClassNames = {
   value: "",
 } as const;
 
+// The sizes of Progress and Meter. The default sm keeps what lg had before the
+// control ladder moved to 4 px steps (Lukas, 30 October 2026): an 8 px track
+// 8 px under 14 px text. md takes the xl look, a 10 px track and 16 px text
+// below 640 px, and lg and xl go on in steps of 2 px; the text stays at 16 px.
 export const linearIndicatorSizeClassNames = {
   label: {
-    md: "text-sm",
-    lg: "text-sm",
+    md: "text-base sm:text-sm",
+    lg: "text-base sm:text-sm",
     sm: "text-sm",
     xl: "text-base sm:text-sm",
   },
   root: {
-    md: "gap-2",
-    lg: "gap-2",
-    sm: "gap-1.5",
-    xl: "gap-2.5",
+    md: "gap-2.5",
+    lg: "gap-3",
+    sm: "gap-2",
+    xl: "gap-3.5",
   },
   track: {
-    md: "h-1.5",
-    lg: "h-2",
-    sm: "h-1",
-    xl: "h-2.5",
+    md: "h-2.5",
+    lg: "h-3",
+    sm: "h-2",
+    xl: "h-3.5",
   },
   value: {
-    md: "text-sm",
-    lg: "text-sm",
-    sm: "text-xs",
+    md: "text-base sm:text-sm",
+    lg: "text-base sm:text-sm",
+    sm: "text-sm",
     xl: "text-base sm:text-sm",
   },
 } as const;
 
 export type SurfaceClassName = keyof typeof surfaceClassNames;
 
-export type FormControlSurface = "default" | "elevated" | "inset";
+// The surfaces of a field (Lukas, 4 November 2026: "nur Standard und soft").
+// `default` rests inset, on the field's depth and its 2 % shade (rulebook
+// B11), and `soft`, on the members that offer it, takes a subtle fill in place
+// of the edge. The elevated and inset surfaces are gone: inset drew the
+// default, and elevated only added the elevated Card's contour.
+export type FormControlSurface = "default";
 export type FormControlVariant = FormControlSurface | "soft";
 
-export const formControlSurfaceClassNames = {
-  default: "",
-  // `shadow-form-control` is a marker, not a Tailwind utility. design-rework.css
-  // draws the elevated contour for every element that carries it
-  // (--sp-rw-surface-elevated-shadow, the elevated Card's), in both themes.
-  elevated: "shadow-form-control",
-  inset: "",
-} as const satisfies Record<FormControlSurface, string>;
-
+// The text of a field at every size: `sm` 14 px on a 20 px line, `base` 16 px
+// on 24. A field names it in data-text-size, which sets the text of its field
+// scale (design-rework.css); without it the text follows the field's size.
 export type FormControlTextSize = "sm" | "base";
-
-// Markers, not Tailwind utilities: the field text of each size is a kit base
-// rule in design-rework.css, so a field's own text rules refine it.
-export const formControlTextClassNames = {
-  base: "sp-field-text-base",
-  sm: "sp-field-text-sm",
-} as const satisfies Record<FormControlTextSize, string>;

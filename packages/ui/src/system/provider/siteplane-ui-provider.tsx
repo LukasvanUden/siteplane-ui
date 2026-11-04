@@ -38,7 +38,7 @@ export interface SiteplaneUIProviderProps extends React.HTMLAttributes<HTMLDivEl
 }
 
 export const siteplaneUIDefaults = {
-  controlSize: "lg",
+  controlSize: "sm",
   density: "default",
   radius: "md",
 } as const satisfies SiteplaneUIConfig;
@@ -92,33 +92,37 @@ export function useResolvedControlSize<T extends string>(
   return resolveControlSize(size, context.controlSize);
 }
 
-/** The control sizes from the smallest; only a part that is xs at lg uses xs. */
+/**
+ * The control sizes from the smallest, 32, 36, 40, 44 and 48 px; only a part
+ * that is xs at the default uses xs.
+ */
 const controlSizeSteps = ["xs", "sm", "md", "lg", "xl"] as const;
 
 /**
- * The size of a part designed for the default lg, at another control size: it
- * keeps its steps from lg within the scale. A code field one step above lg is
- * md at sm and xl at lg; presets two steps below are sm up to lg and md at xl
- * (Lukas, 13 October 2026). Patterns size their parts this way, so they keep
- * their proportions at every control size and look as designed at lg.
+ * The size of a part designed for the default control size, at another control
+ * size: it keeps its steps from the default within the scale. A part that is
+ * md at the default sm is lg at md and xl at lg (Lukas, 13 October 2026; the
+ * default moved from lg to sm and the sizes to 4 px steps on 30
+ * October 2026). Patterns size their parts this way, so they keep their
+ * proportions at every control size and look as designed at the default.
  */
 export function resolveRelativeControlSize(
-  sizeAtLg: SiteplaneControlSize,
+  sizeAtDefault: SiteplaneControlSize,
   controlSize: SiteplaneControlSize,
 ): SiteplaneControlSize;
 export function resolveRelativeControlSize(
-  sizeAtLg: "xs" | SiteplaneControlSize,
+  sizeAtDefault: "xs" | SiteplaneControlSize,
   controlSize: SiteplaneControlSize,
 ): "xs" | SiteplaneControlSize;
 export function resolveRelativeControlSize(
-  sizeAtLg: "xs" | SiteplaneControlSize,
+  sizeAtDefault: "xs" | SiteplaneControlSize,
   controlSize: SiteplaneControlSize,
 ): "xs" | SiteplaneControlSize {
   const step =
     controlSizeSteps.indexOf(controlSize) +
-    controlSizeSteps.indexOf(sizeAtLg) -
-    controlSizeSteps.indexOf("lg");
-  const lowest = sizeAtLg === "xs" ? 0 : 1;
+    controlSizeSteps.indexOf(sizeAtDefault) -
+    controlSizeSteps.indexOf(siteplaneUIDefaults.controlSize);
+  const lowest = sizeAtDefault === "xs" ? 0 : 1;
   return controlSizeSteps[
     Math.min(controlSizeSteps.length - 1, Math.max(lowest, step))
   ]!;
@@ -126,15 +130,44 @@ export function resolveRelativeControlSize(
 
 /** `resolveRelativeControlSize` at the provider's control size. */
 export function useRelativeControlSize(
-  sizeAtLg: SiteplaneControlSize,
+  sizeAtDefault: SiteplaneControlSize,
 ): SiteplaneControlSize;
 export function useRelativeControlSize(
-  sizeAtLg: "xs" | SiteplaneControlSize,
+  sizeAtDefault: "xs" | SiteplaneControlSize,
 ): "xs" | SiteplaneControlSize;
 export function useRelativeControlSize(
-  sizeAtLg: "xs" | SiteplaneControlSize,
+  sizeAtDefault: "xs" | SiteplaneControlSize,
 ): "xs" | SiteplaneControlSize {
-  return resolveRelativeControlSize(sizeAtLg, useSiteplaneUI().controlSize);
+  return resolveRelativeControlSize(
+    sizeAtDefault,
+    useSiteplaneUI().controlSize,
+  );
+}
+
+/**
+ * Gives the parts inside a control size without an element of their own: a
+ * Button or a field in it, with no size of theirs, takes `controlSize`, as it
+ * would inside a provider with that size. A part that sets its controls apart
+ * from the page's, such as Empty, whose actions step with its size, wraps its
+ * content in it. Density and radius stay the provider's.
+ */
+export function SiteplaneControlSizeScope({
+  children,
+  controlSize,
+}: {
+  children: React.ReactNode;
+  controlSize: SiteplaneControlSize;
+}): React.ReactElement {
+  const parent = useSiteplaneUI();
+  const value = React.useMemo<SiteplaneUIConfig>(
+    () => ({ ...parent, controlSize }),
+    [parent, controlSize],
+  );
+  return (
+    <SiteplaneUIContext.Provider value={value}>
+      {children}
+    </SiteplaneUIContext.Provider>
+  );
 }
 
 /** The provider's CSP nonce, for a kit part that hands it to a library that adds an inline style. */

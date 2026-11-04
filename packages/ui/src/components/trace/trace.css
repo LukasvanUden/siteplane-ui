@@ -14,6 +14,21 @@
     line-height: var(--sp-rw-line-21);
   }
 
+  /* The row of a step, a CollapsibleTrigger or a TraceLink, is no text in a
+   * sentence, so it does not underline on hover and press: the link's switch
+   * (design-rework.css, the link block). */
+  :where(.sp-trace-row) {
+    --sp-link-underline: none;
+  }
+
+  /* Nor does it take the link weight: a step is a disclosure row, so it keeps
+   * the body weight of the Collapsible's trigger, through the Button's weight
+   * hook. The class outranks the zero-specificity link rule
+   * (design-rework.css, Component base). */
+  .sp-trace-row {
+    --sp-rw-button-font-weight: var(--sp-rw-font-weight-default);
+  }
+
   /* Work that failed reads in the destructive text tone, also while the
    * pointer is over its row. The title says so in words: colour alone is
    * never the status. */

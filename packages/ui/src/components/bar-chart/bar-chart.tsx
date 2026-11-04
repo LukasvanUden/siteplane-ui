@@ -2,6 +2,10 @@
 
 import * as React from "react";
 
+import {
+  useFormatLocale,
+  useSiteplaneMessages,
+} from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import {
   ChartActiveDot,
@@ -19,6 +23,7 @@ import {
   useGlidingTicks,
   useLastValue,
 } from "../chart/chart-cartesian";
+import { curvePath, curveTrace, type ChartPoint } from "../chart/chart-curve";
 import { chartXKey } from "../chart/chart-data";
 import {
   CHART_DEFAULT_LOCALE,
@@ -47,6 +52,8 @@ import {
   seriesSteppedBack,
   useChartDimClassName,
 } from "../chart/chart-dimming";
+import { ChartHighlight, highlightBand } from "../chart/chart-highlight";
+import { runsOf } from "../chart/chart-line-area";
 import {
   ChartPlotPlaceholder,
   ChartTooltip,
@@ -107,7 +114,20 @@ export type BarChartProps = CartesianChartProps & {
    * axis, and its value labels, the text colour.
    */
   highlight?: ChartXValue;
+  /**
+   * The thickest a bar may be, in px. A bar takes the band of its category up
+   * to it, and the bars of a category are centred on their band. Without it a
+   * bar fills its band.
+   */
+  maxBarSize?: number;
 };
+
+// A line series of a Bar Chart: a 2 px line, as the Line Chart draws one, with
+// a 3 px dot for a point on its own, which has no line to show it.
+const lineWidth = 2;
+const dotRadius = 3;
+const isLine = (item: { type?: "bar" | "line" | undefined }) =>
+  item.type === "line";
 
 // The stripes of the hatched fill of a highlighted category: a soft stripe of
 // the series' colour every 6 px, 2 px wide, at 45 degrees, over a tint of that
@@ -134,7 +154,8 @@ type BarRow = {
 /**
  * One or several series of bars over categories or dates, side by side or
  * stacked, as columns or as horizontal bars, with a tooltip for the category
- * under the pointer and arrow-key navigation. The chart core draws its axes,
+ * under the pointer and arrow-key navigation. A series of `type: "line"` is
+ * drawn as a line through the middle of its categories, over the bars. The chart core draws its axes,
  * grid, tooltip and legend; new data glides in: a new bar grows from the 0
  * line, a bar that is gone shrinks away, and the value axis moves with the
  * bars. The bars are drawn once the chart has measured its width: until then,
@@ -153,14 +174,18 @@ export function BarChart({
   minHeight,
   formatValue,
   formatX,
-  locale = CHART_DEFAULT_LOCALE,
+  locale: localeProp,
   palette = "brand",
   legend = series.length > 1,
-  emptyLabel = "No data",
+  emptyLabel: emptyLabelProp,
   labels,
   className,
   ...plot
 }: BarChartProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const emptyLabel = emptyLabelProp ?? messages.noData;
+  // The chart's own locale, else the provider's, else en-US.
+  const locale = useFormatLocale(localeProp, CHART_DEFAULT_LOCALE);
   const root = React.useRef<HTMLElement>(null);
   // The chart core sizes the chart: its width, and its height in px or from
   // the box it fills.
@@ -171,13 +196,21 @@ export function BarChart({
   // The series whose entry the mouse is over in the legend: the chart owns it
   // and hands it to the legend and to its own bars.
   const focus = useChartSeriesFocus(series.map((item) => item.key));
-  const words = chartLabels(labels);
+  const words = chartLabels(labels, messages);
 
   // The rows of the chart and the span of its numbers, read as the Line and
   // the Area Chart read theirs: a row for each category or date (dates in
   // order), repeated ones kept apart, a missing value left out.
+  // A line series stays out of a stack: its line runs at its own value.
   const model = React.useMemo(
-    () => buildCartesianModel({ data, series, stacked, x }),
+    () =>
+      buildCartesianModel({
+        data,
+        series,
+        stacked,
+        unstacked: series.filter(isLine).map((item) => item.key),
+        x,
+      }),
     [data, series, stacked, x],
   );
   const formatHeading = formatX ?? chartXFormatter(locale, "long");
@@ -288,8 +321,10 @@ function BarPlot({
   highlight,
   label,
   locale,
+  maxBarSize,
   model,
   orientation = "vertical",
+  rollingNumbers = false,
   root,
   series,
   showLegend,
@@ -302,7 +337,14 @@ function BarPlot({
   yAxis = true,
 }: Pick<
   BarChartProps,
-  "grid" | "highlight" | "orientation" | "valueLabels" | "xAxis" | "yAxis"
+  | "grid"
+  | "highlight"
+  | "maxBarSize"
+  | "orientation"
+  | "rollingNumbers"
+  | "valueLabels"
+  | "xAxis"
+  | "yAxis"
 > & {
   colors: readonly string[];
   describedBy: string | undefined;
@@ -329,6 +371,14 @@ function BarPlot({
   const horizontal = orientation === "horizontal";
   const { rows } = model;
   const formatText = formatX ?? chartXFormatter(locale, "short");
+  // The places in `series` of the bar series and of the line series: the bars
+  // are laid out among themselves, the lines run over them.
+  const barPlaces = series.flatMap((item, place) =>
+    isLine(item) ? [] : [place],
+  );
+  const linePlaces = series.flatMap((item, place) =>
+    isLine(item) ? [place] : [],
+  );
 
   // A horizontal chart turns the axes: its values run along the bottom and its
   // categories down the left side, and the layout reserves room for the labels
@@ -347,7 +397,11 @@ function BarPlot({
   const labelRoom =
     valueLabels && !model.empty
       ? valueLabelRoom(
-          valueLabelTexts(model.values, stacked, formatNumber),
+          valueLabelTexts(
+            barPlaces.map((place) => model.values[place]!),
+            stacked,
+            formatNumber,
+          ),
           orientation,
         )
       : { end: 0, start: 0 };
@@ -407,11 +461,14 @@ function BarPlot({
       barSlots({
         categoryScale,
         data: rows.map((row) => ({ ...row.datum, [x]: row.id })),
-        seriesKeys: series.map((item) => item.key),
+        maxSize: maxBarSize,
+        seriesKeys: series
+          .filter((item) => !isLine(item))
+          .map((item) => item.key),
         stacked,
         x,
       }),
-    [categoryScale, rows, series, stacked, x],
+    [categoryScale, maxBarSize, rows, series, stacked, x],
   );
 
   // New data glides in. Each bar is told by its category and series: a bar that
@@ -420,9 +477,9 @@ function BarPlot({
   // value axis moves with them, so grid lines and labels stay with the bars.
   const entries = useTweenedRows(
     slots.map((slot): BarRow => ({
-      color: colors[slot.order]!,
+      color: colors[barPlaces[slot.order]!]!,
       id: slot.key,
-      negativeColor: series[slot.order]?.negativeColor,
+      negativeColor: series[barPlaces[slot.order]!]?.negativeColor,
       slot,
     })),
     (row) => row.slot.value,
@@ -480,17 +537,85 @@ function BarPlot({
         value: entry.value,
       })),
       moving,
-      { count: series.length, length: categoryLength, stacked },
+      {
+        count: barPlaces.length,
+        length: categoryLength,
+        maxSize: maxBarSize,
+        stacked,
+      },
     ),
     { orientation, stacked, valueScale: valueAxis },
   );
 
-  // The labels of the axes. Each is keyed, so that one that comes or goes fades
-  // through while the others stay: the old labels go out before the new ones
-  // come in, and never are two legible on top of each other. The labels of the
-  // categories are all replaced when the categories change; the labels of the
-  // value axis stay by their value and glide with the axis, the grid lines with
-  // them, and the ones that go fade where they stood.
+  // The middle of the band of the category at `index`, where it is right now:
+  // a band that glides while categories come, go or change order takes the
+  // points of the lines along with its bars.
+  const centreAt = (index: number) => {
+    const band = moving.get(rows[index]!.id);
+    return band
+      ? hundredths((band.start + band.size / 2) * categoryLength)
+      : centres[index]!;
+  };
+  // The line series: a point for every category with a number, at the middle
+  // of its band and at its value on the value axis. Their numbers glide with
+  // the bars', in the units of the data, so the lines and the axis move
+  // together; a point that is new appears at its value. A gap in the data
+  // breaks a line, and a point on its own is a dot.
+  const lineTargets = linePlaces.flatMap((place) =>
+    rows.flatMap((row, index) => {
+      const value = model.values[place]![index];
+      return value === null || value === undefined
+        ? []
+        : [{ key: `${row.id}|${series[place]!.key}`, value }];
+    }),
+  );
+  const lineNumbers = lineTargets.map((target) => target.value);
+  const lineGlide = useTweenedValues(lineNumbers, {
+    container: root,
+    keys: lineTargets.map((target) => target.key),
+    starts: lineNumbers,
+  });
+  const linesGliding = lineGlide !== lineNumbers;
+  const glided = new Map(
+    lineTargets.map((target, index) => [
+      target.key,
+      lineGlide[index] ?? target.value,
+    ]),
+  );
+  // A column chart's lines bend as the Line Chart's do and never swing past
+  // the data; a horizontal chart's run straight from category to category.
+  const lineCurve = horizontal ? "linear" : "monotone";
+  const lines = linePlaces.map((place) => {
+    const item = series[place]!;
+    const runs = runsOf(model.values[place]!).map((run) =>
+      run.map((index): ChartPoint => {
+        const along = centreAt(index);
+        const across = at(
+          glided.get(`${rows[index]!.id}|${item.key}`) ??
+            model.values[place]![index]!,
+        );
+        return horizontal ? [across, along] : [along, across];
+      }),
+    );
+    return {
+      color: colors[place]!,
+      d: runs
+        .filter((run) => run.length > 1)
+        .map((run) => curvePath(run, lineCurve))
+        .join(" "),
+      dots: runs.filter((run) => run.length === 1).map((run) => run[0]!),
+      key: item.key,
+      place,
+      runs,
+    };
+  });
+
+  // The labels of the axes. Each is keyed, so that one that comes or goes
+  // switches at once while the others stay: the new labels show the moment the
+  // old ones are hidden, and never are two seen on top of each other. The labels
+  // of the categories are all replaced when the categories change; the labels
+  // of the value axis stay by their value and glide with the axis, the grid
+  // lines with them, and the ones that go are hidden where they stood.
   // The category the chart sets apart, such as a period that is still running:
   // the rows whose x value is the one it is given.
   const highlightKey = highlight === undefined ? "" : chartXKey(highlight);
@@ -552,6 +677,12 @@ function BarPlot({
   // series but the focused one while the mouse is on an entry of the legend; a
   // bar steps back when either rule says so.
   const dimClassName = useChartDimClassName("mark");
+  // A line steps back as a series does in the Line Chart: while a category of
+  // a column chart is active, where the stretch around it is drawn again at
+  // full strength, and while the mouse is on another series' legend entry.
+  const lineDimClassName = useChartDimClassName("series");
+  const lineSteppedBack = (key: string) =>
+    (active !== undefined && !horizontal) || seriesSteppedBack(focusedKey, key);
 
   // The crosshair and the dots wait where they last were while they fade out. A
   // dot sits at the end of its bar, so it waits for the bars to stop gliding.
@@ -559,6 +690,7 @@ function BarPlot({
   const shownKey = rows.find((row) => row.id === lastKey)?.id ?? rows[0]?.id;
   const gliding =
     moving.size > 0 ||
+    linesGliding ||
     entries.some(
       (entry) => entry.leaving || entry.value !== entry.row.slot.value,
     );
@@ -584,13 +716,22 @@ function BarPlot({
     if (!slot || !box || !box.width) return null;
     const scale = box.width / layout.width;
     const own = bars.filter((bar) => bar.x === key);
+    const row = rows.findIndex((item) => item.id === key);
+    const lineEnds = linePlaces.flatMap((place) => {
+      const value = row < 0 ? null : model.values[place]![row];
+      return value === null || value === undefined ? [] : [at(value)];
+    });
     const middle = slot.start + slot.size / 2;
     return horizontal
       ? {
           x:
             box.x +
             (layout.margin.left +
-              Math.max(at(0), ...own.map((bar) => bar.x0 + bar.width))) *
+              Math.max(
+                at(0),
+                ...own.map((bar) => bar.x0 + bar.width),
+                ...lineEnds,
+              )) *
               scale,
           y: box.y + (layout.margin.top + middle) * scale,
         }
@@ -608,7 +749,7 @@ function BarPlot({
           : [
               {
                 color:
-                  value < 0 && item.negativeColor
+                  value < 0 && item.negativeColor && !isLine(item)
                     ? item.negativeColor
                     : colors[order]!,
                 key: item.key,
@@ -619,7 +760,11 @@ function BarPlot({
       })
     : [];
   const content = active && (
-    <ChartTooltipContent heading={heading} rows={tooltipRows} />
+    <ChartTooltipContent
+      heading={heading}
+      rolling={rollingNumbers}
+      rows={tooltipRows}
+    />
   );
 
   // The colour each bar is drawn in, and the hatched fill of each colour that
@@ -762,6 +907,68 @@ function BarPlot({
                 />
               );
             })}
+          {/* The lines run over the bars, each a stroke of its series with a
+              dot for a point on its own. */}
+          {!model.empty &&
+            lines.map((line) => (
+              <React.Fragment key={line.key}>
+                {line.d ? (
+                  <path
+                    className={cn("sp-chart-line", lineDimClassName)}
+                    d={line.d}
+                    data-slot="chart-line"
+                    fill="none"
+                    opacity={chartDimOpacity("line", lineSteppedBack(line.key))}
+                    stroke={line.color}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={lineWidth}
+                  />
+                ) : null}
+                {line.dots.map(([cx, cy], index) => (
+                  <circle
+                    className={cn("sp-chart-dot", lineDimClassName)}
+                    cx={cx}
+                    cy={cy}
+                    data-slot="chart-dot"
+                    fill={line.color}
+                    key={index}
+                    opacity={chartDimOpacity(
+                      "line",
+                      seriesSteppedBack(focusedKey, line.key),
+                    )}
+                    r={dotRadius}
+                  />
+                ))}
+              </React.Fragment>
+            ))}
+          {!model.empty && !horizontal && lines.some((line) => line.d) && (
+            <ChartHighlight
+              band={
+                active !== undefined
+                  ? highlightBand(
+                      rows.map((_, index) => centreAt(index)),
+                      activeIndex,
+                    )
+                  : null
+              }
+              container={root}
+              height={layout.plotHeight}
+              strokes={lines.flatMap((line) =>
+                line.d
+                  ? [
+                      {
+                        color: line.color,
+                        d: line.d,
+                        key: line.key,
+                        steppedBack: seriesSteppedBack(focusedKey, line.key),
+                        width: lineWidth,
+                      },
+                    ]
+                  : [],
+              )}
+            />
+          )}
           {shownLabels.length > 0 && (
             <g
               aria-hidden="true"
@@ -824,12 +1031,31 @@ function BarPlot({
                 />
               ) : null;
             })}
+          {!model.empty &&
+            !horizontal &&
+            lines.map((line) => {
+              const index = rows.findIndex((row) => row.id === shownKey);
+              const value = index < 0 ? null : model.values[line.place]![index];
+              return value === null || value === undefined ? null : (
+                <ChartActiveDot
+                  color={line.color}
+                  container={root}
+                  cx={centreAt(index)}
+                  cy={at(value)}
+                  // It rides its line to the next category.
+                  key={line.key}
+                  trace={curveTrace(line.runs, lineCurve)}
+                  visible={active !== undefined && !gliding}
+                />
+              );
+            })}
         </g>
         {model.empty && <ChartEmptyState label={emptyLabel} layout={layout} />}
       </svg>
       <ChartAxisPill
         container={root}
         layout={layout}
+        rolling={rollingNumbers}
         side={horizontal ? "left" : "bottom"}
         spot={spot}
       />

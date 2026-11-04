@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
-import { ChevronDown } from "lucide-react";
+import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
@@ -48,7 +48,8 @@ export function NavigationMenuList({
       data-slot="navigation-menu-list"
       className={cn(
         slotClass("navigation-menu-list", props),
-        "flex items-center gap-1",
+        // Links stand 2 px apart, as the rows of a Sidebar menu do.
+        "flex items-center gap-0.5",
         className,
       )}
       {...props}
@@ -87,10 +88,11 @@ export function NavigationMenuTrigger({
     >
       {children}
       <NavigationMenuPrimitive.Icon
+        aria-hidden="true"
         className="sp-navigation-menu-icon"
         data-slot="navigation-menu-icon"
       >
-        <ChevronDown />
+        <CaretDownIcon aria-hidden="true" />
       </NavigationMenuPrimitive.Icon>
     </NavigationMenuPrimitive.Trigger>
   );

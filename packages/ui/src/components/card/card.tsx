@@ -414,16 +414,27 @@ export function CardPanel({
 }
 
 export function CardFooter({
+  actionLayout,
   className,
   render,
   ...props
-}: useRender.ComponentProps<"div">): React.ReactElement {
+}: useRender.ComponentProps<"div"> & {
+  /**
+   * `fill` lets the footer's buttons share its row in equal widths, such as
+   * Cancel and Apply under a calendar; a link keeps its own width. Unset, the
+   * actions keep their own widths and its `className` lays out the row. Either
+   * way they stand the action gap apart, 12 px, as in every footer of the
+   * kit (design-rework.css).
+   */
+  actionLayout?: "fill" | undefined;
+}): React.ReactElement {
   const defaultProps = {
     className: cn(
       slotClass("card-footer", props, render),
       "flex items-center",
       className,
     ),
+    "data-action-layout": actionLayout,
     "data-slot": "card-footer",
   };
 

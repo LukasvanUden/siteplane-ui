@@ -58,24 +58,24 @@
 
   /* DrawerMenu touch size (size="xl").
    *
-   * The shared menu-row recipe in design-rework.css is the compact one: 32px rows
-   * with 14px text and 16px icons, which only a coarse pointer turns into 48px
-   * rows. Navigation and sheets that are tapped ask for the touch size whatever
-   * the pointer: 48px rows, 16px text and a 20px icon slot, as the Sidebar rows at
-   * size xl.
+   * The shared menu-row recipe in design-rework.css is the compact one, 36px
+   * rows with 14px text and 16px icons, which only a coarse pointer
+   * turns into 48px rows. Navigation and sheets that are tapped ask for the touch
+   * size whatever the pointer: 48px rows, 16px text and a 20px icon slot, as the
+   * Sidebar rows at size xl.
    *
-   * Every row kind takes the slot through the same two tokens, so the labels of
+   * Every row kind takes the slot through the same tokens, so the labels of
    * icon, check, radio, switch and submenu rows still start at the same x
    * (rulebook I8): the icon width is the width of the check and radio column and
-   * of the slot a switch row keeps, and the Button content gap is the gap of all
-   * of them. The row padding stays 8px, which the menu's negative margin
-   * offsets.
+   * of the slot a switch row keeps, and the menu row gap is the gap of all of
+   * them, which the Button rows take as their content gap. The row padding stays
+   * the menu rows' 10px, which the menu's negative margin offsets.
    *
    * The extra `[data-slot]` ranks the row rule above the menu-row profile of the
    * Button, so the two files can load in any order. */
   :root .sp-drawer-menu[data-size="xl"] {
     --sp-rw-menu-row-icon: var(--sp-rw-control-icon-xl);
-    --sp-rw-button-content-gap: var(--sp-rw-space-2-5);
+    --sp-rw-menu-row-gap: var(--sp-rw-space-2-5);
   }
 
   :root .sp-drawer-menu[data-size="xl"] [data-slot].sp-drawer-menu-item,
@@ -101,15 +101,26 @@
     margin-block: var(--sp-rw-space-2);
   }
 
+  /* The track of a switch row steps with its row to the Switch's md step,
+   * 44x24, beside the touch rows' 24 px line: the Switch's own md rule names
+   * it (design-rework.css). */
+
   /* The current page of a navigation. The row keeps the persistent fill the
-   * Sidebar gives its active row (the pressed glow) and the full foreground, also
-   * under the pointer, so the hover never hides where you are (rulebook T5). */
+   * Sidebar gives its active row, the selected step of the rows ladder (5 %,
+   * 6 % in Dark), and the full foreground, also under the pointer, so the
+   * hover never hides where you are (rulebook T5; until 3 November 2026 it
+   * kept the pressed glow, 8 %, which the Sidebar left on 16 October). */
   :root
-    .sp-drawer-menu-item[data-chassis][data-variant="text"][aria-current="page"]:not(
+    .sp-drawer-menu-item[data-chassis="link"][data-variant][aria-current="page"]:not(
       :disabled,
       [aria-disabled="true"]
     ) {
-    background: var(--sp-rw-glow-pressed);
+    background: color-mix(
+      in srgb,
+      var(--sp-rw-control-interaction)
+        calc(var(--sp-rw-interaction-selected) * 100%),
+      transparent
+    );
     color: var(--sp-rw-fg-primary);
   }
 

@@ -1,31 +1,19 @@
 import * as React from "react";
 
+import {
+  englishMessages,
+  type MessageScrollerLabels,
+} from "../../system/locale/messages";
 import type {
   MessageScrollerController,
   Scrollable,
 } from "./message-scroller-controller";
 
-/** The words a Message Scroller shows and speaks. */
-export type MessageScrollerLabels = {
-  /** The name of the scrolling region. */
-  region: string;
-  /** The name of the button that scrolls to the latest message. */
-  scrollToEnd: string;
-  /** The name of the button that scrolls to the first message. */
-  scrollToStart: string;
-  /** Said once when a reply starts, not for each token. */
-  responding: string;
-  /** Said once when the reply is complete. */
-  complete: string;
-};
+export type { MessageScrollerLabels };
 
-export const defaultMessageScrollerLabels: MessageScrollerLabels = {
-  complete: "Response complete",
-  region: "Messages",
-  responding: "Assistant is responding",
-  scrollToEnd: "Scroll to latest",
-  scrollToStart: "Scroll to first",
-};
+/** The English words of the scroller (its messages without a provider). */
+export const defaultMessageScrollerLabels: MessageScrollerLabels =
+  englishMessages.messageScroller;
 
 /** What the parts need from the scroller; it changes only with the words. */
 export type MessageScrollerContextValue = {

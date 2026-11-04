@@ -1,128 +1,47 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  /* A Number Field is compact by default: two square step buttons and a 7rem
-   * value field, room for a formatted amount such as $1,250.00. The control
-   * sizes are the Input scale (28, 32, 36 and 48 px) and a step button is as
-   * wide as its control is tall, so the value field keeps its width at every
-   * size. The root reads --number-field-width; a width utility in className
-   * replaces it. */
+  /* A Number Field fills its container, like Input
+   * (Lukas, 31 October 2026). width="fit" keeps the compact width: two
+   * square step buttons and a 7rem value field, room for a formatted amount
+   * such as $1,250.00. The heights are the field scale's (36, 40, 44 and
+   * 48 px, design-rework.css) and a step button is as wide as its control is
+   * tall, so the value field keeps its width at every size. The root of a fit
+   * field reads --number-field-width; a width utility in className replaces
+   * it.
+   *
+   * Stacked steppers (steppers="stacked") share a column at the end of the
+   * group (Lukas, 30 October 2026): 28 px
+   * wide at sm and md, 30 px at lg and 32 px at xl, with a 12 px chevron, 14 px
+   * from lg. A fit field is that column and the 7rem value field wide. */
   .sp-number-field {
-    --number-field-control: var(--sp-rw-control-md);
-    --number-field-width: calc(var(--number-field-control) * 2 + 7rem);
-  }
-
-  .sp-number-field[data-size="sm"] {
-    --number-field-control: var(--sp-rw-control-sm);
+    --number-field-width: calc(var(--sp-rw-field-height) * 2 + 7rem);
+    --number-field-stepper-width: var(--sp-rw-space-7);
+    --number-field-stepper-icon: var(--sp-rw-control-icon-2xs);
   }
 
   .sp-number-field[data-size="lg"] {
-    --number-field-control: var(--sp-rw-control-lg);
+    --number-field-stepper-width: calc(var(--sp-rw-space) * 7.5);
+    --number-field-stepper-icon: var(--sp-rw-control-icon-xs);
   }
 
   .sp-number-field[data-size="xl"] {
-    --number-field-control: var(--sp-rw-control-xl);
+    --number-field-stepper-width: var(--sp-rw-space-8);
+    --number-field-stepper-icon: var(--sp-rw-control-icon-xs);
   }
 
-  .sp-number-field-value-window {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    pointer-events: none;
-    color: var(--foreground);
-    font-variant-numeric: tabular-nums;
-    text-align: center;
+  .sp-number-field[data-steppers="stacked"] {
+    --number-field-width: calc(var(--number-field-stepper-width) + 7rem);
   }
 
-  .sp-number-field-value {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: inherit;
-    will-change: opacity, transform;
+  /* The value spans both rows of the group's grid; the steppers take the
+   * column at its end, one row each (design-rework.css, the joined steppers). */
+  .sp-number-field[data-steppers="stacked"] .sp-number-field-group {
+    grid-template-columns: minmax(0, 1fr) var(--number-field-stepper-width);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 
-  .sp-number-field-value[data-roll="in"],
-  .sp-number-field-value[data-roll="out"] {
-    animation-duration: var(--motion-duration-base);
-    animation-fill-mode: both;
-    animation-timing-function: var(--motion-ease-standard);
-  }
-
-  .sp-number-field-value-window[data-roll-direction="up"]
-    .sp-number-field-value[data-roll="in"] {
-    animation-name: sp-number-field-roll-in-up;
-  }
-  .sp-number-field-value-window[data-roll-direction="up"]
-    .sp-number-field-value[data-roll="out"] {
-    animation-name: sp-number-field-roll-out-up;
-  }
-  .sp-number-field-value-window[data-roll-direction="down"]
-    .sp-number-field-value[data-roll="in"] {
-    animation-name: sp-number-field-roll-in-down;
-  }
-  .sp-number-field-value-window[data-roll-direction="down"]
-    .sp-number-field-value[data-roll="out"] {
-    animation-name: sp-number-field-roll-out-down;
-  }
-
-  @keyframes sp-number-field-roll-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes sp-number-field-roll-out-up {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-  }
-  @keyframes sp-number-field-roll-in-down {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes sp-number-field-roll-out-down {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-  }
-
-  html[data-motion-reduce="true"] .sp-number-field-value[data-roll="in"],
-  html[data-motion-reduce="true"] .sp-number-field-value[data-roll="out"] {
-    animation-duration: 1ms;
-    animation-delay: 0ms;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sp-number-field-value[data-roll="in"],
-    .sp-number-field-value[data-roll="out"] {
-      animation-duration: 1ms;
-      animation-delay: 0ms;
-    }
+  .sp-number-field[data-steppers="stacked"] .sp-number-field-input {
+    grid-area: 1 / 1 / -1 / 2;
   }
 }

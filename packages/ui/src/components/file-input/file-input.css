@@ -1,0 +1,17 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A click anywhere on the field opens the file dialog, so its text and an
+   * addon beside it, such as the spinner, take the pointer. A disabled field
+   * keeps the not-allowed cursor of the field rules (design-rework.css). */
+  .sp-file-input .sp-input:enabled,
+  .sp-file-input .sp-input-group-addon {
+    cursor: pointer;
+  }
+
+  /* Names longer than the field end with an ellipsis; the text's title
+   * carries them in full (file-input.tsx). */
+  .sp-file-input .sp-input {
+    text-overflow: ellipsis;
+  }
+}

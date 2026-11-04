@@ -2,25 +2,51 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { PanelLeftIcon } from "lucide-react";
+import {
+  CaretDownIcon,
+  ListIcon,
+  SidebarSimpleIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 import { useMediaQuery } from "../../system/hooks/use-media-query";
 import { focusRingRecipe } from "../../system/recipes/focus-ring.recipe";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
-import { slotClass } from "../../system/utils/slot-class";
-import { Button, type ButtonBaseProps } from "../button";
+import { dropSlotClass, slotClass } from "../../system/utils/slot-class";
+import { Badge } from "../badge";
+import { Button, CloseButton, type ButtonBaseProps } from "../button";
 import { KitButton } from "../button/button-internal";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import {
+  Collapsible,
+  CollapsiblePanel,
+  CollapsibleTrigger,
+} from "../collapsible";
 import { Input } from "../input";
 import { KitInput } from "../input/input-internal";
+import { MenuTriggerIcon } from "../menu";
 import { ScrollArea } from "../scroll-area";
 import { Separator } from "../separator";
-import { Sheet, SheetHeader, SheetTitle } from "../sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetHeader,
+  SheetPrimitive,
+  SheetTitle,
+} from "../sheet";
 import { KitSheetPopup } from "../sheet/sheet-internal";
-import type { KitSidebarProviderProps } from "./sidebar-internal";
+import type {
+  KitSidebarProps,
+  KitSidebarProviderProps,
+} from "./sidebar-internal";
+import {
+  SidebarSubTierContext,
+  type SidebarTier,
+  SidebarTierContext,
+} from "./sidebar-tier";
 import { Skeleton } from "../skeleton";
 import {
   Tooltip,
@@ -93,6 +119,11 @@ const SidebarCollapsibleContext: React.Context<SidebarCollapsible | null> =
 // A menu item with an expand trigger tells its row to step aside while the
 // trigger stands in for it on the collapsed icon rail.
 const SidebarMenuItemContext: React.Context<boolean> =
+  React.createContext(false);
+
+// On a phone the current item of the sheet holds the pages of the second tier,
+// and its row is the trigger that folds them (sidebar-tier.ts).
+const SidebarMenuPagesContext: React.Context<boolean> =
   React.createContext(false);
 
 // Ctrl/Cmd+B stays with a field that edits text: there it is Bold, or a caret
@@ -186,6 +217,14 @@ function persistSidebarOpenState(open: boolean, name: string): void {
 
 type SidebarProviderProps = React.ComponentProps<"div"> & {
   layout?: SidebarLayout;
+  /**
+   * Fills its container instead of the viewport. The provider is as tall as
+   * the element it sits in, which needs a height of its own, clips what lies
+   * outside it and holds the sidebar in it rather than fixed to the screen. Use
+   * it for a sidebar in a preview, a panel or a docs example. A shell that
+   * fills the viewport, the default, needs nothing.
+   */
+  contained?: boolean;
   defaultOpen?: boolean;
   mobileBreakpoint?: "md" | "lg";
   keyboardShortcut?: boolean;
@@ -206,6 +245,7 @@ export function SidebarProvider(
   // KitSidebarProvider (sidebar-internal.ts), the same function.
   const {
     layout,
+    contained = false,
     defaultOpen = true,
     mobileBreakpoint = "md",
     keyboardShortcut = true,
@@ -221,6 +261,18 @@ export function SidebarProvider(
   const viewportMobile = useMediaQuery(`max-${mobileBreakpoint}`);
   const isMobile = forceMobile || viewportMobile;
   const [openMobile, setOpenMobile] = React.useState(false);
+  // The second tier on a phone (sidebar-tier.ts).
+  const [tierPages, setTierPages] = React.useState(false);
+  const [tierList, setTierList] = React.useState<HTMLElement | null>(null);
+  const tier = React.useMemo<SidebarTier>(
+    () => ({
+      list: tierList,
+      pages: tierPages,
+      setList: setTierList,
+      setPages: setTierPages,
+    }),
+    [tierList, tierPages],
+  );
   const generatedId = React.useId();
   const [sidebarId, setSidebarId] = React.useState<string>();
   const controls = React.useMemo<SidebarControls>(
@@ -317,47 +369,91 @@ export function SidebarProvider(
   return (
     <SidebarContext.Provider value={contextValue}>
       <SidebarControlsContext.Provider value={controls}>
-        <div
-          className={cn(
-            slotClass("sidebar-wrapper", props),
-            "group/sidebar-wrapper flex min-h-svh w-full bg-[var(--sp-rw-bg-base)] text-[var(--sp-rw-fg-primary)]",
-            className,
-          )}
-          data-layout={layout}
-          data-slot="sidebar-wrapper"
-          data-state={state}
-          // The widths are the stylesheet's (design-rework.css, "Sidebar"),
-          // so a policy that blocks style attributes keeps them; an app's style
-          // still overrides them.
-          style={style}
-          {...props}
-        >
-          {children}
-        </div>
+        <SidebarTierContext.Provider value={tier}>
+          <div
+            className={cn(
+              slotClass("sidebar-wrapper", props),
+              "group/sidebar-wrapper flex w-full bg-[var(--sp-rw-bg-base)] text-[var(--sp-rw-fg-primary)]",
+              // A contained provider is the height of its container and holds
+              // the sidebar in itself (the container below turns absolute).
+              contained
+                ? "relative isolate h-full min-h-0 overflow-clip"
+                : "min-h-svh",
+              className,
+            )}
+            data-contained={contained ? "" : undefined}
+            data-layout={layout}
+            data-slot="sidebar-wrapper"
+            data-state={state}
+            // The widths are the stylesheet's (design-rework.css, "Sidebar"),
+            // so a policy that blocks style attributes keeps them; an app's style
+            // still overrides them.
+            style={style}
+            {...props}
+          >
+            {children}
+          </div>
+        </SidebarTierContext.Provider>
       </SidebarControlsContext.Provider>
     </SidebarContext.Provider>
   );
 }
 
-export function Sidebar({
-  side = "left",
-  variant = "sidebar",
-  mobileVariant = "default",
-  collapsible = "offcanvas",
-  id: idProp,
-  "aria-label": ariaLabel,
-  "aria-labelledby": ariaLabelledBy,
-  "aria-describedby": ariaDescribedBy,
-  className,
-  style,
-  children,
-  ...props
-}: React.ComponentProps<"div"> & {
+/**
+ * Keeps the page in place while a mobile sheet under a bar is open. That sheet
+ * is no modal dialog, so the button in the bar stays in reach, and Base UI
+ * locks the scroll of modal dialogs only; the bar's sheet locks it as they do:
+ * the root takes `overflow: hidden`, and a page that shows a scrollbar beside
+ * its content keeps its gutter, so nothing moves.
+ */
+function useDocumentScrollLock(locked: boolean): void {
+  React.useEffect(() => {
+    if (!locked || typeof document === "undefined") return;
+    const root = document.documentElement;
+    const { overflow, scrollbarGutter } = root.style;
+    if (window.innerWidth > root.clientWidth)
+      root.style.scrollbarGutter = "stable";
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = overflow;
+      root.style.scrollbarGutter = scrollbarGutter;
+    };
+  }, [locked]);
+}
+
+type SidebarProps = React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
   mobileVariant?: "default" | "fullscreen";
   collapsible?: SidebarCollapsible;
-}): React.ReactElement {
+  /**
+   * The name of the close button of the sheet the sidebar is below its
+   * breakpoint, "Close sidebar" by default.
+   */
+  closeLabel?: string;
+};
+
+export function Sidebar(sidebarProps: SidebarProps): React.ReactElement {
+  // Header Navigation passes the internal mobileBar through KitSidebar
+  // (sidebar-internal.ts), the same function.
+  const {
+    side = "left",
+    variant = "sidebar",
+    mobileVariant = "default",
+    collapsible = "offcanvas",
+    id: idProp,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    "aria-describedby": ariaDescribedBy,
+    className,
+    style,
+    children,
+    closeLabel: closeLabelProp,
+    mobileBar,
+    ...props
+  } = sidebarProps as KitSidebarProps;
+  const messages = useSiteplaneMessages("sidebar");
+  const closeLabel = closeLabelProp ?? messages.close;
   const {
     layout,
     isMobile,
@@ -366,6 +462,7 @@ export function Sidebar({
     openMobile,
     setOpenMobile,
   } = useSidebar();
+  useDocumentScrollLock(Boolean(mobileBar) && isMobile && openMobile);
   const controls = React.useContext(SidebarControlsContext);
   const setControlsId = controls?.setId;
   // A consumer's id names the sidebar for the triggers' aria-controls.
@@ -427,14 +524,36 @@ export function Sidebar({
 
   if (isMobile) {
     // Every prop reaches the sheet popup, the element the sidebar is on a
-    // small screen; aria-label becomes the dialog's title.
+    // small screen; aria-label becomes the dialog's title. Under a bar (Header
+    // Navigation's fullscreen menu) the sheet starts at the bar's bottom edge
+    // and the bar's button is its trigger: it stays in view and in reach above
+    // the sheet, opens it and closes it, so the sheet is no modal dialog,
+    // which would hide the bar from assistive technology and keep the keyboard
+    // out of it. It keeps the page in place while it is open (above).
     return (
-      <Sheet onOpenChange={setOpenMobile} open={openMobile}>
+      <Sheet
+        modal={mobileBar ? false : undefined}
+        onOpenChange={setOpenMobile}
+        open={openMobile}
+      >
+        {mobileBar ? (
+          <SheetPrimitive.Trigger render={mobileBar.trigger} />
+        ) : null}
         <KitSheetPopup
+          belowOffset={Boolean(mobileBar)}
           className={className}
           data-mobile="true"
           data-sidebar="sidebar"
           data-slot="sidebar"
+          {...(mobileBar
+            ? {
+                portalProps: {
+                  style: {
+                    "--sheet-offset-top": mobileBar.offset,
+                  } as React.CSSProperties,
+                },
+              }
+            : null)}
           profile="sidebar"
           showCloseButton={false}
           side={mobileVariant === "fullscreen" ? "top" : side}
@@ -449,12 +568,34 @@ export function Sidebar({
           {...props}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>{ariaLabel ?? "Sidebar"}</SheetTitle>
+            <SheetTitle>{ariaLabel ?? messages.title}</SheetTitle>
           </SheetHeader>
           <SidebarGutterContext.Provider value={Boolean(layout)}>
             <div
               className={cn("flex h-full w-full flex-col", layout && "ps-2")}
             >
+              {mobileBar ? null : (
+                // The sheet's close (Lukas, 3 November 2026): the CloseButton
+                // at md, the 40 px of the menu button that opens the sheet,
+                // at the end of the sheet's first row, 16 px from its edge.
+                // It comes first in the sheet, so it is the first stop of the
+                // Tab key. The row is the phone bar's height; the band that
+                // follows it, the brand's, moves up into it and keeps clear
+                // of the button (design-rework.css, "The Sidebar's sheet on a
+                // phone"), and a sheet without such a band keeps the row for
+                // the button. Under a bar the bar's button closes the sheet.
+                <div
+                  className="sp-sidebar-close-row flex min-h-(--sp-rw-phone-bar-height) shrink-0 items-center justify-end pe-4"
+                  data-sidebar="close-row"
+                  data-slot="sidebar-close-row"
+                >
+                  <SheetClose
+                    data-sidebar="close"
+                    data-slot="sidebar-close"
+                    render={<CloseButton label={closeLabel} size="md" />}
+                  />
+                </div>
+              )}
               {content}
             </div>
           </SidebarGutterContext.Provider>
@@ -504,7 +645,7 @@ export function Sidebar({
       <div
         className={cn(
           slotClass("sidebar-container", props),
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width,visibility] duration-(--motion-duration-base) ease-(--motion-ease-linear)",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width,visibility] duration-(--motion-duration-base) ease-(--motion-ease-linear) group-data-[contained]/sidebar-wrapper:absolute group-data-[contained]/sidebar-wrapper:h-full",
           mobileBreakpoint === "lg" ? "lg:flex" : "md:flex",
           side === "left"
             ? "start-0 group-data-[collapsible=offcanvas]:start-[calc(var(--sidebar-width)*-1)]"
@@ -559,14 +700,32 @@ export function SidebarTrigger({
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>): React.ReactElement {
-  const { toggleSidebar } = useSidebar();
+}: React.ComponentProps<typeof Button>): React.ReactElement | null {
+  const messages = useSiteplaneMessages("sidebar");
+  const { isMobile, mobileBreakpoint, toggleSidebar } = useSidebar();
   const triggerState = useSidebarTriggerState();
+  // Below the mobile breakpoint a trigger outside the sidebar opens its sheet:
+  // it is the menu button of a phone's bar, the 40 px icon Button with the
+  // 20 px hamburger (Phosphor's List) that Header Navigation's menu button has
+  // too (Lukas, 3 November 2026). The stylesheet makes the switch at the
+  // breakpoint the trigger names (data-menu-button, design-rework.css), so
+  // the hamburger shows from the first paint, before a server-rendered page
+  // hydrates, and the size an application gives the trigger stays the desktop
+  // toggle's. Inside the sidebar it is the compact action with the panel
+  // glyph.
+  const collapsible = React.useContext(SidebarCollapsibleContext);
+  const insideSidebar = collapsible !== null;
+  const menuButton = insideSidebar ? undefined : mobileBreakpoint;
+  // In the sheet a collapsible sidebar is on a phone, the sheet's own close
+  // stands in the first row, so a collapse button inside the sidebar stays
+  // out: the sheet has one close (Lukas, 3 November 2026).
+  if (insideSidebar && collapsible !== "none" && isMobile) return null;
 
   return (
     <KitButton
       {...triggerState}
       className={className}
+      data-menu-button={menuButton}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -592,8 +751,14 @@ export function SidebarTrigger({
         <>
           {/* The panel glyph shows the sidebar at the inline start, so it
               mirrors in a right-to-left page. */}
-          <PanelLeftIcon className="rtl:-scale-x-100" />
-          <span className="sr-only">Toggle sidebar</span>
+          <SidebarSimpleIcon
+            aria-hidden="true"
+            className="sp-sidebar-trigger-panel rtl:-scale-x-100"
+          />
+          {menuButton ? (
+            <ListIcon aria-hidden="true" className="sp-sidebar-trigger-menu" />
+          ) : null}
+          <span className="sr-only">{messages.toggle}</span>
         </>
       )}
     </KitButton>
@@ -609,6 +774,7 @@ export function SidebarRail({
 }: React.ComponentProps<typeof Button> & {
   resizable?: boolean;
 }): React.ReactElement {
+  const messages = useSiteplaneMessages("sidebar");
   const { state, toggleSidebar } = useSidebar();
   const triggerState = useSidebarTriggerState();
   const didDragRef = React.useRef(false);
@@ -712,7 +878,7 @@ export function SidebarRail({
   return (
     <KitButton
       {...triggerState}
-      aria-label="Toggle sidebar"
+      aria-label={messages.toggle}
       // An 8 px strip along the whole edge, on its outer side: it leaves the
       // sidebar's own scrollbar free and reaches as little as it can into the
       // content beside it. A collapsed offcanvas sidebar keeps it at the
@@ -739,8 +905,8 @@ export function SidebarRail({
       onPointerDown={handlePointerDown}
       profile="sidebar-rail"
       tabIndex={-1}
-      title={resizable ? "Resize or toggle sidebar" : undefined}
-      variant="text"
+      title={resizable ? messages.resize : undefined}
+      variant="link"
       {...props}
     />
   );
@@ -822,7 +988,7 @@ export function SidebarInput({
 // Header and footer are bands with the same 8px above and below (S2). On the
 // collapsed icon rail their items keep the inset they have in the expanded
 // sidebar, as the rows do, so nothing moves while the width animates: the rail
-// is a clipped view with fixed insets, as in shadcn's sidebar. A 36px item,
+// is a clipped view with fixed insets. A 36px item,
 // such as the brand's square or a row, stands on the rail's centre axis. The
 // items never grow wider than the rail.
 const sidebarBandRailClassName = "group-data-[collapsible=icon]:*:max-w-full";
@@ -832,6 +998,10 @@ export function SidebarHeader({
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
   const leadingGutter = React.useContext(SidebarGutterContext);
+  // In the pages of a second tier on a phone the item's row stands for the
+  // panel's bands, so its header and footer stay out (sidebar-tier.ts).
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <></>;
 
   return (
     <div
@@ -905,6 +1075,8 @@ export function SidebarFooter({
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
   const leadingGutter = React.useContext(SidebarGutterContext);
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <></>;
 
   return (
     <div
@@ -926,6 +1098,9 @@ export function SidebarSeparator({
   className,
   ...props
 }: React.ComponentProps<typeof Separator>): React.ReactElement {
+  // The sub rows of a second tier on a phone stand on one guide line.
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <></>;
   return (
     // The line is the kit separator's (data-slot="separator"), like every
     // other divider; the Sidebar adds only its inset. design-rework.css keeps
@@ -947,6 +1122,10 @@ export function SidebarContent({
   // viewport borrow part of it; without one the viewport must stay inside the
   // sidebar instead of reaching past its edge.
   const hasLayoutGutter = Boolean(React.useContext(SidebarContext)?.layout);
+  // The pages of a second tier on a phone scroll with the sheet, in the list
+  // under their item: no scroll area or wrapper of their own.
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <>{props.children}</>;
 
   return (
     <ScrollArea
@@ -994,6 +1173,8 @@ export function SidebarGroup({
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
   const leadingGutter = React.useContext(SidebarGutterContext);
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <>{props.children}</>;
 
   return (
     <div
@@ -1024,6 +1205,9 @@ export function SidebarGroupLabel({
   // trigger focusable with aria-disabled. The rail's fade-out still wins.
   // A plain-text label gets a span of its own, so a long one ends with an
   // ellipsis instead of being cut off, with its full text in title (K5).
+  // Its text is the role of every group label of the kit, 12/18 at the label
+  // weight in the tertiary colour (the group-label block of
+  // design-rework.css); the label keeps its 32 px row.
   const text = plainText(children);
   const label =
     text === undefined ? (
@@ -1038,7 +1222,7 @@ export function SidebarGroupLabel({
     className: cn(
       slotClass("sidebar-group-label", props, render),
       focusRingRecipe(),
-      "flex h-8 shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg px-2 font-(--sp-rw-font-weight-label) text-sidebar-foreground text-xs transition-opacity duration-(--motion-duration-base) ease-(--motion-ease-linear) [&>svg]:size-4 [&>svg]:shrink-0",
+      "flex h-8 shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg px-2 transition-opacity duration-(--motion-duration-base) ease-(--motion-ease-linear) [&>svg]:size-4 [&>svg]:shrink-0",
       "group-data-[collapsible=icon]:opacity-0",
       "not-group-data-[collapsible=icon]:disabled:opacity-(--sp-rw-disabled-opacity-action) not-group-data-[collapsible=icon]:aria-disabled:opacity-(--sp-rw-disabled-opacity-action)",
       className,
@@ -1047,11 +1231,15 @@ export function SidebarGroupLabel({
     "data-slot": "sidebar-group-label",
   };
 
-  return useRender({
+  const element = useRender({
     defaultTagName: "div",
     props: mergeProps(defaultProps, props),
     render,
   });
+  // The pages of a second tier on a phone stand under their item, whose row
+  // names them.
+  const subTier = React.useContext(SidebarSubTierContext);
+  return subTier ? <></> : element;
 }
 
 export function SidebarGroupAction({
@@ -1066,15 +1254,17 @@ export function SidebarGroupAction({
       className={cn(
         "absolute end-2.5 top-3",
         "group-data-[collapsible=icon]:hidden",
-        className,
+        dropSlotClass(className, props),
       )}
       data-sidebar="group-action"
-      data-slot="sidebar-group-action"
       profile="compact-icon-action"
       render={render}
-      size="icon-xs"
-      variant="text"
+      size="icon-2xs"
+      variant="link"
       {...props}
+      // It keeps its own slot when a trigger renders it, as the menu action
+      // does.
+      data-slot="sidebar-group-action"
     />
   );
 }
@@ -1083,6 +1273,8 @@ export function SidebarGroupContent({
   className,
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <>{props.children}</>;
   return (
     <div
       className={cn(
@@ -1101,11 +1293,16 @@ export function SidebarMenu({
   className,
   ...props
 }: React.ComponentProps<"ul">): React.ReactElement {
+  // The pages of a second tier on a phone render into the sub list of their
+  // item, so their rows join it.
+  const subTier = React.useContext(SidebarSubTierContext);
+  if (subTier) return <>{props.children}</>;
   return (
     <ul
       className={cn(
         slotClass("sidebar-menu", props),
-        "flex w-full min-w-0 flex-col gap-1",
+        // Rows stand 2 px apart (design-rework.css gives a row's icon 8 px).
+        "flex w-full min-w-0 flex-col gap-0.5",
         className,
       )}
       data-sidebar="menu"
@@ -1119,7 +1316,7 @@ export function SidebarMenuItem({
   className,
   children,
   expandTrigger = false,
-  expandLabel = "Expand sidebar",
+  expandLabel: expandLabelProp,
   ...props
 }: React.ComponentProps<"li"> & {
   /**
@@ -1132,8 +1329,12 @@ export function SidebarMenuItem({
   /** The accessible name of the expand trigger. */
   expandLabel?: string;
 }): React.ReactElement {
+  const messages = useSiteplaneMessages("sidebar");
+  const expandLabel = expandLabelProp ?? messages.expand;
   const sidebar = React.useContext(SidebarContext);
   const collapsible = React.useContext(SidebarCollapsibleContext);
+  const tier = React.useContext(SidebarTierContext);
+  const subTier = React.useContext(SidebarSubTierContext);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   // On the collapsed desktop icon rail the row steps aside for the trigger:
   // the trigger joins the tab order and the row leaves it.
@@ -1163,21 +1364,52 @@ export function SidebarMenuItem({
     steppedAside.current = stepsAside;
   }, [stepsAside]);
 
-  return (
-    <li
-      className={cn(
-        slotClass("sidebar-menu-item", props),
-        "group/menu-item relative",
-        className,
-      )}
-      data-expand-trigger={expandTrigger ? "" : undefined}
-      data-sidebar="menu-item"
-      data-slot="sidebar-menu-item"
-      {...props}
-    >
-      <SidebarMenuItemContext.Provider value={stepsAside}>
+  // A row of the second tier's pages on a phone is a sub row.
+  if (subTier) {
+    return (
+      <SidebarMenuSubItem className={className} {...props}>
         {children}
+      </SidebarMenuSubItem>
+    );
+  }
+
+  // On a phone the current item of the sheet, the one whose row is `active`,
+  // holds the pages of a SidebarSecondary: they stand under its row as its sub
+  // rows, open, and its row folds them with its caret, as an expandable row
+  // does (Lukas, 3 November 2026; the panel rendered nothing on a phone).
+  const setList = tier?.setList;
+  const holdsPages = Boolean(
+    sidebar?.isMobile &&
+    collapsible !== null &&
+    tier?.pages &&
+    setList &&
+    holdsCurrentRow(children),
+  );
+  const itemProps = {
+    className: cn(
+      slotClass("sidebar-menu-item", props),
+      "group/menu-item relative",
+      className,
+    ),
+    "data-expand-trigger": expandTrigger ? "" : undefined,
+    "data-sidebar": "menu-item",
+    "data-slot": "sidebar-menu-item",
+    ...props,
+  };
+  const content = (
+    <>
+      <SidebarMenuItemContext.Provider value={stepsAside}>
+        <SidebarMenuPagesContext.Provider value={holdsPages}>
+          {children}
+        </SidebarMenuPagesContext.Provider>
       </SidebarMenuItemContext.Provider>
+      {holdsPages && setList ? (
+        // Kept mounted while folded, so the pages are in place when the
+        // panel opens and measures its height.
+        <CollapsiblePanel keepMounted>
+          <SidebarMenuSub ref={setList} />
+        </CollapsiblePanel>
+      ) : null}
       {expandTrigger ? (
         // design-rework.css owns the swap, its motion and reduced motion.
         <SidebarTrigger
@@ -1189,43 +1421,87 @@ export function SidebarMenuItem({
           tabIndex={stepsAside ? undefined : -1}
         />
       ) : null}
-    </li>
+    </>
   );
+
+  return holdsPages ? (
+    <Collapsible defaultOpen render={<li {...itemProps} />}>
+      {content}
+    </Collapsible>
+  ) : (
+    <li {...itemProps}>{content}</li>
+  );
+}
+
+/** Whether an item's own row, a SidebarMenuButton among its children, is current. */
+function holdsCurrentRow(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement(child) || child.type !== SidebarMenuButton)
+      return false;
+    const props = child.props as {
+      active?: boolean;
+      "aria-current"?: React.AriaAttributes["aria-current"];
+    };
+    return Boolean(props.active) || isCurrent(props["aria-current"]);
+  });
 }
 
 export function SidebarMenuButton({
   "aria-current": ariaCurrent,
-  active: activeProp,
-  isActive,
+  active = false,
   variant = "default",
   size,
   tooltip,
   className,
   render,
+  children,
   ...props
 }: useRender.ComponentProps<"button"> & {
   /** Marks the current destination: `aria-current="page"` and the current fill. */
   active?: boolean;
-  /** @deprecated Use `active`. */
-  isActive?: boolean;
   tooltip?: string | React.ComponentProps<typeof TooltipPopup>;
   size?: SidebarMenuButtonSize;
   variant?: SidebarMenuButtonVariant;
 }): React.ReactElement {
   const { isMobile, state } = useSidebar();
   const resolvedSize = useResolvedControlSize(size);
-  const active = activeProp ?? isActive ?? false;
   // The row of an item whose expand trigger stands in for it on the rail.
   const stepsAside = React.useContext(SidebarMenuItemContext);
+  // A page of the second tier on a phone is a sub row (sidebar-tier.ts).
+  const subTier = React.useContext(SidebarSubTierContext);
+  // The row of the item that holds those pages folds them, as the trigger of
+  // a Collapsible with the caret at its end: a button, also where the row is
+  // a link elsewhere, since its pages are the destinations there.
+  const pagesTrigger = React.useContext(SidebarMenuPagesContext);
+
+  if (subTier) {
+    return (
+      <SidebarMenuSubButton
+        active={active}
+        aria-current={ariaCurrent}
+        className={className}
+        {...(render ? { render } : null)}
+        {...(size ? { size } : null)}
+        {...props}
+      >
+        {children}
+      </SidebarMenuSubButton>
+    );
+  }
 
   const buttonElement = (
     <KitButton
       align="start"
       aria-current={ariaCurrent ?? (active ? "page" : undefined)}
       // A menu action or badge at the end of the row keeps the label clear of
-      // it; the row's padding rule reads the end inset (design-rework.css).
+      // it; the row's padding rule reads the end inset (design-rework.css). A
+      // badge counts as the row's own only as a child of its item: one in a
+      // sub row belongs to that row.
       className={cn(
-        "group/item peer/menu-button group-has-data-[sidebar=menu-action]/menu-item:[--sp-rw-navigation-row-padding-end:--spacing(10)] group-has-data-[sidebar=menu-badge]/menu-item:[--sp-rw-navigation-row-padding-end:--spacing(10)]",
+        "group/item peer/menu-button group-has-data-[sidebar=menu-action]/menu-item:[--sp-rw-navigation-row-padding-end:--spacing(10)] group-has-[>[data-sidebar=menu-badge]]/menu-item:[--sp-rw-navigation-row-padding-end:--spacing(10)]",
+        // As the trigger of the pages it carries the trigger's class, as a
+        // row rendered by a CollapsibleTrigger does, so its caret turns.
+        pagesTrigger && "sp-collapsible-trigger",
         className,
       )}
       // A current row shows the current fill, whether active or
@@ -1235,7 +1511,7 @@ export function SidebarMenuButton({
       data-sidebar-variant={variant}
       data-slot="sidebar-menu-button"
       profile="navigation-row"
-      render={render}
+      render={pagesTrigger ? undefined : render}
       size={resolvedSize}
       variant={variant === "outline" ? "outline" : "ghost"}
       width="full"
@@ -1244,8 +1520,15 @@ export function SidebarMenuButton({
       // The row keeps its profile when a trigger renders it, such as a
       // CollapsibleTrigger that stamps its own profile on what it renders.
       data-profile="navigation-row"
-    />
+    >
+      {children}
+      {pagesTrigger ? <SidebarMenuChevron /> : null}
+    </KitButton>
   );
+
+  if (pagesTrigger) {
+    return <CollapsibleTrigger render={buttonElement} />;
+  }
 
   if (!tooltip) {
     return buttonElement;
@@ -1366,52 +1649,127 @@ export function SidebarMenuAction({
     <Button
       className={cn(
         // Centred on the row of its menu button at every row size, whatever
-        // its own size (S1). design-rework.css reveals an action that shows
-        // on hover.
-        "absolute end-1 top-4 z-10 -translate-y-1/2",
-        "peer-data-[size=sm]/menu-button:top-3.5",
-        "peer-data-[size=lg]/menu-button:top-4.5",
-        "peer-data-[size=xl]/menu-button:top-6",
+        // its own size (S1): design-rework.css sets its top from the row's
+        // size and reveals an action that shows on hover.
+        "absolute end-1 z-10 -translate-y-1/2",
         "group-data-[collapsible=icon]:hidden",
-        className,
+        dropSlotClass(className, props),
       )}
       data-show-on-hover={showOnHover || undefined}
       data-sidebar="menu-action"
-      data-slot="sidebar-menu-action"
       profile="inline"
       profileTone="muted"
       render={render}
       shape="square"
-      variant="text"
+      variant="link"
       {...props}
+      // It keeps its own slot when a trigger renders it, as a menu's trigger
+      // does in the documented pattern, so the rules that place it on its row
+      // keep reaching it; the trigger's slot class goes.
+      data-slot="sidebar-menu-action"
     />
   );
 }
 
+/** Whether the children are text alone: a number or words, no element. */
+function isPlainCount(children: React.ReactNode): boolean {
+  const parts = React.Children.toArray(children);
+  return (
+    parts.length > 0 &&
+    parts.every((part) => typeof part === "string" || typeof part === "number")
+  );
+}
+
+/**
+ * The count at the end of a row, such as the unread items of an inbox. It
+ * places the count: at the row's inline end, in the room the row keeps for it,
+ * centred on the row, and gone with the label on the collapsed icon rail. A
+ * count is the kit's row count, a Badge at `sm` in the secondary variant, as
+ * every count at the end of a navigation row or a tab is (Lukas, 4 November
+ * 2026; it was a bare figure of its own): a number or a text passed as the
+ * children is drawn in that Badge, and a Badge of your own, such as a status,
+ * is placed as it is.
+ */
 export function SidebarMenuBadge({
+  children,
   className,
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
       className={cn(
-        // The badge sits at the row's inline end, in the room the row keeps
-        // for it, in either direction.
+        // The count sits at the row's inline end, in either direction, and
+        // centres on its row: design-rework.css sets its top from the row's
+        // size.
         slotClass("sidebar-menu-badge", props),
-        "pointer-events-none absolute end-1 flex h-5 min-w-5 select-none items-center justify-center rounded-lg px-1 font-(--sp-rw-font-weight-label) text-sidebar-foreground text-xs tabular-nums",
-        "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
-        // The 20 px badge centres on rows of 28, 32, 36 and 48 px.
-        "peer-data-[size=sm]/menu-button:top-1",
-        "peer-data-[size=md]/menu-button:top-1.5",
-        "peer-data-[size=lg]/menu-button:top-2",
-        "peer-data-[size=xl]/menu-button:top-3.5",
+        "pointer-events-none absolute end-1 flex -translate-y-1/2 select-none items-center",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
       data-sidebar="menu-badge"
       data-slot="sidebar-menu-badge"
       {...props}
-    />
+    >
+      {isPlainCount(children) ? (
+        <Badge size="sm" variant="secondary">
+          {children}
+        </Badge>
+      ) : (
+        children
+      )}
+    </div>
+  );
+}
+
+/**
+ * The glyph at the end of a row, last in a SidebarMenuButton that is the
+ * trigger of a Collapsible or of a menu. It keeps the row's end and leaves
+ * with the label on the collapsed icon rail, and its caret is 16 px in the
+ * tertiary text colour. Without children it is a caret that turns half a turn
+ * while the panel or the menu of its trigger is open, with every trigger
+ * chevron of the kit (design-rework.css, "Trigger chevrons").
+ * `variant="switcher"` draws the still up-down caret of a row that switches
+ * between accounts or workspaces, such as a workspace switcher: the caret of
+ * every switcher, MenuTriggerIcon `variant="switcher"`, as an Account Card
+ * draws it. It does not turn, rests in the tertiary text colour and takes the
+ * primary on hover, press and while the row's menu is open (rulebook M9).
+ * Children replace the caret with a glyph of your own, such as a right caret
+ * on a link row; it does not turn.
+ */
+export function SidebarMenuChevron({
+  className,
+  children,
+  variant = "default",
+  ...props
+}: React.ComponentProps<"span"> & {
+  /**
+   * `default`, the caret that turns, for an expandable row or a menu; or
+   * `switcher`, the still up-down caret of a switcher row.
+   */
+  variant?: "default" | "switcher" | undefined;
+}): React.ReactElement {
+  return (
+    <span
+      className={cn(
+        slotClass("sidebar-menu-chevron", props),
+        "ms-auto flex shrink-0 items-center group-data-[collapsible=icon]:hidden",
+        className,
+      )}
+      data-sidebar="menu-chevron"
+      data-slot="sidebar-menu-chevron"
+      {...props}
+    >
+      {children ??
+        (variant === "switcher" ? (
+          <MenuTriggerIcon variant="switcher" />
+        ) : (
+          <CaretDownIcon
+            aria-hidden="true"
+            className="sp-collapsible-chevron size-4"
+            data-slot="collapsible-chevron"
+          />
+        ))}
+    </span>
   );
 }
 
@@ -1480,7 +1838,7 @@ export function SidebarMenuSub({
         // The guide line is the kit's divider colour, at the inline start
         // under the row's icon in either direction.
         slotClass("sidebar-menu-sub", props),
-        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sp-rw-border-translucent)] border-s px-2.5 py-0.5 rtl:-translate-x-px",
+        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-0.5 border-[var(--sp-rw-border-translucent)] border-s px-2.5 py-0.5 rtl:-translate-x-px",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
@@ -1512,8 +1870,7 @@ export function SidebarMenuSubItem({
 export function SidebarMenuSubButton({
   "aria-current": ariaCurrent,
   size,
-  active: activeProp,
-  isActive,
+  active = false,
   className,
   render,
   children,
@@ -1522,17 +1879,18 @@ export function SidebarMenuSubButton({
   size?: SidebarMenuButtonSize;
   /** Marks the current destination: `aria-current="page"` and the current fill. */
   active?: boolean;
-  /** @deprecated Use `active`. */
-  isActive?: boolean;
 }): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
-  const active = activeProp ?? isActive ?? false;
   return (
     <KitButton
       align="start"
       aria-current={ariaCurrent ?? (active ? "page" : undefined)}
       className={cn(
         "-translate-x-px rtl:translate-x-px",
+        // A SidebarMenuBadge after the row, in its item, takes the row's end
+        // as it does after a menu row: the label keeps clear of it, and it
+        // follows the row's hover and current colours.
+        "peer/menu-button group-has-data-[sidebar=menu-badge]/menu-sub-item:[--sp-rw-navigation-row-padding-end:--spacing(10)]",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}

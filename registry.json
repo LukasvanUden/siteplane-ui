@@ -58,6 +58,11 @@
           "target": "~/src/siteplane/system/styles/checkbox-glyph.tsx"
         },
         {
+          "path": "packages/ui/src/system/styles/overflow-glyph.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/styles/overflow-glyph.tsx"
+        },
+        {
           "path": "packages/ui/src/system/styles/generated/tokens.css",
           "type": "registry:file",
           "target": "~/src/siteplane/system/styles/generated/tokens.css"
@@ -106,6 +111,11 @@
           "path": "packages/ui/src/system/utils/text-runs.tsx",
           "type": "registry:file",
           "target": "~/src/siteplane/system/utils/text-runs.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/utils/focus-target-after.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/utils/focus-target-after.ts"
         },
         {
           "path": "packages/ui/src/system/recipes/index.ts",
@@ -158,6 +168,21 @@
           "target": "~/src/siteplane/system/locale/formatted-text.ts"
         },
         {
+          "path": "packages/ui/src/system/locale/messages.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/locale/messages.ts"
+        },
+        {
+          "path": "packages/ui/src/system/locale/messages-context.tsx",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/locale/messages-context.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/locale/modal-block-messages.ts",
+          "type": "registry:file",
+          "target": "~/src/siteplane/system/locale/modal-block-messages.ts"
+        },
+        {
           "path": "packages/ui/src/system/hooks/use-media-query.ts",
           "type": "registry:file",
           "target": "~/src/siteplane/system/hooks/use-media-query.ts"
@@ -176,6 +201,11 @@
           "path": "TRADEMARKS.md",
           "type": "registry:file",
           "target": "~/TRADEMARKS.siteplane-ui.md"
+        },
+        {
+          "path": "packages/ui/src/system/styles/select-caret.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/system/styles/select-caret.tsx"
         }
       ],
       "type": "registry:base"
@@ -185,10 +215,10 @@
       "title": "Action Icons",
       "description": "The animated copy icon, selection check and reveal eye that CopyButton, Code and Resource List draw. Install copy-button to copy a value.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -218,9 +248,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/spinner.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/badge.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/spinner.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json"
       ],
       "files": [
         {
@@ -257,7 +287,7 @@
       "meta": {
         "avoidWhen": [
           "Avoid for a state that stays pressed; use Toggle.",
-          "Avoid for a link inside running text; use a plain link."
+          "Avoid the default profile for a link inside running text; use profile=\"inline\" with variant=\"link\", which flows with the words and takes the accent text color."
         ],
         "description": "Action family with variants, sizes, loading behavior, single-line icon labels, and accessible disabled states.",
         "knownLimitations": [],
@@ -279,11 +309,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/copy-button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/color-swatch-picker.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/copy-button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/color-swatch-picker.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json"
       ],
       "files": [
         {
@@ -335,8 +365,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json"
       ],
       "files": [
         {
@@ -392,9 +422,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -473,14 +504,16 @@
       "description": "Locale-aware inline calendar with single, contiguous range and multiple date selection.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/locale.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/popover.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/list-box.json"
       ],
       "files": [
         {
@@ -510,10 +543,10 @@
         ],
         "description": "Locale-aware inline calendar with single, contiguous range and multiple date selection.",
         "knownLimitations": [
-          "The month heading button, its picker and the group of range shortcuts use English accessible labels in every locale.",
           "Values are native Date objects at local midnight, like the date pickers'; only the day counts, so persist it deliberately, for example as YYYY-MM-DD."
         ],
         "providerNotes": [
+          "The names of the month heading button, its picker, the group of shortcuts and the date input, and the Today button, are the calendar messages of SiteplaneLocaleProvider, English by default; they follow the Calendar into the date pickers.",
           "Use the locale prop for this calendar, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
         ],
         "releaseStatus": "stable",
@@ -534,17 +567,18 @@
       "description": "Segmented, locale-aware date entry with optional Calendar action and native form serialization.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/locale.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/popover.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/time-field.json"
       ],
       "files": [
         {
@@ -556,6 +590,11 @@
           "path": "packages/ui/src/components/date-field/date-field.css",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/date-field/date-field.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-field/date-input-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-field/date-input-group.tsx"
         },
         {
           "path": "packages/ui/src/components/date-field/index.ts",
@@ -597,19 +636,19 @@
       "description": "Segmented, locale-aware time entry with an optional compact hour and minute selector. Search terms: hours, minutes, form.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "motion@12.43.0",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/list-box.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/popover.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/list-box.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -663,15 +702,15 @@
       "description": "Button-triggered, locale-aware single-date picker with Calendar overlay.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/locale.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/locale.json"
       ],
       "files": [
         {
@@ -683,6 +722,11 @@
           "path": "packages/ui/src/components/date-picker/date-picker.css",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/date-picker/date-picker.css"
+        },
+        {
+          "path": "packages/ui/src/components/date-picker/date-picker-panel.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/date-picker/date-picker-panel.tsx"
         },
         {
           "path": "packages/ui/src/components/date-picker/index.ts",
@@ -706,6 +750,7 @@
           "No readOnly prop: React Aria disables the trigger of a read-only picker, so it would look disabled. Use DateField for a read-only date."
         ],
         "providerNotes": [
+          "The trigger's name and placeholder, the calendar's Date and Today labels, and Cancel and Apply with confirm come from the messages of SiteplaneLocaleProvider, English by default.",
           "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
         ],
         "releaseStatus": "stable",
@@ -725,17 +770,18 @@
       "description": "Segmented, locale-aware date-range picker with one Calendar action and two native form values.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/date-field.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/locale.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/date-picker.json"
       ],
       "files": [
         {
@@ -766,9 +812,11 @@
         "description": "Segmented, locale-aware date-range picker with one Calendar action and two native form values.",
         "knownLimitations": [
           "Values use native Date calendar fields in the local time zone; the locale changes formatting, not the zone.",
-          "The control commits a complete range, not a start date alone."
+          "The control commits a complete range, not a start date alone.",
+          "With trigger=\"button\", readOnly disables the Button: React Aria disables the trigger of a read-only picker, so it looks disabled. Keep the default field for a read-only range."
         ],
         "providerNotes": [
+          "The panel's Start date and End date labels, Cancel and Apply come from the messages of SiteplaneLocaleProvider, English by default; startLabel and endLabel replace the first two, and the shortcuts are the application's own labels.",
           "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
         ],
         "releaseStatus": "stable",
@@ -780,28 +828,30 @@
           "form"
         ],
         "useWhen": [
-          "Use when users must choose and submit a contiguous start and end date."
+          "Use when users must choose and submit a contiguous start and end date.",
+          "Use trigger=\"button\" for a compact range filter in a toolbar, with quick choices beside the months and an explicit Apply."
         ]
       }
     },
     {
       "name": "date-time-picker",
       "title": "Date Time Picker",
-      "description": "Combined locale-aware date and time picker with separate disclosures and one native form value. Search terms: calendar.",
+      "description": "Combined locale-aware date and time picker with a calendar disclosure and one native form value.",
       "dependencies": [
         "@internationalized/date@3.12.3",
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/date-field.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/locale.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/time-field.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/time-field.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/date-picker.json"
       ],
       "files": [
         {
@@ -829,12 +879,13 @@
         "avoidWhen": [
           "Avoid when date and time are independent values or only one of them is required."
         ],
-        "description": "Combined locale-aware date and time picker with separate disclosures and one native form value.",
+        "description": "Combined locale-aware date and time picker with a calendar disclosure and one native form value.",
         "knownLimitations": [
           "Values use native Date calendar fields in the local time zone; there is no time zone selector and no conversion between zones.",
-          "The time button stays disabled until a date is set."
+          "With trigger=\"button\", readOnly disables the Button: React Aria disables the trigger of a read-only picker, so it looks disabled. Keep the default field for a read-only value."
         ],
         "providerNotes": [
+          "The panel's Available times, Date, Today, Cancel and Apply come from the messages of SiteplaneLocaleProvider, English by default.",
           "Use the locale prop for this picker, or SiteplaneLocaleProvider for a shared locale. SiteplaneUIProvider configures visual defaults, not locale."
         ],
         "releaseStatus": "stable",
@@ -846,7 +897,8 @@
           "form"
         ],
         "useWhen": [
-          "Use when one local appointment date and time should be edited and submitted together."
+          "Use when one local appointment date and time should be edited and submitted together.",
+          "Use trigger=\"button\" to book a time from a list of available times beside the calendar, confirmed with Apply."
         ]
       }
     },
@@ -855,18 +907,27 @@
       "title": "Input Group",
       "description": "Composite for related Input and Textarea controls, add-ons, segments, and focus routing.",
       "dependencies": [
+        "@base-ui/react@1.7.0",
+        "@phosphor-icons/react@2.1.10",
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/textarea.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/textarea.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
           "path": "packages/ui/src/components/input-group/input-group.tsx",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/input-group/input-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/input-group/field-status.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/input-group/field-status.tsx"
         },
         {
           "path": "packages/ui/src/components/input-group/input-group.css",
@@ -914,7 +975,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -957,8 +1018,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -1010,7 +1071,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1056,7 +1117,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1098,8 +1159,8 @@
       "description": "Menu button whose bars morph into a close icon. Search terms: actions.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -1149,7 +1210,7 @@
       "description": "Layered surface with headers, panels, descriptions and footers.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1196,8 +1257,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -1240,13 +1301,12 @@
       "title": "Dialog",
       "description": "Base UI-backed modal task boundary.",
       "dependencies": [
-        "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json"
       ],
       "files": [
         {
@@ -1300,14 +1360,16 @@
       "description": "Searchable single- and multi-selection control with animated chips, grouped results and form integration.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/kbd.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -1348,18 +1410,40 @@
     {
       "name": "locale",
       "title": "Locale Provider",
-      "description": "React Aria locale boundary for localized components.",
+      "description": "The locale and the kit's own texts: React Aria's locale boundary and the messages every component reads.",
       "dependencies": [
+        "@internationalized/date@3.12.3",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
           "path": "packages/ui/src/system/locale/siteplane-locale-provider.tsx",
           "type": "registry:lib",
           "target": "~/src/siteplane/system/locale/siteplane-locale-provider.tsx"
+        },
+        {
+          "path": "packages/ui/src/system/locale/first-day-of-week.ts",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/system/locale/first-day-of-week.ts"
+        }
+      ],
+      "type": "registry:lib"
+    },
+    {
+      "name": "messages-de",
+      "title": "German Messages",
+      "description": "Every text of the kit in German, for the messages of the Locale Provider. Install it with @siteplane/locale and pass it as messages.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/system/locale/messages-de.ts",
+          "type": "registry:lib",
+          "target": "~/src/siteplane/system/locale/messages-de.ts"
         }
       ],
       "type": "registry:lib"
@@ -1372,7 +1456,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1407,7 +1491,7 @@
           "avatar"
         ],
         "useWhen": [
-          "Use to represent a person, team or account with an image that falls back to initials or an icon."
+          "Use to represent a person, or with shape=\"square\" a company, team or workspace, with an image that falls back to initials or an icon."
         ]
       }
     },
@@ -1416,11 +1500,14 @@
       "title": "Avatar Group",
       "description": "Show several people as a row of overlapping avatars with an optional overflow count. Search terms: avatar stack, facepile, members.",
       "dependencies": [
-        "@base-ui/react@1.7.0"
+        "@base-ui/react@1.7.0",
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/badge.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/avatar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -1448,7 +1535,7 @@
         "knownLimitations": [
           "The application decides how many avatars to show and what the count says; the group does not measure or cut its children.",
           "The ring takes the color of the kit surface the group sits on, such as a Card, Dialog or Popover, and the page background elsewhere.",
-          "The size prop sizes every avatar and the count, 24, 32, 40 or 48 px, and the overlap is a quarter of it; a size class on one avatar changes that avatar alone.",
+          "The size prop sizes every avatar and the count, 24, 32, 40, 48, 56 or 64 px, and the overlap is 4, 8 or 12 px up to md and a quarter of the size above; a size class on one avatar changes that avatar alone.",
           "The count needs an accessible name that says what it counts, for example visually hidden text after the number."
         ],
         "providerNotes": [],
@@ -1464,7 +1551,67 @@
         ],
         "useWhen": [
           "Use to show the people of a project, a team or a conversation in little space.",
-          "Use with a count when a group has more members than it shows."
+          "Use with a count when a group has more members than it shows.",
+          "Use AvatarGroupAddButton at the end of the group when people can be added from there; name it and show the name in a Tooltip."
+        ]
+      }
+    },
+    {
+      "name": "avatar-label-group",
+      "title": "Avatar Label Group",
+      "description": "Show a person, a team or an account as an avatar with a title and a subtitle beside it. Search terms: avatar with name, user cell, name and email, profile row, account row.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/avatar.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/avatar-label-group/avatar-label-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar-label-group/avatar-label-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/avatar-label-group/avatar-label-group.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar-label-group/avatar-label-group.css"
+        },
+        {
+          "path": "packages/ui/src/components/avatar-label-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/avatar-label-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/avatar-label-group.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for several people at once; use Avatar Group.",
+          "Avoid the default figure inside a button or another element that takes only phrasing content; render the group as a span there (render={<span />}), whose caption and lines are spans."
+        ],
+        "description": "Show a person, a team or an account as an avatar with a title and a subtitle beside it.",
+        "knownLimitations": [
+          "The subtitle stays on one line and ends with an ellipsis; it carries its full text as a title only when it is a string.",
+          "The group owns no interaction: wrap the row in a link or put a link in the title."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "avatar label group",
+          "avatar with name",
+          "user cell",
+          "name and email",
+          "profile row",
+          "account row"
+        ],
+        "useWhen": [
+          "Use for the name cell of a table, a member list, an account card or the header of an account menu, where an avatar stands beside a name and a line such as an email address.",
+          "Use the lg size for the header of a profile or an account page, and sm in dense lists."
         ]
       }
     },
@@ -1477,7 +1624,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -1527,6 +1675,65 @@
       }
     },
     {
+      "name": "badge-group",
+      "title": "Badge Group",
+      "description": "Join a small badge and a message in one pill, such as a release note or a status line above a heading. Search terms: announcement badge, release note badge, new feature badge, notice.",
+      "dependencies": [
+        "@phosphor-icons/react@2.1.10"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/badge-group/badge-group.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge-group/badge-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/badge-group/badge-group.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge-group/badge-group.css"
+        },
+        {
+          "path": "packages/ui/src/components/badge-group/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/badge-group/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/badge-group.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a label on its own; use Badge.",
+          "Avoid for a message that needs a description or an action; use Alert."
+        ],
+        "description": "Join a small badge and a message in one pill, such as a release note or a status line above a heading.",
+        "knownLimitations": [
+          "The message stays on one line and ends with an ellipsis where the group meets the edge of its space.",
+          "The arrow and the modern dot are decoration, hidden from assistive technology; the words carry the meaning."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "badge group",
+          "announcement badge",
+          "release note badge",
+          "new feature badge",
+          "pill",
+          "notice"
+        ],
+        "useWhen": [
+          "Use for one short piece of news in a prominent place, such as a release note above a page heading or a status line at the top of a panel.",
+          "Use the modern appearance on a busy or tinted surface, where a white group with a colored dot reads better than a tint."
+        ]
+      }
+    },
+    {
       "name": "card",
       "title": "Card",
       "description": "Structured application surface for related content and actions.",
@@ -1534,7 +1741,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1575,17 +1782,72 @@
       }
     },
     {
+      "name": "credit-card",
+      "title": "Credit Card",
+      "description": "Show a payment card with its issuer, cardholder, number, expiry date and network mark, in one of thirteen looks. Search terms: payment method, card preview, bank card, billing.",
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/credit-card/credit-card.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/credit-card/credit-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/credit-card/credit-card.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/credit-card/credit-card.css"
+        },
+        {
+          "path": "packages/ui/src/components/credit-card/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/credit-card/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/credit-card.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for collecting card details; use the fields of a Form.",
+          "Avoid the transparent looks and gray-strip-vertical on a plain page; they let the background through and need a photo, an illustration or a gradient behind them."
+        ],
+        "description": "Show a payment card with its issuer, cardholder, number, expiry date and network mark, in one of thirteen looks.",
+        "knownLimitations": [
+          "The kit ships no card network logo; the tile shows a generic mark until the network's mark is passed as mark.",
+          "The card shows details and owns no interaction or selection.",
+          "The looks keep their colors in Light and Dark, as a picture of a real card does."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "credit card",
+          "payment card",
+          "payment method",
+          "card preview",
+          "bank card",
+          "billing"
+        ],
+        "useWhen": [
+          "Use to show a saved payment method on a billing page or in a list of cards to choose from, with the last four digits of the number.",
+          "Use a width class to fit the card to its place; it scales its text, padding and corners with its width."
+        ]
+      }
+    },
+    {
       "name": "alert",
       "title": "Alert",
       "description": "Persistent feedback with semantic tone, optional actions and an optional close control, inline, as a page banner or as a card band. Search terms: notice.",
       "dependencies": [
-        "class-variance-authority@0.7.1",
-        "lucide-react@1.18.0"
+        "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -1633,13 +1895,35 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/featured-icon.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/avatar.json"
       ],
       "files": [
         {
           "path": "packages/ui/src/components/empty-state/empty-state.tsx",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/empty-state/empty-state.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/empty-state/empty-avatars.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/empty-avatars.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/empty-state/empty-size-context.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/empty-size-context.ts"
+        },
+        {
+          "path": "packages/ui/src/components/empty-state/empty-scope.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/empty-scope.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/empty-state/empty-state.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/empty-state/empty-state.css"
         },
         {
           "path": "packages/ui/src/components/empty-state/index.ts",
@@ -1673,12 +1957,68 @@
       }
     },
     {
+      "name": "illustration",
+      "title": "Illustration",
+      "description": "Show a drawing of a cloud, a box, a credit card or a few documents, with an optional glyph, to give an empty state its picture. Search terms: empty state illustration, empty state picture, cloud illustration, no data drawing, zero state.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/illustration/illustration.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/illustration/illustration.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/illustration/illustration.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/illustration/illustration.css"
+        },
+        {
+          "path": "packages/ui/src/components/illustration/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/illustration/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/illustration.md",
+      "categories": [
+        "Feedback"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid in a compact empty state, such as one in a table or a popover; use a Featured Icon in EmptyMedia.",
+          "Avoid as the only carrier of a message; the title and the description of the empty state say what it means."
+        ],
+        "description": "Show a drawing of a cloud, a box, a credit card or a few documents, with an optional glyph, to give an empty state its picture.",
+        "knownLimitations": [
+          "Four drawings: cloud, box, credit-card and documents, at one proportion of 220 by 160.",
+          "The glyph disc is a share of the height of the Illustration's own size; in an Empty State, give it the size of the Empty too."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "illustration",
+          "empty state illustration",
+          "empty state picture",
+          "cloud illustration",
+          "no data drawing",
+          "zero state"
+        ],
+        "useWhen": [
+          "Use in the media of an Empty State with variant illustration, for an empty page, panel or large card such as no files uploaded or a failed payment.",
+          "Use the glyph to say what the empty state is about, such as a magnifier for no results or an upload arrow for no files."
+        ]
+      }
+    },
+    {
       "name": "skeleton",
       "title": "Skeleton",
       "description": "Decorative loading placeholder with consumer-owned geometry.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1719,12 +2059,12 @@
     {
       "name": "spinner",
       "title": "Spinner",
-      "description": "Indeterminate loading status with seven visual variants and reduced-motion behavior.",
+      "description": "Indeterminate loading status with eight visual variants and reduced-motion behavior.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1753,7 +2093,7 @@
           "Avoid when completion is measurable; use Progress.",
           "Avoid for content that loads into a known layout; use Skeleton."
         ],
-        "description": "Indeterminate loading status with seven visual variants and reduced-motion behavior.",
+        "description": "Indeterminate loading status with eight visual variants and reduced-motion behavior.",
         "knownLimitations": [
           "A spinner does not start, cancel or finish a request; the application owns the pending and error state."
         ],
@@ -1772,13 +2112,13 @@
       "title": "Stepper",
       "description": "Ordered workflow progress with read-only and native button items.",
       "dependencies": [
-        "class-variance-authority@0.7.1",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10",
+        "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -1828,10 +2168,10 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/copy-button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/copy-button.json"
       ],
       "files": [
         {
@@ -1898,8 +2238,8 @@
         "shiki@4.5.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/code.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/code.json"
       ],
       "files": [
         {
@@ -1916,7 +2256,7 @@
       "description": "Keyboard input notation for keys and grouped shortcuts.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -1961,7 +2301,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2011,7 +2351,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2063,7 +2403,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2109,8 +2449,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json"
       ],
       "files": [
         {
@@ -2146,7 +2486,7 @@
         ],
         "description": "Base UI-backed multi-line text control.",
         "knownLimitations": [
-          "There is no autoGrow prop: the field grows with its content through field-sizing: content, where the browser supports it, and shows no resize grip there; elsewhere it keeps a vertical grip."
+          "There is no autoGrow prop: the field grows with its content through field-sizing: content, where the browser supports it, and fieldSizing=\"fixed\" keeps the height of its rows instead, with longer text scrolling. It keeps the vertical grip either way (resize=\"none\" hides it), and a height people drag takes over from the growth."
         ],
         "providerNotes": [],
         "releaseStatus": "stable",
@@ -2167,7 +2507,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2222,8 +2562,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/checkbox.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/checkbox.json"
       ],
       "files": [
         {
@@ -2271,7 +2611,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2325,11 +2665,10 @@
       "title": "Switch",
       "description": "Base UI-backed on/off preference control.",
       "dependencies": [
-        "@base-ui/react@1.7.0",
-        "class-variance-authority@0.7.1"
+        "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2386,7 +2725,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2438,9 +2777,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/toggle.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/toggle.json"
       ],
       "files": [
         {
@@ -2487,12 +2826,12 @@
       "description": "Base UI-backed numeric entry and stepping.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/label.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/label.json"
       ],
       "files": [
         {
@@ -2544,10 +2883,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/label.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/label.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -2602,7 +2941,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2648,7 +2987,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2695,16 +3034,16 @@
       "description": "Swipe-aware modal panel anchored to a viewport edge.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/checkbox.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/menu.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/radio-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/switch.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/radio-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/switch.json"
       ],
       "files": [
         {
@@ -2757,13 +3096,12 @@
       "title": "Sheet",
       "description": "Dialog-backed edge flyout for forms and save/cancel workflows.",
       "dependencies": [
-        "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json"
       ],
       "files": [
         {
@@ -2814,12 +3152,11 @@
       "title": "Popover",
       "description": "Anchored non-modal surface for contextual content.",
       "dependencies": [
-        "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -2868,7 +3205,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2895,14 +3232,15 @@
         "description": "Short contextual label for hoverable or focusable controls.",
         "knownLimitations": [],
         "providerNotes": [
-          "Mount TooltipProvider once at the application root. It defaults to a 700ms opening delay and a 550ms warm re-hover window; both remain configurable."
+          "Mount TooltipProvider once at the application root. It defaults to a 300ms opening delay and a 550ms warm re-hover window; both remain configurable."
         ],
         "releaseStatus": "stable",
         "searchTerms": [
           "tooltip"
         ],
         "useWhen": [
-          "Use for a short, non-essential label on a control that people hover or focus, such as the name of an icon button."
+          "Use for a short, non-essential label on a control that people hover or focus, such as the name of an icon button.",
+          "Set describeTrigger on a Tooltip that adds what its trigger does not say, such as a title with a sentence, so screen readers read it as the trigger's description."
         ]
       }
     },
@@ -2914,7 +3252,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -2959,11 +3297,13 @@
       "description": "Keyboard-navigable action and selection menu.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/switch.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/switch.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -3012,12 +3352,12 @@
       "description": "Pointer and keyboard context menu sharing Menu presentation.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/menu.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/switch.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/switch.json"
       ],
       "files": [
         {
@@ -3064,11 +3404,11 @@
       "description": "Single or multiple expandable disclosure sections.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -3108,6 +3448,71 @@
       }
     },
     {
+      "name": "account-card",
+      "title": "Account Card",
+      "description": "Show the signed-in account in a sidebar and open a menu with its actions, a list of accounts to switch to and sign out. Search terms: account switcher, account menu, user menu, profile menu, switch account.",
+      "dependencies": [
+        "@phosphor-icons/react@2.1.10"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/avatar.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/avatar-label-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/sidebar.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/account-card/account-card.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/account-card/account-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/account-card/account-menu-content.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/account-card/account-menu-content.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/account-card/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/account-card/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/account-card.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid in a header bar; use the account menu of Header Navigation or a Menu with an avatar trigger.",
+          "Avoid for a list of settings; link to a settings page from an action row instead."
+        ],
+        "description": "Show the signed-in account in a sidebar and open a menu with its actions, a list of accounts to switch to and sign out.",
+        "knownLimitations": [
+          "The menu has no controlled open state; make a row that leads to another page a link with href.",
+          "Shortcuts are labels only; the card registers no keys."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "account card",
+          "account switcher",
+          "account menu",
+          "user menu",
+          "profile menu",
+          "switch account",
+          "sign out"
+        ],
+        "useWhen": [
+          "Use at the foot of an application sidebar for the signed-in account, its actions, an account switcher and sign out.",
+          "Use trigger avatar on the collapsed icon rail of a slim sidebar."
+        ]
+      }
+    },
+    {
       "name": "collapsible",
       "title": "Collapsible",
       "description": "Compact disclosure for a single section of content.",
@@ -3115,8 +3520,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -3158,12 +3563,12 @@
       "description": "Keyboard-navigable single-selection content panels.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -3200,7 +3605,7 @@
         "description": "Keyboard-navigable single-selection content panels.",
         "knownLimitations": [
           "Hidden panels unmount unless keepMounted is set; keep costly state outside the panel.",
-          "Switching tabs swaps the panels: the panel that leaves stays mounted until it has faded out and is taken out of the flow where it sits. The element that holds the panels follows the new height and is clipped while it does; a container that scrolls keeps its own height."
+          "Switching tabs swaps the panels: the panel that leaves is hidden the moment the new one shows and is taken out of the flow where it sits. The element that holds the panels follows the new height and is clipped while it does; a container that scrolls keeps its own height."
         ],
         "providerNotes": [
           "Panel swaps and the scroll of a list whose tabs overflow use the motion package, which the registry installs with the component.",
@@ -3223,10 +3628,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -3268,12 +3673,12 @@
       "description": "Transient status messages managed through a scoped provider.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/spinner.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/spinner.json"
       ],
       "files": [
         {
@@ -3336,7 +3741,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -3389,17 +3794,20 @@
       "description": "Application navigation sidebar with desktop collapse and a mobile sheet.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/sheet.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/skeleton.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/collapsible.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/sheet.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/skeleton.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -3411,6 +3819,21 @@
           "path": "packages/ui/src/components/sidebar/sidebar-internal.ts",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/sidebar/sidebar-internal.ts"
+        },
+        {
+          "path": "packages/ui/src/components/sidebar/sidebar-tier.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sidebar/sidebar-tier.ts"
+        },
+        {
+          "path": "packages/ui/src/components/sidebar/sidebar-secondary.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sidebar/sidebar-secondary.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/sidebar/sidebar-secondary.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/sidebar/sidebar-secondary.css"
         },
         {
           "path": "packages/ui/src/components/sidebar/index.ts",
@@ -3450,7 +3873,7 @@
       "description": "The Menu under DropdownMenu-prefixed part names.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/menu.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json"
       ],
       "files": [
         {
@@ -3496,13 +3919,14 @@
       "description": "Single- and multiple-selection popup with grouped, polymorphic and form-integrated controls.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json"
       ],
       "files": [
         {
@@ -3539,19 +3963,77 @@
       }
     },
     {
+      "name": "native-select",
+      "title": "Native Select",
+      "description": "Choose one option with the browser's own select element, styled like the Select trigger. Search terms: html select, dropdown.",
+      "dependencies": [
+        "@base-ui/react@1.7.0"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/native-select/native-select.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-select/native-select.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/native-select/native-select.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-select/native-select.css"
+        },
+        {
+          "path": "packages/ui/src/components/native-select/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/native-select/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/native-select.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when options need icons, avatars or descriptions, or people choose several; use Select.",
+          "Avoid for a long list that people search in; use Combobox.",
+          "Avoid inside an Input Group or another component; a select in an Input Group segment is a Select with SelectTrigger variant=\"segment\"."
+        ],
+        "description": "Choose one option with the browser's own select element, styled like the Select trigger.",
+        "knownLimitations": [
+          "The list is the browser's: its look and keyboard behavior differ between browsers and systems, and its options are plain text.",
+          "It holds a single choice; a multiple select is not laid out as a field.",
+          "A floating label is not available; the label stays above the field."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "native select",
+          "select element",
+          "html select",
+          "dropdown"
+        ],
+        "useWhen": [
+          "Use where the platform's own list serves people best, such as the system picker on a phone or a long form of plain choices."
+        ]
+      }
+    },
+    {
       "name": "autocomplete",
       "title": "Autocomplete",
       "description": "Text input with suggestions and no selection state.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -3603,8 +4085,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -3652,11 +4134,11 @@
       "title": "Table",
       "description": "React Aria table with composable rows and cells plus optional sorting, row or checkbox selection, captions and footers.",
       "dependencies": [
-        "lucide-react@1.18.0",
+        "@phosphor-icons/react@2.1.10",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -3710,15 +4192,15 @@
       "title": "Tag Group",
       "description": "React Aria tag collection with controlled or uncontrolled selection, accessible removal and focus recovery. Search terms: tags, labels.",
       "dependencies": [
-        "lucide-react@1.18.0",
         "motion@12.43.0",
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/badge.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -3771,16 +4253,80 @@
       }
     },
     {
+      "name": "tags-input",
+      "title": "Tags Input",
+      "description": "Type free-text tags into a field that shows each one as a removable tag before the text. Search terms: tag input, chips input, keywords, email list, multi value input.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tag-group.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/tags-input/tags-input.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tags-input/tags-input.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/tags-input/tags-input-entries.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tags-input/tags-input-entries.ts"
+        },
+        {
+          "path": "packages/ui/src/components/tags-input/tags-input.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tags-input/tags-input.css"
+        },
+        {
+          "path": "packages/ui/src/components/tags-input/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/tags-input/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/tags-input.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when every value comes from a known list; use Combobox with chips.",
+          "Avoid for showing or selecting tags outside a field; use Tag Group."
+        ],
+        "description": "Type free-text tags into a field that shows each one as a removable tag before the text.",
+        "knownLimitations": [
+          "required marks the field for assistive technology and the required indicator, but it does not stop a form sent without a tag; check the list in the submit handler.",
+          "The tags do not reset with their form; control them and restore them in onReset.",
+          "A floating label is not available, the Left and Right arrows between the text and the tags are not mirrored in right-to-left pages, and the height changes at once when a row of tags comes or goes."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "tags input",
+          "tag input",
+          "chips input",
+          "keywords",
+          "email list",
+          "multi value input"
+        ],
+        "useWhen": [
+          "Use for values that people type themselves, such as labels, keywords or a list of email addresses.",
+          "Use with Field for a label, a description of what the field takes and its error."
+        ]
+      }
+    },
+    {
       "name": "command",
       "title": "Command",
       "description": "Searchable keyboard-first action collection.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/autocomplete.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/dialog.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/kbd.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/autocomplete.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/dialog.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/menu.json"
       ],
       "files": [
         {
@@ -3823,11 +4369,11 @@
       "title": "Pagination",
       "description": "Navigation between the pages of a long list or table, built from Button links.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -3866,15 +4412,135 @@
       }
     },
     {
+      "name": "page-indicator",
+      "title": "Page Indicator",
+      "description": "Show which page of a carousel or a short sequence is current, as dots or line segments, and go to another page. Search terms: carousel dots, carousel indicator, pagination dots, slide indicator.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/page-indicator/page-indicator.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/page-indicator/page-indicator.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/page-indicator/page-indicator.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/page-indicator/page-indicator.css"
+        },
+        {
+          "path": "packages/ui/src/components/page-indicator/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/page-indicator/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/page-indicator.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a long list or table with numbered pages; use Pagination.",
+          "Avoid for the steps of a task that people complete in order; use Stepper."
+        ],
+        "description": "Show which page of a carousel or a short sequence is current, as dots or line segments, and go to another page.",
+        "knownLimitations": [
+          "The indicator moves no content: keep the page in state and change the slide when onPageChange fires.",
+          "It shows one mark per page and no ellipsis; use Pagination beyond about ten pages.",
+          "The md dots sit 20 px apart, closer than the 24 px target spacing of WCAG 2.2; use lg where people tap them."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "page indicator",
+          "carousel dots",
+          "carousel indicator",
+          "pagination dots",
+          "slide indicator",
+          "dots"
+        ],
+        "useWhen": [
+          "Use below a carousel, onboarding slides or a short run of cards to show the current page and jump to another one.",
+          "Use framed when the indicator sits on an image, so the marks stay readable."
+        ]
+      }
+    },
+    {
+      "name": "carousel",
+      "title": "Carousel",
+      "description": "Show slides one at a time and move between them with arrows, dots, the arrow keys or a swipe. Search terms: slideshow, image carousel, product tour, testimonials.",
+      "dependencies": [
+        "@phosphor-icons/react@2.1.10"
+      ],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/page-indicator.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/carousel/carousel.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/carousel/carousel.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/carousel/carousel.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/carousel/carousel.css"
+        },
+        {
+          "path": "packages/ui/src/components/carousel/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/carousel/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/carousel.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for content that everyone must read; put it on the page, where no slide hides it.",
+          "Avoid for pictures that people compare with each other; show them side by side in a grid."
+        ],
+        "description": "Show slides one at a time and move between them with arrows, dots, the arrow keys or a swipe.",
+        "knownLimitations": [
+          "No loop from the last slide to the first, no vertical orientation and no autoplay.",
+          "The carousel fills the height of its container; give the container a height or an aspect ratio."
+        ],
+        "providerNotes": [
+          "The role descriptions, the names of the slides, such as 2 of 3, of the arrows and of the indicator are the carousel messages of SiteplaneLocaleProvider, English by default; an aria-label on a part names it otherwise."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "carousel",
+          "slides",
+          "slideshow",
+          "image carousel",
+          "product tour",
+          "testimonials"
+        ],
+        "useWhen": [
+          "Use for a few related pictures or messages of which people need to see one at a time, such as a product tour, feature screenshots or customer stories.",
+          "Use index and onIndexChange when other parts of the page follow the current slide, such as a caption."
+        ]
+      }
+    },
+    {
       "name": "breadcrumb",
       "title": "Breadcrumb",
       "description": "Semantic hierarchy trail with native navigation links.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -3916,8 +4582,8 @@
       "description": "Responsive application frame with a sidebar, a header and scrolling content. Search terms: sticky header.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/sidebar.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/sidebar.json"
       ],
       "files": [
         {
@@ -3965,15 +4631,15 @@
       "title": "Filter Bar",
       "description": "Responsive search, filter summary and action arrangement, with view tabs that open into a search field.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tabs.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tabs.json"
       ],
       "files": [
         {
@@ -4030,8 +4696,8 @@
       "description": "Right-side drawer for the details of a record, with an optional edit form.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/drawer.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/drawer.json"
       ],
       "files": [
         {
@@ -4079,10 +4745,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -4140,9 +4806,9 @@
       "description": "Sectioned settings surface with passive items and consumer-provided controls, tags and supporting content. Search terms: preferences, rows.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/card.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -4188,7 +4854,7 @@
       "description": "Show the details of one record as label and value rows, side by side or stacked. Search terms: description list, detail list, key value, properties, dl.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -4242,8 +4908,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -4297,13 +4963,13 @@
       "title": "Copy Button",
       "description": "Copy a value to the clipboard with an icon button or a labeled button that confirms with a check, a tooltip and an announcement. Search terms: copy to clipboard, copyable, copy link, copy URL.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -4357,14 +5023,14 @@
       "title": "Editable",
       "description": "Show a value as text and edit it in place in its field. Search terms: inline edit, edit in place, click to edit, editable text, rename.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/textarea.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/textarea.json"
       ],
       "files": [
         {
@@ -4420,15 +5086,324 @@
       }
     },
     {
+      "name": "social-button",
+      "title": "Social Button",
+      "description": "Sign in with Google, Facebook, Apple, X, Figma or Dribbble on a button that shows the provider's logo, in its brand color or neutral. Search terms: social login, continue with Apple, OAuth, SSO, login button.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/social-button/social-button.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/social-button/social-button.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/social-button/social-logos.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/social-button/social-logos.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/social-button/social-button.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/social-button/social-button.css"
+        },
+        {
+          "path": "packages/ui/src/components/social-button/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/social-button/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/social-button.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for an action that has nothing to do with the provider's account, such as a share or a follow link; use Button or a link.",
+          "Avoid for a provider outside the six; compose a Button with that provider's own logo and its brand rules instead."
+        ],
+        "description": "Sign in with Google, Facebook, Apple, X, Figma or Dribbble on a button that shows the provider's logo, in its brand color or neutral.",
+        "knownLimitations": [
+          "The button starts no sign-in itself: handle onClick or render a link to your authentication route.",
+          "There is no loading state; disable the button while a sign-in is pending."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "social login",
+          "social button",
+          "sign in with Google",
+          "continue with Apple",
+          "OAuth",
+          "SSO",
+          "login button"
+        ],
+        "useWhen": [
+          "Use on a sign-in or sign-up page for each account provider the application accepts, stacked at full width or as a row of logo buttons.",
+          "Use the color or gray theme where brand fills would compete with the page, such as beside an email form."
+        ]
+      }
+    },
+    {
+      "name": "store-button",
+      "title": "Store Button",
+      "description": "Link to your app on the App Store, Google Play, Galaxy Store or AppGallery with a badge that shows the store's mark and name, in black or as an outline. Search terms: app store badge, store badge, download on the App Store, get it on Google Play, mobile app download.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/social-button.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/store-button/store-button.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/store-button/store-button.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/store-button/store-logos.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/store-button/store-logos.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/store-button/store-button.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/store-button/store-button.css"
+        },
+        {
+          "path": "packages/ui/src/components/store-button/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/store-button/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/store-button.md",
+      "categories": [
+        "Actions"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a link that does not open the app's page in that store; use Button or a link.",
+          "Avoid where a store's guidelines require its official badge; use the badge artwork the store provides."
+        ],
+        "description": "Link to your app on the App Store, Google Play, Galaxy Store or AppGallery with a badge that shows the store's mark and name, in black or as an outline.",
+        "knownLimitations": [
+          "The marks are simplified drawings, not the stores' official badge artwork."
+        ],
+        "providerNotes": [
+          "The caption over the store's name is the storeButton message of SiteplaneLocaleProvider, English by default, in the store's own wording; the store's name stays as it is."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "app store badge",
+          "store badge",
+          "download on the App Store",
+          "get it on Google Play",
+          "mobile app download",
+          "Galaxy Store",
+          "AppGallery"
+        ],
+        "useWhen": [
+          "Use on a landing page, a footer or a download page to send visitors to your mobile app in each store that lists it.",
+          "Use the outline appearance where a row of black badges would weigh too much, such as in a light footer."
+        ]
+      }
+    },
+    {
+      "name": "file-input",
+      "title": "File Input",
+      "description": "Choose files in a field that shows their names and ends with an Upload button, and send them with a form. Search terms: file upload, upload field, attachment, browse files.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/spinner.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/file-input/file-input.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-input/file-input.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/file-input/file-input-selection.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-input/file-input-selection.ts"
+        },
+        {
+          "path": "packages/ui/src/components/file-input/file-input.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-input/file-input.css"
+        },
+        {
+          "path": "packages/ui/src/components/file-input/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/file-input/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/file-input.md",
+      "categories": [
+        "Forms & selection"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for dropping files or for a list of uploads with progress; use File Upload.",
+          "Avoid where the browser's own file control is enough; use Input with type file."
+        ],
+        "description": "Choose files in a field that shows their names and ends with an Upload button, and send them with a form.",
+        "knownLimitations": [
+          "The field uploads nothing and shows no preview. Read the files from onFilesChange or from the form data; Form's onFormSubmit receives the names that the field shows.",
+          "A pick replaces the selection; single files cannot be removed from it."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "file input",
+          "file upload",
+          "upload field",
+          "choose file",
+          "attachment",
+          "browse files"
+        ],
+        "useWhen": [
+          "Use in a form where one file or a few belong among other fields, such as a document, an invoice or a logo.",
+          "Use with Field for a label, a description of the accepted files and the error of a required file."
+        ]
+      }
+    },
+    {
+      "name": "featured-icon",
+      "title": "Featured Icon",
+      "description": "A glyph in a tinted circle, a solid or raised square or with pulsing rings, to lead a message, a dialog or an empty state. Search terms: icon container, icon badge, status icon, pulse.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/featured-icon/featured-icon.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-icon/featured-icon.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/featured-icon/featured-icon.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-icon/featured-icon.css"
+        },
+        {
+          "path": "packages/ui/src/components/featured-icon/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-icon/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/featured-icon.md",
+      "categories": [
+        "Data display"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for an icon inside running text, a button or a menu row; use the icon on its own.",
+          "Avoid for a person or an organization; use Avatar."
+        ],
+        "description": "A glyph in a tinted circle, a solid or raised square or with pulsing rings, to lead a message, a dialog or an empty state.",
+        "knownLimitations": [
+          "The icon is decoration and hidden from assistive technology; the text beside it carries the meaning.",
+          "The outline rings exist only while they pulse; with pulse={false} or reduced motion the glyph stands alone."
+        ],
+        "providerNotes": [
+          "SiteplaneMotionProvider preset=\"reduced\" and the system setting stop the pulse of an outline icon and show its glyph alone."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "featured icon",
+          "icon container",
+          "icon badge",
+          "status icon",
+          "pulse"
+        ],
+        "useWhen": [
+          "Use to lead a notification, a confirmation dialog, an empty state or a feature list with an icon in a status tone.",
+          "Use the outline variant where the icon should draw the eye to a new message, with its pulsing rings."
+        ]
+      }
+    },
+    {
+      "name": "featured-card",
+      "title": "Featured Card",
+      "description": "Feature one offer or status in a sidebar or a panel, such as the storage a team has used, with its progress and a pair of link actions. Search terms: upgrade card, usage card, storage card, sidebar card, promo card.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/progress.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/featured-card/featured-card.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-card/featured-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/featured-card/featured-card.css",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-card/featured-card.css"
+        },
+        {
+          "path": "packages/ui/src/components/featured-card/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/featured-card/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/featured-card.md",
+      "categories": [
+        "Navigation"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for a message that concerns the whole page or follows an action; use Alert or Toast.",
+          "Avoid for several offers at once; show the one that matters most."
+        ],
+        "description": "Feature one offer or status in a sidebar or a panel, such as the storage a team has used, with its progress and a pair of link actions.",
+        "knownLimitations": [
+          "The card does not remove itself: remove it in onDismiss and keep the choice where it should last.",
+          "The title is a paragraph, not a heading, so the card adds nothing to the document outline."
+        ],
+        "providerNotes": [],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "featured card",
+          "upgrade card",
+          "usage card",
+          "storage card",
+          "sidebar card",
+          "promo card"
+        ],
+        "useWhen": [
+          "Use in the footer of a sidebar or beside a settings page for one offer or status people can act on, such as storage that runs out.",
+          "Use indicator circle when the figure matters most, such as the share of a quota that is used."
+        ]
+      }
+    },
+    {
       "name": "animated-buttons",
       "title": "Animated Buttons",
       "description": "Fill sweep, passing fill, running arrow and expanding button family. Search terms: actions, arrow button, carousel arrows, hover fill, entrance.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -4484,11 +5459,11 @@
       "title": "Theme Toggles",
       "description": "Animated sun and moon toggles that switch between light and dark mode. Search terms: actions.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/toggle.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/toggle.json"
       ],
       "files": [
         {
@@ -4540,9 +5515,9 @@
       "description": "Show how a total divides into shares as a donut or pie chart. Search terms: ring, distribution.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json"
       ],
       "files": [
         {
@@ -4605,6 +5580,137 @@
       }
     },
     {
+      "name": "radial-bar-chart",
+      "title": "Radial Bar Chart",
+      "description": "Show progress toward a goal as a ring that fills, or compare a few measures as concentric rings against one maximum. Search terms: progress circle, progress ring, activity rings, gauge.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/radial-bar-chart/radial-bar-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radial-bar-chart/radial-bar-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/radial-bar-chart/radial-geometry.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radial-bar-chart/radial-geometry.ts"
+        },
+        {
+          "path": "packages/ui/src/components/radial-bar-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radial-bar-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/radial-bar-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid for comparing many categories or following change over time; use a Bar Chart, a Bar List or a Line Chart.",
+          "Avoid for the shares of one total; use a Pie Chart, whose shares add up to the whole."
+        ],
+        "description": "Show progress toward a goal as a ring that fills, or compare a few measures as concentric rings against one maximum.",
+        "knownLimitations": [
+          "Every bar is measured against the same max, 100 by default: a value above it fills its ring and a value below 0 leaves it empty, while the tooltip names the value itself.",
+          "The rings thin as bars are added, to a seventeenth of the chart's size for three, so more than four bars leave thin rings and a small hole; the thickness follows the size and the number of bars, not each bar.",
+          "centerValue is fitted into the hole from the chart's size and the text alone, the same on the server and the client: the full figure in the three largest text steps the hole offers, from 48 px in a hole of 240 px down to 20 px in one of 96 px, otherwise compact (1.2M); screen readers read it in full. centerLabel stands above it on one line and ends in an ellipsis.",
+          "Content of your own in center is laid out in the square around the hole and cut off at the hole's round edge, so it never covers a ring but can be cut: keep it short, or pass the figure as centerValue.",
+          "The chart is one focus stop; the arrow keys step from ring to ring and stop at the outer and the inner ring. Bars have no click or selection props, no bar fades while another is active, and the legend neither toggles bars nor reacts to the mouse.",
+          "When the data changes, the bars glide to their new values and a bar is told by its id: give each bar a stable id. A change in the number of bars sets the thickness and the places of the rings at once."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "radial bar chart",
+          "radial",
+          "progress circle",
+          "progress ring",
+          "activity rings",
+          "gauge",
+          "goal"
+        ],
+        "useWhen": [
+          "Use for progress toward a goal or a quota, such as seats or storage used, as a ring with a figure and a caption in its hole.",
+          "Use for up to three or four measures against one maximum, such as the goals reached this quarter, as concentric rings with a legend."
+        ]
+      }
+    },
+    {
+      "name": "radar-chart",
+      "title": "Radar Chart",
+      "description": "Compare one or several series across a handful of measures on spokes that share one value axis. Search terms: spider chart, web chart, polar chart, star chart.",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/radar-chart/radar-chart.tsx",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radar-chart/radar-chart.tsx"
+        },
+        {
+          "path": "packages/ui/src/components/radar-chart/radar-geometry.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radar-chart/radar-geometry.ts"
+        },
+        {
+          "path": "packages/ui/src/components/radar-chart/index.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/radar-chart/index.ts"
+        }
+      ],
+      "type": "registry:ui",
+      "docs": "https://ui.siteplane.io/docs-markdown/components/radar-chart.md",
+      "categories": [
+        "Charts"
+      ],
+      "meta": {
+        "avoidWhen": [
+          "Avoid when the measures have different units or their order means nothing; use a Bar Chart or a Table, where values compare along one axis.",
+          "Avoid for change over many dates; use a Line Chart or an Area Chart."
+        ],
+        "description": "Compare one or several series across a handful of measures on spokes that share one value axis.",
+        "knownLimitations": [
+          "All series share one value axis from 0 at the center to a round value at the rim; a value below 0 or a missing one sits at the center, and a missing one leaves the tooltip for its spoke.",
+          "The radar keeps room around the rim for the names of the spokes and the top pill of the axis, so long names make it smaller. height is a number of px, 240 by default, the legend included; there is no fill height.",
+          "The plot is one focus stop; the arrow keys step round the spokes and wrap. Spokes and series have no click or selection props, and the legend does not toggle series.",
+          "New data glides in when the number of spokes and series stays the same; a change in either shows at once.",
+          "The plot is drawn once the chart has measured its width; until then, and in the server HTML, the chart renders the box of the plot at its full height, the legend and what screen readers read."
+        ],
+        "providerNotes": [
+          "The tooltip comes from the installed Tooltip. The chart opens and closes it itself, so it needs no TooltipProvider.",
+          "The glide uses the installed Motion component and its tokens. SiteplaneMotionProvider preset=\"reduced\" and the system setting show new data at once."
+        ],
+        "releaseStatus": "preview",
+        "searchTerms": [
+          "radar chart",
+          "radar",
+          "spider chart",
+          "web chart",
+          "polar chart",
+          "star chart"
+        ],
+        "useWhen": [
+          "Use to compare the profile of a few series across three to about ten measures on one scale, such as survey scores by area or sessions by weekday.",
+          "Use one series to show the shape of a single measure across the spokes, with the tooltip for exact values."
+        ]
+      }
+    },
+    {
       "name": "file-type-icon",
       "title": "File Type Icon",
       "description": "Show a file’s type as a document icon with its extension. Search terms: file icon, attachment, pdf.",
@@ -4615,7 +5721,7 @@
         "@types/react-file-icon@1.0.5"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -4668,11 +5774,11 @@
       "description": "Open site sections from a row of links with dropdown panels. Search terms: navbar, mega menu.",
       "dependencies": [
         "@base-ui/react@1.7.0",
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json"
       ],
       "files": [
         {
@@ -4730,8 +5836,8 @@
       "description": "Native HTML table in the look of Table, for content that people read and for cells whose inputs and buttons keep their own tab stops. Search terms: static table, report, markdown table.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/table.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/table.json"
       ],
       "files": [
         {
@@ -4790,7 +5896,7 @@
         "motion@12.43.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -4867,7 +5973,7 @@
           "A flow list moves the height of its own box when a row of items appears or goes. A list that is display: contents has no box, so pass the element that wraps its items as container.",
           "While a stack item, a reveal or a swap changes, its own element is the clipping box, so give that element no padding or border and put them on the content inside it.",
           "A leaving item is inert, so focus inside it is lost when it leaves. Move focus before removing it.",
-          "MotionNumber formats a number in en-US unless you pass locales, so the server and the client always agree. A string is shown as it is and only its Latin digits (0 to 9) roll; every other character fades.",
+          "MotionNumber formats a number in the SiteplaneLocaleProvider's locale unless you pass locales, and in en-US without a provider, so the server and the client always agree. A string is shown as it is and only its Latin digits (0 to 9) roll; every other character fades.",
           "MotionNumber is read once, as its final text, with no live announcement. Wrap it in your own live region when a change must be announced.",
           "The value tweens move lists of numbers of the same length. A list that changes its length shows the new values at once, unless the values are keyed with useTweenedRows.",
           "MotionShimmer only draws and announces nothing. Keep the state in its words, and put it in a live region where a change should be announced."
@@ -4922,10 +6028,10 @@
         "@types/d3-array@3.2.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/badge.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -5019,6 +6125,11 @@
           "target": "~/src/siteplane/components/chart/chart-line-area.tsx"
         },
         {
+          "path": "packages/ui/src/components/chart/chart-ring.ts",
+          "type": "registry:ui",
+          "target": "~/src/siteplane/components/chart/chart-ring.ts"
+        },
+        {
           "path": "packages/ui/src/components/chart/index.ts",
           "type": "registry:ui",
           "target": "~/src/siteplane/components/chart/index.ts"
@@ -5031,8 +6142,8 @@
       "title": "Line Chart",
       "description": "Show how one or several measures change over time or across ordered categories. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json"
       ],
       "files": [
         {
@@ -5064,7 +6175,7 @@
           "The value axis always includes 0 and has no props of its own for its range.",
           "Dates must be Date objects; they are written in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. Text x values are categories, shown in the order given.",
           "A date axis is labeled on calendar ticks (days, weeks or months, as many as fit), evenly spaced, which need not sit on a data point; a text axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them. Neither lets two labels overlap.",
-          "When the data changes the lines morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in.",
+          "When the data changes the lines morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away switch at once: the new ones show the moment the old ones are hidden.",
           "Several series share one value axis; a second axis is not provided.",
           "A series that sets no color takes a shade of the brand color, from strong to light and spread over the number of series (palette brand, the default); palette categorical gives each the chart colors --chart-1 to --chart-8 in order instead. A color that a series sets always wins, and both palettes start over from the ninth series.",
           "height=\"fill\" makes the chart as tall as its box, which takes its height from its container (a flex item that grows, a grid cell, or a box with a height) and never from the chart; minHeight sets the least height, 240 px by default. Until the box is measured, on the server too, the chart is minHeight tall."
@@ -5093,8 +6204,8 @@
       "title": "Area Chart",
       "description": "Show how one or several measures change over time as filled areas, overlaid or stacked. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json"
       ],
       "files": [
         {
@@ -5127,7 +6238,7 @@
           "The value axis always includes 0 and has no props of its own for its range.",
           "Dates must be Date objects; they are written in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. Text x values are categories, shown in the order given.",
           "A date axis is labeled on calendar ticks (days, weeks or months, as many as fit), evenly spaced, which need not sit on a data point; a text axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them. Neither lets two labels overlap.",
-          "When the data changes the areas morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in.",
+          "When the data changes the areas morph and the axis moves with them, unless a series has a gap or only one point, or the number of series changes, which show at once. Axis labels that the new data brings or takes away switch at once: the new ones show the moment the old ones are hidden.",
           "Several series share one value axis; a second axis is not provided.",
           "A series that sets no color takes a shade of the brand color, from strong to light and spread over the number of series (palette brand, the default); palette categorical gives each the chart colors --chart-1 to --chart-8 in order instead. A color that a series sets always wins, and both palettes start over from the ninth series.",
           "height=\"fill\" makes the chart as tall as its box, which takes its height from its container (a flex item that grows, a grid cell, or a box with a height) and never from the chart; minHeight sets the least height, 240 px by default. Until the box is measured, on the server too, the chart is minHeight tall."
@@ -5160,9 +6271,9 @@
         "d3-scale@4.0.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json"
       ],
       "files": [
         {
@@ -5204,8 +6315,10 @@
           "The value axis always includes 0 and has no props of its own for its range.",
           "Dates are categories. They must be Date objects; the chart shows them in date order and writes them in UTC, so use dates at midnight UTC (new Date('2026-01-05')) for days. The category axis shows every k-th label, one k for the whole axis, so a narrow chart shows fewer of them.",
           "In a horizontal chart xAxis still labels the categories and yAxis the values, now at the left and along the bottom. The labels at the left take at most 40% of the width, and a longer label ends there in an ellipsis. The tooltip and the live region that reads it to screen readers name the category in full.",
-          "When the data changes the bars glide to their new values and the value axis moves with them; a bar that is new grows from the 0 line and one that is gone shrinks away. A bar is told by its category and series, so a category must keep the same text or date from one data set to the next. When categories come, go or change order, the bars of the categories that stay glide to their new place and thickness, a new bar grows from the 0 line where it stands and a bar that is gone shrinks where it stood. Axis labels that the new data brings or takes away fade through: the old ones are out before the new ones come in. A change in the number of series, or between side by side and stacked, shows at once.",
+          "When the data changes the bars glide to their new values and the value axis moves with them; a bar that is new grows from the 0 line and one that is gone shrinks away. A bar is told by its category and series, so a category must keep the same text or date from one data set to the next. When categories come, go or change order, the bars of the categories that stay glide to their new place and thickness, a new bar grows from the 0 line where it stands and a bar that is gone shrinks where it stood. Axis labels that the new data brings or takes away switch at once: the new ones show the moment the old ones are hidden. A change in the number of series, or between side by side and stacked, shows at once.",
           "Several series share one value axis; a second axis is not provided.",
+          "A series with type \"line\" is drawn as a line through the middle of its categories, over the bars and on the same value axis, and is never stacked; a horizontal chart draws it in straight segments and marks its active category with the tooltip alone. It keeps its color below 0: negativeColor colors bars only.",
+          "maxBarSize caps the thickness of a bar in px: a bar takes its band up to it, and the bars of a category are centered on their band.",
           "valueLabels writes each bar's value at its end in the format of the tooltip, or the sum of each sign of a stack. When the labels do not all fit, every k-th category keeps its labels, one k for the whole chart; side by side bars too thin for their labels show none. The labels are hidden while the bars glide.",
           "highlight sets one category apart, such as a period that is still running: its bars take a hatched fill of their own color, and its axis label and value labels take the text color. It is a look only: the tooltip and screen readers read the category as any other, so name it in the data, such as Today.",
           "height=\"fill\" makes the chart as tall as its box, which takes its height from its container (a flex item that grows, a grid cell, or a box with a height) and never from the chart; minHeight sets the least height, 240 px by default. Until the box is measured, on the server too, the chart is minHeight tall."
@@ -5237,9 +6350,9 @@
       "title": "Sparkline",
       "description": "Show the trend of one or several measures in a small chart without axes. Search terms: spark chart, spark line, spark area, mini chart, inline chart, metric.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -5298,10 +6411,10 @@
       "title": "Bar List",
       "description": "Rank labeled values with a bar for each, relative to the largest. Search terms: ranking, top list, leaderboard, horizontal bars, chart, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/chart.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -5362,14 +6475,14 @@
       "title": "Message Scroller",
       "description": "Scroll a chat thread that opens at the latest message, follows a streaming reply and leads back to the latest message. Search terms: conversation, scroll to bottom, auto scroll, stick to bottom, AI chat.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json"
       ],
       "files": [
         {
@@ -5448,7 +6561,7 @@
       "description": "Lay out one turn of a conversation with the message, its actions and, in a chat between people, an avatar and a header. Search terms: chat message, message actions, message group.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -5504,7 +6617,7 @@
       "description": "Show the text of a chat message on a surface that fits its sender and purpose. Search terms: chat bubble, message bubble, speech bubble.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json"
       ],
       "files": [
         {
@@ -5559,8 +6672,8 @@
       "description": "Show a line in a conversation that is not a message, such as a status, a note or a date. Search terms: status line, system message, date separator, divider, thinking, typing indicator.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {
@@ -5617,13 +6730,13 @@
       "title": "Trace",
       "description": "Show the steps an AI agent took, such as its reasoning, tool calls and sources, as one-line rows that can expand to their details. Search terms: agent steps, thinking, chain of thought, citations.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/collapsible.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/collapsible.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json"
       ],
       "files": [
         {
@@ -5689,10 +6802,10 @@
       "description": "Show a file or an image attached to a message or a draft, with its upload state. Search terms: thumbnail, file chip, file part, chat.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/scroll-area.json"
       ],
       "files": [
         {
@@ -5754,16 +6867,16 @@
       "title": "Prompt Input",
       "description": "A message field for chat and AI interfaces that sends on Enter and turns Send into Stop while a reply runs. Search terms: composer, chat input, message input.",
       "dependencies": [
-        "lucide-react@1.18.0"
+        "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/form.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/motion.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/form.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/tooltip.json"
       ],
       "files": [
         {
@@ -5834,11 +6947,11 @@
       "description": "Set rendered markdown, such as a chat answer or a document, in the kit's type, with a map for the components prop of a markdown renderer. Search terms: prose, typography, rich text, react-markdown, streamdown.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/1.8.1/base.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/button.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/code.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/native-table.json",
-        "https://ui.siteplane.io/registry/v/1.8.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.0.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/code.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/native-table.json",
+        "https://ui.siteplane.io/registry/v/2.0.0/separator.json"
       ],
       "files": [
         {

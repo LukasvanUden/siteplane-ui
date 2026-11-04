@@ -1,0 +1,68 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* An avatar beside a title and a subtitle: 8 px
+   * between the avatar and the text, the text vertically centred on the avatar,
+   * and the group fills the row it stands in (flex: 1) without pushing past
+   * it (min-width: 0). The figure's own margins are the browser's, so the
+   * group takes none. */
+  :where(.sp-avatar-label-group) {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 0%;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+    margin: 0;
+  }
+
+  /* The caption and its lines are blocks, as the figcaption and the paragraphs
+   * of a figure are, and so are the spans that a group rendered as a span holds
+   * inside a button, a link or a menu row. */
+  :where(.sp-avatar-label-group-caption) {
+    display: block;
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+
+  /* The text roles. The title is the label role (the name of a row, as in the
+   * kit's lists) in the primary text colour; the subtitle is body text in the
+   * tertiary colour and stays on one line. sm: 14 px on a 20 px line over
+   * 12 px on 18; md: 14 px on 20 over 14 px on 20; lg: 16 px on 24 over 16 px
+   * on 24. */
+  :where(.sp-avatar-label-group-title) {
+    display: block;
+    margin: 0;
+    color: var(--sp-rw-fg-primary);
+    font-size: var(--sp-rw-font-14);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-20);
+    overflow-wrap: anywhere;
+  }
+
+  :where(.sp-avatar-label-group-subtitle) {
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-rw-font-weight-default);
+    line-height: var(--sp-rw-line-18);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :where(
+    .sp-avatar-label-group[data-size="md"] .sp-avatar-label-group-subtitle
+  ) {
+    font-size: var(--sp-rw-font-14);
+    line-height: var(--sp-rw-line-20);
+  }
+
+  :where(.sp-avatar-label-group[data-size="lg"] .sp-avatar-label-group-title),
+  :where(
+    .sp-avatar-label-group[data-size="lg"] .sp-avatar-label-group-subtitle
+  ) {
+    font-size: var(--sp-rw-font-16);
+    line-height: var(--sp-rw-line-24);
+  }
+}

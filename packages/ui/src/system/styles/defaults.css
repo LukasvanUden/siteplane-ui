@@ -71,28 +71,35 @@
   --motion-duration-entrance: 850ms;
   /* The label of a growing Animated Button, which fades in last. */
   --motion-duration-entrance-label: 500ms;
+  /* A Button's border flash: when a press ends, a ring shows for a moment
+   * (the hold) and fades (the flash). */
+  --motion-duration-flash-hold: 20ms;
+  --motion-duration-flash: 400ms;
   /* The standard curve: a quick start that settles softly. What appears,
    * moves, draws or changes takes it unless its motion names another curve. */
   --motion-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
   /* State changes: hover, press, focus and selection on fields, choice
-   * controls, tabs and accordions, and a scrollbar that fades. */
+   * controls, tabs and accordions, the chevron of a trigger that turns, and a
+   * scrollbar that fades. */
   --motion-ease-state: cubic-bezier(0.4, 0, 0.2, 1);
   /* Even in and out: a shape that morphs, a fill that sweeps, a series that
    * dims, and content that fades out of a swap. */
   --motion-ease-soft-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  /* A Collapsible's panel and chevron. */
+  /* A Collapsible's panel. */
   --motion-ease-expand: cubic-bezier(0.7, 0.1, 0.5, 0.9);
   /* A Sheet or Drawer panel and its backdrop. */
   --motion-ease-panel: cubic-bezier(0.32, 0.72, 0, 1);
   /* The browser's default ease: a NavigationMenu, the Icon Morphs, calendar
-   * days, the fades of the toast stack and a menu row's Switch thumb. */
+   * days and the fades of the toast stack. */
   --motion-ease-navigation: cubic-bezier(0.25, 0.1, 0.25, 1);
   /* A carousel page that settles (rulebook M3). */
   --motion-ease-carousel: cubic-bezier(0.25, 1, 0.5, 1);
-  /* A Switch thumb on its way to the other end. */
+  /* A Switch thumb on its way to the other end, also in a menu row. */
   --motion-ease-switch: cubic-bezier(0, 0.55, 0.45, 1);
   /* The toast replay: a quick start that eases into place. */
   --motion-ease-toast-replay: cubic-bezier(0.5, 1, 0.89, 1);
+  /* A Button's border flash as it fades: an even fade that ends softly. */
+  --motion-ease-flash: cubic-bezier(0.2, 0, 0.6, 1);
   /* A loading loop that swells and settles: the Spinner's comet, dots and
    * bars. */
   --motion-ease-loop: ease-in-out;
@@ -280,7 +287,18 @@
   --motion-ring-pulse-count: infinite;
   --state-hover: rgb(0 0 0 / 4%);
   --state-pressed: rgb(0 0 0 / 8%);
-  --state-selected: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  /* The fill of a selected or current row that is not a Button, such as a
+   * Resource List row without `interactive`: the selected step of the rows
+   * ladder, the fill a Table row, a List Box option and an interactive
+   * Resource List row draw, so every selected row takes one fill (rulebook
+   * T5; cleanup, 4 November 2026: it was 8 % of the navy primary in Light and
+   * 12 % in Dark, where it almost vanished). */
+  --state-selected: color-mix(
+    in srgb,
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-selected) * 100%),
+    transparent
+  );
   --background: var(--sp-semantic-color-background);
   --foreground: var(--sp-semantic-color-foreground);
   --card: var(--sp-semantic-color-card);
@@ -295,7 +313,6 @@
   --info: var(--sp-semantic-color-info);
   --success: var(--sp-semantic-color-success);
   --warning: var(--sp-semantic-color-warning);
-  --button-text: oklch(0.466 0.027 271.6);
   /* Categorical chart palette in a fixed order: blue, orange, teal, purple, gold,
    * cyan, rose, green. Each series keeps its hue in Dark, which is lighter and
    * more saturated. Every mark is at least 3:1 on the card and page surfaces of
@@ -318,7 +335,9 @@
    * into the dark card, and text on the lightest shade stays legible. */
   --chart-brand: var(--sp-rw-bg-accent);
   --sidebar: var(--color-neutral-50);
-  /* 70% keeps 12px group labels at 4.5:1 on the light sidebar surfaces. */
+  /* 70% keeps the 12px count of a SidebarMenuBadge at 4.5:1 on the light
+   * sidebar surfaces. Sidebar group labels take the tertiary text of every
+   * group label (coherence audit C17, 3 November 2026). */
   --sidebar-foreground: color-mix(
     in srgb,
     var(--color-neutral-800) 70%,
@@ -332,14 +351,44 @@
   --sidebar-ring: var(--color-neutral-400);
 }
 
+/* The colour aliases above are resolved where they are declared, so a theme
+ * scope inside a page of the other theme, such as a dark Card in a light page
+ * or a Provider with data-theme="dark", has to declare them again to read its
+ * own semantic tokens. Without it, a rule that reads var(--foreground) painted
+ * the Light value on a dark surface, which hid a Close button on hover (Lukas,
+ * 30 October 2026). */
+.dark,
+[data-theme="dark"],
+.light,
+[data-theme="light"] {
+  --background: var(--sp-semantic-color-background);
+  --foreground: var(--sp-semantic-color-foreground);
+  --card: var(--sp-semantic-color-card);
+  --primary: var(--sp-semantic-color-primary);
+  --primary-foreground: var(--sp-semantic-color-primary-foreground);
+  --secondary: var(--sp-semantic-color-secondary);
+  --secondary-foreground: var(--sp-semantic-color-secondary-foreground);
+  --accent: var(--sp-semantic-color-accent);
+  --destructive: var(--sp-semantic-color-destructive);
+  --input: var(--sp-semantic-color-input);
+  --ring: var(--sp-semantic-color-ring);
+  --info: var(--sp-semantic-color-info);
+  --success: var(--sp-semantic-color-success);
+  --warning: var(--sp-semantic-color-warning);
+}
+
 /* Same theme scopes as the generated tokens and design-rework.css: the kit is
  * light until the application sets .dark or data-theme="dark". */
 .dark,
 [data-theme="dark"] {
   --state-hover: rgb(255 255 255 / 4%);
   --state-pressed: rgb(255 255 255 / 8%);
-  --state-selected: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  --button-text: oklch(0.879 0.016 270);
+  --state-selected: color-mix(
+    in srgb,
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-selected) * 100%),
+    transparent
+  );
   --chart-1: oklch(64% 0.19 265);
   --chart-2: oklch(66.5% 0.18 48);
   --chart-3: oklch(66.5% 0.116 181);
@@ -374,9 +423,10 @@
  * is 1 ms on every element in scope, so transitions and animations end at once
  * and still settle: their end events fire and getAnimations() empties. The
  * declarations are important, so a token an app overrides does not bring
- * motion back. The loop, ring pulse and Badge light durations keep their
- * values: the Spinner, Skeleton, indeterminate Progress, the Badge light and a
- * featured icon's rings stop under reduced motion instead. */
+ * motion back. The loop, ring pulse, Badge light and caret blink durations
+ * keep their values: the Spinner, Skeleton, indeterminate Progress, the Badge
+ * light and a featured icon's rings stop under reduced motion instead, and the
+ * caret of an OTP Field stays shown. */
 @media (prefers-reduced-motion: reduce) {
   :where(:root, :root *) {
     --motion-duration-micro: 1ms !important;
@@ -401,6 +451,8 @@
     --motion-duration-card-fill: 1ms !important;
     --motion-duration-entrance: 1ms !important;
     --motion-duration-entrance-label: 1ms !important;
+    --motion-duration-flash-hold: 1ms !important;
+    --motion-duration-flash: 1ms !important;
   }
 }
 
@@ -432,6 +484,8 @@
   --motion-duration-card-fill: 1ms !important;
   --motion-duration-entrance: 1ms !important;
   --motion-duration-entrance-label: 1ms !important;
+  --motion-duration-flash-hold: 1ms !important;
+  --motion-duration-flash: 1ms !important;
 }
 
 .animate-skeleton {

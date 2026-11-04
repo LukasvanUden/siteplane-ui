@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ChevronDownIcon,
-  ChevronsUpDownIcon,
-  ChevronUpIcon,
-} from "lucide-react";
+  CaretDownIcon,
+  CaretUpDownIcon,
+  CaretUpIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import {
   Cell as AriaCell,
   Checkbox as AriaCheckbox,
@@ -55,19 +55,25 @@ import { CheckboxGlyph } from "../../system/styles/checkbox-glyph";
 import { cn } from "../../system/utils/cn";
 import {
   tableAlignmentClassName,
-  tableContainerSizeClassName,
   tableFooterClassName,
+  useResolvedTableSize,
   type TableAlign,
+  type TableSize,
 } from "./table-shared";
 
 import "./table.css";
 
 export type { SortDescriptor } from "react-aria-components";
 
-export type { TableAlign };
+export type { TableAlign, TableSize };
 export type TableSelectionTrigger = "checkbox" | "row";
 
-/** The table's resolved size, which its selection checkboxes take as theirs. */
+/**
+ * The size of the Checkbox of the table's selection column. The md
+ * Checkbox, 20 px, serves the sm and md tables alike, so the default sm
+ * table takes md and the larger tables take their own size. The Checkbox has
+ * no step below sm, so a compact xs table takes sm.
+ */
 const TableSizeContext = createContext<SiteplaneControlSize | undefined>(
   undefined,
 );
@@ -95,15 +101,26 @@ export interface TableProps extends Omit<
 > {
   className?: string | undefined;
   /**
-   * Classes for the scrolling container. The heading row sticks to the top of
-   * this container, so it stays in view only when the container has a height
-   * limit, such as `max-h-80`.
+   * Classes for the scrolling container, such as a height limit (`max-h-80`)
+   * for a table with `stickyHeader`.
    */
   containerClassName?: string | undefined;
   hoverable?: boolean | undefined;
   selectionTrigger?: TableSelectionTrigger | undefined;
-  size?: SiteplaneControlSize | undefined;
+  size?: TableSize | undefined;
   sortDescriptor?: AriaSortDescriptor | undefined;
+  /**
+   * Keeps the heading row in view while the rows scroll (table.css). The row
+   * sticks to the top of the table's own scrolling container, which takes at
+   * most the height of a parent that has one, such as a card or a panel of a
+   * fixed height; `containerClassName` sets a height limit of its own.
+   */
+  stickyHeader?: boolean | undefined;
+  /**
+   * Tints every other body row, starting with the first (table.css). The
+   * hover and selection fills replace the tint.
+   */
+  striped?: boolean | undefined;
 }
 
 export interface TableCaptionProps {
@@ -166,9 +183,13 @@ export function Table({
   selectionTrigger = "row",
   size,
   sortDescriptor,
+  stickyHeader = false,
+  striped = false,
   ...props
 }: TableProps): ReactElement {
-  const resolvedSize = useResolvedControlSize(size);
+  const resolvedSize = useResolvedTableSize(size);
+  const choiceSize: SiteplaneControlSize =
+    resolvedSize === "xs" ? "sm" : resolvedSize === "sm" ? "md" : resolvedSize;
   const checkboxTrigger = selectionTrigger === "checkbox";
   const actionsRan = useRef(0);
   const rowActions = useMemo<TableRowActions>(
@@ -211,12 +232,12 @@ export function Table({
     <div
       className={cn(
         "sp-table-container",
-        "relative w-full overflow-x-auto data-[size=lg]:[--table-row-height:--spacing(10)] data-[size=xl]:[--table-row-height:--spacing(12)]",
-        tableContainerSizeClassName,
+        "relative w-full overflow-x-auto",
         containerClassName,
       )}
       data-size={resolvedSize}
       data-slot="table-container"
+      data-sticky-header={stickyHeader || undefined}
       onClickCapture={(event) => markSelectionOrigin(event.target)}
       onKeyDownCapture={(event: KeyboardEvent<HTMLDivElement>) =>
         markSelectionOrigin(event.target)
@@ -225,7 +246,7 @@ export function Table({
         markSelectionOrigin(event.target)
       }
     >
-      <TableSizeContext.Provider value={resolvedSize}>
+      <TableSizeContext.Provider value={choiceSize}>
         <TableRowActionsContext.Provider value={rowActions}>
           <AriaTable
             {...props}
@@ -255,6 +276,7 @@ export function Table({
             data-hoverable={hoverable}
             data-selection-trigger={selectionTrigger}
             data-slot="table"
+            data-striped={striped || undefined}
             onSelectionChange={handleSelectionChange}
             selectedKeys={selectedKeys ?? internalSelectedKeys}
             {...(sortDescriptor === undefined ? {} : { sortDescriptor })}
@@ -300,13 +322,22 @@ export function TableHeader<T>({
   );
 }
 
+/**
+ * A heading of the table. A control inside it, such as a help icon with a
+ * tooltip, keeps its presses and its Enter and Space: they neither sort the
+ * column nor reach React Aria's heading, as in a cell (TableCell).
+ */
 export function TableHead({
   align = "start",
   allowsSorting,
   children,
   className,
+  render,
   ...props
 }: TableHeadProps): ReactElement {
+  // A virtualized table renders its headings as divs.
+  const { isVirtualized } = useContext(CollectionRendererContext);
+
   return (
     <AriaColumn
       {...props}
@@ -321,6 +352,32 @@ export function TableHead({
       )}
       data-align={align}
       data-slot="table-head"
+      // The heading element is rendered here, so that the handlers React Aria
+      // gives it (its press, which sorts) run only for what starts on the
+      // heading: a press or a key that starts in a control inside it stays
+      // with the control.
+      render={(elementProps, renderProps) => {
+        const headProps = elementProps as ComponentProps<"th">;
+        const guarded: ComponentProps<"th"> = {
+          ...headProps,
+          onClick: leaveControlsOut(headProps.onClick),
+          onKeyDown: leaveControlsOut(headProps.onKeyDown, true),
+          onKeyUp: leaveControlsOut(headProps.onKeyUp, true),
+          onMouseDown: leaveControlsOut(headProps.onMouseDown),
+          onPointerDown: leaveControlsOut(headProps.onPointerDown),
+          onPointerUp: leaveControlsOut(headProps.onPointerUp),
+          onTouchEnd: leaveControlsOut(headProps.onTouchEnd),
+          onTouchStart: leaveControlsOut(headProps.onTouchStart),
+        };
+
+        if (render) return render(guarded, renderProps);
+
+        return isVirtualized ? (
+          <div {...(guarded as ComponentProps<"div">)} />
+        ) : (
+          <th {...guarded} />
+        );
+      }}
     >
       {(renderProps) => (
         <span
@@ -335,11 +392,11 @@ export function TableHead({
           {typeof children === "function" ? children(renderProps) : children}
           {allowsSorting ? (
             renderProps.sortDirection === "ascending" ? (
-              <ChevronUpIcon aria-hidden="true" data-default-size="" />
+              <CaretUpIcon aria-hidden="true" data-default-size="" />
             ) : renderProps.sortDirection === "descending" ? (
-              <ChevronDownIcon aria-hidden="true" data-default-size="" />
+              <CaretDownIcon aria-hidden="true" data-default-size="" />
             ) : (
-              <ChevronsUpDownIcon aria-hidden="true" data-default-size="" />
+              <CaretUpDownIcon aria-hidden="true" data-default-size="" />
             )
           ) : null}
         </span>
@@ -507,6 +564,29 @@ function chain<E>(
   };
 }
 
+/**
+ * The handler of a heading that does not run for what starts in a control
+ * inside it: such a press, or such an Enter or Space (`keys`), is the
+ * control's, so it neither reaches the handler nor leaves the heading. Other
+ * keys, such as the arrows that move between headings, still do.
+ */
+function leaveControlsOut<E extends SyntheticEvent>(
+  given: ((event: E) => void) | undefined,
+  keys = false,
+): ((event: E) => void) | undefined {
+  if (given === undefined) return undefined;
+  return (event) => {
+    const key = keys ? (event as unknown as KeyboardEvent).key : undefined;
+    const ownedByControl =
+      startsOnCellControl(event) && (!keys || key === "Enter" || key === " ");
+    if (ownedByControl) {
+      event.stopPropagation();
+      return;
+    }
+    given(event);
+  };
+}
+
 export function TableCell({
   align = "start",
   className,
@@ -563,8 +643,7 @@ export function TableSelectionCheckbox({
   const size = useResolvedControlSize(useContext(TableSizeContext));
   // React Aria counts every one of no rows as selected, so a table whose rows
   // are gone while keys stay selected showed its select-all box checked. With
-  // no rows there is nothing to select: the box is unchecked, as TanStack
-  // Table's getIsAllRowsSelected() reports for an empty table, and React Aria
+  // no rows there is nothing to select: the box is unchecked, and React Aria
   // keeps it disabled. Only the header box can render then.
   const tableState = useContext(TableStateContext);
   const noRows = tableState !== null && tableState.collection.size === 0;

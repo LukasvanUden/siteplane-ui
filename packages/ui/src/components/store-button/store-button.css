@@ -1,0 +1,85 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A StoreButton is the kit Button as a link at the control size of its
+   * provider, never below md (Lukas, 4 November 2026; it was fixed at md): md
+   * is Button md (40 px), lg Button lg (44 px) and xl Button xl (48 px), with
+   * their padding, radius, focus, hover, press and cursor. Its content is the
+   * store's mark, 8 px before two lines of text: the store's caption, 10 px,
+   * over its name, 16 px, in the kit's typeface. md draws the mark at 24 px;
+   * lg and xl draw mark, gap and text at --sp-store-button-scale, 10 and 20 %
+   * larger, the steps from 40 to 44 and 48 px. The extra [data-chassis] ranks
+   * these rules above the Button's size rules, so the two sheets can load in
+   * any order. */
+  :root .sp-store-button[data-size="md"] {
+    --sp-store-button-scale: 1;
+  }
+
+  :root .sp-store-button[data-size="lg"] {
+    --sp-store-button-scale: 1.1;
+  }
+
+  :root .sp-store-button[data-size="xl"] {
+    --sp-store-button-scale: 1.2;
+  }
+
+  :root .sp-store-button[data-chassis][data-size] {
+    --sp-rw-button-icon: calc(
+      var(--sp-rw-space-6) * var(--sp-store-button-scale, 1)
+    );
+    --sp-rw-button-content-gap: calc(
+      var(--sp-rw-space-2) * var(--sp-store-button-scale, 1)
+    );
+  }
+
+  /* The two lines start at one edge, and the pair centres in the Button's
+   * height. Their unitless lines scale with the text at lg and xl; the name's
+   * line is its size, so in Inter the baselines stand 16 px apart at md, at
+   * 15.5 and 31.5 px from the top, as on the stores' badges. */
+  :root .sp-store-button-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  :root .sp-store-button-caption {
+    font-size: calc(var(--sp-rw-font-10) * var(--sp-store-button-scale, 1));
+    line-height: 1.2;
+  }
+
+  :root .sp-store-button-name {
+    font-size: calc(var(--sp-rw-font-16) * var(--sp-store-button-scale, 1));
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: 1;
+  }
+
+  /* Google Play and AppGallery set their caption in capitals. */
+  :root .sp-store-button[data-store="google-play"] .sp-store-button-caption,
+  :root .sp-store-button[data-store="app-gallery"] .sp-store-button-caption {
+    text-transform: uppercase;
+  }
+
+  /* A mark keeps its full colour, without the Button's 80 % icon opacity. */
+  :root .sp-store-button-logo {
+    opacity: 1;
+  }
+
+  /* The solid badge is the inverse Button, the kit's black Button, held black
+   * in Light and Dark: white text and mark on black, and the veil of hover and
+   * press in its white text, at the inverse Button's own steps. Its ring is the
+   * stores' light grey (#a6a6a6) in Light and white in Dark. */
+  :root .sp-store-button[data-chassis][data-appearance="solid"] {
+    --sp-rw-button-source: oklch(0% 0 0);
+    --sp-rw-button-text: var(--sp-rw-fg-emphasis);
+    --sp-rw-button-interaction: var(--sp-rw-button-text);
+    --sp-rw-button-rim: inset 0 0 0 var(--sp-rw-border-default)
+      light-dark(oklch(72.5% 0 0), oklch(100% 0 0));
+  }
+
+  /* The outline badge is the outline Button with its ring in its text colour,
+   * the primary text, as its mark and its words. */
+  :root .sp-store-button[data-chassis][data-appearance="outline"] {
+    --sp-rw-button-rim: inset 0 0 0 var(--sp-rw-border-default)
+      var(--sp-rw-button-text);
+  }
+}

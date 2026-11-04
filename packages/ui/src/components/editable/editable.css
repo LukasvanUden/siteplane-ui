@@ -6,32 +6,22 @@
    * text; the value takes what the row leaves. The value stands where the
    * field's text stands (Lukas, 30 October 2026): the row is as tall as a
    * one-line field of its size, so the frame that comes around the value
-   * stands where every field stands, flush with its label's start and 8 px
-   * under it. The defaults have no specificity, so the rules below and a
-   * className win. The Buttons and the field keep their own states and focus.
+   * stands where every field stands, flush with its label's start and the
+   * Field's 6 px under it. The defaults have no specificity, so the rules
+   * below and a className win. The Buttons and the field keep their own states
+   * and focus.
    * While the sides switch, the parts at rest stay pinned against the row
    * (holdPanePlace) while the field lays it out, and the row follows its
    * height as a swap container does (motion.css). */
+  /* The row is as high as an Input of its size: the field scale of the size
+   * (design-rework.css). */
   :where(.sp-editable) {
     display: flex;
     width: 100%;
     min-width: 0;
-    min-height: var(--sp-rw-control-md);
+    min-height: var(--sp-rw-field-height);
     align-items: center;
     column-gap: var(--sp-rw-space-2);
-  }
-
-  /* The heights of the Input's sizes (design-rework.css, Input). */
-  .sp-editable[data-size="sm"] {
-    min-height: var(--sp-rw-control-sm);
-  }
-
-  .sp-editable[data-size="lg"] {
-    min-height: var(--sp-rw-control-lg);
-  }
-
-  .sp-editable[data-size="xl"] {
-    min-height: var(--sp-rw-control-xl);
   }
 
   /* While editing the field takes the row, and the optional Cancel and Save
@@ -39,6 +29,17 @@
    * under the field moves nothing beside it. */
   .sp-editable[data-editing] {
     align-items: flex-start;
+  }
+
+  /* A disabled Editable fades once, as every disabled field does: its value
+   * and its triggers together, by the field's disabled opacity (0.5, T1),
+   * with the not-allowed cursor over its text (A15, 3 November 2026; only
+   * its pencil faded, and the value kept its full colour). The Buttons in it
+   * keep their full opacity, as the parts of every faded field do ("Disabled
+   * parts" in design-rework.css), so the pencil fades once. */
+  :root .sp-editable[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--sp-semantic-state-disabled-opacity);
   }
 
   :where(.sp-editable-area) {
@@ -71,48 +72,34 @@
     flex-shrink: 0;
   }
 
-  /* The value at rest: body text in the field's text colour, so it reads the
-   * same as the field that edits it and the two texts take turns pixel for
-   * pixel, on one line that ends with an ellipsis, as a dense row's value
-   * does (K5). It starts where the Input's text starts, at every size
-   * (design-rework.css, `--sp-input-padding-inline`). */
+  /* The value at rest: body text in the field's text colour and the field's
+   * text of the size, 14 px on a 20 px line at sm and 16 px on 24 from md, so
+   * it reads the same as the field that edits it and the two texts take turns
+   * pixel for pixel, on one line that ends with an ellipsis, as a dense row's
+   * value does (K5). It starts where the Input's text starts, at the field's
+   * inline padding: 12 px up to md, 14 px at lg and 16 px at xl (the field
+   * scale, design-rework.css). */
   :where(.sp-editable-preview) {
     min-width: 0;
     overflow: hidden;
-    padding-inline-start: var(--sp-rw-space-3);
+    padding-inline-start: var(--sp-rw-field-padding-inline);
     color: var(--sp-rw-fg-primary);
-    font-size: var(--sp-rw-font-14);
+    font-size: var(--sp-rw-field-text);
     font-weight: var(--sp-rw-font-weight-default);
-    line-height: var(--sp-rw-line-21);
+    line-height: var(--sp-rw-field-line);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   /* The text of a multi-line value wraps and keeps its line breaks, inside
    * the insets of the Textarea's size (design-rework.css, Textarea), so it
-   * stands where the textarea's text stands. */
+   * stands where the textarea's text stands: 12 px above and below at every
+   * size, and the area padding of the size at the sides, 12 px at sm, 14 px at
+   * md and lg and 16 px at xl. */
   .sp-editable-area:has(.sp-base-textarea) > .sp-editable-preview {
-    padding: var(--sp-rw-space-2) var(--sp-rw-space-3);
+    padding: var(--sp-rw-space-3) var(--sp-rw-field-area-padding-inline);
     overflow-wrap: anywhere;
     white-space: pre-wrap;
-  }
-
-  .sp-editable[data-size="sm"]
-    .sp-editable-area:has(.sp-base-textarea)
-    > .sp-editable-preview {
-    padding: var(--sp-rw-space-1) var(--sp-rw-space-2-5);
-  }
-
-  .sp-editable[data-size="lg"]
-    .sp-editable-area:has(.sp-base-textarea)
-    > .sp-editable-preview {
-    padding-block: var(--sp-rw-space-2-5);
-  }
-
-  .sp-editable[data-size="xl"]
-    .sp-editable-area:has(.sp-base-textarea)
-    > .sp-editable-preview {
-    padding: var(--sp-rw-space-3) var(--sp-rw-space-4);
   }
 
   /* An empty value shows the preview placeholder in the placeholder colour

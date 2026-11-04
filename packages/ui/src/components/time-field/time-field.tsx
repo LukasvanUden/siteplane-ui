@@ -6,7 +6,7 @@ import {
   today,
   toCalendarDateTime,
 } from "@internationalized/date";
-import { ClockIcon } from "lucide-react";
+import { ClockIcon } from "@phosphor-icons/react/dist/ssr";
 import { animate } from "motion/react";
 import * as React from "react";
 import {
@@ -20,13 +20,13 @@ import {
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { useFormReset } from "../../system/form/use-form-reset";
 import { normalizeFormattedText } from "../../system/locale/formatted-text";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
 import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  formControlTextClassNames,
   type FormControlTextSize,
   type FormControlVariant,
 } from "../../system/styles/surface";
@@ -92,21 +92,29 @@ export interface TimeFieldProps {
   openPickerLabel?: string;
   readOnly?: boolean;
   required?: boolean;
+  /**
+   * While the field is invalid, an alert icon stands at the end of the field,
+   * before the selector button, where the help icon of `tooltip` stands,
+   * which gives way to it, as in an Input. It is decorative: the Field ties
+   * the error message to the field. `false` turns it off. Default: `true`.
+   */
+  showInvalidIcon?: boolean;
   size?: SiteplaneControlSize;
   textSize?: FormControlTextSize;
+  /**
+   * Help text that a help icon at the end of the field shows in a tooltip,
+   * as Input's `tooltip` does. With the selector button the help icon sits
+   * before it.
+   */
+  tooltip?: React.ReactNode;
   value?: TimeFieldValue | null;
   variant?: FormControlVariant;
+  /**
+   * `fit` is as wide as the segments and the selector button. `full` fills
+   * the container, like Input. Default: `fit`.
+   */
+  width?: "fit" | "full";
 }
-
-const timeFieldActionSizes = {
-  md: "icon-xs",
-  lg: "icon-xs",
-  sm: "icon-2xs",
-  xl: "icon-sm",
-} as const satisfies Record<
-  SiteplaneControlSize,
-  "icon-2xs" | "icon-xs" | "icon-sm"
->;
 
 const hourOptions = Array.from({ length: 24 }, (_, hour) =>
   String(hour).padStart(2, "0"),
@@ -144,11 +152,48 @@ export function useHourOptionLabels(
 
 /**
  * A literal that separates two segments, the colon or the space before AM,
- * cancels their padding (time-field.css), so it sits as close to them as in
+ * cancels their padding (input-group.css), so it sits as close to them as in
  * text.
  */
 function isSeparatorLiteral(text: string): boolean {
   return text.includes(":") || /^\s+$/.test(text);
+}
+
+type TimeSegmentValue = React.ComponentProps<
+  typeof DateSegmentPrimitive
+>["segment"];
+
+const timeSegmentTypes: ReadonlySet<string> = new Set([
+  "dayPeriod",
+  "hour",
+  "minute",
+  "second",
+  "timeZoneName",
+]);
+
+/**
+ * What a segment of a date and time is to its time, for the rules of a time's
+ * segments (input-group.css): `segment` for the hour, the
+ * minute and the day period, and `separator` for a literal before one of them,
+ * the colon, the space before AM or PM or the comma that joins the date to
+ * the time. A separator cancels the padding beside it and keeps its white
+ * space, so it reads as in text. React Aria isolates the time with bidi marks,
+ * literals of their own that take no room; they and the date have no part.
+ */
+export function timeSegmentPart(
+  segment: TimeSegmentValue,
+  segments: readonly TimeSegmentValue[],
+): "segment" | "separator" | undefined {
+  if (timeSegmentTypes.has(segment.type)) return "segment";
+  if (segment.type !== "literal" || /^[\u2066-\u2069]*$/.test(segment.text))
+    return undefined;
+  if (segment.text.includes(":")) return "separator";
+  const index = segments.indexOf(segment);
+  if (index < 1) return undefined;
+  const next = segments.slice(index + 1).find(({ type }) => type !== "literal");
+  return next !== undefined && timeSegmentTypes.has(next.type)
+    ? "separator"
+    : undefined;
 }
 
 function normalizeTimeFieldValue(value: TimeFieldValue): TimeFieldValue {
@@ -211,30 +256,35 @@ function TimeFieldRoot({
   form,
   hourCycle = 24,
   hourLabel,
-  hoursLabel = "Hours",
+  hoursLabel: hoursLabelProp,
   iconMode = "action-end",
-  incompleteLabel = "Enter a complete time.",
+  incompleteLabel: incompleteLabelProp,
   minuteLabel,
-  minutesLabel = "Minutes",
+  minutesLabel: minutesLabelProp,
   minuteStep = 5,
   name,
   onValueChange,
-  openPickerLabel = "Open time selector",
+  openPickerLabel: openPickerLabelProp,
   readOnly,
   required,
+  showInvalidIcon = true,
   size,
   textSize,
+  tooltip,
   value,
   variant = "default",
+  width = "fit",
 }: TimeFieldProps): React.ReactElement {
+  const messages = useSiteplaneMessages("timeField");
+  const hoursLabel = hoursLabelProp ?? messages.hours;
+  const incompleteLabel = incompleteLabelProp ?? messages.incomplete;
+  const minutesLabel = minutesLabelProp ?? messages.minutes;
+  const openPickerLabel = openPickerLabelProp ?? messages.openSelector;
   const controlled = value !== undefined;
   const normalizedDefaultValue = defaultValue
     ? normalizeTimeFieldValue(defaultValue)
     : undefined;
   const resolvedSize = useResolvedControlSize(size);
-  const resolvedTextSize =
-    textSize ??
-    (resolvedSize === "lg" || resolvedSize === "xl" ? "base" : undefined);
   const resolvedMinuteStep = Math.min(
     Math.max(Math.trunc(minuteStep) || 5, 1),
     60,
@@ -311,18 +361,22 @@ function TimeFieldRoot({
           className={className}
           controlled={controlled}
           controlledInvalid={controlledInvalid}
-          dayPeriodLabel={namedByLabel ? `${ariaLabel}, AM/PM` : undefined}
+          dayPeriodLabel={
+            namedByLabel ? messages.dayPeriodSegment(ariaLabel) : undefined
+          }
           defaultValue={normalizedDefaultValue}
           field={field}
           form={form}
           hourCycle={hourCycle}
           hourLabel={
-            hourLabel ?? (namedByLabel ? `${ariaLabel}, hour` : undefined)
+            hourLabel ??
+            (namedByLabel ? messages.hourSegment(ariaLabel) : undefined)
           }
           hoursLabel={hoursLabel}
           iconMode={iconMode}
           minuteLabel={
-            minuteLabel ?? (namedByLabel ? `${ariaLabel}, minute` : undefined)
+            minuteLabel ??
+            (namedByLabel ? messages.minuteSegment(ariaLabel) : undefined)
           }
           minutesLabel={minutesLabel}
           minuteOptions={minuteOptions}
@@ -330,12 +384,14 @@ function TimeFieldRoot({
           readOnly={readOnly}
           required={required}
           resolvedSize={resolvedSize}
-          resolvedTextSize={resolvedTextSize}
           segmented={segmented}
+          showInvalidIcon={showInvalidIcon}
           stateValue={(state as TimeFieldState).timeValue as Time | null}
           textSize={textSize}
           timeFieldState={state as TimeFieldState}
+          tooltip={tooltip}
           variant={variant}
+          width={width}
         />
       )}
     </TimeFieldPrimitive>
@@ -362,12 +418,14 @@ function TimeFieldContent({
   readOnly,
   required,
   resolvedSize,
-  resolvedTextSize,
   segmented,
+  showInvalidIcon,
   stateValue,
   textSize,
   timeFieldState,
+  tooltip,
   variant,
+  width,
 }: {
   align: "center" | "start";
   className: string | undefined;
@@ -388,12 +446,14 @@ function TimeFieldContent({
   readOnly: boolean | undefined;
   required: boolean | undefined;
   resolvedSize: SiteplaneControlSize;
-  resolvedTextSize: FormControlTextSize | undefined;
   segmented: SegmentedValue<Time>;
+  showInvalidIcon: boolean;
   stateValue: Time | null;
   textSize: FormControlTextSize | undefined;
   timeFieldState: TimeFieldState;
+  tooltip: React.ReactNode;
   variant: FormControlVariant;
+  width: "fit" | "full";
 }): React.ReactElement {
   const [open, setOpen] = React.useState(false);
   const hourOptionLabels = useHourOptionLabels(hourCycle);
@@ -433,34 +493,36 @@ function TimeFieldContent({
     controlled: controlledInvalid !== undefined,
     ownerInvalid: timeFieldState.isInvalid,
   });
-  const optionTextClassName = resolvedTextSize
-    ? formControlTextClassNames[resolvedTextSize]
-    : "text-base sm:text-sm";
   // The segments read in the locale's direction, which React Aria's arrow
   // keys follow, whatever the page's: an en-US time keeps its hours before
   // its minutes in a right-to-left page. The dir attribute also isolates the
   // row from the text around it; the field keeps the page's direction and
-  // pads its own insets (time-field.css), as the Date Field does.
+  // pads its own insets (input-group.css), as every date and time field does.
   const { direction } = useLocale();
   const control = (
     <InputGroup
       aria-label={undefined}
-      // As wide as the segments by default, like the Date Time Picker; a width
-      // utility in className, such as w-full, replaces it. The default width
-      // never shrinks below the segments in a flex row (shrink-0 while w-max).
+      // As wide as the segments by default, like the Date Time Picker, and
+      // never narrower than them in a flex row; width="full" fills the
+      // container, like Input. A width utility in className replaces either.
       className={cn(
-        "sp-time-field-control w-max [&.w-max]:shrink-0",
+        "sp-time-field-control",
+        width === "fit" && "w-max shrink-0",
         align === "center" && "sp-time-field-control-center",
         className,
       )}
       data-icon-mode={iconMode}
       data-invalid={invalid || undefined}
       data-readonly={(readOnly && !field.disabled) || undefined}
-      data-size={resolvedSize}
       data-time-field-align={align}
-      // The segments take the field text scale, as Input does: 14 px, or
-      // 16 px at xl; textSize sets one size for every control size.
-      textSize={textSize ?? (resolvedSize === "xl" ? "base" : undefined)}
+      // The group is the field of the size: its height, its padding, its
+      // icons and its text, 14 px at sm and 16 px from md (the field scale);
+      // textSize sets one text at every size. It shows the help icon of
+      // `tooltip` and the alert icon of an invalid field after the segments.
+      showInvalidIcon={showInvalidIcon}
+      size={resolvedSize}
+      textSize={textSize}
+      tooltip={tooltip}
       variant={variant}
     >
       {iconMode === "decorative-start" ? (
@@ -470,6 +532,7 @@ function TimeFieldContent({
           className="sp-time-field-icon-addon pointer-events-none"
         >
           <ClockIcon
+            aria-hidden="true"
             className="sp-time-field-decorative-icon"
             data-slot="time-field-decorative-icon"
           />
@@ -505,7 +568,7 @@ function TimeFieldContent({
                 aria-label={openPickerLabel}
                 disabled={field.disabled || readOnly}
                 profile="field-action"
-                size={timeFieldActionSizes[resolvedSize]}
+                shape="square"
               />
             }
           >
@@ -523,7 +586,10 @@ function TimeFieldContent({
           {control}
           <PopoverPopup
             align="end"
-            className={cn("sp-time-field-popover", optionTextClassName)}
+            // The selector names the field's size on the field scale, so its
+            // lists grow with their rows (time-field.css).
+            className="sp-time-field-popover sp-field-scale"
+            data-size={resolvedSize}
             initialFocus={hoursListBoxRef}
             sideOffset={6}
             viewportPadding="compact"
@@ -544,6 +610,7 @@ function TimeFieldContent({
                 open={open}
                 optionLabels={hourOptionLabels}
                 options={hourOptions}
+                size={resolvedSize}
                 slot="time-field-hours"
                 value={
                   stateValue
@@ -562,6 +629,7 @@ function TimeFieldContent({
                 }}
                 open={open}
                 options={minuteOptions}
+                size={resolvedSize}
                 slot="time-field-minutes"
                 value={
                   stateValue
@@ -631,15 +699,23 @@ function TimeFieldSegment({
 }
 
 export function TimeFieldOptionColumn({
+  fill = false,
   label,
   listBoxRef: providedListBoxRef,
   onValueChange,
   open,
   optionLabels,
   options,
+  size,
   slot,
   value,
 }: {
+  /**
+   * The list fills the column's height under its label, the height the
+   * column is given, instead of the selector's fixed height: the times beside
+   * a Date Time Picker's calendar.
+   */
+  fill?: boolean;
   label: string;
   listBoxRef?: React.RefObject<HTMLDivElement | null>;
   onValueChange: (value: string) => void;
@@ -647,7 +723,13 @@ export function TimeFieldOptionColumn({
   /** The names the options show, where they differ from their values. */
   optionLabels?: Record<string, string> | undefined;
   options: string[];
-  slot: "time-field-hours" | "time-field-minutes";
+  /**
+   * The size of the field that opens the list. Its rows are as tall as that
+   * field, with the text of their height, as a Select's options are as tall
+   * as their trigger.
+   */
+  size?: SiteplaneControlSize | undefined;
+  slot: "date-time-picker-times" | "time-field-hours" | "time-field-minutes";
   value: string | undefined;
 }): React.ReactElement {
   const localListBoxRef = React.useRef<HTMLDivElement | null>(null);
@@ -751,6 +833,7 @@ export function TimeFieldOptionColumn({
   return (
     <div
       className={cn(slotClass(slot), "sp-time-field-column")}
+      data-fill={fill || undefined}
       data-slot={slot}
     >
       <span className="sp-time-field-column-label">{label}</span>
@@ -759,19 +842,24 @@ export function TimeFieldOptionColumn({
         scrollFade
         scrollbar="hidden"
       >
+        {/* The rows are ListBox rows of the field's size: as tall as the
+            field, 36 to 48 px, with 14/20 text at sm and 16/24 from md (the
+            option rule of design-rework.css), the chosen one in the
+            persistent selected fill, and the focus outline inside the row
+            for the keyboard alone. They kept the 36 px of sm at every size
+            until 4 November 2026. The digits centre in their column. */}
         <ListBox
           aria-label={label}
-          className="sp-time-field-listbox"
           onPointerDownCapture={captureScrollStart}
           onValueChange={onValueChange}
           ref={listBoxRef}
           selectionAppearance="row"
-          size="md"
+          size={size}
           value={value}
         >
           {options.map((option) => (
             <ListBoxItem
-              className="sp-time-field-option justify-center font-normal"
+              className="sp-time-field-option justify-center"
               data-slot="time-field-option"
               key={option}
               multiline={false}

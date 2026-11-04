@@ -8,8 +8,12 @@ import { Badge, type BadgeProfile, type BadgeProps } from "./badge";
  *
  * `group-overflow-count` is the circular count at the end of an avatar stack.
  * AvatarGroupCount renders it; applications use AvatarGroupCount.
+ *
+ * `tag-count` is the count after the label of a Tag (`Tag count`), a badge of
+ * its own that is as high as its line. Tag renders it and sets its geometry.
  */
-export type KitBadgeProfile = BadgeProfile | "group-overflow-count";
+export type KitBadgeProfile =
+  BadgeProfile | "group-overflow-count" | "tag-count";
 
 export type KitBadgeProps = Omit<BadgeProps, "profile"> & {
   profile?: KitBadgeProfile;

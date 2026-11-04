@@ -1,94 +1,26 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  .sp-button-motion {
-    --sp-semantic-color-background: var(--color-white);
-    --sp-semantic-color-foreground: var(--color-neutral-800);
-    --sp-semantic-color-popover: var(--color-white);
-    --sp-semantic-color-primary: oklch(0.335 0.061 267.9);
-    --sp-semantic-color-primary-foreground: var(--color-neutral-50);
-    --sp-semantic-color-secondary: rgb(0 0 0 / 4%);
-    --sp-semantic-color-secondary-foreground: var(--color-neutral-800);
-    --sp-semantic-color-accent: rgb(0 0 0 / 4%);
-    --sp-semantic-color-destructive: var(--color-red-500);
-    --sp-semantic-color-destructive-foreground: var(--color-red-700);
-    --sp-semantic-color-input: rgb(0 0 0 / 10%);
-    --sp-semantic-color-ring: var(--color-neutral-400);
-    --sp-semantic-color-success: var(--color-emerald-500);
-    --sp-semantic-color-success-foreground: var(--color-emerald-700);
-    --sp-semantic-color-warning: var(--color-amber-500);
-    --sp-semantic-color-warning-foreground: var(--color-amber-700);
-    --button-text-base: oklch(0.466 0.027 271.6);
-    --button-text-hover-base: oklch(0.317 0.021 281.4);
-    --button-text: var(--button-text-base);
-    --button-text-hover: var(--button-text-hover-base);
-  }
+  /* The Button reads the theme's colours where it is, as every part does: it
+   * declares no copy of a theme token, so a dot, a glyph or text inside it is
+   * the colour it is outside it (3 November 2026). Its text is the chassis'
+   * --sp-rw-button-text, which each variant sets from a role of the theme
+   * (design-rework.css, "Button and IconButton"). */
 
-  .dark .sp-button-motion,
-  [data-theme="dark"] .sp-button-motion {
-    --sp-semantic-color-background: color-mix(
-      in srgb,
-      var(--color-neutral-950) 95%,
-      var(--color-white)
-    );
-    --sp-semantic-color-foreground: var(--color-neutral-100);
-    --sp-semantic-color-popover: color-mix(
-      in srgb,
-      var(--sp-semantic-color-background) 98%,
-      var(--color-white)
-    );
-    --sp-semantic-color-primary-foreground: var(--color-neutral-50);
-    --sp-semantic-color-secondary: rgb(255 255 255 / 4%);
-    --sp-semantic-color-secondary-foreground: var(--color-neutral-100);
-    --sp-semantic-color-accent: rgb(255 255 255 / 4%);
-    --sp-semantic-color-destructive: color-mix(
-      in srgb,
-      var(--color-red-500) 90%,
-      var(--color-white)
-    );
-    --sp-semantic-color-destructive-foreground: var(--color-red-400);
-    --sp-semantic-color-input: rgb(255 255 255 / 8%);
-    --sp-semantic-color-ring: var(--color-neutral-500);
-    --sp-semantic-color-success-foreground: var(--color-emerald-400);
-    --sp-semantic-color-warning-foreground: var(--color-amber-400);
-    --button-text-base: oklch(0.879 0.016 270);
-    --button-text-hover-base: oklch(0.977 0.005 275);
-  }
-
+  /* The spinner of a loading Button stands in the middle of it, as large as a
+   * glyph of the Button (button.tsx); with showTextWhileLoading it stands in the
+   * content before the label instead (data-loading-text). */
   .sp-button-motion .sp-button-loading-indicator {
     position: absolute;
-    width: 1rem;
-    height: 1rem;
   }
 
-  .sp-button-motion[data-loading] > .sp-button-content {
+  .sp-button-motion[data-loading]:not([data-loading-text])
+    > .sp-button-content {
     color: transparent;
-  }
-
-  .sp-loading-button-shell {
-    display: inline-flex;
-    max-width: 100%;
-  }
-
-  .sp-loading-button-idle,
-  .sp-loading-button-pending {
-    transition-property: opacity;
-    transition-duration: var(--motion-duration-micro);
-    transition-timing-function: var(--motion-ease-standard);
-  }
-
-  .sp-loading-button-shell[data-loading-button-phase="loading"]
-    .sp-loading-button-idle,
-  .sp-loading-button-shell[data-loading-button-phase="idle"]
-    .sp-loading-button-pending {
-    pointer-events: none;
-    opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .sp-button-motion,
-    .sp-loading-button-idle,
-    .sp-loading-button-pending,
     .sp-button-motion .sp-button-loading-indicator {
       transition-duration: 1ms;
     }
@@ -99,11 +31,7 @@
   }
 
   html[data-motion-reduce="true"] .sp-button-motion,
-  html[data-motion-reduce="true"] .sp-loading-button-idle,
-  html[data-motion-reduce="true"] .sp-loading-button-pending,
   [data-sp-motion="reduced"] .sp-button-motion,
-  [data-sp-motion="reduced"] .sp-loading-button-idle,
-  [data-sp-motion="reduced"] .sp-loading-button-pending,
   html[data-motion-reduce="true"]
     .sp-button-motion
     .sp-button-loading-indicator,
@@ -140,7 +68,10 @@
     pointer-events: none;
   }
 
-  /* Avatar controls keep the portrait, interaction surface and focus ring circular. */
+  /* Avatar controls keep the portrait, interaction surface and focus ring
+   * circular. Around a square avatar, a company's or a workspace's, they take
+   * the square's corners instead, with every layer and the focus ring
+   * (design-rework.css, beside the Avatar's square shape). */
   :root [data-chassis][data-profile="avatar"][data-size] {
     border-radius: 50%;
     padding: 0;
@@ -162,9 +93,23 @@
     z-index: 31;
   }
 
+  /* An Avatar that names no size fills the control, and so does the wrapper of an
+   * Avatar with a presence dot or a corner mark, with the avatar in it, so the dot
+   * does not change the fill. An Avatar that names its own size keeps it, centred
+   * in the circle, as an avatar in a menu row does: the 32 px avatar of an
+   * AccountCard's avatar trigger stays 32 px in its 36 px button. */
   :root
     [data-chassis][data-profile="avatar"]
     > .sp-button-content
+    > .sp-avatar:not([data-size]),
+  :root
+    [data-chassis][data-profile="avatar"]
+    > .sp-button-content
+    > .sp-avatar-status-root:not([data-size]),
+  :root
+    [data-chassis][data-profile="avatar"]
+    > .sp-button-content
+    > .sp-avatar-status-root:not([data-size])
     > .sp-avatar {
     width: 100%;
     height: 100%;

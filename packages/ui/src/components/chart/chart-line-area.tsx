@@ -33,6 +33,10 @@
 
 import * as React from "react";
 
+import {
+  useFormatLocale,
+  useSiteplaneMessages,
+} from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { useTweenedValues } from "../motion";
 import {
@@ -75,7 +79,7 @@ import {
 } from "./chart-model";
 import { seriesColors } from "./chart-palette";
 import {
-  calendarTicks,
+  calendarLabels,
   estimateLabelWidth,
   labelStep,
   pointScale,
@@ -196,9 +200,10 @@ export type AxisLabel = { id: string; position: number; text: string };
 /**
  * The labels of the x axis, with an even rhythm and none on top of another.
  * Dates are labelled on the calendar ticks of the time scale (days, weeks,
- * months, ...), which it spaces evenly and which need not sit on data points.
- * Categories show every k-th label, one k for the whole axis: the smallest that
- * leaves them clear.
+ * months, ...), which it spaces evenly and which need not sit on data points:
+ * the chart core's one rule for a date axis (`calendarLabels`), which the Bar
+ * Chart's date axis follows too. Categories show every k-th label, one k for
+ * the whole axis: the smallest that leaves them clear.
  */
 export function axisLabels({
   format,
@@ -213,19 +218,7 @@ export function axisLabels({
   /** The scale of a time axis, null for categories. */
   timeAxis: ScaleTime<number, number> | null;
 }): AxisLabel[] {
-  if (timeAxis) {
-    const labels = calendarTicks(timeAxis, (date) =>
-      estimateLabelWidth(format(date)),
-    ).map((tick) => ({
-      id: tick.toISOString(),
-      position: hundredths(timeAxis(tick)),
-      text: format(tick),
-    }));
-    // A calendar finer than the text, such as hours written as days, would repeat it.
-    return labels.filter(
-      (label, index) => index === 0 || label.text !== labels[index - 1]!.text,
-    );
-  }
+  if (timeAxis) return calendarLabels(timeAxis, format);
   const labels = rows.map((row, index) => ({
     id: row.id,
     position: positions[index]!,
@@ -242,9 +235,7 @@ export function axisLabels({
 const pointerSlack = 16;
 // A static dot of a line: 3 px in the series colour.
 const dotRadius = 3;
-// A line is 2 px, as shadcn draws its lines (`strokeWidth={2}`). The outline
-// along the top of an area is 1 px, which is Recharts' default stroke and what
-// shadcn leaves its areas with, over the tint.
+// A line is 2 px. The outline along the top of an area is 1 px, over the tint.
 const lineWidth = 2;
 const areaOutlineWidth = 1;
 const noValues: readonly number[] = [];
@@ -302,16 +293,20 @@ export function LineAreaChart({
   minHeight,
   formatValue,
   formatX,
-  locale = CHART_DEFAULT_LOCALE,
+  locale: localeProp,
   palette = "brand",
   legend = series.length > 1,
   xAxis = true,
   yAxis = true,
-  emptyLabel = "No data",
+  emptyLabel: emptyLabelProp,
   labels,
   className,
   ...plot
 }: LineAreaChartProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const emptyLabel = emptyLabelProp ?? messages.noData;
+  // The chart's own locale, else the provider's, else en-US.
+  const locale = useFormatLocale(localeProp, CHART_DEFAULT_LOCALE);
   const root = React.useRef<HTMLElement>(null);
   // The chart core sizes the chart: its width, and its height in px or from
   // the box it fills.
@@ -324,7 +319,7 @@ export function LineAreaChart({
   // The series whose entry the mouse is over in the legend: the chart owns it
   // and hands it to the legend and to its own marks.
   const focus = useChartSeriesFocus(series.map((item) => item.key));
-  const words = chartLabels(labels);
+  const words = chartLabels(labels, messages);
 
   const model = React.useMemo(
     () => buildCartesianModel({ data, series, stacked: stack, x }),
@@ -448,6 +443,7 @@ function LineAreaPlot({
   label,
   locale,
   model,
+  rollingNumbers = false,
   root,
   series,
   showLegend,
@@ -456,7 +452,10 @@ function LineAreaPlot({
   words,
   xAxis,
   yAxis,
-}: Pick<LineAreaChartProps, "curve" | "dots" | "fill" | "grid"> & {
+}: Pick<
+  LineAreaChartProps,
+  "curve" | "dots" | "fill" | "grid" | "rollingNumbers"
+> & {
   area: boolean;
   colors: readonly string[];
   describedBy: string | undefined;
@@ -602,14 +601,14 @@ function LineAreaPlot({
     ),
   );
 
-  // The labels of the axes. Each is keyed, so a label that comes or goes fades
-  // through while the others stay: the old labels go out before the new ones
-  // come in, and never are two legible on top of each other. The x labels of an
-  // axis that new data changes are all replaced, even a date that both axes
-  // have, which sits in another place on the new one. The value labels stay by
-  // their value and glide with the axis, the grid lines with them; the ones
-  // that go fade where they stood, and the axis leaves out any that would
-  // touch another while it moves (`ChartValueAxis`).
+  // The labels of the axes. Each is keyed, so a label that comes or goes
+  // switches at once while the others stay: the new labels show the moment the
+  // old ones are hidden, and never are two seen on top of each other. The x
+  // labels of an axis that new data changes are all replaced, even a date that
+  // both axes have, which sits in another place on the new one. The value
+  // labels stay by their value and glide with the axis, the grid lines with
+  // them; the ones that go are hidden where they stood, and the axis leaves out
+  // any that would touch another while it moves (`ChartValueAxis`).
   const formatText = formatX ?? chartXFormatter(locale, "short");
   const xLabels = useGlidingLabels({
     container: root,
@@ -726,7 +725,11 @@ function LineAreaPlot({
       })
     : [];
   const content = active && (
-    <ChartTooltipContent heading={heading} rows={tooltipRows} />
+    <ChartTooltipContent
+      heading={heading}
+      rolling={rollingNumbers}
+      rows={tooltipRows}
+    />
   );
 
   return (
@@ -912,6 +915,7 @@ function LineAreaPlot({
       <ChartAxisPill
         container={root}
         layout={layout}
+        rolling={rollingNumbers}
         side="bottom"
         spot={spot}
       />

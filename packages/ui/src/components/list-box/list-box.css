@@ -1,26 +1,37 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
+  /* A row is laid out by the option rule of design-rework.css, which Select,
+   * Combobox and Autocomplete options share: as tall as the control size of
+   * its list, 36, 40, 44 or 48 px, with 8 px before what leads the row and
+   * 10 px after what ends it, 6 px corners and a check that follows the text.
+   * A list stands in the page, not in a popup, so its rows take no inset
+   * beside them, and the Button's content gap is the option's 8 px. Its check
+   * and icons are the option's, 16 px in a 36 px row and 20 px from 40 px, in
+   * place of the Button's glyph (3 November 2026; the glyph ladder made the
+   * check 20 px in a 36 px row). A selected row takes the persistent fill of
+   * every selected or current row in the page, the rule of rulebook T5 in
+   * design-rework.css, through the Button's interaction layer, so a
+   * className on the item still restyles it (it was a 4 % fill of its own). */
+  :root .sp-list-box-item[data-chassis][data-size] {
+    --sp-rw-button-content-gap: var(--sp-rw-space-2);
+    --sp-rw-button-icon: var(--sp-rw-select-item-icon);
+    --sp-rw-select-item-margin-inline: 0px;
+  }
+
   .sp-list-box-item[data-chassis][data-size="sm"] {
-    min-height: var(--sp-rw-control-sm);
+    --sp-rw-select-item-height: var(--sp-rw-control-sm);
   }
 
   .sp-list-box-item[data-chassis][data-size="md"] {
-    min-height: var(--sp-rw-control-md);
+    --sp-rw-select-item-height: var(--sp-rw-control-md);
   }
 
   .sp-list-box-item[data-chassis][data-size="lg"] {
-    min-height: var(--sp-rw-control-lg);
+    --sp-rw-select-item-height: var(--sp-rw-control-lg);
   }
 
   .sp-list-box-item[data-chassis][data-size="xl"] {
-    min-height: var(--sp-rw-control-xl);
-  }
-
-  /* The selected option: the row's own fill and text, set through the
-   * Button's fill and text, so a className on the item still restyles it. */
-  :root .sp-list-box-item[data-chassis][data-selected] {
-    --sp-rw-button-fill: var(--sp-semantic-color-secondary);
-    --sp-rw-button-text: var(--sp-semantic-color-secondary-foreground);
+    --sp-rw-select-item-height: var(--sp-rw-control-xl);
   }
 }

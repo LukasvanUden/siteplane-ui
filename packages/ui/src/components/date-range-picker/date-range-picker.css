@@ -1,62 +1,22 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  /* The heights are the Input scale (28, 32, 36 and 48 px), so the picker is as
-   * tall as the Input, Select, Button, DateField and TimeField of the same size. */
-  .sp-date-range-control {
-    --date-range-picker-control-height: var(--sp-rw-control-md);
-    --date-range-picker-segment-start: calc(
-      var(--sp-rw-space-3) - var(--input-segment-padding-inline)
-    );
-    height: var(--date-range-picker-control-height);
-  }
-
-  .sp-date-range-control[data-size="sm"] {
-    --date-range-picker-control-height: var(--sp-rw-control-sm);
-    --date-range-picker-segment-start: calc(
-      var(--sp-rw-space-2-5) - var(--input-segment-padding-inline)
-    );
-  }
-
-  .sp-date-range-control[data-size="lg"] {
-    --date-range-picker-control-height: var(--sp-rw-control-lg);
-  }
-
-  .sp-date-range-control[data-size="xl"] {
-    --date-range-picker-control-height: var(--sp-rw-control-xl);
-    --date-range-picker-segment-start: calc(
-      var(--sp-rw-space-4) - var(--input-segment-padding-inline)
-    );
-  }
-
-  /* The segment row holds the start date, the dash and the end date, in the
-   * locale's direction (its dir). The insets belong to the field, which takes
-   * the page's direction: it pads its start, and without the calendar button
-   * (iconMode="none") its end too, as a DateField without its button does, so
-   * a range as wide as its segments is balanced. */
-  .sp-date-range-control {
-    padding-inline-start: var(--date-range-picker-segment-start);
-  }
-
-  .sp-date-range-control[data-icon-mode="none"] {
-    padding-inline-end: var(--date-range-picker-segment-start);
-  }
-
-  .sp-date-range-picker-segments {
-    display: flex;
-    flex: none;
-    align-items: center;
-    align-self: stretch;
-  }
-
-  /* The surface (border, radius, shadow) is the floating-md recipe that
-   * design-rework.css draws for the popover's data-slot. */
+  /* The picker's field takes the height, the insets and the segment row of
+   * every date and time field (input-group.css, "Date and time fields"): the
+   * row holds the start date, the dash and the end date. The surface of the
+   * popover (border, radius, shadow) is the floating-md recipe that
+   * design-rework.css draws for its data-slot. */
   .sp-date-range-popover {
     z-index: 50;
     width: max-content;
-    padding: var(--sp-rw-space-4);
     outline: none;
     transform-origin: var(--trigger-anchor-point);
+  }
+
+  /* The popover's 16 px lie in its dialog, which scrolls when the page leaves
+   * the popover less room than the calendar (design-rework.css). */
+  .sp-date-range-picker-dialog {
+    padding: var(--sp-rw-space-4);
   }
 
   .sp-date-range-popover[data-entering] {
@@ -67,6 +27,24 @@
   .sp-date-range-popover[data-exiting] {
     animation: sp-date-range-popover-exit var(--motion-duration-fast)
       var(--motion-ease-soft-in-out) both;
+  }
+
+  /* The button's panel (trigger="button") is the date pickers' panel
+   * (date-picker.css): the dialog gives up its padding for it. Its footer
+   * starts with the start date, a dash and the end date, 8 px apart, each as
+   * wide as its segments. */
+  .sp-date-range-popover[data-panel] .sp-date-range-picker-dialog {
+    padding: 0;
+  }
+
+  .sp-date-range-picker-inputs {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-space-2);
+  }
+
+  .sp-date-range-picker-dash {
+    color: var(--sp-rw-fg-tertiary);
   }
 
   @keyframes sp-date-range-popover-enter {

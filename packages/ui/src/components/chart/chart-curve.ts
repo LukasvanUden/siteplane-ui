@@ -35,14 +35,14 @@ function monotoneTangents(points: readonly ChartPoint[]): number[] {
   return tangents;
 }
 
-// Natural cubic spline (d3's curveNatural for evenly spaced points, which is
-// what shadcn's charts draw with `type="natural"`): the smooth path through
-// every point whose bend runs on across each point, so that it never changes
-// abruptly, and is straight at both ends. A monotone curve bends at each point
-// on its own, which shows as a knee wherever the data turns from steep to flat.
-// The price is that the spline can swing a little past the data between two
-// points. Its tangents come from one tridiagonal system over the whole run
-// (Thomas's algorithm), for points at any distance apart.
+// Natural cubic spline (d3's curveNatural for evenly spaced points): the
+// smooth path through every point whose bend runs on across each point, so
+// that it never changes abruptly, and is straight at both ends. A monotone
+// curve bends at each point on its own, which shows as a knee wherever the
+// data turns from steep to flat. The price is that the spline can swing a
+// little past the data between two points. Its tangents come from one
+// tridiagonal system over the whole run (Thomas's algorithm), for points at
+// any distance apart.
 function naturalTangents(points: readonly ChartPoint[]): number[] {
   const last = points.length - 1;
   const width = (i: number) => points[i + 1]![0] - points[i]![0];

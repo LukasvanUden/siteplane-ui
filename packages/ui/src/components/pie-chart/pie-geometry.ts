@@ -32,7 +32,7 @@
  * SOFTWARE.
  */
 
-import { estimateLabelWidth } from "../chart/chart-scales";
+import { chartCirclePath, ringCenterFit } from "../chart/chart-ring";
 
 /** The side of the box the chart is drawn in: the view box of its SVG. */
 export const PIE_BOX = 200;
@@ -60,9 +60,7 @@ export function ringOf(innerRadius: number): { radius: number; width: number } {
  * ends exactly there then showed a stray wedge for some data.
  */
 export function ringPath(radius: number): string {
-  const top = CENTER - radius;
-  const bottom = CENTER + radius;
-  return `M ${CENTER} ${top} A ${radius} ${radius} 0 1 1 ${CENTER} ${bottom} A ${radius} ${radius} 0 1 1 ${CENTER} ${top}`;
+  return chartCirclePath(CENTER, CENTER, radius);
 }
 
 /** A coordinate as short as it needs to be: three decimals, and none that are 0. */
@@ -175,7 +173,7 @@ export type PieCenterStep = (typeof PIE_CENTER_STEPS)[number];
 // compact first, so a large total reads as 1.2M in a large step rather than
 // in full in a small one.
 const fullSteps = 3;
-// The caption under a figure: 12 px on a line of its height, 4 px below it.
+// The caption above a figure: 12 px on a line of its height, 4 px above it.
 const captionSize = 12;
 const captionGap = 4;
 
@@ -183,7 +181,7 @@ const captionGap = 4;
 export type PieCenterFit = {
   compact: boolean;
   size: PieCenterStep;
-  /** The widest the caption may be, in percent of the hole's width: the chord of the hole at the caption's lower edge. */
+  /** The widest the caption may be, in percent of the hole's width: the chord of the hole at the caption's outer edge. */
   captionWidth: number;
 };
 
@@ -211,37 +209,22 @@ export function pieCenterFit({
   /** The figure in full. */
   full: string;
 }): PieCenterFit {
-  const hole = (Math.max(0, chartSize) * DONUT_INNER_RADIUS) / PIE_BOX;
-  const room = Math.max(0, hole - Math.max(4, hole * 0.12));
-  // The width of a line whose corners sit `edge` px above or below the centre.
-  const chord = (edge: number) =>
-    edge >= room ? 0 : 2 * Math.sqrt(room * room - edge * edge);
-  const blockHeight = (size: number) =>
-    size + (caption ? captionGap + captionSize : 0);
-  const width = (text: string, size: number) =>
-    (estimateLabelWidth(text) * size) / 12;
-  const candidates = [
-    ...PIE_CENTER_STEPS.slice(0, fullSteps).map((size) => ({
-      compact: false,
-      size,
-    })),
-    ...PIE_CENTER_STEPS.map((size) => ({ compact: true, size })),
-  ];
-  const chosen =
-    candidates.find(
-      ({ compact: short, size }) =>
-        width(short ? compact : full, size) <= chord(blockHeight(size) / 2),
-    ) ?? candidates[candidates.length - 1]!;
-  const captionWidth =
-    hole > 0 ? (chord(blockHeight(chosen.size) / 2) / (2 * hole)) * 100 : 0;
-  return {
-    captionWidth: Math.round(captionWidth * 100) / 100,
-    compact: chosen.compact,
-    size: chosen.size,
-  };
+  // The chart core fits the block into the hole (`ringCenterFit`), whose
+  // radius is a quarter of the chart's size.
+  const fit = ringCenterFit({
+    caption,
+    captionGap,
+    captionHeight: captionSize,
+    compact,
+    full,
+    fullSteps,
+    holeRadius: (Math.max(0, chartSize) * DONUT_INNER_RADIUS) / PIE_BOX,
+    steps: PIE_CENTER_STEPS,
+  });
+  return { ...fit, size: fit.size as PieCenterStep };
 }
 
-/** How far the active share steps out of the ring, in px: bklit UI's `hoverOffset`. */
+/** How far the active share steps out of the ring, in px. */
 export const PIE_POP_OUT = 10;
 
 /**
@@ -256,8 +239,8 @@ export function popDistance(size: number): number {
 /**
  * Where the active share moves to: `distance` along its middle angle, away from
  * the centre, as a translate in the units of `distance`, with y growing
- * downwards (bklit's `getSliceOffset`: x is the sine of the angle and y minus
- * its cosine, from 12 o'clock). A share that is the whole has nowhere outside
+ * downwards (x is the sine of the angle and y minus its cosine, from 12
+ * o'clock). A share that is the whole has nowhere outside
  * itself to go and stays.
  */
 export function popOffset(

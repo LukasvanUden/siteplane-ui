@@ -1,0 +1,76 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A featured card is a Card with its compact 16 px inset:
+   * its parts stack 16 px apart in the Card's panel, the text
+   * (or the ring with the text under it) first, then a progress bar, then the
+   * actions. */
+  :where(.sp-featured-card > .sp-card-panel) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-rw-space-4);
+  }
+
+  /* The 64 px ring leads the text, 12 px above it, at the start of the card. */
+  :where(.sp-featured-card-lead) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-rw-space-3);
+  }
+
+  /* The title over its description, 4 px apart. */
+  :where(.sp-featured-card-text) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--sp-rw-space-1);
+  }
+
+  /* The title takes the label role, the small title of a toast or a list; the
+   * description is body text in the tertiary colour. Both are 14 px on a
+   * 20 px line, and long values wrap (rulebook K5). */
+  :where(.sp-featured-card-title) {
+    margin: 0;
+    color: var(--sp-rw-fg-primary);
+    font-size: var(--sp-rw-font-14);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-20);
+    overflow-wrap: anywhere;
+  }
+
+  :where(.sp-featured-card-description) {
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-14);
+    font-weight: var(--sp-rw-font-weight-default);
+    line-height: var(--sp-rw-line-20);
+    overflow-wrap: anywhere;
+  }
+
+  /* A title that leads the card ends before the close button in the corner:
+   * the close is a 36 px square 4 px inside the corner, so it reaches that far
+   * past the card's inset into the title's line. Under a ring the title
+   * starts below the close and keeps its whole line. */
+  :where(
+    .sp-featured-card[data-dismissible]
+      > .sp-card-panel
+      > .sp-featured-card-text
+      > .sp-featured-card-title
+  ) {
+    padding-inline-end: max(
+      0px,
+      calc(
+        var(--sp-rw-control-sm) + var(--sp-rw-space-1) -
+          var(--card-part-inset-inline, var(--sp-rw-space-4))
+      )
+    );
+  }
+
+  /* The link actions, Dismiss and the offer's own, the action gap apart. */
+  :where(.sp-featured-card-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-rw-action-gap);
+  }
+}

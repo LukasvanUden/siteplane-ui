@@ -1,24 +1,94 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
+  /* The size scale of Table and NativeTable, set once on the container and read
+   * by the heading row, the rows and the cells below. sm, the default, and md
+   * (Lukas, 2 November 2026): a 36 px heading
+   * row, rows of at least 56 px and 12 px above and below the cells and 20 at
+   * their sides at sm, and 44 px, 72 px, 16 and 24 px at md, where a row holds
+   * a 32 or a 40 px avatar between its paddings. lg and xl go on from md with a
+   * taller heading row and rows of 80 and 88 px.
+   * xs is the compact table that sm was before the control ladder moved
+   * to 4 px steps on 30 October 2026: a 32 px heading row, 4 px above and
+   * below the cells, 8 px at their sides and rows as tall as their padding and
+   * line. A provider never gives xs, since its sizes start at sm, so a table
+   * takes it from its own `size` prop or from the compact density
+   * (useResolvedTableSize). The rule has no weight of its own, so a class on
+   * the container still wins. */
+  :where(.sp-table-container) {
+    --table-cell-padding-block: var(--sp-rw-space-3);
+    --table-cell-padding-inline: var(--sp-rw-space-5);
+    --table-head-height: var(--sp-rw-space-9);
+    --table-row-height: var(--sp-rw-space-14);
+    --table-selection-end: 0px;
+    --table-selection-gap: var(--sp-rw-space-3);
+  }
+
+  :where(.sp-table-container[data-size="xs"]) {
+    --table-cell-padding-block: var(--sp-rw-space-1);
+    --table-cell-padding-inline: var(--sp-rw-space-2);
+    --table-head-height: var(--sp-rw-space-8);
+    --table-row-height: auto;
+    --table-selection-end: var(--sp-rw-space-2);
+    --table-selection-gap: var(--sp-rw-space-2);
+  }
+
+  :where(.sp-table-container[data-size="md"]) {
+    --table-cell-padding-block: var(--sp-rw-space-4);
+    --table-cell-padding-inline: var(--sp-rw-space-6);
+    --table-head-height: var(--sp-rw-space-11);
+    --table-row-height: calc(var(--sp-rw-space) * 18);
+  }
+
+  :where(.sp-table-container[data-size="lg"]) {
+    --table-cell-padding-block: var(--sp-rw-space-4);
+    --table-cell-padding-inline: var(--sp-rw-space-6);
+    --table-head-height: var(--sp-rw-space-12);
+    --table-row-height: calc(var(--sp-rw-space) * 20);
+  }
+
+  :where(.sp-table-container[data-size="xl"]) {
+    --table-cell-padding-block: var(--sp-rw-space-4);
+    --table-cell-padding-inline: var(--sp-rw-space-6);
+    --table-head-height: var(--sp-rw-space-13);
+    --table-row-height: calc(var(--sp-rw-space) * 22);
+  }
+
   /* The table fills its container; cells don't wrap, so columns that need more
    * room scroll horizontally inside the container instead of the page. */
   .sp-table {
     background: var(--sp-rw-bg-secondary);
   }
 
-  /* The heading row sticks to the top of the scrolling container (the
-   * container scrolls on both axes). It stays in view only when the container
-   * has a height limit, such as containerClassName="max-h-80". */
+  /* The heading row stands on the table's surface. */
   .sp-table-header {
-    position: sticky;
-    z-index: 10;
-    top: 0;
     background: var(--sp-rw-bg-secondary);
     color: var(--sp-rw-fg-tertiary);
     font-size: var(--sp-rw-font-14);
-    font-weight: 480;
+    font-weight: var(--sp-rw-font-weight-heading);
     line-height: var(--sp-rw-line-21);
+  }
+
+  /* stickyHeader, on Table and NativeTable: the heading row stays in view
+   * while the rows scroll. The container scrolls on both axes, since it
+   * scrolls sideways, so the row sticks to its top and never to the page. The
+   * container takes at most the height of a parent that has one, such as a
+   * card or a panel of a fixed height; a height class on it, such as
+   * containerClassName="max-h-80", wins over this rule, which has no weight.
+   * The rows pass under the row's opaque surface and its hairline, which its
+   * cells draw (below). The z-index lifts the row over the rows' own layers,
+   * and the container is a stacking context of its own, so the row never
+   * rises above anything outside the table: the page's bars or the popups,
+   * which the kit portals out of it. */
+  :where(.sp-table-container[data-sticky-header]) {
+    max-height: 100%;
+    isolation: isolate;
+  }
+
+  .sp-table-container[data-sticky-header] .sp-table-header {
+    position: sticky;
+    z-index: 10;
+    top: 0;
   }
 
   /* The hover tint is a layer over the opaque fill, so a sticky heading row
@@ -29,36 +99,35 @@
       var(--sp-rw-bg-secondary);
   }
 
-  .sp-table-header > tr {
-    border-bottom: var(--sp-rw-border-default) solid
-      var(--sp-rw-border-translucent);
-  }
-
   /* The heading row's height and the cells' block padding follow the size: the
-   * container sets them (tableContainerSizeClassName, table-shared.ts). */
+   * container sets them (the size scale above). */
   .sp-table-head {
-    height: var(--table-head-height, var(--sp-rw-space-10));
+    height: var(--table-head-height, var(--sp-rw-space-9));
     color: var(--sp-rw-fg-tertiary);
-    font-weight: 480;
+    font-weight: var(--sp-rw-font-weight-heading);
     line-height: var(--sp-rw-line-21);
     outline: none;
   }
 
   .sp-table-head {
-    padding: 0 var(--sp-rw-space-2);
+    padding: 0 var(--table-cell-padding-inline, var(--sp-rw-space-5));
   }
 
-  /* lg and xl set a minimum row height on the container (--table-row-height);
-   * sm and the default size are as tall as their padding and line. */
+  /* Every size but the compact xs has a row height, 56, 72, 80 and 88 px from
+   * sm to xl (--table-row-height, the size scale above), for Table and
+   * NativeTable alike; the xs rows are as tall as their padding and their line
+   * of text. The line under a row is drawn inside its cells and adds nothing
+   * to the height (below), so a row is as tall as its size says. */
   .sp-table-cell {
     height: var(--table-row-height, auto);
-    padding: var(--table-cell-padding-block, var(--sp-rw-space-2))
-      var(--sp-rw-space-2);
+    padding: var(--table-cell-padding-block, var(--sp-rw-space-3))
+      var(--table-cell-padding-inline, var(--sp-rw-space-5));
   }
 
   /* The kit focus token, as on the rows and the sortable headings. */
   .sp-table-cell[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px var(--sp-rw-border-focus);
+    box-shadow: inset 0 0 0 var(--sp-semantic-state-focus-width)
+      var(--sp-rw-border-focus);
   }
 
   .sp-table .sp-table-head,
@@ -67,7 +136,9 @@
   }
 
   /* The outer columns take the inset of the surrounding surface, such as a
-   * CardFrameBleed, so a framed table lines up with the frame header and footer. */
+   * Card joined into a CardFrame or a CardFrameBleed, so a framed table lines
+   * up with the frame header and footer. A table on its own keeps 8 px at its
+   * edges. */
   .sp-table .sp-table-head:first-child,
   .sp-table .sp-table-cell:first-child {
     padding-inline-start: var(--table-edge-padding, var(--sp-rw-space-2));
@@ -78,33 +149,64 @@
     padding-inline-end: var(--table-edge-padding, var(--sp-rw-space-2));
   }
 
-  .sp-table-row {
-    border-color: var(--sp-rw-border-translucent);
+  /* A column that holds the selection checkbox (TableSelectionCheckbox):
+   * the box ends the column, which has no
+   * padding after it, and the next column starts 12 px after the box. The
+   * compact xs table keeps its 8 px on both sides. */
+  .sp-table .sp-table-head:has(.sp-table-selection-checkbox),
+  .sp-table .sp-table-cell:has(> .sp-table-selection-checkbox) {
+    padding-inline-end: var(--table-selection-end, 0px);
   }
 
-  .sp-table-body .sp-table-row:not(:last-child) {
-    border-bottom-width: var(--sp-rw-border-default);
+  .sp-table .sp-table-head:has(.sp-table-selection-checkbox) + .sp-table-head,
+  .sp-table
+    .sp-table-cell:has(> .sp-table-selection-checkbox)
+    + .sp-table-cell {
+    padding-inline-start: var(--table-selection-gap, var(--sp-rw-space-3));
   }
 
-  .sp-table-body .sp-table-row:last-child {
-    border-bottom-width: 0;
+  /* The line under a row is drawn inside its cells, over their bottom edge,
+   * so it takes no height: a row is as tall as its size
+   * says, the line included. The heading row has one, so has every body row
+   * but the last, and so has every row of the footer but the last. It is the
+   * border of a pseudo-element, which forced colours keep. */
+  .sp-table-head,
+  .sp-table-cell {
+    position: relative;
+  }
+
+  .sp-table-header > tr > .sp-table-head::after,
+  .sp-table-body > .sp-table-row:not(:last-child) > .sp-table-head::after,
+  .sp-table-body > .sp-table-row:not(:last-child) > .sp-table-cell::after,
+  .sp-table-footer > .sp-table-row:not(:last-child) > .sp-table-head::after,
+  .sp-table-footer > .sp-table-row:not(:last-child) > .sp-table-cell::after {
+    position: absolute;
+    inset: auto 0 0;
+    border-bottom: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+    content: "";
+    pointer-events: none;
+  }
+
+  /* `striped` tints every other body row, starting with the first, in the
+   * tinted band of a Card header (--sp-rw-bg-primary), one step down from the
+   * table's surface; the rows keep their lines. Table and NativeTable share
+   * this rule. It weighs one class, so the hover, focus and selected fills
+   * below and the row tones of NativeTable replace the tint. */
+  :where(.sp-table[data-striped] > .sp-table-body)
+    > .sp-table-row:where(:nth-child(odd)) {
+    background: var(--sp-rw-bg-primary);
   }
 
   /* Rows take the rows ladder of the ghost controls (hover and selected
-   * steps of --sp-rw-interaction-*), in the control interaction colour. A
-   * selected row keeps its fill under the pointer and in focus: the stronger
+   * steps of --sp-rw-interaction-*), in the control interaction colour. A row
+   * that acts, with an action or a link, draws the same steps: its hover, and
+   * the keyboard focus on it or on something inside it, take the hover step.
+   * A selected row keeps its fill under the pointer and in focus: the stronger
    * state wins over hover, as it does for pressed and open elsewhere. */
   :where(.sp-table[data-hoverable="true"])
     > .sp-table-body
-    > .sp-table-row[data-hoverable="true"]:not([data-selected]):hover {
-    background: color-mix(
-      in srgb,
-      var(--sp-rw-control-interaction)
-        calc(var(--sp-rw-interaction-hover) * 100%),
-      transparent
-    );
-  }
-
+    > .sp-table-row[data-hoverable="true"]:not([data-selected]):hover,
   :where(.sp-table[data-hoverable="true"])
     > .sp-table-body
     > .sp-table-row[data-interactive="true"]:not([data-selected]):is(
@@ -116,7 +218,12 @@
       :focus-within,
       [data-focus-visible]
     ) {
-    background: var(--sp-rw-bg-base);
+    background: color-mix(
+      in srgb,
+      var(--sp-rw-control-interaction)
+        calc(var(--sp-rw-interaction-hover) * 100%),
+      transparent
+    );
   }
 
   .sp-table-row[data-selected] {
@@ -129,7 +236,8 @@
   }
 
   .sp-table-row[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px var(--sp-rw-border-focus);
+    box-shadow: inset 0 0 0 var(--sp-semantic-state-focus-width)
+      var(--sp-rw-border-focus);
   }
 
   .sp-table-row[data-disabled] {
@@ -165,8 +273,9 @@
   }
 
   .sp-table-head[data-focus-visible] .sp-table-head-content {
-    outline: 2px solid var(--sp-rw-border-focus);
-    outline-offset: 2px;
+    outline: var(--sp-semantic-state-focus-width) solid
+      var(--sp-rw-border-focus);
+    outline-offset: var(--sp-semantic-state-focus-offset);
   }
 
   .sp-table-head[data-pressed] .sp-table-head-content {

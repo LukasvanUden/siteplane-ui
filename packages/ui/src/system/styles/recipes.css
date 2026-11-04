@@ -1,7 +1,9 @@
+/* The kit's focus colour, --sp-rw-border-focus, as every focus ring draws it
+ * (design-rework.css, "One focus outline for every control"); the inset ring
+ * below keeps it. */
 .sp-focus-ring:focus-visible,
 .sp-focus-ring--visible {
-  outline: var(--sp-semantic-state-focus-width) solid
-    var(--sp-semantic-color-focus);
+  outline: var(--sp-semantic-state-focus-width) solid var(--sp-rw-border-focus);
   outline-offset: var(--sp-semantic-state-focus-offset);
 }
 

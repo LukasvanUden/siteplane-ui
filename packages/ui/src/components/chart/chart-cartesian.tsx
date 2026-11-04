@@ -11,7 +11,7 @@ import {
   useTweenedRows,
   type TweenOptions,
 } from "../motion";
-import { swapFadeClassName } from "../motion/motion-presence";
+import { panelSwitchClassName } from "../motion/motion-presence";
 import {
   advanceGeneration,
   presenceOf,
@@ -299,7 +299,7 @@ export function useGeneration(signature: string): number {
   return next.count;
 }
 
-/** A label of a category or time axis as it is drawn: where it sits, what it says and whether it fades through. */
+/** A label of a category or time axis as it is drawn: where it sits, what it says and whether it comes or goes. */
 export type GlidingLabel = {
   key: string;
   position: number;
@@ -313,9 +313,10 @@ export type GlidingLabel = {
 
 /**
  * The labels of a category or time axis, kept by key so that a label that comes
- * or goes fades through while the others stay: the old labels go out before the
- * new ones come in, and never are two legible on top of each other (rulebook
- * M8). Every label is replaced when the `signature` of the axis changes; none is
+ * or goes switches at once while the others stay: the new labels show the moment
+ * the old ones are hidden, so two are never seen on top of each other and the
+ * axis is never bare (rulebook M8). Every label is replaced when the `signature`
+ * of the axis changes; none is
  * while it stays. Hand the result to `ChartCategoryAxis` with `thin` off, having
  * thinned the labels yourself, since the old and the new labels are in the list
  * at once while one set replaces the other.
@@ -350,7 +351,7 @@ export function useGlidingLabels({
   }));
 }
 
-/** A tick of a value axis as it is drawn: where it is now, what it says and whether it fades through. */
+/** A tick of a value axis as it is drawn: where it is now, what it says and whether it comes or goes. */
 export type GlidingTick = {
   position: number;
   presence: ChartPresence | undefined;
@@ -398,63 +399,53 @@ export function useGlidingTicks({
     .filter((tick) => tick.position >= -12 && tick.position <= length + 12);
 }
 
+/** The fade of a part that comes and goes, over the micro duration (M1). */
+const microFadeClassName =
+  "transition-opacity duration-(--motion-duration-micro) ease-(--motion-ease-standard)";
+
 // Parts that come and go fade over the micro duration, and not at all for
 // reduced motion (rulebook M5).
 export function useFadeClassName(): string {
   const reduced = useReducedMotionPreference();
   return cn(
     "opacity-0 data-visible:opacity-100",
-    !reduced &&
-      "transition-opacity duration-(--motion-duration-micro) ease-(--motion-ease-standard)",
+    !reduced && microFadeClassName,
   );
 }
 
 /**
- * Labels and grid lines that replace others fade through (rulebook M8): the old
- * ones fade out within `--motion-duration-micro` and the new ones fade in during
- * the last micro duration of a swap, so that two legible labels are never on top
- * of each other. The timing is the Motion component's own, the one a Tabs panel
- * takes (`swapFadeClassName`), driven by the attributes it reads.
+ * How an axis label or a grid line takes part in a change. One that comes with
+ * new data shows at once and one that goes is hidden at once, with the kit's
+ * content switch (`panelSwitchClassName`, rulebook M8), so the old labels and
+ * the new ones are never seen together and the axis is never bare (Lukas,
+ * 4 November 2026: they faded through, which left the axis without labels for
+ * about 80 ms). A label that the axis pill covers fades out over the micro
+ * duration until the pill has passed, and back in, as the parts of the pill
+ * come and go (M4).
  */
-function useFadeThrough(
+function useAxisPart(
   presence: ChartPresence | undefined,
   covered = false,
   fading = false,
 ): {
   className?: string;
   "data-ending-style"?: string | undefined;
-  "data-starting-style"?: string | undefined;
 } {
-  // A part that comes in is drawn invisible first and released two frames later,
-  // so that the browser has a frame to start the fade from. A part that was
-  // already there never waits.
-  const [released, setReleased] = React.useState(presence !== "entering");
-  React.useEffect(() => {
-    if (released) return;
-    let second = 0;
-    const first = requestAnimationFrame(() => {
-      second = requestAnimationFrame(() => setReleased(true));
-    });
-    return () => {
-      cancelAnimationFrame(first);
-      cancelAnimationFrame(second);
-    };
-  }, [released]);
   const reduced = useReducedMotionPreference();
-  // A part at rest carries nothing of a fade, unless it can be covered by a
-  // pill: it takes the classes of the fade before that happens, so that its
-  // first fade out does not snap, and keeps them to fade back in. With reduced
-  // motion a label that is covered is out of sight at once and comes back at
-  // once (M5).
-  if (!presence && !covered && !fading) return {};
+  const hidden = presence === "leaving" || covered ? "" : undefined;
+  if (presence)
+    return { className: panelSwitchClassName, "data-ending-style": hidden };
+  // A label at rest carries nothing, unless it can be covered by a pill: it
+  // takes the classes of the fade before that happens, so that its first fade
+  // out does not snap, and keeps them to fade back in. With reduced motion a
+  // label that is covered is out of sight at once and comes back at once (M5).
+  if (!covered && !fading) return {};
   return {
-    className:
-      reduced && !presence
-        ? "data-[ending-style]:opacity-0"
-        : swapFadeClassName,
-    "data-ending-style": presence === "leaving" || covered ? "" : undefined,
-    "data-starting-style":
-      presence === "entering" && !released ? "" : undefined,
+    className: cn(
+      "data-[ending-style]:opacity-0",
+      !reduced && microFadeClassName,
+    ),
+    "data-ending-style": hidden,
   };
 }
 
@@ -471,7 +462,7 @@ function FadingText({
   fading?: boolean | undefined;
   presence?: ChartPresence | undefined;
 }) {
-  const fade = useFadeThrough(presence, covered, fading);
+  const fade = useAxisPart(presence, covered, fading);
   return (
     <text
       {...props}
@@ -481,12 +472,12 @@ function FadingText({
   );
 }
 
-function FadingLine({
+function GridLine({
   presence,
   ...props
 }: React.ComponentProps<"line"> & { presence?: ChartPresence | undefined }) {
-  const fade = useFadeThrough(presence);
-  return <line {...props} {...fade} />;
+  const part = useAxisPart(presence);
+  return <line {...props} {...part} />;
 }
 
 /** Hairlines across the plot, one per position, in the colour of the Separator. */
@@ -513,7 +504,7 @@ export function ChartGrid({
       strokeWidth={1}
     >
       {positions.map((position, index) => (
-        <FadingLine
+        <GridLine
           key={index}
           presence={presences?.[index]}
           x1={direction === "horizontal" ? 0 : position}
@@ -620,7 +611,7 @@ export function ChartCategoryAxis({
     text: string;
     /** Whether the label comes or goes with new data. */
     presence?: ChartPresence | undefined;
-    /** Whether a pill sits on the label: it fades out until the pill has left (rulebook M8). */
+    /** Whether a pill sits on the label: it fades out until the pill has left (rulebook M4). */
     covered?: boolean | undefined;
     /** Whether the chart highlights the category: its label takes the text colour and the medium weight. */
     highlighted?: boolean | undefined;

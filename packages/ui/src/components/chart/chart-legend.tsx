@@ -106,7 +106,7 @@ export function useChartSeriesFocus(keys: readonly string[]): ChartSeriesFocus {
 
 /**
  * What makes an entry of the legend the focused series: a mouse over it, and
- * nothing else. A touch or a pen has no hover to show, as in bklit UI, so
+ * nothing else. A touch or a pen has no hover to show, so
  * neither sets or clears the focus; an entry is no focus stop, so the keyboard
  * does not either.
  */

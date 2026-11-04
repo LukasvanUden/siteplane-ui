@@ -1,0 +1,130 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* An Illustration is an empty-state drawing in the kit's surface
+   * and edge tokens: a soft disc with a few specks, an object on it that
+   * casts a shadow, and an optional glyph in a frosted disc over the object's
+   * lower middle. One drawing at one proportion (220 by 160); the size is its
+   * height, 120, 128 or 160 px, and the width follows. The frosted disc and
+   * its glyph are measured against that height, so they scale with it, which
+   * is also what lets an Empty give the illustration its own height. The
+   * defaults sit at zero specificity, so the media of an Empty, which sets the
+   * height of its size, replaces them (P6). */
+  :where(.sp-illustration) {
+    position: relative;
+    display: inline-block;
+    height: calc(var(--sp-rw-space) * 40);
+    flex-shrink: 0;
+    aspect-ratio: 220 / 160;
+  }
+
+  :where(.sp-illustration[data-size="md"]) {
+    height: calc(var(--sp-rw-space) * 32);
+  }
+
+  :where(.sp-illustration[data-size="sm"]) {
+    height: calc(var(--sp-rw-space) * 30);
+  }
+
+  :root .sp-illustration-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* The disc and the specks are the muted surface tint, so they follow the
+   * theme and show through nothing. */
+  :root .sp-illustration-disc {
+    fill: var(--sp-rw-bg-muted);
+  }
+
+  /* The object: an opaque surface with a hairline edge, lit from its top start
+   * corner by a shade that fades out of it, and the folds, lines and marks
+   * drawn on it in the edge tone. */
+  :root .sp-illustration-surface {
+    fill: var(--sp-rw-bg-secondary);
+  }
+
+  :root .sp-illustration-depth {
+    fill: var(--sp-rw-bg-depth);
+  }
+
+  :root .sp-illustration-fold {
+    fill: var(--sp-rw-border-translucent);
+  }
+
+  :root .sp-illustration-edge {
+    fill: none;
+    stroke: var(--sp-rw-border-translucent);
+    stroke-linejoin: round;
+    stroke-width: 1;
+  }
+
+  :root .sp-illustration-shade-start {
+    stop-color: var(--sp-rw-bg-depth);
+  }
+
+  :root .sp-illustration-shade-end {
+    stop-color: var(--sp-rw-bg-depth);
+    stop-opacity: 0;
+  }
+
+  /* The shadow under the object, a tight contact shadow and a long soft one, in
+   * black at the kit's shadow strengths; darker in Dark. */
+  :root .sp-illustration-contact {
+    flood-color: oklch(0% 0 0);
+    flood-opacity: 0.06;
+  }
+
+  :root .sp-illustration-ambient {
+    flood-color: oklch(0% 0 0);
+    flood-opacity: 0.08;
+  }
+
+  :where(.dark, [data-theme="dark"]) .sp-illustration-contact {
+    flood-opacity: 0.24;
+  }
+
+  :where(.dark, [data-theme="dark"]) .sp-illustration-ambient {
+    flood-opacity: 0.32;
+  }
+
+  /* The glyph floats at the bottom middle of the drawing in a frosted disc: a
+   * translucent dark disc that blurs what is behind it, with a white glyph at
+   * half its size. Its size and its distance from the bottom are shares of the
+   * illustration's height. */
+  :root .sp-illustration-badge {
+    position: absolute;
+    bottom: 12.5%;
+    left: 50%;
+    z-index: 10;
+    display: flex;
+    height: 35%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sp-rw-radius-full);
+    background: oklch(0% 0 0 / 20%);
+    color: var(--sp-rw-fg-on-accent);
+    translate: -50% 0;
+    -webkit-backdrop-filter: blur(var(--sp-rw-space-1));
+    backdrop-filter: blur(var(--sp-rw-space-1));
+  }
+
+  :root .sp-illustration[data-size="md"] .sp-illustration-badge {
+    bottom: 9.375%;
+    height: 43.75%;
+  }
+
+  :root .sp-illustration[data-size="sm"] .sp-illustration-badge {
+    bottom: 6.667%;
+    height: 40%;
+  }
+
+  :root .sp-illustration-badge > svg {
+    width: 50%;
+    height: 50%;
+    flex-shrink: 0;
+  }
+}

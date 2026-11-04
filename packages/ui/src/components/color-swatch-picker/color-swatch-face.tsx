@@ -3,6 +3,8 @@
 import * as React from "react";
 import { ColorSwatch as ColorSwatchPrimitive } from "react-aria-components";
 
+import { checkGlyphStrokeWidth } from "../../system/styles/checkbox-glyph";
+
 import "./color-swatch-picker.css";
 
 /**
@@ -75,18 +77,22 @@ export function ColorSwatchFace({
             color: `contrast-color(color-mix(in oklch, ${color ?? "black"} 90%, black))`,
           }}
         >
+          {/* The Checkbox's check: the centre line of Phosphor's check with
+              the Checkbox's stroke (checkGlyphStrokeWidth), as long as the
+              motion's dash. */}
           <svg
             className="sp-check-glyph-motion"
             fill="none"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="3"
-            viewBox="0 0 24 24"
+            strokeWidth={checkGlyphStrokeWidth}
+            viewBox="0 0 256 256"
           >
             <path
               className="sp-check-path-motion"
-              d="M5.252 12.7 10.2 18.63 18.748 5.37"
+              d="M40 144 96 200 224 72"
+              pathLength={24}
             />
           </svg>
         </span>

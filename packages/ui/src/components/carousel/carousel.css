@@ -1,0 +1,117 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A Carousel is a row of slides that shows one at a time, the
+   * arrows over the slide at its edges and the indicator over its bottom. The
+   * root is the place the arrows and the indicator are measured from; its
+   * height is the host's, and the slides fill it. The sizes:
+   * md has 36 px arrows 16 px from the edge, lg has 44 px arrows 20 px from it,
+   * and both keep the indicator 16 px from the bottom. */
+  :where(.sp-carousel) {
+    --sp-carousel-edge: var(--sp-rw-space-4);
+    --sp-carousel-gap: var(--sp-rw-space-2);
+    --sp-carousel-direction: 1;
+
+    position: relative;
+    height: 100%;
+  }
+
+  :where(.sp-carousel[data-size="lg"]) {
+    --sp-carousel-edge: var(--sp-rw-space-5);
+  }
+
+  /* The viewport clips the slides, and a horizontal swipe is the carousel's:
+   * the browser keeps the vertical scroll. */
+  :root .sp-carousel-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  /* The track carries the slides, 8 px apart (rulebook M3). The slide is its own
+   * width plus the gap from the next, so the current slide sits at the
+   * index times that, and a drag adds the way the pointer has gone. A slide
+   * settles in the carousel duration on the carousel curve (M3); while a
+   * pointer drags the track it follows at once. The track lays out from the
+   * start of the reading direction, so a right-to-left page turns the sign. */
+  :root .sp-carousel-track {
+    display: flex;
+    height: 100%;
+    gap: var(--sp-carousel-gap);
+    transform: translateX(
+      calc(
+        var(--sp-carousel-index, 0) * -1 * (100% + var(--sp-carousel-gap)) *
+          var(--sp-carousel-direction) + var(--sp-carousel-drag, 0px)
+      )
+    );
+    transition: transform var(--motion-duration-carousel)
+      var(--motion-ease-carousel);
+  }
+
+  :root .sp-carousel-track:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+    --sp-carousel-direction: -1;
+  }
+
+  :root .sp-carousel-content[data-dragging] > .sp-carousel-track {
+    transition: none;
+  }
+
+  /* A slide is as wide as the viewport, clips its picture to the surface
+   * corners and fills its height; a picture in it covers it. */
+  :root .sp-carousel-item {
+    height: 100%;
+    min-width: 0;
+    flex: 0 0 100%;
+    overflow: hidden;
+    border-radius: var(--sp-rw-radius-surface);
+  }
+
+  :root .sp-carousel-item > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* The arrows: over the slide, in the middle of its height, one at each edge. */
+  :root .sp-carousel-previous,
+  :root .sp-carousel-next {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    translate: 0 -50%;
+  }
+
+  :root .sp-carousel-previous {
+    inset-inline-start: var(--sp-carousel-edge);
+  }
+
+  :root .sp-carousel-next {
+    inset-inline-end: var(--sp-carousel-edge);
+  }
+
+  /* An arrow points the way the page reads, so a right-to-left page turns it. */
+  :root .sp-carousel-arrow-glyph:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+    scale: -1 1;
+  }
+
+  /* The indicator: over the slide, in the middle of its bottom. */
+  :root .sp-carousel-indicator {
+    position: absolute;
+    bottom: var(--sp-rw-space-4);
+    left: 50%;
+    z-index: 10;
+    translate: -50% 0;
+  }
+
+  /* The indicator's box is as wide as what it holds, which a row of dots
+   * sets. A line of segments takes the width of its container instead, as on
+   * its own, so in that box it had none and shrank to its gaps, 16 by 6 px (3
+   * November 2026). Here the line spans a third of the carousel, centred as
+   * the dots are; a width class on the indicator gives it another. */
+  :root .sp-carousel-indicator[data-variant="line"] {
+    width: calc(100% / 3);
+  }
+}

@@ -1,32 +1,25 @@
 "use client";
 
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu";
-import { ChevronRightIcon } from "lucide-react";
+import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
+import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import {
-  type SiteplaneControlSize,
-  SiteplaneUIPortalScope,
-} from "../../system/provider/siteplane-ui-provider";
-import {
-  ChoiceMenuItemCheck,
-  choiceMenuItemCheckGridClassName,
+  type ChoiceIndicatorPosition,
+  ChoiceMenuItemContent,
+  choiceIndicatorPosition,
   choiceMenuItemClassName,
-  choiceMenuItemEndGridClassName,
-  choiceMenuItemEndLabelClassName,
-  choiceMenuItemLabelClassName,
+  choiceMenuItemGridClassNames,
+  choiceMenuItemRadioCloseProps,
+  choiceMenuItemSwitchCloseProps,
   choiceMenuItemSwitchGridClassName,
   choiceMenuItemSwitchLabelClassName,
-  choiceMenuSwitchSize,
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
-import {
-  switchMenuTrackClassName,
-  switchThumbClassName,
-  switchVariants,
-} from "../switch/switch";
+import { switchThumbClassName, switchTrackClassName } from "../switch/switch";
 import {
   menuGroupLabelClassName,
   menuItemClassName,
@@ -178,7 +171,9 @@ export function ContextMenuPopup({
             data-variant={variant === "glass" ? variant : undefined}
             {...props}
           >
-            <div className="max-h-(--available-height) w-full overflow-y-auto p-1">
+            {/* The list of a MenuPopup: 6 px beside the rows, 4 px above and
+                below them, one grid column (menu.tsx). */}
+            <div className="sp-menu-list grid max-h-(--available-height) w-full grid-cols-1 overflow-y-auto">
               {children}
             </div>
           </ContextMenuPrimitive.Popup>
@@ -256,15 +251,17 @@ export function ContextMenuCheckboxItem({
   className,
   children,
   checked,
-  size,
   variant = "default",
   ...props
 }: WithStringClassName<ContextMenuPrimitive.CheckboxItem.Props> & {
-  size?: SiteplaneControlSize;
+  /**
+   * `switch` ends the row with the Switch in place of the check. A switch row
+   * keeps the menu open when it is pressed, whatever `closeOnClick` says.
+   */
   variant?: "default" | "switch";
 }) {
-  // The switch keeps the size that fits the compact row.
-  const resolvedSize = size ?? choiceMenuSwitchSize;
+  // The check ends the row, as the switch does (I8).
+  const position = choiceIndicatorPosition(undefined);
   return (
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
@@ -273,13 +270,14 @@ export function ContextMenuCheckboxItem({
         choiceMenuItemClassName,
         variant === "switch"
           ? choiceMenuItemSwitchGridClassName
-          : choiceMenuItemCheckGridClassName,
+          : choiceMenuItemGridClassNames[position],
         className,
       )}
-      data-size={resolvedSize}
+      data-indicator-position={position}
       data-slot="context-menu-checkbox-item"
       data-variant={variant}
       {...props}
+      {...choiceMenuItemSwitchCloseProps(variant)}
     >
       {variant === "switch" ? (
         <>
@@ -287,11 +285,7 @@ export function ContextMenuCheckboxItem({
             {menuRowLabel(children)}
           </span>
           <ContextMenuPrimitive.CheckboxItemIndicator
-            className={cn(
-              "sp-switch-track sp-base-switch",
-              switchVariants({ size: resolvedSize }),
-              switchMenuTrackClassName,
-            )}
+            className={cn("sp-base-switch", switchTrackClassName)}
             data-foundation="switch"
             data-slot="switch-track"
             keepMounted
@@ -303,15 +297,12 @@ export function ContextMenuCheckboxItem({
           </ContextMenuPrimitive.CheckboxItemIndicator>
         </>
       ) : (
-        <>
-          <ContextMenuPrimitive.CheckboxItemIndicator
-            className="col-start-1"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </ContextMenuPrimitive.CheckboxItemIndicator>
-          <span className={choiceMenuItemLabelClassName}>{children}</span>
-        </>
+        <ChoiceMenuItemContent
+          indicator={ContextMenuPrimitive.CheckboxItemIndicator}
+          position={position}
+        >
+          {children}
+        </ChoiceMenuItemContent>
       )}
     </ContextMenuPrimitive.CheckboxItem>
   );
@@ -333,52 +324,42 @@ export function ContextMenuRadioGroup(
 export function ContextMenuRadioItem({
   className,
   children,
-  indicatorPosition = "start",
+  closeOnClick,
+  indicatorPosition,
   ...props
 }: WithStringClassName<ContextMenuPrimitive.RadioItem.Props> & {
   /**
-   * Where the row shows its check: in the leading slot (`start`), or at the
-   * end of the row (`end`) for identity rows that lead with a logo or an
-   * avatar.
+   * Whether picking the row closes the menu. It does by default, as a single
+   * choice does in a Select; `false` keeps the menu open.
    */
-  indicatorPosition?: "start" | "end" | undefined;
+  closeOnClick?: boolean | undefined;
+  /**
+   * Where the row shows its check: at the end of the row, the default of
+   * every list of the kit, while a logo, an avatar or an icon passed first
+   * takes the leading slot; or in the leading slot (`start`).
+   */
+  indicatorPosition?: ChoiceIndicatorPosition | undefined;
 }) {
-  const end = indicatorPosition === "end";
+  const position = choiceIndicatorPosition(indicatorPosition);
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
         slotClass("context-menu-radio-item", props),
         choiceMenuItemClassName,
-        end ? choiceMenuItemEndGridClassName : choiceMenuItemCheckGridClassName,
+        choiceMenuItemGridClassNames[position],
         className,
       )}
-      data-indicator-position={end ? "end" : undefined}
+      data-indicator-position={position}
       data-slot="context-menu-radio-item"
       {...props}
+      {...choiceMenuItemRadioCloseProps(closeOnClick)}
     >
-      {end ? (
-        <>
-          <span className={choiceMenuItemEndLabelClassName}>
-            {menuRowLabel(children)}
-          </span>
-          <ContextMenuPrimitive.RadioItemIndicator
-            className="col-start-2"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </ContextMenuPrimitive.RadioItemIndicator>
-        </>
-      ) : (
-        <>
-          <ContextMenuPrimitive.RadioItemIndicator
-            className="col-start-1"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </ContextMenuPrimitive.RadioItemIndicator>
-          <span className={choiceMenuItemLabelClassName}>{children}</span>
-        </>
-      )}
+      <ChoiceMenuItemContent
+        indicator={ContextMenuPrimitive.RadioItemIndicator}
+        position={position}
+      >
+        {children}
+      </ChoiceMenuItemContent>
     </ContextMenuPrimitive.RadioItem>
   );
 }
@@ -414,6 +395,26 @@ export function ContextMenuSeparator({
         className,
       )}
       data-slot="context-menu-separator"
+      {...props}
+    />
+  );
+}
+/**
+ * The supporting text of a row: the description of a Menu row
+ * (MenuItemDescription).
+ */
+export function ContextMenuItemDescription({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        slotClass("context-menu-item-description", props),
+        "min-w-0 truncate",
+        className,
+      )}
+      data-slot="context-menu-item-description"
       {...props}
     />
   );
@@ -459,7 +460,7 @@ export function ContextMenuSubTrigger({
       {...props}
     >
       {menuRowLabel(children)}
-      <ChevronRightIcon />
+      <CaretRightIcon aria-hidden="true" />
     </ContextMenuPrimitive.SubmenuTrigger>
   );
 }

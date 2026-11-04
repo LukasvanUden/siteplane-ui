@@ -1,0 +1,77 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A SocialButton is the kit Button at the control size of its provider, as
+   * high as a Button beside it (Lukas, 4 November 2026; it was fixed at lg):
+   * sm and md are Button sm and md (36 and 40 px, 14/20) with a 16 px logo,
+   * lg and xl are Button lg and xl (44 and 48 px, 16/24) with their 20 px
+   * icon, and each icon-only one is the square of its size. The logo stands
+   * 8 px (sm, md) and 10 px (lg, xl) from the label; the label keeps the
+   * Button's 2 px inset, so the content gap is 2 px less. Height, padding,
+   * text, radius, focus, hover, press, disabled and cursor stay the Button's.
+   * The extra [data-chassis] ranks these rules above the Button's size rules,
+   * so the two sheets can load in any order. */
+  :root .sp-social-button[data-chassis][data-size="sm"],
+  :root .sp-social-button[data-chassis][data-size="md"],
+  :root .sp-social-button[data-chassis][data-size="icon-sm"],
+  :root .sp-social-button[data-chassis][data-size="icon-md"] {
+    --sp-rw-button-icon: var(--sp-rw-space-4);
+  }
+
+  :root .sp-social-button[data-chassis][data-size="sm"],
+  :root .sp-social-button[data-chassis][data-size="md"] {
+    --sp-rw-button-content-gap: var(--sp-rw-space-1-5);
+  }
+
+  :root .sp-social-button[data-chassis][data-size="lg"],
+  :root .sp-social-button[data-chassis][data-size="xl"] {
+    --sp-rw-button-content-gap: var(--sp-rw-space-2);
+  }
+
+  /* The brand theme is the solid chassis of the accent Button filled with the
+   * provider's colour, which its depth, spotlights, dome and rim derive from;
+   * Google's brand button stays the neutral default one. Text and logo are
+   * white on every fill, whatever the application's accent text is. The
+   * provider's hover colour is the Button's interaction layer at full
+   * strength, on hover and on press, where the chassis also flattens as on
+   * every solid Button. */
+  :root .sp-social-button[data-social-theme="brand"][data-variant="accent"] {
+    --sp-rw-button-text: var(--sp-rw-fg-emphasis);
+  }
+
+  :root .sp-social-button[data-social-theme="brand"][data-social="facebook"] {
+    --sp-rw-button-source: #1877f2;
+    --sp-rw-button-interaction: #0c63d4;
+    --sp-rw-button-interaction-hover: 1;
+    --sp-rw-button-interaction-pressed: 1;
+  }
+
+  :root .sp-social-button[data-social-theme="brand"][data-social="dribbble"] {
+    --sp-rw-button-source: #ea4c89;
+    --sp-rw-button-interaction: #e62872;
+    --sp-rw-button-interaction-hover: 1;
+    --sp-rw-button-interaction-pressed: 1;
+  }
+
+  /* Apple, X and Figma fill black in Light and Dark. Black has no darker
+   * step, so hover and press lift it with a veil in its white text, at the
+   * steps of the inverse Button, the kit's black Button. */
+  :root .sp-social-button[data-social-theme="brand"][data-social="apple"],
+  :root .sp-social-button[data-social-theme="brand"][data-social="x"],
+  :root .sp-social-button[data-social-theme="brand"][data-social="figma"] {
+    --sp-rw-button-source: oklch(0% 0 0);
+    --sp-rw-button-interaction: var(--sp-rw-button-text);
+    --sp-rw-button-interaction-hover: 0.08;
+    --sp-rw-button-interaction-pressed: 0.12;
+  }
+
+  /* A logo keeps its full colour, without the Button's 80 % icon opacity; in
+   * the gray theme it takes the quaternary text colour. */
+  :root .sp-social-button-logo {
+    opacity: 1;
+  }
+
+  :root .sp-social-button[data-social-theme="gray"] .sp-social-button-logo {
+    color: var(--sp-rw-fg-quaternary);
+  }
+}

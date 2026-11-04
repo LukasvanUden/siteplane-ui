@@ -9,10 +9,10 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  ChoiceMenuItemCheck,
-  choiceMenuItemCheckGridClassName,
+  ChoiceMenuItemContent,
+  choiceIndicatorPosition,
   choiceMenuItemClassName,
-  choiceMenuItemLabelClassName,
+  choiceMenuItemGridClassNames,
 } from "../../system/styles/choice-menu-item";
 import { CheckboxGlyph } from "../../system/styles/checkbox-glyph";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
@@ -49,34 +49,36 @@ export function Checkbox(checkboxProps: CheckboxProps): React.ReactElement {
   } = checkboxProps as KitCheckboxProps;
   const groupSize = React.useContext(CheckboxSizeContext);
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
+  // A menu row ends with its check, as the Menu's check rows do (I8).
+  const position =
+    profile === "menu-item" ? choiceIndicatorPosition(undefined) : undefined;
 
   return (
     <CheckboxPrimitive.Root
       className={cn(
         slotClass("checkbox", props),
         baseClass("checkbox", props),
-        profile === "menu-item"
-          ? cn(choiceMenuItemClassName, choiceMenuItemCheckGridClassName)
+        position
+          ? cn(choiceMenuItemClassName, choiceMenuItemGridClassNames[position])
           : checkboxVariants(),
         className,
       )}
       data-foundation="checkbox"
+      data-indicator-position={position}
       data-profile={profile}
       data-size={resolvedSize}
       data-slot="checkbox"
       {...props}
     >
-      {profile === "menu-item" ? (
-        <>
-          <CheckboxPrimitive.Indicator
-            className="sp-checkbox-indicator col-start-1"
-            data-slot="checkbox-indicator"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </CheckboxPrimitive.Indicator>
-          <span className={choiceMenuItemLabelClassName}>{children}</span>
-        </>
+      {position ? (
+        <ChoiceMenuItemContent
+          indicator={CheckboxPrimitive.Indicator}
+          indicatorClassName="sp-checkbox-indicator"
+          indicatorSlot="checkbox-indicator"
+          position={position}
+        >
+          {children}
+        </ChoiceMenuItemContent>
       ) : (
         <CheckboxPrimitive.Indicator
           className="sp-checkbox-indicator pointer-events-none absolute flex items-center justify-center"

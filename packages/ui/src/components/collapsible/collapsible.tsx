@@ -39,7 +39,7 @@ export function CollapsibleTrigger({
             align="between"
             multiline
             profile="collapsible-trigger"
-            variant="text"
+            variant="link"
             width="full"
           />
         )

@@ -54,31 +54,24 @@
   .sp-navigation-content[data-ending-style]:not([data-activation-direction]) {
     opacity: 0.999;
   }
+  /* The trigger's caret turns half a turn while its panel is open, with every
+   * trigger chevron of the kit (design-rework.css, "Trigger chevrons"). */
   .sp-navigation-menu-icon {
     display: flex;
-    transition: transform var(--motion-duration-expand)
-      var(--motion-ease-navigation);
   }
-  .sp-navigation-menu-icon[data-popup-open] {
-    transform: translateY(1px);
-  }
+  /* Reduced motion (M5): the duration tokens are pinned to 1 ms, so the popup
+   * and the content change at once and their starting and ending offsets last
+   * no frame. */
   :where(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
     .sp-navigation-menu-popup,
   :where(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
-    .sp-navigation-content,
-  :where(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
-    .sp-navigation-menu-icon {
+    .sp-navigation-content {
     transition-duration: 1ms;
-    translate: none !important;
-    transform: none !important;
   }
   @media (prefers-reduced-motion: reduce) {
     .sp-navigation-menu-popup,
-    .sp-navigation-content,
-    .sp-navigation-menu-icon {
+    .sp-navigation-content {
       transition-duration: 1ms;
-      translate: none !important;
-      transform: none !important;
     }
   }
 }

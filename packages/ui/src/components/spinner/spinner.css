@@ -67,39 +67,79 @@
     }
   }
 
+  /* A spinner with a caption (the `label` prop): the caption
+   * stands under the spinner, centred on it, 16 px away
+   * (20 px under the 64 px xl). Its type is the label role in the secondary
+   * colour: 14 px on a 20 px line at sm and md (and an unsized spinner), 18 px
+   * on 28 from lg. */
+  :where(.sp-spinner-group) {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-rw-space-4);
+  }
+
+  :where(.sp-spinner-group[data-size="xl"]) {
+    gap: var(--sp-rw-space-5);
+  }
+
+  :where(.sp-spinner-label) {
+    color: var(--sp-rw-fg-secondary);
+    font-size: var(--sp-rw-font-14);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-20);
+    text-align: center;
+  }
+
+  :where(.sp-spinner-group[data-size="lg"] .sp-spinner-label),
+  :where(.sp-spinner-group[data-size="xl"] .sp-spinner-label) {
+    font-size: var(--sp-rw-font-18);
+    line-height: calc(var(--sp-rw-space) * 7);
+  }
+
   /* Each variant's motion, at zero specificity so the reduced-motion rules
-   * below and a consumer's animate-* utility both win. */
-  :where(.sp-spinner:is([data-variant="default"], [data-variant="ring"])) {
+   * below and a consumer's animate-* utility both win. The rules hang on
+   * .sp-spinner-motion, which every variant carries, not on the slot class: a
+   * part that re-slots its Spinner (Button's loading indicator) loses that.
+   * The arc, the ring and the dot ring turn once a loop, at an even pace. */
+  :where(
+    .sp-spinner-motion:is(
+      [data-variant="default"],
+      [data-variant="ring"],
+      [data-variant="dot-ring"]
+    )
+  ) {
     animation: sp-spinner-rotate var(--motion-duration-loop)
       var(--motion-ease-linear) infinite;
   }
 
-  :where(.sp-spinner[data-variant="comet"]) {
+  :where(.sp-spinner-motion[data-variant="comet"]) {
     animation: sp-spinner-rotate calc(var(--motion-duration-loop) * 2)
       var(--motion-ease-linear) infinite;
   }
 
-  :where(.sp-spinner[data-variant="comet"] > circle) {
+  :where(.sp-spinner-motion[data-variant="comet"] > circle) {
     animation: sp-spinner-dash calc(var(--motion-duration-loop) * 1.5)
       var(--motion-ease-loop) infinite;
   }
 
-  :where(.sp-spinner[data-variant="pulse"] > :first-child) {
+  :where(.sp-spinner-motion[data-variant="pulse"] > :first-child) {
     animation: sp-spinner-ping var(--motion-duration-loop)
       var(--motion-ease-ping) infinite;
   }
 
-  :where(.sp-spinner[data-variant="dots"] > span) {
+  :where(.sp-spinner-motion[data-variant="dots"] > span) {
     animation: sp-spinner-dot calc(var(--motion-duration-loop) * 1.2)
       var(--motion-ease-loop) infinite;
   }
 
-  :where(.sp-spinner[data-variant="bars"] > span) {
+  :where(.sp-spinner-motion[data-variant="bars"] > span) {
     animation: sp-spinner-bars var(--motion-duration-loop)
       var(--motion-ease-loop) infinite;
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span) {
     animation: sp-spinner-spoke calc(var(--motion-duration-loop) * 0.8)
       var(--motion-ease-linear) infinite;
   }
@@ -108,61 +148,61 @@
    * stand 45 degrees apart, each a tenth of the loop later, and start mid-loop
    * so they never pulse together. These values live here rather than in style
    * attributes, which a Content Security Policy may block. */
-  :where(.sp-spinner[data-variant="dots"] > span:nth-child(2)) {
+  :where(.sp-spinner-motion[data-variant="dots"] > span:nth-child(2)) {
     animation-delay: calc(var(--motion-duration-loop) * 0.16);
   }
 
-  :where(.sp-spinner[data-variant="dots"] > span:nth-child(3)) {
+  :where(.sp-spinner-motion[data-variant="dots"] > span:nth-child(3)) {
     animation-delay: calc(var(--motion-duration-loop) * 0.32);
   }
 
-  :where(.sp-spinner[data-variant="bars"] > span:nth-child(2)) {
+  :where(.sp-spinner-motion[data-variant="bars"] > span:nth-child(2)) {
     animation-delay: calc(var(--motion-duration-loop) * 0.12);
   }
 
-  :where(.sp-spinner[data-variant="bars"] > span:nth-child(3)) {
+  :where(.sp-spinner-motion[data-variant="bars"] > span:nth-child(3)) {
     animation-delay: calc(var(--motion-duration-loop) * 0.24);
   }
 
-  :where(.sp-spinner[data-variant="bars"] > span:nth-child(4)) {
+  :where(.sp-spinner-motion[data-variant="bars"] > span:nth-child(4)) {
     animation-delay: calc(var(--motion-duration-loop) * 0.36);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(1)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(1)) {
     animation-delay: calc(var(--motion-duration-loop) * -0.8);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(2)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(2)) {
     rotate: 45deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.7);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(3)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(3)) {
     rotate: 90deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.6);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(4)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(4)) {
     rotate: 135deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.5);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(5)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(5)) {
     rotate: 180deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.4);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(6)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(6)) {
     rotate: 225deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.3);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(7)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(7)) {
     rotate: 270deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.2);
   }
 
-  :where(.sp-spinner[data-variant="spokes"] > span:nth-child(8)) {
+  :where(.sp-spinner-motion[data-variant="spokes"] > span:nth-child(8)) {
     rotate: 315deg;
     animation-delay: calc(var(--motion-duration-loop) * -0.1);
   }

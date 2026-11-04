@@ -2,39 +2,73 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import type * as React from "react";
+import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
+import * as React from "react";
 
+import { AvatarScope, type AvatarShape } from "../avatar";
 import type { BadgeProps } from "../badge";
 import { KitBadge } from "../badge/badge-internal";
+import { Button, type ButtonBaseProps, type ButtonProps } from "../button";
 import { normalizeFormattedText } from "../../system/locale/formatted-text";
-import { slotClass } from "../../system/utils/slot-class";
+import {
+  useFormatLocale,
+  useSiteplaneMessages,
+} from "../../system/locale/messages-context";
+import { dropSlotClass, slotClass } from "../../system/utils/slot-class";
 import { cn } from "../../system/utils/cn";
 
-export type AvatarGroupSize = "sm" | "md" | "lg" | "xl";
+export type AvatarGroupSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
 export interface AvatarGroupProps extends useRender.ComponentProps<"div"> {
   /**
-   * The size of every avatar and the count in the group: `sm` 24 px, `md`
-   * 32 px (the default, the size of a single Avatar), `lg` 40 px and `xl`
-   * 48 px. The avatars overlap by a quarter of it.
+   * `square` makes a group of companies or workspaces: its avatars that name
+   * no shape, its count and its add button take the rounded square of a
+   * company's Avatar, with the corners of the group's size. People keep the
+   * circle (`default`).
+   */
+  shape?: AvatarShape | undefined;
+  /**
+   * The size of every avatar and the count in the group:
+   * `xs` 24 px, `sm` 32 px (the default, the size of a single Avatar),
+   * `md` 40 px, `lg` 48 px, `xl` 56 px and `2xl` 64 px. The avatars overlap by
+   * 4 px at `xs`, 8 px at `sm`, 12 px at `md` and by a quarter of the size
+   * above.
    */
   size?: AvatarGroupSize;
 }
 
+/** The size of the group around a part, for the add button. */
+const AvatarGroupSizeContext = React.createContext<AvatarGroupSize | undefined>(
+  undefined,
+);
+
 /**
  * A row of overlapping avatars. The group sizes its avatars and its count;
- * each item after the first overlaps the one before it by a quarter of that
- * size, and every avatar draws a 2 px ring in the color of the surface it
- * sits on, so the circles stay apart on a page, a Card or a Dialog. The kit
- * stylesheet owns the size, the overlap and the ring.
+ * each item after the first overlaps the one before it, and every avatar
+ * draws a 2 px ring in the color of the surface it sits on, so the circles
+ * stay apart on a page, a Card or a Dialog. The kit stylesheet owns the size,
+ * the overlap and the ring, and the group hands its size and its shape to the
+ * avatars that name none (AvatarScope), so their corner marks step with it,
+ * and to an AvatarGroupAddButton at its end; the count takes the shape of the
+ * group's avatars.
  */
 export function AvatarGroup({
+  children,
   className,
   render,
-  size = "md",
+  shape,
+  size = "sm",
   ...props
 }: AvatarGroupProps): React.ReactElement {
   const defaultProps = {
+    children: (
+      <AvatarGroupSizeContext.Provider value={size}>
+        <AvatarScope shape={shape} size={size}>
+          {children}
+        </AvatarScope>
+      </AvatarGroupSizeContext.Provider>
+    ),
+    "data-shape": shape,
     "data-size": size,
     "data-slot": "avatar-group",
     className: cn(slotClass("avatar-group", props, render), className),
@@ -59,8 +93,9 @@ export type AvatarGroupCountProps = Omit<
    */
   count?: number | undefined;
   /**
-   * The locale that writes `count`. en-US unless set, as in the charts, so the
-   * server and the browser write the same text.
+   * The locale that writes `count`: the SiteplaneLocaleProvider's unless set,
+   * and en-US without a provider, as in the charts, so the server and the
+   * browser write the same text.
    */
   locale?: string | undefined;
 };
@@ -96,17 +131,19 @@ function countText(
 /**
  * The count of the members a group does not show, such as "+2", at the end
  * of an AvatarGroup: a circle of the group's size with the same surface ring
- * as the avatars. A longer count grows as a pill of the same height and never
- * truncates. Pass the number as `count`, or the text as children; either way,
+ * as the avatars, or the rounded square of a square group's avatars. A longer
+ * count grows as a pill of the same height, or a wider rounded square, and
+ * never truncates. Pass the number as `count`, or the text as children; either way,
  * give it an accessible name that says what it counts, for example with
  * visually hidden text.
  */
 export function AvatarGroupCount({
   children,
   count,
-  locale = "en-US",
+  locale: localeProp,
   ...props
 }: AvatarGroupCountProps): React.ReactElement {
+  const locale = useFormatLocale(localeProp, "en-US");
   let content: React.ReactNode = children;
   if (count !== undefined) {
     const { exact, shown } = countText(count, locale);
@@ -133,5 +170,65 @@ export function AvatarGroupCount({
     >
       {content}
     </KitBadge>
+  );
+}
+
+export type AvatarGroupAddButtonProps = Omit<
+  ButtonBaseProps,
+  "children" | "shape" | "size" | "variant"
+> & {
+  /** The glyph: a plus by default. */
+  children?: React.ReactNode;
+  /**
+   * The size, by the group's names. Inside an AvatarGroup the button takes the
+   * group's size and is a circle as large as its avatars, or a rounded square
+   * in a square group. On its own it is
+   * `sm`, 32 px, unless set, and its circle stops at 48 px (`lg`).
+   */
+  size?: AvatarGroupSize | undefined;
+};
+
+/** The icon Button size whose glyph each group size takes. */
+const addButtonSizes = {
+  "2xl": "icon-xl",
+  lg: "icon-xl",
+  md: "icon-md",
+  sm: "icon-xs",
+  xl: "icon-xl",
+  xs: "icon-2xs",
+} as const satisfies Record<AvatarGroupSize, ButtonProps["size"]>;
+
+/**
+ * The action that adds someone to a group, after its avatars: an outline
+ * Button as a circle of the group's size, or the rounded square of a square
+ * group, its hairline dashed, with a plus.
+ * Put it last inside the AvatarGroup, which sets it 8 px after the stack
+ * instead of over it. It is a button; give it a name that says what it adds
+ * (`aria-label`, the `avatarGroup.add` message by default, "Add user" in
+ * English) and show that name in a Tooltip.
+ */
+export function AvatarGroupAddButton({
+  "aria-label": ariaLabelProp,
+  children,
+  className,
+  size,
+  ...props
+}: AvatarGroupAddButtonProps): React.ReactElement {
+  const messages = useSiteplaneMessages("avatarGroup");
+  const ariaLabel = ariaLabelProp ?? messages.add;
+  const groupSize = React.useContext(AvatarGroupSizeContext);
+  const resolvedSize = size ?? groupSize ?? "sm";
+  return (
+    <Button
+      aria-label={ariaLabel}
+      shape="pill"
+      size={addButtonSizes[resolvedSize]}
+      variant="outline"
+      {...props}
+      className={dropSlotClass(className, props)}
+      data-slot="avatar-group-add-button"
+    >
+      {children ?? <PlusIcon aria-hidden="true" />}
+    </Button>
   );
 }

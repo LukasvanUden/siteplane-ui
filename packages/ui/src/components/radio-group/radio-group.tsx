@@ -11,13 +11,10 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  ChoiceMenuItemCheck,
-  choiceMenuItemCheckGridClassName,
+  ChoiceMenuItemContent,
+  choiceIndicatorPosition,
   choiceMenuItemClassName,
-  choiceMenuItemEndGridClassName,
-  choiceMenuItemEndLabelClassName,
-  choiceMenuItemLabelClassName,
-  menuRowLabel,
+  choiceMenuItemGridClassNames,
 } from "../../system/styles/choice-menu-item";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
@@ -60,8 +57,9 @@ export function RadioGroup(groupProps: RadioGroupProps): React.ReactElement {
           slotClass("radio-group", props),
           baseClass("radio-group", props),
           "flex flex-col",
-          // The 8 px default is a utility, so a gap in className replaces it.
-          profile === "control" && "gap-2",
+          // The 16 px default is a utility, so a gap in
+          // className replaces it.
+          profile === "control" && "gap-4",
           className,
         )}
         data-foundation="radio-group"
@@ -87,63 +85,46 @@ export function Radio(radioProps: RadioProps): React.ReactElement {
   const {
     children,
     className,
-    indicatorPosition = "start",
+    indicatorPosition,
     profile = "control",
     size,
     ...props
   } = radioProps as KitRadioProps;
   const groupSize = useContext(RadioSizeContext);
   const resolvedSize = useResolvedControlSize(size ?? groupSize);
-  // An identity row of a menu, such as a workspace in a switcher, leads with
-  // its logo or avatar and ends with its check, as MenuRadioItem's end rows.
-  const end = profile === "menu-item" && indicatorPosition === "end";
+  // A menu row ends with its check, as MenuRadioItem does (I8), while a logo,
+  // an avatar or an icon passed first takes the leading slot.
+  const position =
+    profile === "menu-item"
+      ? choiceIndicatorPosition(indicatorPosition)
+      : undefined;
 
   return (
     <RadioPrimitive.Root
       className={cn(
         slotClass("radio", props),
         baseClass("radio", props),
-        profile === "menu-item"
-          ? cn(
-              choiceMenuItemClassName,
-              end
-                ? choiceMenuItemEndGridClassName
-                : choiceMenuItemCheckGridClassName,
-            )
+        position
+          ? cn(choiceMenuItemClassName, choiceMenuItemGridClassNames[position])
           : radioVariants(),
         className,
       )}
       data-foundation="radio"
-      data-indicator-position={end ? "end" : undefined}
+      data-indicator-position={position}
       data-profile={profile}
       data-size={resolvedSize}
       data-slot="radio"
       {...props}
     >
-      {end ? (
-        <>
-          <span className={choiceMenuItemEndLabelClassName}>
-            {menuRowLabel(children)}
-          </span>
-          <RadioPrimitive.Indicator
-            className="sp-radio-indicator col-start-2"
-            data-slot="radio-indicator"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </RadioPrimitive.Indicator>
-        </>
-      ) : profile === "menu-item" ? (
-        <>
-          <RadioPrimitive.Indicator
-            className="sp-radio-indicator col-start-1"
-            data-slot="radio-indicator"
-            keepMounted
-          >
-            <ChoiceMenuItemCheck />
-          </RadioPrimitive.Indicator>
-          <span className={choiceMenuItemLabelClassName}>{children}</span>
-        </>
+      {position ? (
+        <ChoiceMenuItemContent
+          indicator={RadioPrimitive.Indicator}
+          indicatorClassName="sp-radio-indicator"
+          indicatorSlot="radio-indicator"
+          position={position}
+        >
+          {children}
+        </ChoiceMenuItemContent>
       ) : (
         <RadioPrimitive.Indicator
           className={cn("sp-radio-indicator", radioIndicatorClassName)}

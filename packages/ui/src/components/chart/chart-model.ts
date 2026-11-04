@@ -17,9 +17,9 @@ import type {
 } from "./chart-types";
 
 /**
- * Where a part of an axis stands when new data replaces it: `entering` comes in
- * after the parts it replaces, `leaving` goes out before the parts that replace
- * it. A part at rest has none.
+ * Where a part of an axis stands when new data replaces it: `entering` has come
+ * in and shows at once, `leaving` is on its way out and is hidden at once (the
+ * kit's content switch, rulebook M8). A part at rest has none.
  */
 export type ChartPresence = "entering" | "leaving";
 
@@ -53,11 +53,17 @@ export function buildCartesianModel({
   x,
   series,
   stacked,
+  unstacked = [],
 }: {
   data: readonly ChartDatum[];
   x: string;
   series: readonly ChartSeries[];
   stacked: boolean;
+  /**
+   * The keys of series that stay out of a stack, such as the line series of a
+   * Bar Chart: their marks end at their own value and start at 0.
+   */
+  unstacked?: readonly string[];
 }): CartesianModel {
   const time = isTimeData(data, x);
   const seen = new Map<string, number>();
@@ -81,16 +87,23 @@ export function buildCartesianModel({
   const values = keys.map((key) =>
     rows.map((row) => chartValue(row.datum, key)),
   );
-  const missing = () => keys.map(() => rows.map((): number | null => null));
   let tops: (number | null)[][] = values;
   let bases: (number | null)[][] = values.map((own) =>
     own.map((value) => (value === null ? null : 0)),
   );
   if (stacked) {
-    tops = missing();
-    bases = missing();
+    const apart = new Set(unstacked);
+    const stackKeys = keys.filter((key) => !apart.has(key));
+    tops = keys.map((key, place) =>
+      apart.has(key) ? values[place]! : rows.map((): number | null => null),
+    );
+    bases = keys.map((key, place) =>
+      apart.has(key)
+        ? values[place]!.map((value) => (value === null ? null : 0))
+        : rows.map((): number | null => null),
+    );
     rows.forEach((row, index) => {
-      for (const segment of stackSeries([row.datum], x, keys)) {
+      for (const segment of stackSeries([row.datum], x, stackKeys)) {
         const place = keys.indexOf(segment.series);
         tops[place]![index] = segment.y1;
         bases[place]![index] = segment.y0;
@@ -161,7 +174,7 @@ export function cartesianSummary({
 }
 
 /**
- * Where a keyed row stands in a fade through, from its tween: a row on its way
+ * Where a keyed row stands in a change, from its tween: a row on its way
  * out is `leaving`, one that has not yet arrived `entering`, one at rest neither.
  */
 export function presenceOf(entry: {
@@ -174,8 +187,8 @@ export function presenceOf(entry: {
 /**
  * Where a tick of the value axis is drawn. One that stays or comes in sits where
  * the axis puts it, and moves with the axis while it glides. One that goes out
- * fades where it stood: the axis may have moved far since, and carried along it
- * would crowd its labels into each other.
+ * is hidden where it stood: the axis may have moved far since, and carried
+ * along it would crowd its labels into each other.
  */
 export function tickPosition(
   entry: { leaving: boolean; row: { position: number; value: number } },

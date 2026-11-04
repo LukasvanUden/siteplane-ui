@@ -54,38 +54,28 @@
     scale(var(--motion-floating-panel-scale));
 }
 
-/* Fade through for a pane that Base UI mounts and unmounts and fades with CSS
- * transitions, such as a Tabs panel (rulebook M8; swapFadeClassName of the
- * Motion component). The pane that takes over fades in during the last micro
- * duration of the base duration; the pane that leaves fades out at once. Zero
- * specificity, so the reduced-motion rules below and a consumer's utility both
- * win. */
-:where(.sp-swap-fade) {
-  transition-property: opacity;
-  transition-duration: var(--motion-duration-micro);
-  transition-timing-function: var(--motion-ease-standard);
-  transition-delay: max(
-    0ms,
-    calc(var(--motion-duration-base) - var(--motion-duration-micro))
-  );
-}
-
-:where(.sp-swap-fade:is([data-starting-style], [data-ending-style])) {
-  opacity: 0;
-}
-
-:where(.sp-swap-fade[data-ending-style]) {
+/* A floating panel leaves as the kit's other popovers do, the Date Time
+ * Picker's calendar and the Color Picker's: over the fast step on the even
+ * curve of content that fades out, so its surface and its content fade
+ * together. On the standard curve over the moderate step it fell below a
+ * tenth of its opacity within 50 ms and stayed there for nearly 200 ms more,
+ * where its text still read and its white surface no longer did: a ghost of
+ * the Time Field's columns after the selector closed (4 November 2026). */
+.sp-floating-panel[data-ending-style] {
+  transition-duration: var(--motion-duration-fast);
   transition-timing-function: var(--motion-ease-soft-in-out);
-  transition-delay: 0ms;
 }
 
-/* A Tabs panel switches at once (rulebook M8; panelSwitchClassName of the
- * Motion component), as tabs do in the WAI-ARIA pattern and most interfaces:
- * the panel that leaves is hidden the moment the new one shows, and the
- * indicator and the height of the panels' container carry the motion. A
+/* Content that replaces content switches at once (rulebook M8;
+ * panelSwitchClassName of the Motion component), as tabs do in the WAI-ARIA
+ * pattern and most interfaces and as MotionSwap replaces its content: the part
+ * that leaves is hidden the moment the new one shows, and the height of the
+ * container carries the motion. Tabs panels take it (Lukas, 13 October 2026: a
  * dissolve showed both panels' text at once wherever a panel has no surface of
- * its own (Lukas, 13 October 2026). Zero specificity, so a consumer's utility
- * wins. */
+ * its own), and so do the Filter Bar's tab list and search field, an Editable's
+ * pencil and optional triggers, and the axis labels and grid lines that new
+ * data brings to a chart (Lukas, 4 November 2026: a fade through read as a
+ * flash). Zero specificity, so a consumer's utility wins. */
 :where(.sp-panel-switch[data-ending-style]) {
   opacity: 0;
 }
@@ -93,7 +83,9 @@
 /* The height follow (followHeight in motion-follow.ts; rulebook M7, M8): a
  * container whose content changes moves to the height of the new content.
  * JavaScript measures the height the container shows and the height of its
- * new content and writes them as its height; this transition animates between
+ * new content and writes them as its height, clipping what is taller at the
+ * container's bottom edge only (heightClipPath in motion-presence.ts), so
+ * rings at the top and the sides stay whole; this transition animates between
  * them, as Base UI's Collapsible and Accordion panels animate the height they
  * measure. It starts with the frame that renders it and retargets from the
  * height shown when content that builds later changes the height again. A
@@ -102,7 +94,7 @@
  * the lines of a wrapping row or a grid's rows. Zero specificity, so a
  * consumer's utility wins (P6); with reduced motion nothing follows (M5). A
  * container whose content swaps (swapContainerClassName: MotionSwap,
- * Editable) moves its height over the whole swap, everything else over the
+ * Editable) moves its height over the base duration, everything else over the
  * expand duration. */
 :where(.sp-height-follow) {
   align-content: start;
@@ -113,6 +105,20 @@
 
 :where(.sp-height-follow.sp-swap-container) {
   transition-duration: var(--motion-duration-base);
+}
+
+/* A floating panel that follows its height, such as the popup of a Combobox
+ * or an Autocomplete whose options change while it is open (PopupListMotion
+ * in motion-follow.ts), adds the height to its own fade and move, which the
+ * floating panel rule above names. The rule outranks that one, as the panel's
+ * own transition would otherwise leave the height out; the reduced-motion
+ * rules below still win, and nothing follows under reduced motion (M5). */
+.sp-floating-panel.sp-height-follow {
+  transition-property: opacity, transform, height;
+  transition-duration:
+    var(--motion-duration-moderate), var(--motion-duration-moderate),
+    var(--motion-duration-expand);
+  transition-timing-function: var(--motion-ease-standard);
 }
 
 @keyframes sp-calendar-slide-in-from-right {
@@ -243,10 +249,10 @@ html[data-motion-reduce="true"]
  * selection slot of a ResourceList row, the indicator of a Table box) and,
  * while it enters or leaves, data-starting-style and data-ending-style. A glyph
  * that sits deeper inside the element that owns the state, as the check of a
- * ListBox row does, names that element with `sp-check-item`. A glyph
- * with a geometry of its own, as the mark of a ResourceList row and the Table
- * box have, takes pathLength 24 so that the dash of 24 covers its path exactly
- * and the draw runs along its whole length. */
+ * ListBox row does, names that element with `sp-check-item`. Every check
+ * path takes pathLength 24, so that the dash of 24 covers it exactly and the
+ * draw runs along its whole length: the check is the centre line of
+ * Phosphor's check in a 256-unit box, far longer than 24 units. */
 .sp-check-path-motion,
 .sp-checkbox-indeterminate {
   opacity: 0;
@@ -328,12 +334,6 @@ html[data-motion-reduce="true"] .sp-floating-panel,
   transition-duration: 1ms;
 }
 
-html[data-motion-reduce="true"] .sp-swap-fade,
-:where([data-sp-motion="reduced"]) .sp-swap-fade {
-  transition-duration: 1ms;
-  transition-delay: 0ms;
-}
-
 html[data-motion-reduce="true"] .sp-icon-pop,
 :where([data-sp-motion="reduced"]) .sp-icon-pop {
   animation-duration: 1ms;
@@ -400,11 +400,6 @@ html[data-motion-reduce="true"] .sp-shimmer,
 
   .sp-floating-panel {
     transition-duration: 1ms;
-  }
-
-  .sp-swap-fade {
-    transition-duration: 1ms;
-    transition-delay: 0ms;
   }
 
   .sp-floating-panel[data-starting-style],

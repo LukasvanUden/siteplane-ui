@@ -3,12 +3,18 @@
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { ChevronRightIcon, XIcon } from "lucide-react";
+import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr";
 import type React from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo, useRef } from "react";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
+import {
+  type ChoiceIndicatorPosition,
+  choiceMenuItemRadioCloseProps,
+  menuRowStack,
+} from "../../system/styles/choice-menu-item";
 import { surfaceClassNames } from "../../system/styles/surface";
+import { CloseButton } from "../button";
 import { KitButton } from "../button/button-internal";
 import {
   menuGroupLabelClassName,
@@ -31,8 +37,17 @@ import "./drawer.css";
 
 type DrawerPosition = "right" | "left" | "top" | "bottom";
 
-const DrawerContext: React.Context<{ position: DrawerPosition }> =
-  createContext<{ position: DrawerPosition }>({
+type DrawerContextValue = {
+  position: DrawerPosition;
+  /**
+   * Closes the drawer, as DrawerClose does: a radio row of its DrawerMenu
+   * calls it when it is picked.
+   */
+  close?: (() => void) | undefined;
+};
+
+const DrawerContext: React.Context<DrawerContextValue> =
+  createContext<DrawerContextValue>({
     position: "bottom",
   });
 
@@ -50,15 +65,25 @@ export const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =
   DrawerPrimitive.createHandle;
 
 export function Drawer({
+  actionsRef,
   swipeDirection,
   position = "bottom",
   ...props
 }: DrawerPrimitive.Root.Props & {
   position?: DrawerPosition;
 }): React.ReactElement {
+  // The drawer's imperative actions, in the app's ref when it passes one: a
+  // radio row of the drawer's menu closes the drawer through them.
+  const ownActions = useRef<DrawerPrimitive.Root.Actions | null>(null);
+  const actions = actionsRef ?? ownActions;
+  const context = useMemo(
+    () => ({ close: () => actions.current?.close(), position }),
+    [actions, position],
+  );
   return (
-    <DrawerContext.Provider value={{ position }}>
+    <DrawerContext.Provider value={context}>
       <DrawerPrimitive.Root
+        actionsRef={actions}
         swipeDirection={swipeDirection ?? directionMap[position]}
         {...props}
       />
@@ -220,9 +245,9 @@ export function DrawerPopup({
               position === "top" &&
                 "data-starting-style:transform-[translateY(calc(-100%-var(--inset)))] data-ending-style:transform-[translateY(calc(-100%-var(--inset)))] transform-[translateY(var(--drawer-swipe-movement-y))] after:inset-x-0 after:bottom-full after:h-(--bleed) has-data-[slot=drawer-bar]:pb-2",
               position === "left" &&
-                "data-starting-style:transform-[translateX(calc(-100%-var(--inset)))] data-ending-style:transform-[translateX(calc(-100%-var(--inset)))] transform-[translateX(var(--drawer-swipe-movement-x))] w-[calc(100%-(--spacing(12)))] max-w-md after:inset-y-0 after:end-full after:w-(--bleed) has-data-[slot=drawer-bar]:pe-2",
+                "data-starting-style:transform-[translateX(calc(-100%-var(--inset)))] data-ending-style:transform-[translateX(calc(-100%-var(--inset)))] transform-[translateX(var(--drawer-swipe-movement-x))] w-[calc(100%-(--spacing(12)))] max-w-100 after:inset-y-0 after:end-full after:w-(--bleed) has-data-[slot=drawer-bar]:pe-2",
               position === "right" &&
-                "transform-[translateX(var(--drawer-swipe-movement-x))] data-ending-style:transform-[translateX(calc(100%+var(--inset)))] data-starting-style:transform-[translateX(calc(100%+var(--inset)))] col-start-2 w-[calc(100%-(--spacing(12)))] max-w-md after:inset-y-0 after:start-full after:w-(--bleed) has-data-[slot=drawer-bar]:ps-2",
+                "transform-[translateX(var(--drawer-swipe-movement-x))] data-ending-style:transform-[translateX(calc(100%+var(--inset)))] data-starting-style:transform-[translateX(calc(100%+var(--inset)))] col-start-2 w-[calc(100%-(--spacing(12)))] max-w-100 after:inset-y-0 after:start-full after:w-(--bleed) has-data-[slot=drawer-bar]:ps-2",
               variant === "default" &&
                 cn(
                   position === "bottom" && "before:rounded-t-[inherit]",
@@ -261,20 +286,13 @@ export function DrawerPopup({
                 after it, so it paints and takes clicks above the strip. */}
             {showBar && <DrawerBar />}
             {showCloseButton && (
+              // The CloseButton at its dense 24 px step, 8 px inside the
+              // top-end corner, as the close of every overlay; it names itself.
               <DrawerPrimitive.Close
-                aria-label="Close"
                 className="absolute end-2 top-2"
-                render={
-                  <KitButton
-                    profile="overlay-dismiss"
-                    shape="square"
-                    variant="ghost"
-                  />
-                }
+                render={<CloseButton size="2xs" />}
                 {...closeProps}
-              >
-                <XIcon />
-              </DrawerPrimitive.Close>
+              />
             )}
           </DrawerPrimitive.Popup>
         </DrawerViewport>
@@ -316,10 +334,17 @@ export function DrawerHeader({
 export function DrawerFooter({
   className,
   allowSelection = true,
+  actionLayout,
   render,
   ...props
 }: useRender.ComponentProps<"div"> & {
   allowSelection?: boolean;
+  /**
+   * `fill` lets the Buttons of the footer share its row in equal widths, as
+   * the actions of a Card footer do; a link keeps its own width. Left unset
+   * the actions end the row at their own widths.
+   */
+  actionLayout?: "fill" | undefined;
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
@@ -330,6 +355,7 @@ export function DrawerFooter({
       !allowSelection && "cursor-default",
       className,
     ),
+    "data-action-layout": actionLayout,
     "data-slot": "drawer-footer",
   };
 
@@ -463,9 +489,12 @@ export function DrawerMenu({
 }): React.ReactElement {
   const resolvedSize = useResolvedControlSize(size);
   const defaultProps = {
+    // The menu reaches past its content box by the rows' inline padding, so
+    // the labels start where the drawer's other text starts; the rows keep
+    // 1 px above and below them in this flex column (design-rework.css).
     className: cn(
       slotClass("drawer-menu", props, render),
-      "-m-2 flex flex-col",
+      "sp-menu-rows -mx-(--sp-rw-menu-row-padding-inline) -my-2 flex flex-col",
       className,
     ),
     "data-size": resolvedSize,
@@ -480,6 +509,7 @@ export function DrawerMenu({
 }
 
 export function DrawerMenuItem({
+  children,
   className,
   variant = "default",
   render,
@@ -496,12 +526,46 @@ export function DrawerMenuItem({
       multiline
       profile="menu-row"
       render={render}
-      variant={variant === "destructive" ? "ghost-destructive" : "text"}
+      variant={variant === "destructive" ? "ghost-destructive" : "link"}
       width="full"
       {...props}
       // Last, so a host that renders the row, such as DrawerClose, cannot swap
       // the slot that the row recipe and the touch size are keyed on.
       data-slot="drawer-menu-item"
+    >
+      {/* A stacked description stands under the name in one column, as in a
+          Menu row (menuRowStack); otherwise the row's text wraps. */}
+      {menuRowStack(children)}
+    </KitButton>
+  );
+}
+
+/**
+ * The supporting text of a row: the description of a Menu row
+ * (MenuItemDescription). A direct child of the row, after its text.
+ */
+export function DrawerMenuItemDescription({
+  className,
+  stacked,
+  ...props
+}: React.ComponentProps<"span"> & {
+  /**
+   * Puts the description under the name instead of after it, in one column
+   * beside the row's avatar or icon, as an account row shows a name over its
+   * email. The row's name and description stay on one line each.
+   */
+  stacked?: boolean | undefined;
+}): React.ReactElement {
+  return (
+    <span
+      className={cn(
+        slotClass("drawer-menu-item-description", props),
+        "min-w-0 truncate",
+        className,
+      )}
+      data-layout={stacked ? "stacked" : undefined}
+      data-slot="drawer-menu-item-description"
+      {...props}
     />
   );
 }
@@ -586,14 +650,14 @@ export function DrawerMenuTrigger({
           align="start"
           multiline
           profile="submenu-trigger"
-          variant="text"
+          variant="link"
           width="full"
         />
       }
       {...props}
     >
       {children}
-      <ChevronRightIcon />
+      <CaretRightIcon aria-hidden="true" />
     </DrawerTrigger>
   );
 }
@@ -638,27 +702,49 @@ export function DrawerMenuRadioGroup({
 }
 
 export function DrawerMenuRadioItem({
-  indicatorPosition = "start",
+  closeOnClick,
+  indicatorPosition,
+  onClick,
   ...props
 }: Omit<RadioProps, "profile"> & {
   value: string;
   /**
-   * Where the row shows its check: in the leading slot (`start`), or at the
-   * end of the row (`end`) for identity rows that lead with a logo or an
-   * avatar, such as the workspaces of a switcher.
+   * Whether picking the row closes the drawer, as picking a radio row closes
+   * a menu. It does by default; `false` keeps the drawer open.
    */
-  indicatorPosition?: "start" | "end" | undefined;
+  closeOnClick?: boolean | undefined;
+  /**
+   * Where the row shows its check: at the end of the row, the default of
+   * every list of the kit, while a logo, an avatar or an icon passed first
+   * takes the leading slot; or in the leading slot (`start`).
+   */
+  indicatorPosition?: ChoiceIndicatorPosition | undefined;
 }): React.ReactElement {
+  const { close } = useContext(DrawerContext);
+  const closes = choiceMenuItemRadioCloseProps(closeOnClick).closeOnClick;
   return (
     <KitRadio
       data-slot="drawer-menu-radio-item"
       indicatorPosition={indicatorPosition}
       profile="menu-item"
       {...props}
+      // A press, or Space, picks the row and closes the drawer. The arrow
+      // keys move the choice without a click, so they keep it open, and a
+      // disabled row receives no click.
+      onClick={(event) => {
+        onClick?.(event);
+        if (
+          !closes ||
+          event.defaultPrevented ||
+          event.currentTarget.hasAttribute("data-readonly")
+        )
+          return;
+        close?.();
+      }}
     />
   );
 }
 
-// DrawerContent is the shadcn name of DrawerPopup, as DialogContent is of
+// DrawerContent is an alias of DrawerPopup, as DialogContent is of
 // DialogPopup. Base UI's bare content part is DrawerPrimitive.Content.
 export { DrawerPrimitive, DrawerPopup as DrawerContent };

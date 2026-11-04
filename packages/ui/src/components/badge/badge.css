@@ -68,7 +68,11 @@
     z-index: -1;
     border: 26px solid transparent;
     border-radius: calc(
-      var(--sp-rw-radius-badge, var(--sp-rw-radius-xs)) + 28px
+      var(
+          --sp-rw-radius-badge,
+          var(--sp-badge-radius, var(--sp-rw-radius-sm))
+        ) +
+        28px
     );
     padding: 2px;
     background-clip: padding-box;
@@ -88,8 +92,10 @@
     opacity: 0.55;
   }
 
-  /* A lit badge answers hover with the stronger halo, not the grey link tint. */
-  :root :is(a, button).sp-base-badge[data-light]:hover {
+  /* A lit badge answers hover with the stronger halo, not the grey link tint,
+   * and keeps no tint while it is pressed either. */
+  :root :is(a, button).sp-base-badge[data-light]:hover,
+  :root :is(a, button).sp-base-badge[data-light]:active {
     background-image: none;
   }
 
@@ -115,5 +121,25 @@
       animation: none;
       transition-duration: 1ms;
     }
+  }
+
+  /* A removable badge (onRemove) ends with the chip remove action
+   * (Lukas, 30 October 2026). Its place is the pill's
+   * (design-rework.css): 2 px after the label and as far from the
+   * end as from the top and the bottom, border included. The action is the one
+   * remove action of every chip (the chip-remove profile in design-rework.css),
+   * which owns its glyph, size, colours and corner; the badge names only the
+   * size of its cross, the badge's icon size, and the end inset its corner
+   * stays concentric with. A Tag places its own remove action. */
+  :root .sp-base-badge[data-removable]:not(.sp-tag) {
+    --sp-badge-remove-inset: var(--sp-pill-remove-inset);
+  }
+
+  /* The size of the cross is the badge's icon size only on a badge of its
+   * own: a Combobox chip is a pill of the Tag size block, so it takes its
+   * cross from its field as a Tags Input tag does, 10 px in an sm field,
+   * 12 px at md and lg and 16 px at xl (rulebook I3, B9). */
+  :root .sp-base-badge[data-removable]:not(.sp-tag, .sp-combobox-chip) {
+    --sp-chip-remove-icon: var(--sp-badge-icon-size, var(--sp-rw-space-3));
   }
 }

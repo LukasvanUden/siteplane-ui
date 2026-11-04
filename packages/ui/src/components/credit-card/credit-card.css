@@ -1,0 +1,334 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A payment card: 316 by 190 px, drawn in units of
+   * its width (--sp-credit-card-unit, a 316th of it, read where a part uses it)
+   * so a width from the consumer scales the text, the padding and the corners
+   * with it. The card is a picture of an object and keeps its colours in both
+   * themes: the greys are the kit's fixed neutrals, the brand shades derive from
+   * the accent, and the clear glass is the kit's shared glass surface. */
+  :where(.sp-credit-card) {
+    --sp-credit-card-unit: calc(100cqw / 316);
+    --sp-credit-card-white: var(--sp-primitive-color-white);
+    --sp-credit-card-ink-dark: var(--sp-primitive-color-neutral-700);
+    --sp-credit-card-ink-faint: var(--sp-primitive-color-neutral-400);
+    --sp-credit-card-strip: var(--sp-primitive-color-neutral-800);
+    --sp-credit-card-film: color-mix(
+      in oklab,
+      var(--sp-primitive-color-white) 10%,
+      transparent
+    );
+    --sp-credit-card-rim-light: color-mix(
+      in oklab,
+      var(--sp-primitive-color-white) 30%,
+      transparent
+    );
+    --sp-credit-card-rim-dark: var(--sp-primitive-color-black-alpha-10);
+
+    /* The brand in three shades and the soft gradients, from the accent. A
+     * brand override recolours them (rulebook C1, C3). */
+    --sp-credit-card-brand-100: oklch(
+      from var(--sp-rw-bg-accent) 0.951 calc(c * 0.14) h
+    );
+    --sp-credit-card-brand-700: oklch(
+      from var(--sp-rw-bg-accent) calc(l - 0.058) c h
+    );
+    --sp-credit-card-brand-900: oklch(
+      from var(--sp-rw-bg-accent) calc(l - 0.166) calc(c - 0.055) h
+    );
+    --sp-credit-card-soft-blue: oklch(
+      from var(--sp-rw-bg-accent) 0.804 calc(c * 0.465) calc(h + 7)
+    );
+    --sp-credit-card-soft-pink: oklch(
+      from var(--sp-rw-bg-accent) 0.88 calc(c * 0.52) calc(h + 82)
+    );
+    --sp-credit-card-soft-violet: oklch(
+      from var(--sp-rw-bg-accent) 0.685 calc(c * 0.66) calc(h + 43)
+    );
+    /* The warm tint of the salmon looks, in the hue of the orange colour tint
+     * (the warning moved to amber, 2 November 2026). */
+    --sp-credit-card-warm: oklch(from var(--sp-rw-bg-orange) 0.905 0.033 h);
+
+    /* What a variant sets: the face, the hairline ring along its edge, the
+     * wordmark, the lines of the footer, the contactless symbol, the tile of
+     * the network mark and the mark in it. The default is brand-dark. */
+    --sp-credit-card-fill: linear-gradient(
+      to top right,
+      var(--sp-credit-card-brand-900),
+      var(--sp-credit-card-brand-700)
+    );
+    --sp-credit-card-ring: var(--sp-credit-card-rim-light);
+    --sp-credit-card-brand-ink: var(--sp-credit-card-white);
+    --sp-credit-card-footer-ink: var(--sp-credit-card-white);
+    --sp-credit-card-contactless-ink: var(--sp-credit-card-white);
+    --sp-credit-card-tile: var(--sp-credit-card-film);
+    --sp-credit-card-mark-ink: var(--sp-credit-card-white);
+
+    position: relative;
+    display: grid;
+    width: 19.75rem;
+    max-width: 100%;
+    aspect-ratio: 316 / 190;
+    container-type: inline-size;
+  }
+
+  :where(.sp-credit-card[data-variant="brand-light"]) {
+    --sp-credit-card-fill: var(--sp-credit-card-brand-100);
+    --sp-credit-card-ring: var(--sp-credit-card-rim-dark);
+    --sp-credit-card-brand-ink: var(--sp-credit-card-ink-dark);
+    --sp-credit-card-footer-ink: var(--sp-credit-card-ink-dark);
+    --sp-credit-card-tile: var(--sp-credit-card-white);
+    --sp-credit-card-mark-ink: var(--sp-credit-card-ink-dark);
+  }
+
+  :where(.sp-credit-card[data-variant="gray-dark"]) {
+    --sp-credit-card-fill: linear-gradient(
+      to top right,
+      var(--sp-primitive-color-neutral-900),
+      var(--sp-primitive-color-neutral-700)
+    );
+  }
+
+  :where(.sp-credit-card[data-variant="gray-light"]) {
+    --sp-credit-card-fill: var(--sp-primitive-color-neutral-100);
+    --sp-credit-card-ring: var(--sp-credit-card-rim-dark);
+    --sp-credit-card-brand-ink: var(--sp-credit-card-ink-dark);
+    --sp-credit-card-footer-ink: var(--sp-credit-card-ink-dark);
+    --sp-credit-card-contactless-ink: var(--sp-credit-card-ink-faint);
+    --sp-credit-card-tile: var(--sp-credit-card-white);
+    --sp-credit-card-mark-ink: var(--sp-credit-card-ink-dark);
+  }
+
+  /* The strips: a dark half under a coloured one, or a dark face with a
+   * coloured column at its end. The wordmark sits on the colour or on the dark
+   * as the variant's top or start does, and the footer lines on the dark. */
+  :where(.sp-credit-card[data-variant="gray-strip"]) {
+    --sp-credit-card-fill: var(--sp-primitive-color-neutral-100);
+    --sp-credit-card-brand-ink: var(--sp-credit-card-ink-dark);
+    --sp-credit-card-contactless-ink: var(--sp-credit-card-ink-faint);
+  }
+
+  :where(.sp-credit-card[data-variant="gradient-strip"]) {
+    --sp-credit-card-fill: linear-gradient(
+      to bottom,
+      var(--sp-credit-card-soft-blue),
+      var(--sp-credit-card-soft-pink)
+    );
+  }
+
+  :where(.sp-credit-card[data-variant="salmon-strip"]) {
+    --sp-credit-card-fill: var(--sp-credit-card-warm);
+    --sp-credit-card-brand-ink: var(--sp-credit-card-ink-dark);
+  }
+
+  :where(.sp-credit-card[data-variant="gray-strip-vertical"]) {
+    --sp-credit-card-fill: linear-gradient(
+      to bottom right,
+      var(--sp-credit-card-rim-light),
+      transparent
+    );
+    --sp-credit-card-contactless-ink: var(--sp-credit-card-ink-faint);
+  }
+
+  :where(.sp-credit-card[data-variant="gradient-strip-vertical"]) {
+    --sp-credit-card-fill: linear-gradient(
+      to bottom,
+      var(--sp-credit-card-soft-pink),
+      var(--sp-credit-card-soft-violet)
+    );
+  }
+
+  :where(.sp-credit-card[data-variant="salmon-strip-vertical"]) {
+    --sp-credit-card-fill: var(--sp-credit-card-warm);
+  }
+
+  /* The face fills the card, with 16 px inside it and 16 px corners, which are
+   * the kit's dialog radius at the most (16 px at the default radius) and
+   * shrink with the card, so a theme that squares or rounds the kit's corners
+   * does the same to the card. The clear glass variants take their fill, rim
+   * and shadow from the shared glass surface, which stands above this rule. */
+  :where(.sp-credit-card-face) {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: calc(16 * var(--sp-credit-card-unit));
+    border-radius: min(
+      var(--sp-rw-radius-dialog),
+      calc(16 * var(--sp-credit-card-unit))
+    );
+    background: var(--sp-credit-card-fill);
+  }
+
+  /* The hairline ring along the edge, strongest at the top start and fading to
+   * a fifth of it at the bottom end. */
+  :where(.sp-credit-card-face:not(.sp-glass-surface))::before {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 var(--sp-rw-border-default)
+      var(--sp-credit-card-ring);
+    content: "";
+    -webkit-mask-image: linear-gradient(135deg, black, rgb(0 0 0 / 20%));
+    mask-image: linear-gradient(135deg, black, rgb(0 0 0 / 20%));
+    pointer-events: none;
+  }
+
+  /* The dark half of a strip variant, behind the text. */
+  :where(.sp-credit-card-strip) {
+    position: absolute;
+    z-index: 0;
+    background: var(--sp-credit-card-strip);
+    pointer-events: none;
+  }
+
+  :where(.sp-credit-card-strip[data-strip="horizontal"]) {
+    inset-block-end: 0;
+    inset-inline: 0;
+    height: 50%;
+  }
+
+  :where(.sp-credit-card-strip[data-strip="vertical"]) {
+    inset-block: 0;
+    inset-inline-start: 0;
+    inset-inline-end: calc(88 * var(--sp-credit-card-unit));
+  }
+
+  /* The soft glow in the corner of the transparent gradient: four quarters in
+   * the brand's neighbours, the kit's orange, blue and green, blurred into one
+   * haze. */
+  :where(.sp-credit-card-glow) {
+    position: absolute;
+    inset-block-start: calc(-16 * var(--sp-credit-card-unit));
+    inset-inline-start: calc(-16 * var(--sp-credit-card-unit));
+    z-index: 0;
+    width: calc(160 * var(--sp-credit-card-unit));
+    height: calc(160 * var(--sp-credit-card-unit));
+    border-radius: 50%;
+    background: conic-gradient(
+      color-mix(in oklab, var(--sp-rw-bg-orange) 50%, transparent) 0 25%,
+      color-mix(in oklab, var(--sp-rw-bg-positive) 30%, transparent) 0 50%,
+      color-mix(in oklab, var(--sp-rw-bg-accent) 30%, transparent) 0 75%,
+      color-mix(
+          in oklab,
+          oklch(from var(--sp-rw-bg-accent) l c calc(h + 100)) 30%,
+          transparent
+        )
+        0
+    );
+    filter: blur(calc(64 * var(--sp-credit-card-unit)));
+    pointer-events: none;
+  }
+
+  :where(.sp-credit-card-header),
+  :where(.sp-credit-card-footer) {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* The wordmark and the contactless symbol: 4 px in from the sides and the
+   * top, a 16 px wordmark in the strong weight and the bare waves of the
+   * symbol in a 20 by 24 px box, with no circle around
+   * them (Lukas, 2 November 2026). */
+  :where(.sp-credit-card-header) {
+    align-items: flex-start;
+    padding-inline: calc(4 * var(--sp-credit-card-unit));
+    padding-block-start: calc(4 * var(--sp-credit-card-unit));
+  }
+
+  :where(.sp-credit-card-brand) {
+    margin: 0;
+    color: var(--sp-credit-card-brand-ink);
+    font-size: calc(16 * var(--sp-credit-card-unit));
+    font-weight: var(--sp-rw-font-weight-strong);
+    line-height: normal;
+  }
+
+  :where(.sp-credit-card-contactless) {
+    width: calc(20 * var(--sp-credit-card-unit));
+    height: calc(24 * var(--sp-credit-card-unit));
+    flex-shrink: 0;
+    color: var(--sp-credit-card-contactless-ink);
+  }
+
+  /* The footer: the cardholder and the expiry date over the number, 8 px apart,
+   * and the tile of the network mark 12 px after them. The tracking is
+   * 0.6 px at 12 px and 1 px at 16 px, set through the token that the
+   * global letter spacing reads. */
+  :where(.sp-credit-card-footer) {
+    align-items: flex-end;
+    gap: calc(12 * var(--sp-credit-card-unit));
+  }
+
+  :where(.sp-credit-card-details) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: calc(8 * var(--sp-credit-card-unit));
+  }
+
+  :where(.sp-credit-card-line) {
+    display: flex;
+    align-items: flex-end;
+    gap: calc(4 * var(--sp-credit-card-unit));
+  }
+
+  :where(.sp-credit-card-name),
+  :where(.sp-credit-card-expiry),
+  :where(.sp-credit-card-number) {
+    --sp-rw-letter-spacing-default: 0.05em;
+
+    margin: 0;
+    color: var(--sp-credit-card-footer-ink);
+    font-size: calc(12 * var(--sp-credit-card-unit));
+    font-weight: var(--sp-rw-font-weight-strong);
+    line-height: 1.375;
+  }
+
+  :where(.sp-credit-card-name) {
+    text-transform: uppercase;
+    word-break: break-word;
+  }
+
+  :where(.sp-credit-card-expiry) {
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+    line-height: normal;
+    text-align: end;
+  }
+
+  :where(.sp-credit-card-number) {
+    --sp-rw-letter-spacing-default: 0.0625em;
+
+    min-height: 1.2em;
+    font-size: calc(16 * var(--sp-credit-card-unit));
+    font-variant-numeric: tabular-nums;
+    line-height: normal;
+  }
+
+  :where(.sp-credit-card-mark) {
+    display: flex;
+    width: calc(46 * var(--sp-credit-card-unit));
+    height: calc(32 * var(--sp-credit-card-unit));
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: min(
+      var(--sp-rw-radius-xs),
+      calc(4 * var(--sp-credit-card-unit))
+    );
+    background: var(--sp-credit-card-tile);
+    color: var(--sp-credit-card-mark-ink);
+  }
+
+  :where(.sp-credit-card-mark-glyph) {
+    width: calc(30 * var(--sp-credit-card-unit));
+    height: calc(19 * var(--sp-credit-card-unit));
+  }
+}

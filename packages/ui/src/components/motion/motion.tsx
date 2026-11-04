@@ -19,13 +19,9 @@ import { swapContainerClassName, useHeightFollower } from "./motion-follow";
 import {
   GlideOnChange,
   leavingProps,
-  measureSwapTiming,
-  swapPresence,
-  toMotionElement,
   useLeavingEntries,
   usePresenceMotion,
   type MotionLayout,
-  type SwapTiming,
 } from "./motion-presence";
 
 export type { MotionLayout };
@@ -321,8 +317,8 @@ export function MotionItem({
   const stack = list.layout === "stack";
   // A stack keeps its leaving items itself (MotionEntry) and collapses them; a
   // flow list holds them in AnimatePresence, out of the flow, until their exit
-  // has played. A stack item never holds the presence of a swap or a reveal
-  // around it, but it is inert while that presence leaves.
+  // has played. A stack item never holds the presence of a reveal around it,
+  // but it is inert while that presence leaves.
   const inPresence = useIsPresent();
   const [inFlow, safeToRemove] = usePresence(!stack);
   const shown = stack ? !entry?.leaving : inFlow;
@@ -444,17 +440,20 @@ function MotionRevealPanel({
 
 export interface MotionSwapProps extends useRender.ComponentProps<"div"> {
   /**
-   * Identifies the content. When it changes, the old content fades out, the
-   * new content fades in after it and the container's height follows.
+   * Identifies the content. When it changes, the new content replaces the old
+   * at once and the container's height follows it.
    */
   swapKey: React.Key;
 }
 
 /**
- * Content that replaces other content, for steps, states and panels. The old
- * content fades out quickly and the new content fades in after it, so the two
- * are never legible on top of each other. The container's height follows the
- * new content over the whole swap, so nothing jumps.
+ * Content that replaces other content, for steps, states and panels. The new
+ * content replaces the old at once, as a Tabs panel switches, so the two are
+ * never seen together and there is never a moment with neither; the
+ * container's height follows the new content over the base duration, so
+ * nothing below it jumps (rulebook M8). While the height moves only the
+ * container's bottom edge clips, so rings and focus rings that the content
+ * draws outside its box stay whole.
  */
 export function MotionSwap({
   children,
@@ -464,14 +463,9 @@ export function MotionSwap({
   ...props
 }: MotionSwapProps): React.ReactElement {
   const swapRef = React.useRef<HTMLDivElement>(null);
-  // Measured from the container when a swap starts.
-  const resolve = React.useCallback(
-    () => measureSwapTiming(swapRef.current),
-    [],
-  );
 
   // The container follows the height of the new content, and keeps following
-  // the entering pane until the swap is over, so content that builds a frame
+  // the new pane until the height has arrived, so content that builds a frame
   // later does not make the height pop at the end.
   const follow = useHeightFollower(swapRef);
   const previousKey = React.useRef(swapKey);
@@ -480,24 +474,17 @@ export function MotionSwap({
     previousKey.current = swapKey;
     const container = swapRef.current;
     if (!container) return;
-    // The follow rule moves a swap's height over the whole swap, base in all.
+    // The follow rule moves a swap's height over the base duration.
     follow({
-      enter: container.querySelector(
-        ':scope > [data-slot="motion-swap-pane"]:not([inert])',
-      ),
+      enter: container.querySelector(':scope > [data-slot="motion-swap-pane"]'),
     });
   }, [follow, swapKey]);
 
   const defaultProps = {
-    children: (
-      <PopLayoutPresence>
-        <MotionSwapPane key={swapKey} resolve={resolve}>
-          {children}
-        </MotionSwapPane>
-      </PopLayoutPresence>
-    ),
-    // The leaving pane is taken out of the flow and positioned from here, and
-    // the height follows over the whole swap.
+    // A new key mounts a new pane in place of the old one in the same commit,
+    // so nothing of the old content stays and state inside starts over.
+    children: <MotionSwapPane key={swapKey}>{children}</MotionSwapPane>,
+    // Positioned, so that content placed absolutely inside stays against it.
     className: cn(
       slotClass("motion-swap", props, render),
       swapContainerClassName,
@@ -517,16 +504,9 @@ export function MotionSwap({
 
 function MotionSwapPane({
   children,
-  resolve,
   ...props
-}: React.ComponentProps<"div"> & {
-  resolve: () => SwapTiming;
-}): React.ReactElement {
-  const present = useIsPresent();
-  const reduced = useReducedMotionPreference();
+}: React.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    ...swapPresence({ reduced, resolve }),
-    ...leavingProps(present, reduced),
     children,
     className: cn(slotClass("motion-swap-pane", props), "flow-root"),
     "data-slot": "motion-swap-pane",
@@ -535,6 +515,5 @@ function MotionSwapPane({
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(defaultProps, props),
-    render: toMotionElement(undefined, "div"),
   });
 }

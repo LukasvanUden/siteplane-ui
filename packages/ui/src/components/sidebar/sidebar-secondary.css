@@ -1,0 +1,94 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The second tier of a sidebar (SidebarSecondary):
+   * a 256 px panel at the sidebar's inline end that
+   * lies over the content beside it. It sits on the page canvas like the
+   * sidebar, and the kit's divider line ends it towards the content. Closed it
+   * is a zero-width strip, and it opens to its width at the sidebar's own pace
+   * (the duration and curve of the sidebar's width), so the rail, the panel
+   * and their edge move in step; reduced motion makes it instant through the
+   * duration token (M5). Its offset is the width the sidebar takes: the
+   * sidebar's width, the rail's when it is collapsed to its icons, and the
+   * rail with the 8 px around a floating or inset rail. */
+  :where(.sp-sidebar-secondary) {
+    --sidebar-secondary-offset: var(--sidebar-width);
+    position: fixed;
+    z-index: 10;
+    inset-block: 0;
+    inset-inline-start: var(--sidebar-secondary-offset);
+    display: flex;
+    width: 0;
+    overflow: clip;
+    border: 0 solid transparent;
+    border-inline-end-width: var(--sp-rw-border-default);
+    background: var(--sp-rw-bg-base);
+    color: var(--sp-rw-fg-primary);
+    transition-property: width, border-color, inset-inline-start;
+    transition-duration: var(--motion-duration-base);
+    transition-timing-function: var(--motion-ease-linear);
+  }
+
+  /* In a contained provider the panel stays in the provider, as the sidebar
+   * does. */
+  :where(.sp-sidebar-wrapper[data-contained] > .sp-sidebar-secondary) {
+    position: absolute;
+  }
+
+  :where(.sp-sidebar[data-collapsible="icon"] ~ .sp-sidebar-secondary) {
+    --sidebar-secondary-offset: var(--sidebar-width-icon);
+  }
+
+  :where(
+    .sp-sidebar[data-collapsible="icon"][data-variant="floating"]
+      ~ .sp-sidebar-secondary
+  ),
+  :where(
+    .sp-sidebar[data-collapsible="icon"][data-variant="inset"]
+      ~ .sp-sidebar-secondary
+  ) {
+    --sidebar-secondary-offset: calc(
+      var(--sidebar-width-icon) + var(--sp-rw-space-4)
+    );
+  }
+
+  /* A sidebar at the inline end opens its panel towards the content at its
+   * start, with the line on that side. */
+  :where(.sp-sidebar[data-side="right"] ~ .sp-sidebar-secondary) {
+    inset-inline-start: auto;
+    inset-inline-end: var(--sidebar-secondary-offset);
+    border-inline-width: var(--sp-rw-border-default) 0;
+    transition-property: width, border-color, inset-inline-end;
+  }
+
+  /* A sidebar that has slid out takes its panel with it. */
+  :where(.sp-sidebar[data-collapsible="offcanvas"] ~ .sp-sidebar-secondary) {
+    display: none;
+  }
+
+  /* Open while the pointer is over the sidebar or the panel, or while keyboard
+   * focus is in either: the pointer crosses from the sidebar into the panel
+   * without closing it, and the keyboard reaches the panel's links right after
+   * the sidebar's. A link the pointer clicked keeps its focus but not the
+   * panel, which closes when the pointer leaves. */
+  .sp-sidebar:hover ~ .sp-sidebar-secondary,
+  .sp-sidebar:has(:focus-visible) ~ .sp-sidebar-secondary,
+  .sp-sidebar-secondary:hover,
+  .sp-sidebar-secondary:has(:focus-visible) {
+    width: calc(
+      var(--sidebar-secondary-width, 16rem) + var(--sp-rw-border-default)
+    );
+    border-color: var(--sp-rw-border-translucent);
+  }
+
+  /* The content keeps the panel's open width and the full height, so nothing
+   * in it reflows while the panel opens and closes around it. */
+  :where(.sp-sidebar-secondary-content) {
+    display: flex;
+    width: var(--sidebar-secondary-width, 16rem);
+    min-width: var(--sidebar-secondary-width, 16rem);
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+  }
+}

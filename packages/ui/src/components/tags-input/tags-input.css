@@ -1,0 +1,84 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The field is the kit's chips field (design-rework.css, beside the
+   * Combobox chips): its surface, focus, invalid and disabled states, its
+   * height on the field scale, the padding that centres a row of tags and the
+   * chip gap, 6 px between the tags. These defaults lay it out: one row of
+   * tags and text, which wraps, then the status of the field at its end,
+   * centred on the rows, 4 px after them, so the text ends 8 px before its
+   * glyph (I3). A press on it puts the caret in the text. */
+  :where(.sp-tags-input) {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: var(--sp-rw-space-1);
+    cursor: text;
+  }
+
+  /* The tags and the text stand the field's chip gap apart, and the text is
+   * as high as a tag of the field (the input-group profile of Input reads the
+   * composite context). It starts 8 px after the last tag, as the text of
+   * Combobox chips does, and at the field's inline padding, 12 px from the
+   * edge, in an empty field, where the empty tag list keeps no gap. */
+  :where(.sp-tags-input-area) {
+    --sp-composite-control-height: var(--sp-pill-height, var(--sp-rw-space-6));
+    --sp-composite-control-padding-inline-start: var(--sp-rw-space-0-5);
+    --sp-composite-control-padding-inline-end: 0px;
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex: 1 1 0%;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-chip-gap);
+  }
+
+  .sp-tags-input-area:not(:has(.sp-tag)) {
+    --sp-composite-control-padding-inline-start: var(--sp-rw-space-1);
+    column-gap: 0;
+  }
+
+  /* The text keeps 48 px, the least width of the text of Combobox chips, and
+   * moves to a row of its own where less is left beside the tags. */
+  .sp-tags-input-area > .sp-base-input[data-profile="input-group"] .sp-input {
+    flex: 1 1 var(--sp-rw-space-12);
+  }
+
+  :where(.sp-tags-input .sp-tag) {
+    cursor: default;
+  }
+
+  /* A field that fades as disabled fades its tags with it: a disabled tag in
+   * it keeps its full opacity instead of fading a second time, as the
+   * disabled parts of every field do (design-rework.css). */
+  .sp-tags-input:has(.sp-input:disabled) .sp-tag {
+    --sp-rw-disabled-opacity-action: 1;
+  }
+
+  /* The status of the field (FieldStatus, input-group.css): the help icon of
+   * `tooltip`, and the alert icon in its place while the text is invalid.
+   * Its 24 px box keeps 4 px around the 16 px glyph, so the glyph ends at the
+   * field's inline padding and the text ends 8 px before it, with the gap. */
+  .sp-tags-input > .sp-field-status {
+    margin-inline-end: calc((var(--sp-rw-space-6) - var(--sp-rw-space-4)) / -2);
+  }
+
+  .sp-tags-input:has([aria-invalid="true"]) > .sp-field-status[data-alert] {
+    display: flex;
+  }
+
+  .sp-tags-input:has([aria-invalid="true"])
+    > .sp-field-status[data-alert]
+    > .sp-input-invalid-icon {
+    display: block;
+  }
+
+  .sp-tags-input:has([aria-invalid="true"])
+    > .sp-field-status[data-alert]
+    > .sp-input-group-tooltip {
+    display: none;
+  }
+}

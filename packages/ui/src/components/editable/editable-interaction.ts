@@ -205,9 +205,9 @@ export function swapPhase(
 /**
  * The attributes of a part in a phase. A part that leaves is inert and hidden
  * from assistive technology, so nothing can be pressed or focused in it while
- * it fades; a part that enters takes focus and keys at once, also while it is
- * still transparent. `starting` is true in the first frames of a swap, which
- * show where the fade in starts (`data-starting-style`, the kit's swap fade).
+ * it leaves; a part that enters takes focus and keys at once, also while the
+ * field's frame still fades in. `starting` is true in the first frames of a
+ * swap (`data-starting-style`, as Base UI marks a part whose entrance starts).
  */
 export function swapAttributes(
   phase: EditableSwapPhase,
@@ -227,16 +227,14 @@ export function swapAttributes(
 }
 
 /**
- * How long a swap lasts in milliseconds, from its timing: the old side fades
- * out within the leave, the new side fades in after its delay. Durations are
- * in seconds, as the kit's measured transitions give them.
+ * How long a swap lasts in milliseconds, from its timing (the kit's
+ * `measureSwapTiming`): the base duration, over which the Editable's height
+ * follows and within which the field's frame fades. The pencil and the
+ * optional triggers switch at once. Durations are in seconds, as the kit's
+ * measured transitions give them.
  */
-export function swapDuration(timing: {
-  enter: { delay?: number; duration?: number };
-  leave: { duration?: number };
-}): number {
-  const enter = (timing.enter.delay ?? 0) + (timing.enter.duration ?? 0);
-  return Math.round(Math.max(enter, timing.leave.duration ?? 0) * 1000);
+export function swapDuration(timing: { duration?: number }): number {
+  return Math.round((timing.duration ?? 0) * 1000);
 }
 
 /** A box against the Editable, in pixels. */

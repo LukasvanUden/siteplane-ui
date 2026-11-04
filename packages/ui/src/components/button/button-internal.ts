@@ -1,4 +1,5 @@
-import type * as React from "react";
+import type { VariantProps } from "class-variance-authority";
+import { createElement, type ComponentProps, type ReactElement } from "react";
 
 import {
   Button,
@@ -6,6 +7,7 @@ import {
   type ButtonProfile,
   type ButtonProfileTone,
   type InlineButtonProps,
+  type buttonVariants,
 } from "./button";
 
 /*
@@ -28,6 +30,7 @@ export type KitButtonProfile =
   | "accordion-trigger"
   | "animated-arrow"
   | "animated-expand"
+  | "close"
   | "animated-fill"
   | "chip-remove"
   | "compact-icon-action"
@@ -40,7 +43,6 @@ export type KitButtonProfile =
   | "morph-trigger"
   | "navigation-row"
   | "navigation-sub-row"
-  | "overlay-dismiss"
   | "responsive-navigation"
   | "select-trigger"
   | "sidebar-rail"
@@ -54,7 +56,7 @@ export type TaskPillTone =
   "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5" | "muted";
 
 export type SelectTriggerButtonMode =
-  "default" | "elevated" | "ghost" | "inset";
+  "default" | "ghost" | "outline" | "segment";
 
 export type KitButtonProfileMode =
   | ResponsiveNavigationButtonProps["profileMode"]
@@ -63,7 +65,16 @@ export type KitButtonProfileMode =
 
 export type KitButtonProfileTone = ButtonProfileTone | TaskPillTone;
 
-interface KitDefaultProfileProps extends ButtonBaseProps {
+/**
+ * The Button's props with every size the chassis draws: the public sizes and
+ * the CloseButton's own 28 px step, `close-xs`, which only the close profile
+ * sizes (design-rework.css).
+ */
+interface KitButtonBaseProps extends Omit<ButtonBaseProps, "size"> {
+  size?: VariantProps<typeof buttonVariants>["size"];
+}
+
+interface KitDefaultProfileProps extends KitButtonBaseProps {
   profile?: Exclude<
     KitButtonProfile,
     | "inline"
@@ -76,25 +87,25 @@ interface KitDefaultProfileProps extends ButtonBaseProps {
   profileTone?: never;
 }
 
-interface ResponsiveNavigationButtonProps extends ButtonBaseProps {
+interface ResponsiveNavigationButtonProps extends KitButtonBaseProps {
   profile: "responsive-navigation";
   profileMode?: "responsive" | "compact";
   profileTone?: never;
 }
 
-interface TabsTabButtonProps extends ButtonBaseProps {
+interface TabsTabButtonProps extends KitButtonBaseProps {
   profile: "tabs-tab";
-  profileMode: "default" | "pill" | "underline";
+  profileMode: "default" | "pill" | "underline" | "ghost" | "minimal";
   profileTone?: never;
 }
 
-interface SelectTriggerButtonProps extends ButtonBaseProps {
+interface SelectTriggerButtonProps extends KitButtonBaseProps {
   profile: "select-trigger";
   profileMode: SelectTriggerButtonMode;
   profileTone?: never;
 }
 
-interface TaskPillButtonProps extends ButtonBaseProps {
+interface TaskPillButtonProps extends KitButtonBaseProps {
   profile: "task-pill";
   profileMode?: never;
   profileTone?: TaskPillTone;
@@ -102,13 +113,43 @@ interface TaskPillButtonProps extends ButtonBaseProps {
 
 export type KitButtonProps =
   | KitDefaultProfileProps
-  | (InlineButtonProps & { profileMode?: never })
+  | (Omit<InlineButtonProps, "size"> & {
+      profileMode?: never;
+      size?: KitButtonBaseProps["size"];
+    })
   | ResponsiveNavigationButtonProps
   | SelectTriggerButtonProps
   | TabsTabButtonProps
   | TaskPillButtonProps;
 
 /** Button with the kit's composition profiles; the same component. */
-export const KitButton = Button as (
-  props: KitButtonProps,
-) => React.ReactElement;
+export const KitButton = Button as (props: KitButtonProps) => ReactElement;
+
+/**
+ * The X of every close and remove action in the kit, exported from the
+ * Button's recipes: the CloseButton, the corner close of the overlays, Alert,
+ * Notification and Toast, and the remove action of a Badge, a Tag and a
+ * Combobox chip. It is Phosphor's X in the Regular weight, the centre lines of
+ * its two strokes with their 16-unit stroke in the 256-unit box, drawn here so
+ * that the Button's registry item needs no icon package. The Button it sits in
+ * sizes it; elsewhere it is 1em, as a Phosphor icon is.
+ */
+export function CloseGlyph(props: ComponentProps<"svg">): ReactElement {
+  return createElement(
+    "svg",
+    {
+      "aria-hidden": true,
+      fill: "none",
+      height: "1em",
+      stroke: "currentColor",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      strokeWidth: 16,
+      viewBox: "0 0 256 256",
+      width: "1em",
+      ...props,
+    },
+    createElement("path", { d: "M200 56 56 200" }),
+    createElement("path", { d: "M56 56l144 144" }),
+  );
+}

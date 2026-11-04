@@ -24,7 +24,9 @@ export interface DashboardShellProps extends React.ComponentProps<
    * viewport's height and only DashboardShellMain scrolls. Below it the page
    * scrolls and the header sticks to the top of the viewport. Set false for a
    * page that scrolls as a whole: the shell is then at least the viewport's
-   * height, and the header scrolls away with the page.
+   * height, and the header scrolls away with the page. A `contained` shell is
+   * the height of its container instead, at every width, and only
+   * DashboardShellMain scrolls.
    */
   stickyHeader?: boolean;
 }
@@ -44,30 +46,37 @@ export interface DashboardShellMainProps extends React.ComponentProps<"div"> {
 // The parts that follow the shell's settings read them here. Outside a
 // DashboardShell no sticky rule applies, so a part there keeps the Sidebar's
 // own behaviour.
-const DashboardShellContext: React.Context<{
+type DashboardShellSettings = {
   inShell: boolean;
+  mobileBreakpoint: "lg" | "md" | undefined;
   stickyHeader: boolean;
-}> = React.createContext<{ inShell: boolean; stickyHeader: boolean }>({
-  inShell: false,
-  stickyHeader: false,
-});
+};
+
+const DashboardShellContext: React.Context<DashboardShellSettings> =
+  React.createContext<DashboardShellSettings>({
+    inShell: false,
+    mobileBreakpoint: undefined,
+    stickyHeader: false,
+  });
 
 export function DashboardShell({
   children,
   className,
+  contained = false,
   layout = "push",
   mobileBreakpoint = "md",
   stickyHeader = true,
   ...props
 }: DashboardShellProps): React.ReactElement {
   const context = React.useMemo(
-    () => ({ inShell: true, stickyHeader }),
-    [stickyHeader],
+    () => ({ inShell: true, mobileBreakpoint, stickyHeader }),
+    [mobileBreakpoint, stickyHeader],
   );
   return (
     <DashboardShellContext.Provider value={context}>
       <SidebarProvider
-        className={cn("min-h-svh", className)}
+        className={cn(!contained && "min-h-svh", className)}
+        contained={contained}
         // The bar height and the sidebar width are the stylesheet's
         // (design-rework.css, "Dashboard Shell"); an app's style overrides
         // them. So are the sticky header's rules, which switch at the
@@ -130,8 +139,9 @@ export function DashboardShellInset({
       // inset clips its content without becoming one (overflow: clip, where
       // the Sidebar's inset is hidden), so where the page scrolls, below the
       // breakpoint and with stickyHeader={false} at every width, the header
-      // and a sticky bar or table header in the content stick to the
-      // viewport.
+      // and a sticky bar of the app's own in the content stick to the
+      // viewport. A Table's sticky heading row sticks to the table's own
+      // scrolling container.
       className={cn(inShell && "overflow-clip", className)}
       data-dashboard-shell="inset"
       {...props}
@@ -153,7 +163,10 @@ export function DashboardShellHeader({
   // expanded sidebar with the rest of the content. With the shell's
   // stickyHeader, the default, it sticks to the top below the breakpoint,
   // filled with the surface it sits on there, so the content scrolls under it
-  // unseen.
+  // unseen. Below the breakpoint it is the phone bar that holds the menu
+  // button, 56 px tall like Header Navigation's (B15): it names the breakpoint
+  // in data-menu-bar, and the stylesheet switches its height there.
+  const { inShell, mobileBreakpoint } = React.useContext(DashboardShellContext);
   return (
     <header
       className={cn(
@@ -163,6 +176,7 @@ export function DashboardShellHeader({
       )}
       data-dashboard-shell="header"
       data-divider={divider ? "true" : "false"}
+      data-menu-bar={inShell ? mobileBreakpoint : undefined}
       data-slot="dashboard-shell-header"
       {...props}
     />
@@ -176,8 +190,8 @@ export function DashboardShellMain({
 }: DashboardShellMainProps): React.ReactElement {
   // It scrolls on its own only where the shell is the viewport's height
   // (design-rework.css, "Dashboard Shell sticky header"). Elsewhere the page
-  // scrolls, and a scroll container here would hold every sticky bar or table
-  // header inside it to a box that never scrolls.
+  // scrolls, and a scroll container here would hold every sticky bar inside
+  // it to a box that never scrolls.
   return (
     <div
       className={cn(
@@ -199,17 +213,20 @@ export function DashboardShellPrimary({
   ...props
 }: React.ComponentProps<"section">): React.ReactElement {
   // It clips its content without becoming a scroll container (overflow:
-  // clip, as the inset does), so a sticky bar or table header in the content
+  // clip, as the inset does), so a sticky bar of the app's own in the content
   // sticks to the part that scrolls: the page below the breakpoint, and
   // DashboardShellMain from it up. With overflow hidden it was a scroll
   // container that never scrolls, and nothing in it stuck.
+  // It names its slot as the header and the main area do.
   return (
     <section
       className={cn(
+        slotClass("dashboard-shell-primary", props),
         "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-clip",
         className,
       )}
       data-dashboard-shell="primary"
+      data-slot="dashboard-shell-primary"
       {...props}
     />
   );

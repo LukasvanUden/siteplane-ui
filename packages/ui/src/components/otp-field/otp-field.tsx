@@ -9,7 +9,6 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  formControlSurfaceClassNames,
   type FormControlSurface,
   surfaceClassNames,
 } from "../../system/styles/surface";
@@ -34,14 +33,28 @@ export const OTPFieldPrimitive = {
  */
 export type OTPFieldLayout = "separate" | "joined";
 
+/**
+ * The display sizes of separate slots: squares of 64, 80 and 96 px with
+ * display digits, for a code that is the content of its screen, such as a
+ * verification step.
+ */
+export type OTPFieldDisplay = "sm" | "md" | "lg";
+
 const OTPFieldContext = React.createContext<{
   layout: OTPFieldLayout;
-  variant: FormControlSurface;
-}>({ layout: "separate", variant: "default" });
+}>({ layout: "separate" });
 
 export type OTPFieldProps = WithStringClassName<
   React.ComponentProps<typeof OTPFieldPrimitive.Root>
 > & {
+  /**
+   * Separate slots for display in place of field-sized ones: `sm` 64 px, `md`
+   * 80 px and `lg` 96 px squares, with digits of 48 px at `sm` and `md` and of
+   * 60 px at `lg`. `size` is ignored
+   * while it is set, and the field's hint takes the text beside a larger
+   * field. A joined field keeps the field's size.
+   */
+  display?: OTPFieldDisplay | undefined;
   layout?: OTPFieldLayout | undefined;
   size?: SiteplaneControlSize | undefined;
   variant?: FormControlSurface | undefined;
@@ -52,17 +65,21 @@ export function OTPField({
   "aria-labelledby": ariaLabelledBy,
   children,
   className,
+  display,
   id,
   layout = "separate",
   size,
   variant = "default",
   ...props
 }: OTPFieldProps): React.ReactElement {
-  const resolvedSize = useResolvedControlSize(size);
+  const joined = layout === "joined";
+  // Display slots take no size of the ladder; beside them the field's hint
+  // takes the text of a larger field (md).
+  const displayed = display !== undefined && !joined;
+  const resolvedSize = useResolvedControlSize(displayed ? "md" : size);
   const generatedInputId = React.useId();
   const resolvedInputId = id ?? (ariaLabel ? generatedInputId : undefined);
-  const joined = layout === "joined";
-  const context = React.useMemo(() => ({ layout, variant }), [layout, variant]);
+  const context = React.useMemo(() => ({ layout }), [layout]);
 
   return (
     <OTPFieldContext.Provider value={context}>
@@ -75,27 +92,30 @@ export function OTPField({
         aria-labelledby={ariaLabelledBy}
         className={cn(
           slotClass("otp-field", props),
-          !joined && "flex items-center gap-2",
+          // The slots and their text follow the field scale of the size
+          // (design-rework.css), and so does the gap between separate slots
+          // (otp-field.css).
+          "sp-field-scale",
+          !joined && "flex items-center",
           className,
         )}
+        data-display={displayed ? display : undefined}
         data-layout={layout}
         data-size={resolvedSize}
         data-slot="otp-field"
         data-variant={variant}
         id={resolvedInputId}
-        // A joined field is an InputGroup: the field surface and its invalid
-        // state stay with the component that owns them, with the same text size
-        // as an Input. Focus is not the field's: the current slot draws the ring
-        // of a separate slot (otp-field.css).
+        // A joined field is an InputGroup of the field's size: the field
+        // surface and its invalid state stay with the component that owns
+        // them, with the text of an Input of that size. Focus is not the
+        // field's: the current slot draws the ring of a separate slot
+        // (otp-field.css). The slots show no alert icon.
         {...(joined
           ? {
               render: (
                 <InputGroup
-                  textSize={
-                    resolvedSize === "lg" || resolvedSize === "xl"
-                      ? "base"
-                      : undefined
-                  }
+                  showInvalidIcon={false}
+                  size={resolvedSize}
                   variant={variant}
                 />
               ),
@@ -115,17 +135,33 @@ export type OTPFieldInputProps = WithStringClassName<
 
 /**
  * What a slot shows in both layouts: the character is centred, and there is no
- * caret and no selection highlight, so the focus ring is the only mark of the
- * current slot.
+ * selection highlight. The caret is the native one in the kit's caret colour,
+ * like every field's, shown only in the focused empty slot (otp-field.css).
  */
 const slotClassName =
-  "text-center caret-transparent selection:bg-transparent selection:text-foreground";
+  "text-center selection:bg-transparent selection:text-foreground";
+
+/**
+ * A slot: its input in a box as large as the input, which holds the slot's
+ * text size that the input takes.
+ */
+function OTPFieldSlot({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactElement {
+  return (
+    <span className="sp-otp-field-slot" data-slot="otp-field-slot">
+      {children}
+    </span>
+  );
+}
 
 export function OTPFieldInput({
   className,
   ...props
 }: OTPFieldInputProps): React.ReactElement {
-  const { layout, variant } = React.useContext(OTPFieldContext);
+  const { layout } = React.useContext(OTPFieldContext);
 
   if (layout === "joined") {
     // The field draws the surface; the slot is a bare cell inside it that keeps
@@ -135,34 +171,38 @@ export function OTPFieldInput({
     return (
       <>
         <Separator orientation="vertical" role="presentation" />
-        <OTPFieldPrimitive.Input
-          className={cn(
-            slotClass("otp-field-input", props),
-            slotClassName,
-            className,
-          )}
-          data-slot="otp-field-input"
-          spellCheck={false}
-          {...props}
-        />
+        <OTPFieldSlot>
+          <OTPFieldPrimitive.Input
+            className={cn(
+              slotClass("otp-field-input", props),
+              slotClassName,
+              className,
+            )}
+            data-slot="otp-field-input"
+            spellCheck={false}
+            {...props}
+          />
+        </OTPFieldSlot>
       </>
     );
   }
 
+  // The slot's box and text follow the field's size: kit rules in
+  // design-rework.css, so a size or text utility in className still wins.
   return (
-    <OTPFieldPrimitive.Input
-      className={cn(
-        slotClass("otp-field-input", props),
-        surfaceClassNames.formControlCell,
-        formControlSurfaceClassNames[variant],
-        slotClassName,
-        "in-[[data-slot=otp-field][data-size=sm]]:text-sm in-[[data-slot=otp-field][data-size=lg]]:text-lg in-[[data-slot=otp-field][data-size=xl]]:text-lg in-[[data-slot=otp-field][data-size=sm]]:leading-8 in-[[data-slot=otp-field][data-size=lg]]:leading-10 in-[[data-slot=otp-field][data-size=xl]]:leading-6 leading-9 sm:in-[[data-slot=otp-field][data-size=lg]]:text-base sm:in-[[data-slot=otp-field][data-size=xl]]:text-lg sm:in-[[data-slot=otp-field][data-size=sm]]:leading-7 sm:in-[[data-slot=otp-field][data-size=lg]]:leading-9 sm:in-[[data-slot=otp-field][data-size=xl]]:leading-6 sm:leading-8",
-        className,
-      )}
-      data-slot="otp-field-input"
-      spellCheck={false}
-      {...props}
-    />
+    <OTPFieldSlot>
+      <OTPFieldPrimitive.Input
+        className={cn(
+          slotClass("otp-field-input", props),
+          surfaceClassNames.formControlCell,
+          slotClassName,
+          className,
+        )}
+        data-slot="otp-field-input"
+        spellCheck={false}
+        {...props}
+      />
+    </OTPFieldSlot>
   );
 }
 

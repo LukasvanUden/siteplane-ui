@@ -5,12 +5,13 @@
     text-transform: uppercase;
   }
 
+  /* A trigger that shows the value is a field: the text of the field scale at
+   * the body weight, from the field's inline padding, with the swatch 8 px
+   * before the value (design-rework.css, beside the field states of the
+   * trigger). */
   .sp-color-picker-trigger-with-value {
     min-width: 8rem;
     justify-content: flex-start;
-    font-family: var(--sp-semantic-font-family-mono);
-    font-size: var(--sp-rw-font-12);
-    font-weight: 400;
   }
 
   /* The swatch is a fixed share (5/8) of the trigger's height, so every size keeps
@@ -48,36 +49,41 @@
     z-index: 50;
     width: 15.625rem;
     max-width: calc(100vw - 1.5rem);
-    padding: var(--sp-rw-space-3);
     outline: none;
     transform-origin: var(--trigger-anchor-point);
   }
 
+  /* The popover's 12 px lie in its dialog, which scrolls when the page leaves
+   * the popover less room than the panel (design-rework.css). */
   .sp-color-picker-dialog {
     display: grid;
     gap: var(--sp-rw-space-3);
+    padding: var(--sp-rw-space-3);
     outline: none;
   }
 
+  /* The colour area is 144 px high at the default sm, as lg had before the
+   * control ladder moved to 4 px steps, 160 px at md, as xl had, and 176 and
+   * 192 px at lg and xl (Lukas, 30 October 2026). */
   .sp-color-picker-area-frame {
     width: 100%;
-    height: 8rem;
+    height: 9rem;
     overflow: hidden;
     border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
     border-radius: var(--sp-rw-radius-control);
     background-clip: padding-box;
   }
 
-  .sp-color-picker-popover[data-size="sm"] .sp-color-picker-area-frame {
-    height: 7rem;
+  .sp-color-picker-popover[data-size="md"] .sp-color-picker-area-frame {
+    height: 10rem;
   }
 
   .sp-color-picker-popover[data-size="lg"] .sp-color-picker-area-frame {
-    height: 9rem;
+    height: 11rem;
   }
 
   .sp-color-picker-popover[data-size="xl"] .sp-color-picker-area-frame {
-    height: 10rem;
+    height: 12rem;
   }
 
   .sp-color-picker-area {
@@ -107,11 +113,14 @@
     top: 50%;
   }
 
+  /* A thumb's keyboard focus is a ring in the focus colour of every focus
+   * ring (--sp-rw-border-focus; it drew the semantic focus colour, Tailwind's
+   * blue-500, 4 November 2026). */
   .sp-color-picker-area-thumb[data-focus-visible],
   .sp-color-picker-hue-thumb[data-focus-visible] {
     box-shadow:
       0 0 0 1px rgb(0 0 0 / 24%),
-      0 0 0 3px var(--sp-semantic-color-focus);
+      0 0 0 3px var(--sp-rw-border-focus);
   }
 
   .sp-color-picker-hue-row {

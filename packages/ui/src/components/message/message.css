@@ -16,7 +16,7 @@
   :where(.sp-message) {
     --sp-message-avatar-gap: var(--sp-rw-space-2);
     --sp-message-avatar-size: var(--sp-rw-space-8);
-    --sp-message-footer-size: var(--sp-rw-control-xs);
+    --sp-message-footer-size: var(--sp-rw-space-6);
     --sp-message-gap: var(--sp-rw-space-2);
     --sp-message-inset: var(--sp-bubble-padding-inline, var(--sp-rw-space-4));
 

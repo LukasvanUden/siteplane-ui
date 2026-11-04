@@ -3,13 +3,12 @@
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { XIcon } from "lucide-react";
 import type React from "react";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
-import { KitButton } from "../button/button-internal";
+import { CloseButton } from "../button";
 import { ScrollArea } from "../scroll-area";
 import type { KitSheetPopupProps } from "./sheet-internal";
 
@@ -113,15 +112,22 @@ export function SheetPopup(popupProps: SheetPopupProps): React.ReactElement {
     side = "right",
     variant = "default",
     profile = "default",
+    belowOffset = false,
     closeProps,
     portalProps,
     ...props
   } = popupProps as KitSheetPopupProps;
+  // Below an offset, a bar above the sheet stays in view and in reach.
+  const offsetClassName = belowOffset && "top-(--sheet-offset-top)";
   return (
     <SheetPortal {...portalProps}>
       <SiteplaneUIPortalScope>
-        <SheetBackdrop />
-        <SheetViewport side={side} variant={variant}>
+        <SheetBackdrop className={offsetClassName || undefined} />
+        <SheetViewport
+          className={cn(offsetClassName, belowOffset && "overflow-clip")}
+          side={side}
+          variant={variant}
+        >
           <SheetPrimitive.Popup
             className={cn(
               slotClass("sheet-popup", props),
@@ -132,12 +138,22 @@ export function SheetPopup(popupProps: SheetPopupProps): React.ReactElement {
               // A fullscreen sheet takes the whole viewport (sheet.css).
               (side === "left" || side === "right") &&
                 variant !== "fullscreen" &&
-                "w-[calc(100%-(--spacing(12)))] max-w-md",
-              variant === "inset" &&
-                "sm:rounded-2xl sm:before:rounded-[inherit]",
+                "w-[calc(100%-(--spacing(12)))] max-w-100",
+              // An inset sheet takes the dialog's corners from 640 px through
+              // the inset Drawer's rule, one owner for both side panels
+              // (design-rework.css; C13, 3 November 2026: it drew Tailwind's
+              // 2xl radius, 18 px, where the Drawer beside it drew 16).
               profile === "sidebar" && [
+                // The Sidebar names the popup after itself, so it would lose
+                // the class its slot gives a Sheet popup and with it the
+                // Sheet's surface: it drew the floating surface's 1 px
+                // translucent border instead, a dark line over the backdrop
+                // along the screen's edges (Lukas, 3 November 2026). Its
+                // fill is the Sidebar's page background, published as the
+                // surface colour, so the rings inside it match the fill.
+                "sp-sheet-popup",
                 variant !== "fullscreen" && "w-(--sidebar-width)",
-                "bg-[var(--sp-rw-bg-base)] p-0 text-[var(--sp-rw-fg-primary)]",
+                "bg-(--sp-rw-surface-color) p-0 text-[var(--sp-rw-fg-primary)] [--sp-rw-surface-color:var(--sp-rw-bg-base)]",
               ],
               className,
             )}
@@ -149,23 +165,16 @@ export function SheetPopup(popupProps: SheetPopupProps): React.ReactElement {
           >
             {children}
             {showCloseButton && (
-              // The corner close of every overlay: the 24 px overlay-dismiss
-              // Button 8 px inside the top-end corner. The header keeps its
-              // text clear of it (design-rework.css).
+              // The corner close of a slideout: the CloseButton
+              // at its sm step, 36 px, which owns its box, glyph and states;
+              // the popup places it 12 px inside the top-end corner. The
+              // header keeps its text clear of it (design-rework.css).
+              // CloseButton names it ("Close" in the provider's messages).
               <SheetClose
-                aria-label="Close"
-                className="absolute end-2 top-2"
-                render={
-                  <KitButton
-                    profile="overlay-dismiss"
-                    shape="square"
-                    variant="ghost"
-                  />
-                }
+                className="absolute end-3 top-3"
+                render={<CloseButton size="sm" />}
                 {...closeProps}
-              >
-                <XIcon />
-              </SheetClose>
+              />
             )}
           </SheetPrimitive.Popup>
         </SheetViewport>
@@ -197,9 +206,17 @@ export function SheetHeader({
 
 export function SheetFooter({
   className,
+  actionLayout,
   render,
   ...props
-}: useRender.ComponentProps<"div">): React.ReactElement {
+}: useRender.ComponentProps<"div"> & {
+  /**
+   * `fill` lets the Buttons of the footer share its row in equal widths, as
+   * the actions of a Card footer do; a link keeps its own width. Left unset
+   * the actions end the row at their own widths.
+   */
+  actionLayout?: "fill" | undefined;
+}): React.ReactElement {
   const defaultProps = {
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap instead
@@ -208,6 +225,7 @@ export function SheetFooter({
       "flex flex-wrap",
       className,
     ),
+    "data-action-layout": actionLayout,
     "data-slot": "sheet-footer",
   };
 
@@ -276,7 +294,7 @@ export function SheetPanel({
   );
 }
 
-// SheetOverlay and SheetContent are the shadcn names of SheetBackdrop and
+// SheetOverlay and SheetContent are aliases of SheetBackdrop and
 // SheetPopup.
 export {
   SheetPrimitive,

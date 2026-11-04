@@ -109,7 +109,7 @@ export function ChartHighlight({
   const clipId = React.useId();
   const active = band !== null;
   // The band waits where it was while the strokes fade back in. It follows a
-  // little slower than the crosshair, as bklit's does, so the stretch trails the
+  // little slower than the crosshair, so the stretch trails the
   // point it belongs to; its duration is the series' own, the one the strokes
   // step back over.
   const options = { active, container, duration: bandDuration } as const;

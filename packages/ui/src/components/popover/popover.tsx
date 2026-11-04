@@ -1,7 +1,8 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
-import { XIcon } from "lucide-react";
+import { useRender } from "@base-ui/react/use-render";
 import type React from "react";
 import { usePopoverFlipMotion } from "./popover-motion";
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
@@ -9,7 +10,7 @@ import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provi
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
-import { KitButton } from "../button/button-internal";
+import { CloseButton } from "../button";
 
 export const PopoverCreateHandle: typeof PopoverPrimitive.createHandle =
   PopoverPrimitive.createHandle;
@@ -58,8 +59,8 @@ export function PopoverPopup({
   anchor?: PopoverPrimitive.Positioner.Props["anchor"];
   /**
    * Shows a close button in the top-end corner, as Dialog, Sheet and Drawer
-   * do: the 24 px overlay-dismiss Button 8 px inside the corner. The first
-   * block of the content keeps 8 px clear of it.
+   * do: the CloseButton at its dense 24 px step, 8 px inside the corner. The
+   * first block of the content keeps 8 px clear of it.
    */
   showCloseButton?: boolean;
   closeProps?: WithStringClassName<PopoverPrimitive.Close.Props>;
@@ -120,20 +121,13 @@ export function PopoverPopup({
               {children}
             </PopoverPrimitive.Viewport>
             {showCloseButton && (
+              // The CloseButton at its dense 24 px step, 8 px inside the
+              // top-end corner, as the close of every overlay; it names itself.
               <PopoverClose
-                aria-label="Close"
                 className="absolute end-2 top-2"
-                render={
-                  <KitButton
-                    profile="overlay-dismiss"
-                    shape="square"
-                    variant="ghost"
-                  />
-                }
+                render={<CloseButton size="2xs" />}
                 {...closeProps}
-              >
-                <XIcon />
-              </PopoverClose>
+              />
             )}
           </PopoverPrimitive.Popup>
         </PopoverPrimitive.Positioner>
@@ -152,6 +146,31 @@ export function PopoverClose({
       className={cn(slotClass("popover-close", props), props.className)}
     />
   );
+}
+
+/**
+ * The header of a popover: its title over its description, 4 px apart, as in
+ * the header of a Dialog, a Sheet or a Drawer (design-rework.css). The space
+ * to the content after it, such as a form, is the content's.
+ */
+export function PopoverHeader({
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"div">): React.ReactElement {
+  const defaultProps = {
+    className: cn(
+      slotClass("popover-header", props, render),
+      "flex flex-col",
+      className,
+    ),
+    "data-slot": "popover-header",
+  };
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(defaultProps, props),
+    render,
+  });
 }
 
 export function PopoverTitle({
@@ -175,7 +194,7 @@ export function PopoverDescription({
     <PopoverPrimitive.Description
       className={cn(
         slotClass("popover-description", props),
-        "wrap-anywhere [[data-slot=popover-viewport]>[data-current]>[data-slot=popover-title]+&]:mt-1",
+        "wrap-anywhere",
         className,
       )}
       data-slot="popover-description"
@@ -184,5 +203,5 @@ export function PopoverDescription({
   );
 }
 
-// PopoverContent is the shadcn name of PopoverPopup.
+// PopoverContent is an alias of PopoverPopup.
 export { PopoverPrimitive, PopoverPopup as PopoverContent };

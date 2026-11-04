@@ -1,31 +1,56 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  .sp-calendar {
-    --calendar-cell-size: 2.25rem;
+  /* The day cell, and with it the navigation, follows the control size: 40 px
+   * at the default sm, the size lg had before the control ladder moved to
+   * 4 px steps, 48 px at md, as xl had, and 52 and 56 px at lg and xl (Lukas,
+   * 30 October 2026). The picker popup below takes the same cells, from the
+   * same tokens. The weights are the kit's text roles (Lukas, 4 November
+   * 2026): the month heading, the picker's heading, today and the chosen day
+   * take the label role (500), and the weekday row, the grid's column
+   * headings, the heading role (480), as a Table's column headings do. The
+   * two tokens are hooks that read the roles; the calendar had weights of its
+   * own, 560 and 480. */
+  :root {
+    --sp-rw-calendar-cell-sm: 2.5rem;
+    --sp-rw-calendar-cell-md: 3rem;
+    --sp-rw-calendar-cell-lg: 3.25rem;
+    --sp-rw-calendar-cell-xl: 3.5rem;
+    --sp-rw-calendar-font-weight-emphasis: var(--sp-rw-font-weight-label);
+    --sp-rw-calendar-font-weight-weekday: var(--sp-rw-font-weight-heading);
+    /* The list of shortcuts beside the months, 152 px (Lukas, 2 November 2026).
+     * A date picker's panel lines its footer
+     * up with the list by the same width. */
+    --sp-rw-calendar-shortcut-list-width: calc(var(--sp-rw-space) * 38);
+  }
 
+  .sp-calendar,
+  .sp-calendar-picker-popup {
+    --calendar-cell-size: var(--sp-rw-calendar-cell-sm);
+  }
+
+  .sp-calendar[data-size="md"],
+  .sp-calendar-picker-popup[data-calendar-size="md"] {
+    --calendar-cell-size: var(--sp-rw-calendar-cell-md);
+  }
+
+  .sp-calendar[data-size="lg"],
+  .sp-calendar-picker-popup[data-calendar-size="lg"] {
+    --calendar-cell-size: var(--sp-rw-calendar-cell-lg);
+  }
+
+  .sp-calendar[data-size="xl"],
+  .sp-calendar-picker-popup[data-calendar-size="xl"] {
+    --calendar-cell-size: var(--sp-rw-calendar-cell-xl);
+  }
+
+  .sp-calendar {
     display: grid;
     position: relative;
     width: max-content;
     color: var(--sp-rw-fg-primary);
     font-size: var(--sp-rw-font-14);
     line-height: var(--sp-rw-line-21);
-  }
-
-  .sp-calendar[data-size="xs"] {
-    --calendar-cell-size: 1.75rem;
-  }
-
-  .sp-calendar[data-size="sm"] {
-    --calendar-cell-size: 2rem;
-  }
-
-  .sp-calendar[data-size="lg"] {
-    --calendar-cell-size: 2.5rem;
-  }
-
-  .sp-calendar[data-size="xl"] {
-    --calendar-cell-size: 3rem;
   }
 
   .sp-calendar-header {
@@ -57,10 +82,52 @@
     column-gap: var(--sp-rw-space-6);
   }
 
-  .sp-calendar-previous,
-  .sp-calendar-next {
-    width: var(--calendar-cell-size);
-    height: var(--calendar-cell-size);
+  /* The shortcuts as a list beside the months (shortcutsLayout="list"): the
+   * list runs from the top of the panel the calendar fills to its bottom, 12
+   * px inside, with a hairline at its end, and the months keep the 16 px
+   * padding of a picker's panel. Its rows are the List Box's, the height of
+   * the calendar's control size, and the row of the range the calendar shows
+   * is selected. */
+  .sp-calendar[data-shortcuts-layout="list"] {
+    grid-template-columns: var(--sp-rw-calendar-shortcut-list-width) auto;
+  }
+
+  .sp-calendar-shortcut-list {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    border-inline-end: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+    padding: var(--sp-rw-space-3);
+  }
+
+  .sp-calendar-main {
+    --sp-calendar-bleed: var(--sp-rw-space-4);
+    display: grid;
+    align-content: start;
+    padding: var(--sp-calendar-bleed);
+  }
+
+  /* Months beside a list fill its height, so the hairline between them runs
+   * from the panel's top to its bottom, beside the list's own. */
+  .sp-calendar-main:has(> .sp-calendar-months) {
+    align-content: stretch;
+  }
+
+  /* The date input and the Today button between the heading and the days of
+   * a single calendar (showDateInput, showToday):
+   * the input takes the row and the button keeps its own width,
+   * 12 px apart, both of the calendar's control size. The row takes the width
+   * the days give the calendar, so it never widens it. */
+  .sp-calendar-toolbar {
+    display: flex;
+    gap: var(--sp-rw-space-3);
+    margin-bottom: var(--sp-rw-space-2);
+    contain: inline-size;
+  }
+
+  .sp-calendar-toolbar .sp-date-field-control {
+    flex: 1 1 auto;
   }
 
   /* A header holds the Previous button only on the first month and the Next
@@ -83,23 +150,55 @@
     margin: 0;
     color: var(--sp-rw-fg-primary);
     font-size: var(--sp-rw-font-14);
-    font-weight: 560;
+    font-weight: var(--sp-rw-calendar-font-weight-emphasis);
     text-align: center;
   }
 
-  .sp-calendar-heading-trigger {
-    min-height: var(--calendar-cell-size);
-    gap: var(--sp-rw-space-1);
-    padding: 0 var(--sp-rw-space-2);
-    color: inherit;
-    font: inherit;
-  }
-
-  /* The heading icons take the tertiary text colour; their 16 px size comes
-   * from the Button they sit in. */
+  /* The heading icons take the tertiary text colour. */
   .sp-calendar-heading-trigger svg,
   .sp-calendar-picker-heading svg {
     color: var(--sp-rw-fg-tertiary);
+  }
+
+  /* The glyphs of the navigation and the headings stay 16 px (I3) at every
+   * size, as they were beside the 14 px heading before the Button ladder gave
+   * a Button of the default size a 20 px icon (Lukas, 30 October 2026). */
+  :root [data-chassis][data-size].sp-calendar-previous,
+  :root [data-chassis][data-size].sp-calendar-next,
+  :root [data-chassis][data-size].sp-calendar-heading-trigger,
+  :root [data-chassis][data-size].sp-calendar-picker-previous,
+  :root [data-chassis][data-size].sp-calendar-picker-next,
+  :root [data-chassis][data-size].sp-calendar-picker-heading {
+    --sp-rw-button-icon: var(--sp-rw-control-icon);
+  }
+
+  /* A month's header and the month and year picker's are one header: Previous
+   * and Next as wide and as tall as a day, and the heading between them, a
+   * Button as tall, 8 px inside its edges and 4 px from its text to its
+   * caret, in the calendar's text, 14 px on its 21 px line, at the emphasis
+   * weight. These rules outrank the Button chassis, whose size rules set a
+   * Button's box and type. A month's header had rules of its own that the
+   * chassis beat, so its three Buttons were the chassis's sm box, 36 px with
+   * a 14/20 label and 12 px inside, beside 40 px days and the picker's 40 px
+   * header (cleanup of 4 November 2026). */
+  :root [data-chassis][data-size].sp-calendar-previous,
+  :root [data-chassis][data-size].sp-calendar-next,
+  :root [data-chassis][data-size].sp-calendar-picker-previous,
+  :root [data-chassis][data-size].sp-calendar-picker-next {
+    width: var(--calendar-cell-size);
+    height: var(--calendar-cell-size);
+    min-height: var(--calendar-cell-size);
+    padding: 0;
+  }
+
+  :root [data-chassis][data-size].sp-calendar-heading-trigger,
+  :root [data-chassis][data-size].sp-calendar-picker-heading {
+    height: var(--calendar-cell-size);
+    min-height: var(--calendar-cell-size);
+    gap: var(--sp-rw-space-1);
+    padding: 0 var(--sp-rw-space-2);
+    font: inherit;
+    font-weight: var(--sp-rw-calendar-font-weight-emphasis);
   }
 
   .sp-calendar-heading-motion-frame {
@@ -201,22 +300,8 @@
   }
 
   .sp-calendar-picker-popup {
-    --calendar-cell-size: 2.25rem;
-
     width: calc(var(--calendar-cell-size) * 6);
     border-radius: var(--sp-rw-radius-surface);
-  }
-
-  .sp-calendar-picker-popup[data-calendar-size="sm"] {
-    --calendar-cell-size: 2rem;
-  }
-
-  .sp-calendar-picker-popup[data-calendar-size="lg"] {
-    --calendar-cell-size: 2.5rem;
-  }
-
-  .sp-calendar-picker-popup[data-calendar-size="xl"] {
-    --calendar-cell-size: 3rem;
   }
 
   .sp-calendar-picker-header {
@@ -228,22 +313,10 @@
     margin-bottom: var(--sp-rw-space-2);
   }
 
-  :root [data-chassis][data-size].sp-calendar-picker-previous,
-  :root [data-chassis][data-size].sp-calendar-picker-next {
-    width: var(--calendar-cell-size);
-    height: var(--calendar-cell-size);
-    min-height: var(--calendar-cell-size);
-    padding: 0;
-  }
-
+  /* The picker's heading stands in the middle of its header's column; a
+   * month's heading is centred by the text of its h2. */
   :root [data-chassis][data-size].sp-calendar-picker-heading {
-    height: var(--calendar-cell-size);
-    min-height: var(--calendar-cell-size);
-    gap: var(--sp-rw-space-1);
     justify-self: center;
-    padding: 0 var(--sp-rw-space-2);
-    font: inherit;
-    font-weight: 560;
   }
 
   .sp-calendar-picker-grid {
@@ -372,10 +445,32 @@
 
   /* Consecutive months share one selection and one Previous and Next pair; each
    * month has its own header. A day of the neighbouring month shows in that
-   * month's own grid, not twice. */
+   * month's own grid, not twice. A hairline divides the months, 24 px from
+   * each (rulebook B4; Lukas, 2 November 2026; they stood 24 px apart with no
+   * line). The line runs through the padding the calendar sits in,
+   * --sp-calendar-bleed, which a panel or a picker's popover sets, so it meets
+   * the panel's edge and the hairline of a footer below, as the line of a list
+   * of shortcuts does. */
   .sp-calendar-months {
     display: flex;
     gap: var(--sp-rw-space-6);
+  }
+
+  .sp-calendar-month + .sp-calendar-month {
+    margin-block: calc(var(--sp-calendar-bleed, 0px) * -1);
+    border-inline-start: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+    padding-block: var(--sp-calendar-bleed, 0px);
+    padding-inline-start: var(--sp-rw-space-6);
+  }
+
+  /* Under a row of shortcuts the line starts at the months. */
+  .sp-calendar-shortcuts
+    + .sp-calendar-months
+    > .sp-calendar-month
+    + .sp-calendar-month {
+    margin-block-start: 0;
+    padding-block-start: 0;
   }
 
   .sp-calendar-month {
@@ -397,7 +492,7 @@
     padding: 0;
     color: var(--sp-rw-fg-tertiary);
     font-size: var(--sp-rw-font-12);
-    font-weight: 480;
+    font-weight: var(--sp-rw-calendar-font-weight-weekday);
     text-align: center;
   }
 
@@ -406,6 +501,7 @@
    * the same tokens. Reduced motion shortens it for all of them below. */
   .sp-calendar-cell {
     display: grid;
+    position: relative;
     width: var(--calendar-cell-size);
     height: var(--calendar-cell-size);
     place-items: center;
@@ -433,7 +529,7 @@
   .sp-calendar-cell[data-selected] {
     background: var(--sp-rw-bg-accent);
     color: var(--sp-rw-fg-on-accent);
-    font-weight: 560;
+    font-weight: var(--sp-rw-calendar-font-weight-emphasis);
   }
 
   .sp-calendar[data-selection-mode="range"]
@@ -480,16 +576,44 @@
     border-end-start-radius: 0;
   }
 
+  /* A day's keyboard focus is the kit's focus ring, inside its cell, in the
+   * focus colour of every focus ring (--sp-rw-border-focus; it drew the
+   * semantic focus colour, Tailwind's blue-500, 4 November 2026). */
   .sp-calendar-cell[data-focus-visible] {
     outline: var(--sp-semantic-state-focus-width) solid
-      var(--sp-semantic-color-focus);
+      var(--sp-rw-border-focus);
     outline-offset: calc(var(--sp-semantic-state-focus-width) * -1);
   }
 
+  /* Today keeps the weight of a selected day and shows a dot under its
+   * number (Lukas, 31 October 2026; it was a
+   * hairline box around the day). The dot is 5 px round and its top 11 px
+   * under the middle of the day: 4 px above the bottom of the 40 px day of sm,
+   * and as close under the number at every size. It takes
+   * the accent text colour, and on a selected day the colour of the number,
+   * so it keeps the number's contrast on the accent fill and in a range, and
+   * it changes colour with the day's fill. */
   .sp-calendar-cell[data-today]:not([data-selected]) {
-    box-shadow: inset 0 0 0 var(--sp-rw-border-default)
-      var(--sp-rw-border-translucent);
-    font-weight: 560;
+    font-weight: var(--sp-rw-calendar-font-weight-emphasis);
+  }
+
+  .sp-calendar-cell[data-today]::after {
+    position: absolute;
+    top: calc(50% + var(--sp-rw-space) * 2.75);
+    inset-inline: 0;
+    width: calc(var(--sp-rw-space) * 1.25);
+    height: calc(var(--sp-rw-space) * 1.25);
+    margin-inline: auto;
+    border-radius: var(--sp-rw-radius-full);
+    background: var(--sp-rw-fg-accent);
+    content: "";
+    pointer-events: none;
+    transition: background-color var(--motion-duration-fast)
+      var(--motion-ease-navigation);
+  }
+
+  .sp-calendar-cell[data-today][data-selected]::after {
+    background: currentColor;
   }
 
   .sp-calendar-cell[data-outside-month] {
@@ -534,13 +658,6 @@
     transform: rotate(180deg);
   }
 
-  @media (max-width: 639px), (pointer: coarse) {
-    .sp-calendar[data-size="md"],
-    .sp-calendar-picker-popup[data-calendar-size="md"] {
-      --calendar-cell-size: 2.5rem;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .sp-calendar-previous,
     .sp-calendar-next,
@@ -549,7 +666,8 @@
     .sp-calendar-picker-heading,
     .sp-calendar-picker-next,
     .sp-calendar-picker-option,
-    .sp-calendar-cell {
+    .sp-calendar-cell,
+    .sp-calendar-cell::after {
       transition-duration: 1ms;
     }
 
@@ -571,6 +689,7 @@
   html[data-motion-reduce="true"] .sp-calendar-picker-next,
   html[data-motion-reduce="true"] .sp-calendar-picker-option,
   html[data-motion-reduce="true"] .sp-calendar-cell,
+  html[data-motion-reduce="true"] .sp-calendar-cell::after,
   [data-sp-motion="reduced"] .sp-calendar-previous,
   [data-sp-motion="reduced"] .sp-calendar-next,
   [data-sp-motion="reduced"] .sp-calendar-heading-trigger,
@@ -578,7 +697,8 @@
   [data-sp-motion="reduced"] .sp-calendar-picker-heading,
   [data-sp-motion="reduced"] .sp-calendar-picker-next,
   [data-sp-motion="reduced"] .sp-calendar-picker-option,
-  [data-sp-motion="reduced"] .sp-calendar-cell {
+  [data-sp-motion="reduced"] .sp-calendar-cell,
+  [data-sp-motion="reduced"] .sp-calendar-cell::after {
     transition-duration: 1ms;
   }
 

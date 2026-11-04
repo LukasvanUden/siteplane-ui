@@ -71,7 +71,9 @@
     transform: translateY(calc(-100% - 1rem));
   }
 
-  /* Fullscreen navigation is a Sheet surface, including its nested subpages. */
+  /* Fullscreen navigation is a Sheet surface, including its nested subpages.
+   * It fills with the page background and publishes it as the surface colour,
+   * so the rings inside it match the fill. */
   :root .sp-sheet-viewport[data-variant="fullscreen"] {
     display: flex;
     padding: 0;
@@ -82,7 +84,8 @@
     height: 100%;
     border: 0;
     border-radius: 0;
-    background: var(--sp-rw-bg-base);
+    --sp-rw-surface-color: var(--sp-rw-bg-base);
+    background: var(--sp-rw-surface-color);
     box-shadow: none;
     transition-duration: var(--motion-duration-slow);
     transition-timing-function: var(--motion-ease-standard);

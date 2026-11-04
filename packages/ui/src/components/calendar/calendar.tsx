@@ -10,12 +10,13 @@ import {
   startOfMonth,
   toCalendar,
   toCalendarDate,
+  today,
 } from "@internationalized/date";
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronsUpDownIcon,
-} from "lucide-react";
+  CaretLeftIcon,
+  CaretRightIcon,
+  CaretUpDownIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
   Button as CalendarButtonPrimitive,
@@ -44,6 +45,7 @@ import {
 import { nativeDayTime, toNativeDay } from "../../system/date/native-day";
 import { isInvalidAriaValue } from "../../system/form/aria-invalid";
 import { normalizeFormattedText } from "../../system/locale/formatted-text";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { SiteplaneLocaleProvider } from "../../system/locale/siteplane-locale-provider";
 import {
   type SiteplaneControlSize,
@@ -51,6 +53,8 @@ import {
 } from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import { Button } from "../button";
+import { DateInputGroup } from "../date-field/date-input-group";
+import { ListBox, ListBoxItem } from "../list-box";
 import { Popover, PopoverPopup, PopoverTrigger } from "../popover";
 
 import "./calendar.css";
@@ -150,6 +154,17 @@ export type CalendarSingleProps = CalendarBaseProps & {
   value?: Date | null | undefined;
   defaultValue?: Date | null | undefined;
   onValueChange?: ((value: Date) => void) | undefined;
+  /**
+   * Shows a date input between the heading and the days. It shows the
+   * selected day, and a complete day typed into it is selected and shows its
+   * month; a day the calendar does not allow marks the input invalid instead.
+   */
+  showDateInput?: boolean | undefined;
+  /**
+   * Shows a Today button between the heading and the days, after the date
+   * input. It selects today, `todayDate` when set, and shows its month.
+   */
+  showToday?: boolean | undefined;
 };
 
 export type CalendarMultipleProps = CalendarBaseProps & {
@@ -179,6 +194,15 @@ export type CalendarRangeProps = CalendarBaseProps & {
    * calendar with several months shows them once, above the months.
    */
   shortcuts?: readonly CalendarRangeShortcut[] | undefined;
+  /**
+   * Where the shortcuts stand: `row`, links between the heading and the days;
+   * `list`, a list beside the months at their inline start, whose choice is
+   * selected while the calendar's range is its range. With the list the
+   * calendar fills the panel it stands in, such as a Card or a popover: the
+   * list runs from the panel's top to its bottom and the months keep the
+   * panel's padding, so place it without padding of its own. Default: `row`.
+   */
+  shortcutsLayout?: "list" | "row" | undefined;
 };
 
 export type CalendarProps =
@@ -420,6 +444,9 @@ const calendarOwnProps = new Set<string>([
   "readOnly",
   "selectionMode",
   "shortcuts",
+  "shortcutsLayout",
+  "showDateInput",
+  "showToday",
   "size",
   "startMonth",
   "todayDate",
@@ -513,6 +540,13 @@ function CalendarRoot(props: CalendarMultipleProps | CalendarSingleProps) {
         <CalendarContent
           focusedDateRef={shared.focusedDateRef}
           isDisabled={isDisabled}
+          // The date input and Today choose one day.
+          showDateInput={
+            props.selectionMode !== "multiple" && props.showDateInput === true
+          }
+          showToday={
+            props.selectionMode !== "multiple" && props.showToday === true
+          }
           size={resolvedSize}
           state={state}
           todayDate={toTodayDate(props.todayDate)}
@@ -532,8 +566,16 @@ function toRangeValue(
 }
 
 function CalendarRangeRoot(props: CalendarRangeProps) {
-  const { defaultValue, numberOfMonths, onValueChange, shortcuts, value } =
-    props;
+  const {
+    defaultValue,
+    numberOfMonths,
+    onValueChange,
+    shortcuts,
+    shortcutsLayout,
+    value,
+  } = props;
+  // The list layout needs choices to list.
+  const shortcutList = shortcutsLayout === "list" && Boolean(shortcuts?.length);
   const resolvedSize = useResolvedControlSize(props.size);
   // A date range picker passes its range through React Aria's context.
   const pickerRange = useSlottedContext(RangeCalendarContext)?.value;
@@ -572,6 +614,7 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
       className={cn("sp-base-calendar", "sp-calendar", props.className)}
       data-foundation="calendar"
       data-selection-mode="range"
+      data-shortcuts-layout={shortcutList ? "list" : undefined}
       data-size={resolvedSize}
       data-slot="calendar"
       data-visible-months={visibleMonths > 1 ? visibleMonths : undefined}
@@ -580,6 +623,7 @@ function CalendarRangeRoot(props: CalendarRangeProps) {
         <CalendarContent
           focusedDateRef={shared.focusedDateRef}
           isDisabled={isDisabled}
+          shortcutList={shortcutList}
           shortcuts={shortcuts}
           size={resolvedSize}
           state={state}
@@ -631,7 +675,10 @@ function isRangeCalendarState<M extends PointCalendarSelectionMode>(
 function CalendarContent<M extends PointCalendarSelectionMode>({
   focusedDateRef,
   isDisabled,
+  shortcutList = false,
   shortcuts,
+  showDateInput = false,
+  showToday = false,
   size,
   state,
   todayDate,
@@ -640,7 +687,11 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
 }: {
   focusedDateRef: React.RefObject<CalendarDate | null>;
   isDisabled: boolean;
+  /** The shortcuts stand in a list beside the months. */
+  shortcutList?: boolean;
   shortcuts?: readonly CalendarRangeShortcut[] | undefined;
+  showDateInput?: boolean;
+  showToday?: boolean;
   size: SiteplaneControlSize;
   state: CalendarState<M> | RangeCalendarState;
   todayDate?: CalendarDate | undefined;
@@ -648,6 +699,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   visibleRangeRef: React.RefObject<VisibleRange | null>;
 }) {
   const { locale } = useLocale();
+  const messages = useSiteplaneMessages("calendar");
 
   // The Calendar tells a change of month by the day that had focus last, and
   // places a controlled month by the months on screen.
@@ -710,32 +762,130 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   const isDateAllowed = (date: CalendarDate) =>
     !state.isInvalid(date) && !state.isCellUnavailable(date);
 
-  const shortcutRow = shortcuts?.length ? (
-    <div
-      aria-label="Shortcuts"
-      className="sp-calendar-shortcuts"
-      data-slot="calendar-shortcuts"
-      role="group"
-    >
-      {shortcuts.map((shortcut) => (
-        <Button
-          disabled={
-            isDisabled ||
-            state.isReadOnly ||
-            !isDateAllowed(fromNativeDate(shortcut.value.from)) ||
-            !isDateAllowed(fromNativeDate(shortcut.value.to))
-          }
-          key={shortcut.label}
-          onClick={() => selectShortcut(shortcut.value)}
-          profile="inline"
-          profileTone="accent"
-          variant="link"
+  // A day typed into the date input, or today, is selected once its month
+  // shows: while some days are unavailable, React Aria takes a selection only
+  // from the months on screen.
+  const [pendingSelection, setPendingSelection] = useState<CalendarDate | null>(
+    null,
+  );
+  useLayoutEffect(() => {
+    if (pendingSelection === null || pendingFocus.length > 0) return;
+    if (!isMonthInRange(pendingSelection, state.visibleRange)) return;
+
+    setPendingSelection(null);
+    if (!isRangeCalendarState(state)) state.selectDate(pendingSelection);
+  });
+  const selectDay = (date: CalendarDate) => {
+    if (isDisabled || state.isReadOnly || !isDateAllowed(date)) return;
+
+    showMonth(0, date, date);
+    setPendingSelection(date);
+  };
+  // Today in the calendar's own calendar system: `todayDate`, else the
+  // device's today in the calendar's time zone.
+  const todayValue = toCalendar(
+    todayDate ?? today(state.timeZone),
+    state.focusedDate.calendar,
+  );
+
+  const toolbar =
+    !isRangeCalendarState(state) && (showDateInput || showToday) ? (
+      <div className="sp-calendar-toolbar" data-slot="calendar-toolbar">
+        {showDateInput ? (
+          <CalendarDateEntry
+            isDisabled={isDisabled}
+            onSelect={selectDay}
+            size={size}
+            state={state}
+          />
+        ) : null}
+        {showToday ? (
+          <Button
+            data-slot="calendar-today"
+            disabled={
+              isDisabled || state.isReadOnly || !isDateAllowed(todayValue)
+            }
+            onClick={() => selectDay(todayValue)}
+            size={size}
+          >
+            {messages.today}
+          </Button>
+        ) : null}
+      </div>
+    ) : null;
+
+  // The shortcut that the selected range matches, which the list shows
+  // selected.
+  const selectedRange = isRangeCalendarState(state) ? state.value : null;
+  const matchingShortcut = selectedRange
+    ? shortcuts?.find(
+        ({ value }) =>
+          isSameDay(fromNativeDate(value.from), selectedRange.start) &&
+          isSameDay(fromNativeDate(value.to), selectedRange.end),
+      )
+    : undefined;
+  const shortcutListBox =
+    shortcutList && shortcuts?.length ? (
+      <div
+        className="sp-calendar-shortcut-list"
+        data-slot="calendar-shortcut-list"
+      >
+        <ListBox
+          aria-label={messages.shortcuts}
+          onValueChange={(label) => {
+            const shortcut = shortcuts.find((item) => item.label === label);
+            if (shortcut) selectShortcut(shortcut.value);
+          }}
+          selectionAppearance="row"
+          size={size}
+          // No choice is selected while the range matches none.
+          value={matchingShortcut?.label ?? ""}
         >
-          {shortcut.label}
-        </Button>
-      ))}
-    </div>
-  ) : null;
+          {shortcuts.map((shortcut) => (
+            <ListBoxItem
+              disabled={
+                isDisabled ||
+                state.isReadOnly ||
+                !isDateAllowed(fromNativeDate(shortcut.value.from)) ||
+                !isDateAllowed(fromNativeDate(shortcut.value.to))
+              }
+              key={shortcut.label}
+              value={shortcut.label}
+            >
+              {shortcut.label}
+            </ListBoxItem>
+          ))}
+        </ListBox>
+      </div>
+    ) : null;
+
+  const shortcutRow =
+    shortcuts?.length && !shortcutList ? (
+      <div
+        aria-label={messages.shortcuts}
+        className="sp-calendar-shortcuts"
+        data-slot="calendar-shortcuts"
+        role="group"
+      >
+        {shortcuts.map((shortcut) => (
+          <Button
+            disabled={
+              isDisabled ||
+              state.isReadOnly ||
+              !isDateAllowed(fromNativeDate(shortcut.value.from)) ||
+              !isDateAllowed(fromNativeDate(shortcut.value.to))
+            }
+            key={shortcut.label}
+            onClick={() => selectShortcut(shortcut.value)}
+            profile="inline"
+            profileTone="accent"
+            variant="link"
+          >
+            {shortcut.label}
+          </Button>
+        ))}
+      </div>
+    ) : null;
 
   const renderMonth = (index: number) => {
     // Each month of a multi-month calendar picks its own month and year. The
@@ -760,7 +910,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
               shape="square"
               variant="ghost"
             >
-              <ChevronLeftIcon aria-hidden="true" />
+              <CaretLeftIcon aria-hidden="true" />
             </Button>
           ) : null}
           <CalendarMonthHeading
@@ -779,12 +929,18 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
               shape="square"
               variant="ghost"
             >
-              <ChevronRightIcon aria-hidden="true" />
+              <CaretRightIcon aria-hidden="true" />
             </Button>
           ) : null}
         </div>
+        {toolbar}
         {visibleMonths < 2 ? shortcutRow : null}
-        <div className="sp-calendar-grid-frame" data-slot="calendar-grid-frame">
+        <div
+          className="sp-calendar-grid-frame"
+          data-slot="calendar-grid-frame"
+          // A day focused on opening shows whole in its popover.
+          onFocus={revealFocusedDay}
+        >
           {navigationMotion ? (
             <div
               aria-hidden="true"
@@ -826,28 +982,80 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
     );
   };
 
-  if (visibleMonths < 2) {
-    return renderMonth(0);
-  }
-
   // Consecutive months share one range selection and one Previous and Next
   // pair; each month has its own heading and month picker. The shortcuts have
   // no single heading to sit under, so they show once above the months.
-  return (
+  const months =
+    visibleMonths < 2 ? (
+      renderMonth(0)
+    ) : (
+      <>
+        {shortcutRow}
+        <div className="sp-calendar-months" data-slot="calendar-months">
+          {Array.from({ length: visibleMonths }, (_, index) => (
+            <div
+              className="sp-calendar-month"
+              data-slot="calendar-month"
+              key={index}
+            >
+              {renderMonth(index)}
+            </div>
+          ))}
+        </div>
+      </>
+    );
+
+  // A list of shortcuts stands beside the months, which keep the panel's
+  // padding in a column of their own.
+  return shortcutListBox ? (
     <>
-      {shortcutRow}
-      <div className="sp-calendar-months" data-slot="calendar-months">
-        {Array.from({ length: visibleMonths }, (_, index) => (
-          <div
-            className="sp-calendar-month"
-            data-slot="calendar-month"
-            key={index}
-          >
-            {renderMonth(index)}
-          </div>
-        ))}
+      {shortcutListBox}
+      <div className="sp-calendar-main" data-slot="calendar-main">
+        {months}
       </div>
     </>
+  ) : (
+    months
+  );
+}
+
+/**
+ * The date input of a single calendar: the selected day, or the day being
+ * typed. A complete day the calendar allows is selected; one it does not
+ * allow stays in the input, which shows it invalid, until a day is picked.
+ */
+function CalendarDateEntry<M extends PointCalendarSelectionMode>({
+  isDisabled,
+  onSelect,
+  size,
+  state,
+}: {
+  isDisabled: boolean;
+  onSelect: (date: CalendarDate) => void;
+  size: SiteplaneControlSize;
+  state: CalendarState<M>;
+}) {
+  const messages = useSiteplaneMessages("calendar");
+  const selected = Array.isArray(state.value)
+    ? null
+    : (state.value as CalendarDate | null);
+
+  return (
+    <DateInputGroup
+      aria-label={messages.date}
+      isDateUnavailable={(date) =>
+        state.isCellUnavailable(toCalendarDate(date))
+      }
+      isDisabled={isDisabled}
+      isReadOnly={state.isReadOnly}
+      maxValue={state.maxValue}
+      minValue={state.minValue}
+      onChange={(next) => {
+        if (next) onSelect(toCalendarDate(next));
+      }}
+      size={size}
+      value={selected}
+    />
   );
 }
 
@@ -945,6 +1153,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
   size: SiteplaneControlSize;
   state: CalendarState<M> | RangeCalendarState;
 }) {
+  const messages = useSiteplaneMessages("calendar");
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [pickerView, setPickerView] = useState<PickerView>("month");
   const pickerPortalContainerRef = useRef<HTMLElement | null>(null);
@@ -971,7 +1180,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
           }}
           render={
             <Button
-              aria-label={`Choose month and year, ${heading}`}
+              aria-label={messages.monthYearButton(heading)}
               disabled={isDisabled}
               variant="ghost"
             />
@@ -1007,7 +1216,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
               {heading}
             </span>
           </span>
-          <ChevronsUpDownIcon aria-hidden="true" />
+          <CaretUpDownIcon aria-hidden="true" />
         </PopoverTrigger>
       </h2>
       <PopoverPopup
@@ -1027,6 +1236,122 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
       </PopoverPopup>
     </Popover>
   );
+}
+
+/**
+ * The scroll position of an area that shows a day whole: unchanged while the
+ * day shows whole (unless `clearMargin`), else moved so the day keeps
+ * `margin` to the edge, the room the calendar leaves under its last row at
+ * the end of the scroll. Lengths are the area's own pixels; `dayTop` and
+ * `dayBottom` count from the top of the part that shows.
+ */
+export function dayRevealScrollTop({
+  clearMargin = false,
+  dayBottom,
+  dayTop,
+  margin,
+  scrollTop,
+  viewHeight,
+}: {
+  clearMargin?: boolean;
+  dayBottom: number;
+  dayTop: number;
+  margin: number;
+  scrollTop: number;
+  viewHeight: number;
+}): number {
+  if (!clearMargin && dayTop >= 0 && dayBottom <= viewHeight) return scrollTop;
+
+  let next = scrollTop;
+  const end = viewHeight - margin;
+  if (dayBottom > end) next += dayBottom - end;
+  // A day taller than the room keeps its top in view.
+  const top = dayTop - (next - scrollTop);
+  if (top < margin) next -= margin - top;
+
+  return Math.max(0, next);
+}
+
+/** The area that scrolls around a day, inside its dialog, if one scrolls. */
+function dayScrollArea(day: HTMLElement, dialog: Element): HTMLElement | null {
+  for (let node = day.parentElement; node; node = node.parentElement) {
+    const { overflowY } = getComputedStyle(node);
+    if (
+      (overflowY === "auto" || overflowY === "scroll") &&
+      node.scrollHeight > node.clientHeight
+    )
+      return node;
+    if (node === dialog) return null;
+  }
+  return null;
+}
+
+/**
+ * React Aria focuses the selected day, or today, when a date picker opens, and
+ * scrolls it into view only for the keyboard, so that nothing moves under a
+ * pointer; it scrolls before the popover has the height the page leaves it,
+ * so that scroll does not hold either. A picker's popover scrolls in a short
+ * window (its dialog or the body of its panel), and the day focused on
+ * opening sat below the part that shows, by mouse and by keyboard. When the
+ * focus comes to a day from outside its month, the area that scrolls around
+ * it inside its dialog shows the day whole once the popover has its height;
+ * nothing outside the dialog moves, and a calendar outside a dialog keeps
+ * React Aria's behavior.
+ */
+function revealFocusedDay(event: React.FocusEvent<HTMLDivElement>): void {
+  const frame = event.currentTarget;
+  const day = event.target;
+  const from = event.relatedTarget;
+
+  if (
+    !(day instanceof HTMLElement) ||
+    !day.classList.contains("sp-calendar-cell")
+  )
+    return;
+  if (from instanceof Node && frame.contains(from)) return;
+
+  const dialog = day.closest('[role="dialog"]');
+  if (!dialog) return;
+
+  const reveal = (clearMargin: boolean): boolean => {
+    if (day.ownerDocument.activeElement !== day) return false;
+    const area = dayScrollArea(day, dialog);
+    const grid = day.closest(".sp-calendar-grid");
+    if (!area || !grid) return false;
+
+    const box = area.getBoundingClientRect();
+    // The popover's entrance scales the area and the day alike.
+    const scale = area.offsetHeight > 0 ? box.height / area.offsetHeight : 1;
+    const offset = (y: number) => (y - box.top) / scale - area.clientTop;
+    const rect = day.getBoundingClientRect();
+    // The room under the days to the end of what scrolls: the padding of the
+    // dialog, of a panel's body or of the months beside a list of shortcuts.
+    const margin = Math.max(
+      0,
+      area.scrollHeight -
+        (offset(grid.getBoundingClientRect().bottom) + area.scrollTop),
+    );
+    const next = dayRevealScrollTop({
+      clearMargin,
+      dayBottom: offset(rect.bottom),
+      dayTop: offset(rect.top),
+      margin,
+      scrollTop: area.scrollTop,
+      viewHeight: area.clientHeight,
+    });
+
+    if (next === area.scrollTop) return false;
+    area.scrollTop = next;
+    return true;
+  };
+
+  // React Aria gives the popover its height in the frames after it mounts.
+  // A second pass holds the day in view, with its margin once the first moved
+  // it, if that height comes a frame late.
+  requestAnimationFrame(() => {
+    const moved = reveal(false);
+    requestAnimationFrame(() => reveal(moved));
+  });
 }
 
 function CalendarGrid({
@@ -1098,6 +1423,7 @@ function CalendarPicker<M extends PointCalendarSelectionMode>({
   state: CalendarState<M> | RangeCalendarState;
   view: Exclude<PickerView, null>;
 }) {
+  const messages = useSiteplaneMessages("calendar");
   const [pageMotion, setPageMotion] = useState<CalendarPickerPageMotion | null>(
     null,
   );
@@ -1166,7 +1492,7 @@ function CalendarPicker<M extends PointCalendarSelectionMode>({
 
   const picker = (
     <div
-      aria-label="Choose month and year"
+      aria-label={messages.monthYearPicker}
       data-motion-active={isMoving || undefined}
       className="sp-calendar-picker"
       data-slot="calendar-picker"
@@ -1368,19 +1694,22 @@ function CalendarPickerHeader({
   onToggle: () => void;
   view: Exclude<PickerView, null>;
 }) {
+  const messages = useSiteplaneMessages("calendar");
   return (
     <div
       className="sp-calendar-picker-header"
       data-slot="calendar-picker-header"
     >
       <Button
-        aria-label={view === "month" ? "Previous year" : "Previous years"}
+        aria-label={
+          view === "month" ? messages.previousYear : messages.previousYears
+        }
         data-slot="calendar-picker-previous"
         disabled={isDisabled}
         onClick={onPrevious}
         variant="ghost"
       >
-        <ChevronLeftIcon aria-hidden="true" />
+        <CaretLeftIcon aria-hidden="true" />
       </Button>
       <Button
         data-slot="calendar-picker-heading"
@@ -1389,16 +1718,16 @@ function CalendarPickerHeader({
         variant="ghost"
       >
         {heading}
-        <ChevronsUpDownIcon aria-hidden="true" />
+        <CaretUpDownIcon aria-hidden="true" />
       </Button>
       <Button
-        aria-label={view === "month" ? "Next year" : "Next years"}
+        aria-label={view === "month" ? messages.nextYear : messages.nextYears}
         data-slot="calendar-picker-next"
         disabled={isDisabled}
         onClick={onNext}
         variant="ghost"
       >
-        <ChevronRightIcon aria-hidden="true" />
+        <CaretRightIcon aria-hidden="true" />
       </Button>
     </div>
   );

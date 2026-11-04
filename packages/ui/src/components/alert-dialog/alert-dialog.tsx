@@ -126,20 +126,27 @@ export function AlertDialogHeader({
 }
 export function AlertDialogFooter({
   className,
+  actionLayout,
   render,
   ...props
-}: useRender.ComponentProps<"div">): React.ReactElement {
+}: useRender.ComponentProps<"div"> & {
+  /**
+   * `fill` lets the Buttons of the footer share its row in equal widths, as
+   * the actions of a Card footer do; a link keeps its own width. Left unset
+   * the actions end the row at their own widths.
+   */
+  actionLayout?: "fill" | undefined;
+}): React.ReactElement {
   const defaultProps = {
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap
-      // instead of overflowing a narrow popup.
+      // instead of overflowing a narrow popup. They sit 16 px below the text,
+      // the popup's gap (S12).
       slotClass("alert-dialog-footer", props, render),
       "flex flex-wrap",
-      // Actions right after the text sit 24 px below it, as in every dialog
-      // without content (S12): 8 px here plus the popup's 16 px gap.
-      "[[data-slot=alert-dialog-header]+&]:mt-2",
       className,
     ),
+    "data-action-layout": actionLayout,
     "data-slot": "alert-dialog-footer",
   };
   return useRender({
@@ -192,7 +199,7 @@ export function AlertDialogClose(
   );
 }
 
-// AlertDialogOverlay and AlertDialogContent are the shadcn names of
+// AlertDialogOverlay and AlertDialogContent are aliases of
 // AlertDialogBackdrop and AlertDialogPopup.
 export {
   AlertDialogPrimitive,

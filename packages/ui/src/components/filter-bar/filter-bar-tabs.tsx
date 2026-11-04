@@ -1,14 +1,15 @@
 "use client";
 
-import { SearchIcon, XIcon } from "lucide-react";
+import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 
 import { useResolvedControlSize } from "../../system/provider/siteplane-ui-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { Button } from "../button";
 import { KitButton } from "../button/button-internal";
 import { Input, type InputProps } from "../input";
-import { swapFadeClassName } from "../motion/motion-presence";
+import { panelSwitchClassName } from "../motion/motion-presence";
 import { ScrollArea } from "../scroll-area";
 import { Tabs, TabsList, TabsRail, type TabsProps } from "../tabs";
 
@@ -106,7 +107,7 @@ export function FilterBarTabs({
   "aria-labelledby": ariaLabelledBy,
   children,
   className,
-  clearLabel = "Clear search",
+  clearLabel: clearLabelProp,
   defaultQuery = "",
   defaultSearching = false,
   grow = true,
@@ -114,12 +115,15 @@ export function FilterBarTabs({
   onQueryChange,
   onSearchingChange,
   query: queryProp,
-  searchLabel = "Search",
+  searchLabel: searchLabelProp,
   searching: searchingProp,
   size,
   variant = "default",
   ...props
 }: FilterBarTabsProps): React.ReactElement {
+  const messages = useSiteplaneMessages("filterBar");
+  const clearLabel = clearLabelProp ?? messages.clear;
+  const searchLabel = searchLabelProp ?? messages.search;
   const [searching, setSearching] = useControllableState(
     searchingProp,
     defaultSearching,
@@ -188,9 +192,9 @@ export function FilterBarTabs({
           profileMode={variant}
           ref={searchRef}
           size={resolvedSize}
-          variant="text"
+          variant="link"
         >
-          <SearchIcon aria-hidden="true" />
+          <MagnifyingGlassIcon aria-hidden="true" />
           {searchLabel}
         </KitButton>
         <div className="relative min-w-0 flex-1">
@@ -207,7 +211,7 @@ export function FilterBarTabs({
               aria-label={ariaLabel}
               aria-labelledby={ariaLabelledBy}
               className={cn(
-                swapFadeClassName,
+                panelSwitchClassName,
                 "w-max max-w-none overflow-visible",
               )}
               data-ending-style={searching ? "" : undefined}
@@ -221,7 +225,7 @@ export function FilterBarTabs({
             aria-hidden={!searching || undefined}
             className={cn(
               "sp-filter-bar-tabs-field",
-              swapFadeClassName,
+              panelSwitchClassName,
               "absolute inset-0 flex items-center gap-1 pe-1",
             )}
             data-ending-style={searching ? undefined : ""}
@@ -243,8 +247,9 @@ export function FilterBarTabs({
               className={cn("min-w-0 flex-1", inputClassName)}
               onValueChange={setQuery}
               ref={inputRef}
+              // The field text of its size, 14 px at sm and 16 px from md, as
+              // the tabs beside it (the field scale, design-rework.css).
               size={resolvedSize}
-              textSize={resolvedSize === "xl" ? "base" : "sm"}
               type="search"
               unstyled
               value={query}
@@ -253,10 +258,10 @@ export function FilterBarTabs({
               aria-label={clearLabel}
               onClick={closeSearch}
               profile="field-action"
-              size={resolvedSize === "xl" ? "icon-sm" : "icon-xs"}
+              shape="square"
               variant="ghost"
             >
-              <XIcon aria-hidden="true" className="size-3" />
+              <XIcon aria-hidden="true" />
             </Button>
           </div>
         </div>

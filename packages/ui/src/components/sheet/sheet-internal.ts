@@ -11,6 +11,12 @@ export type SheetPopupProfile = "default" | "sidebar";
 
 export type KitSheetPopupProps = React.ComponentProps<typeof SheetPopup> & {
   profile?: SheetPopupProfile;
+  /**
+   * Starts the sheet, its viewport and its backdrop `--sheet-offset-top` below
+   * the top of the viewport, which the portal sets, and clips the sheet's
+   * entrance there, so a bar above it stays in view and in reach.
+   */
+  belowOffset?: boolean | undefined;
 };
 
 /** SheetPopup with the kit's composition profile; the same component. */

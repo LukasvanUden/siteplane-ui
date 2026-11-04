@@ -3,6 +3,7 @@
 import type * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { useResolvedDensity } from "../../system/provider/siteplane-ui-provider";
 import { MotionReveal } from "../motion";
 
@@ -27,11 +28,13 @@ export function FilterBar({
   return (
     <section
       className={cn(
+        slotClass("filter-bar", props),
         "flex min-w-0 flex-col gap-(--filter-bar-gap) [--filter-bar-gap:calc(var(--spacing)*3)] data-[density=compact]:[--filter-bar-gap:calc(var(--spacing)*2)]",
         className,
       )}
       data-density={resolvedDensity}
       data-pattern="filter-bar"
+      data-slot="filter-bar"
       {...props}
     />
   );
@@ -44,10 +47,12 @@ export function FilterBarControls({
   return (
     <div
       className={cn(
+        slotClass("filter-bar-controls", props),
         "flex min-w-0 flex-wrap items-center justify-between gap-2",
         className,
       )}
       data-pattern="filter-bar-controls"
+      data-slot="filter-bar-controls"
       {...props}
     />
   );
@@ -59,8 +64,13 @@ export function FilterBarSearch({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("min-w-0", className)}
+      className={cn(
+        slotClass("filter-bar-search", props),
+        "min-w-0",
+        className,
+      )}
       data-pattern="filter-bar-search"
+      data-slot="filter-bar-search"
       {...props}
     />
   );
@@ -72,8 +82,13 @@ export function FilterBarFilters({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("flex min-w-0 flex-wrap items-center gap-2", className)}
+      className={cn(
+        slotClass("filter-bar-filters", props),
+        "flex min-w-0 flex-wrap items-center gap-2",
+        className,
+      )}
       data-pattern="filter-bar-filters"
+      data-slot="filter-bar-filters"
       {...props}
     />
   );
@@ -102,10 +117,12 @@ export function FilterBarActiveFilters({
     <MotionReveal className="-mt-(--filter-bar-gap)" open={open}>
       <div
         className={cn(
+          slotClass("filter-bar-active-filters", props),
           "flex min-w-0 flex-wrap items-center gap-1.5 pt-(--filter-bar-gap)",
           className,
         )}
         data-pattern="filter-bar-active-filters"
+        data-slot="filter-bar-active-filters"
         {...props}
       />
     </MotionReveal>
@@ -118,8 +135,13 @@ export function FilterBarActions({
 }: React.ComponentProps<"div">): React.ReactElement {
   return (
     <div
-      className={cn("flex shrink-0 items-center gap-2", className)}
+      className={cn(
+        slotClass("filter-bar-actions", props),
+        "flex shrink-0 items-center gap-2",
+        className,
+      )}
       data-pattern="filter-bar-actions"
+      data-slot="filter-bar-actions"
       {...props}
     />
   );

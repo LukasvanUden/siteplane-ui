@@ -1,6 +1,5 @@
 "use client";
 
-import { XIcon } from "lucide-react";
 import { motion } from "motion/react";
 import * as React from "react";
 import {
@@ -19,13 +18,35 @@ import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { Badge } from "../badge";
-import { Button } from "../button";
+import { KitBadge } from "../badge/badge-internal";
+import { CloseGlyph, KitButton } from "../button/button-internal";
+import { Checkbox } from "../checkbox";
 import { MotionItem, MotionList } from "../motion";
 import { leavingTagProps } from "./tag-group-leaving";
 
 const MotionTagPrimitive = motion.create(TagPrimitive);
+
+// The checkbox of a selectable tag is the Checkbox that goes with the tag's
+// text, as beside a label (rulebook S13): sm, 16 px, beside the 12 and 14 px
+// text of sm to lg, and md, 20 px, beside the 16 px text of xl.
+const tagCheckboxSizes = {
+  lg: "sm",
+  md: "sm",
+  sm: "sm",
+  xl: "md",
+} as const satisfies Record<SiteplaneControlSize, SiteplaneControlSize>;
+
+// The count of a tag is a badge with 12 px type at sm and
+// md, 14 px at lg and 16 px at xl, the Badge sizes sm, sm, lg and xl.
+const tagCountSizes = {
+  lg: "lg",
+  md: "sm",
+  sm: "sm",
+  xl: "xl",
+} as const satisfies Record<SiteplaneControlSize, SiteplaneControlSize>;
 
 type InternalTagProps = TagProps & { collectionKey?: string };
 
@@ -36,10 +57,12 @@ type TagEntry = {
 
 /**
  * A tag is selectable with an `onSelectedChange` handler or, uncontrolled,
- * with `defaultSelected`; `selected` alone only shows the state.
+ * with `defaultSelected` or `selectable`; `selected` alone only shows the
+ * state.
  */
 function isSelectableTag({ element }: TagEntry): boolean {
   return (
+    Boolean(element.props.selectable) ||
     Boolean(element.props.onSelectedChange) ||
     element.props.defaultSelected !== undefined
   );
@@ -282,12 +305,28 @@ export interface TagProps extends Omit<
   | "transition"
 > {
   children: React.ReactNode;
+  /**
+   * A number after the label, such as the items behind a filter. It is part
+   * of the tag's accessible name.
+   */
+  count?: number | undefined;
   /** Uncontrolled initial selection; the tag is selectable without a handler. */
   defaultSelected?: boolean | undefined;
   disabled?: boolean | undefined;
   onRemove?: (() => void) | undefined;
   onSelectedChange?: ((selected: boolean) => void) | undefined;
+  /**
+   * The whole accessible name of the remove button, such as "Remove Design".
+   * Without it the button is named by the `chip.remove` message with the tag,
+   * "Remove" and the tag in English.
+   */
   removeLabel?: string | undefined;
+  /**
+   * Shows a checkbox before the content that is checked while the tag is
+   * selected. The tag is then selectable, uncontrolled from unselected unless
+   * `selected` or `defaultSelected` is set.
+   */
+  selectable?: boolean | undefined;
   /** Controlled selection. Omit for uncontrolled usage with `defaultSelected`. */
   selected?: boolean | undefined;
 }
@@ -296,21 +335,27 @@ export function Tag({
   children,
   className,
   collectionKey,
+  count,
   defaultSelected,
   disabled = false,
   onRemove,
   onSelectedChange,
-  removeLabel = "Remove tag",
+  removeLabel,
+  selectable = false,
   selected = false,
   ...props
 }: InternalTagProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chip");
   const context = React.useContext(TagVisualContext);
+  const removeId = React.useId();
   if (!context || collectionKey === undefined) {
     throw new Error("Tag must be rendered inside TagGroup.");
   }
 
-  const selectable = Boolean(onSelectedChange) || defaultSelected !== undefined;
+  const isSelectable =
+    selectable || Boolean(onSelectedChange) || defaultSelected !== undefined;
   const removable = Boolean(onRemove);
+  const text = getTextValue(children);
 
   return (
     <Badge
@@ -319,37 +364,73 @@ export function Tag({
         "sp-tag group",
         // The tag renders a div, so Badge's :disabled styles never match it.
         "data-disabled:opacity-(--sp-rw-disabled-opacity-action)",
-        disabled ? "cursor-not-allowed" : selectable && "cursor-pointer",
+        disabled ? "cursor-not-allowed" : isSelectable && "cursor-pointer",
         className,
       )}
+      data-count={count === undefined ? undefined : ""}
       data-disabled={disabled || undefined}
       data-removable={removable || undefined}
+      data-selectable={selectable || undefined}
       data-selected={selected || undefined}
       data-slot="tag"
       render={
         <MotionTagPrimitive
           id={collectionKey}
           isDisabled={disabled}
-          textValue={getTextValue(children)}
+          textValue={count === undefined ? text : `${text} ${count}`}
         />
       }
       size={context.size}
       variant={selected ? "info" : "secondary"}
     >
+      {selectable ? (
+        // The tag is the row that is selected: the checkbox only shows its
+        // state. Inert, it takes no focus and no pointer, and assistive
+        // technology reads the selection from the row. The tag dims a
+        // disabled tag's checkbox once, so it is not disabled itself.
+        <Checkbox
+          checked={selected}
+          inert
+          size={tagCheckboxSizes[context.size]}
+        />
+      ) : null}
       {children}
+      {count === undefined ? null : (
+        <KitBadge
+          profile="tag-count"
+          size={tagCountSizes[context.size]}
+          variant="secondary"
+        >
+          {count}
+        </KitBadge>
+      )}
       {removable ? (
-        <Button
-          aria-label={removeLabel}
+        // The chip remove action, the one a Combobox chip shows too. It grows
+        // with the tag: 14 px with a 10 px cross at sm, 16
+        // px with 12 px at md, 20 px with 14 px at lg and 24 px with 16 px at
+        // xl; the tag names the size of its cross (design-rework.css). Its
+        // whole name is the chip.remove message with the tag, "Remove Design"
+        // in English, or a removeLabel, so it is labelled by itself alone,
+        // in place of React Aria's "Remove" and the tag's row: a translation
+        // sets its own word order.
+        <KitButton
+          aria-label={
+            removeLabel ??
+            messages.remove(count === undefined ? text : `${text} ${count}`)
+          }
+          aria-labelledby={removeId}
+          id={removeId}
           // A disabled tag already dims its remove action; it isn't dimmed
           // again (design-rework.css, "Disabled parts").
-          className="sp-tag-remove-action size-3.5 min-w-0 shrink-0"
+          className="sp-tag-remove-action min-w-0 shrink-0"
           disabled={disabled}
+          profile="chip-remove"
           render={<TagButtonPrimitive slot="remove" />}
           size="icon-2xs"
           variant="ghost"
         >
-          <XIcon aria-hidden="true" className="size-2.5" />
-        </Button>
+          <CloseGlyph />
+        </KitButton>
       ) : null}
     </Badge>
   );

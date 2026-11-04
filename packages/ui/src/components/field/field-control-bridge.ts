@@ -11,6 +11,8 @@ import {
 } from "@base-ui/react/internals/labelable-provider";
 import * as React from "react";
 
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
+
 /*
  * Kit-internal Field adapter for controls whose own foundation (the React Aria
  * date, time and color controls) owns the value and, for date and time fields,
@@ -18,7 +20,9 @@ import * as React from "react";
  * It connects such a control to an enclosing Field the way Base UI's own
  * Select does: FieldLabel names the control, FieldDescription and FieldError
  * describe it, Field and Form see its value and validity, and FieldError shows
- * the control's validation message.
+ * the control's validation message. It also lets a native input beside a Base
+ * UI control carry the Field's validity (useFieldValueInput), as the file
+ * input beside FileInput's text does.
  */
 
 /** Validation result reported by the control's own validation owner. */
@@ -219,6 +223,7 @@ export function useFieldControlProxy({
   /** Serialized value; an empty string while the control is empty. */
   value: string;
 }): FieldControlProxyProps | null {
+  const messages = useSiteplaneMessages("field");
   const field = useFieldRootContext();
   const { clearErrors } = useFormContext();
   const inField = field.state !== DEFAULT_FIELD_ROOT_STATE;
@@ -273,7 +278,7 @@ export function useFieldControlProxy({
     // so Field and Form validation see the result the owner reports.
     inputRef.current?.setCustomValidity(
       realtimeValidation.isInvalid
-        ? realtimeValidation.validationErrors.join(" ") || "Invalid value."
+        ? realtimeValidation.validationErrors.join(" ") || messages.invalid
         : "",
     );
   });
@@ -356,6 +361,55 @@ export function useFieldControlProxy({
     required,
     tabIndex: -1,
     value,
+  };
+}
+
+export type FieldValueInput = {
+  /** The native input's ref, which registers the input with the Field. */
+  ref: React.RefCallback<HTMLInputElement>;
+  /**
+   * Tells the Field that the input's value changed, with the value its control
+   * shows: like a change of a Base UI control, it clears a Form error given
+   * for the Field, marks the Field dirty and validates it again.
+   */
+  change: (value: string) => void;
+};
+
+/**
+ * A native input that holds the form value of a Field control which shows
+ * that value itself, such as the hidden file input beside the read-only text
+ * of FileInput. The control stays the Field's control: FieldLabel names it,
+ * and Field and Form focus it. Field and Form validation read the native
+ * input's validity instead of the control's, so a constraint of the input,
+ * such as `required` on a file input, marks the Field invalid and FieldError
+ * shows the browser's message. Outside a Field the ref and the change do
+ * nothing.
+ */
+export function useFieldValueInput(
+  focusTarget: React.RefObject<HTMLElement | null>,
+): FieldValueInput {
+  const { name, setDirty, validation, validityData } = useFieldRootContext();
+  const { clearErrors } = useFormContext();
+  const { registerInput } = validation;
+  const ref = React.useCallback(
+    (element: HTMLInputElement | null) =>
+      element
+        ? (registerInput(element, {
+            controlRef: focusTarget,
+            value: undefined,
+          }) ?? undefined)
+        : undefined,
+    [focusTarget, registerInput],
+  );
+
+  return {
+    change: (value) => {
+      clearErrors(name);
+      // Base UI's validation reads the dirty mark, so it is set first.
+      setDirty(value !== (validityData.initialValue ?? ""));
+      validation.change(value);
+    },
+    ref,
   };
 }
 

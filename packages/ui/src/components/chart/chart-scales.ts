@@ -244,14 +244,17 @@ export function labelStep(
  * weeks, months, ...): as many as fit without any two overlapping, which the
  * calendar spaces evenly. They need not sit on data points. `widthOf` gives the
  * width of the label a date would have. When no tick fits, or the domain has no
- * span, the first date of the domain is the one label.
+ * span, the first date of the domain is the one label. The scale may run
+ * through several places (`rowTimeScale`); the axis is its first to its last.
  */
 export function calendarTicks(
   scale: ScaleTime<number, number>,
   widthOf: (date: Date) => number,
   gap = labelGap,
 ): Date[] {
-  const [from = 0, to = 0] = scale.range();
+  const range = scale.range();
+  const from = range[0] ?? 0;
+  const to = range[range.length - 1] ?? 0;
   const fits = (ticks: readonly Date[]) =>
     ticks.every(
       (tick, index) =>
@@ -274,6 +277,62 @@ export function calendarTicks(
   }
   const [first] = scale.domain();
   return first ? [first] : [];
+}
+
+/**
+ * A time scale through the places of dated rows, such as the bands of a Bar
+ * Chart: each date at the place of its row, and linear between two rows, so a
+ * calendar tick that falls between two rows stands between them, as far along
+ * as its date is. The dates are in order; a date that repeats keeps the place
+ * of its first row. Null for fewer than two dates, which have no span.
+ */
+export function rowTimeScale(
+  dates: readonly Date[],
+  places: readonly number[],
+): ScaleTime<number, number> | null {
+  const domain: Date[] = [];
+  const range: number[] = [];
+  dates.forEach((date, index) => {
+    const place = places[index];
+    const time = date.getTime();
+    const last = domain[domain.length - 1];
+    if (place === undefined || !Number.isFinite(time)) return;
+    if (last !== undefined && time <= last.getTime()) return;
+    domain.push(date);
+    range.push(place);
+  });
+  if (domain.length < 2) return null;
+  return scaleUtc<number, number>().domain(domain).range(range);
+}
+
+/** A label of a date axis: where it sits, what it says, and its date as its key. */
+export type CalendarLabel = { id: string; position: number; text: string };
+
+/**
+ * The labels of a date axis, one rule for the Line, the Area and the Bar Chart
+ * (Lukas, 3 November 2026): the calendar ticks of `scale` (days, weeks,
+ * months, ...), as many as fit with `gap` between them (`calendarTicks`),
+ * written by `format` and keyed by their date in ISO form, the key of a row
+ * on that date. `size` gives a label's extent along the axis: the width of its
+ * text by default, the height of a line down a side.
+ */
+export function calendarLabels(
+  scale: ScaleTime<number, number>,
+  format: (date: Date) => string,
+  size: (text: string) => number = estimateLabelWidth,
+  gap = labelGap,
+): CalendarLabel[] {
+  const labels = calendarTicks(scale, (date) => size(format(date)), gap).map(
+    (tick) => ({
+      id: tick.toISOString(),
+      position: Math.round(scale(tick) * 100) / 100,
+      text: format(tick),
+    }),
+  );
+  // A calendar finer than the text, such as hours written as days, would repeat it.
+  return labels.filter(
+    (label, index) => index === 0 || label.text !== labels[index - 1]!.text,
+  );
 }
 
 /**

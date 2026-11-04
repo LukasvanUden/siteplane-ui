@@ -23,7 +23,9 @@
     align-items: center;
     gap: var(--sp-rw-space-2);
     overflow: clip;
-    border: var(--sp-rw-border-default) solid var(--sp-rw-border-translucent);
+    /* The card is a surface and draws the one surface edge (rulebook B7); it
+     * drew the separator colour until 4 November 2026. */
+    border: var(--sp-rw-border-default) solid var(--sp-rw-surface-edge);
     border-radius: var(--sp-rw-radius-surface);
     padding: var(--sp-attachment-padding);
     background: var(--sp-rw-bg-secondary);

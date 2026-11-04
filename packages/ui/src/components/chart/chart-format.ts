@@ -1,29 +1,36 @@
 import { normalizeFormattedText } from "../../system/locale/formatted-text";
+import { englishMessages } from "../../system/locale/messages";
 import type { CartesianChartLabels, ChartXValue } from "./chart-types";
 
-/** Charts format numbers and dates in this locale unless they are given another, so the server and the client agree. */
+/** Charts format numbers and dates in this locale unless they are given another or a SiteplaneLocaleProvider sets one, so the server and the client agree. */
 export const CHART_DEFAULT_LOCALE = "en-US";
 
-/** The English words that charts give screen readers, which a chart's `labels` replaces one by one. */
+/**
+ * The English words that charts give screen readers (the `chart` messages of
+ * the kit), which the provider's messages and a chart's `labels` replace one
+ * by one.
+ */
 export const CHART_DEFAULT_LABELS: Readonly<CartesianChartLabels> = {
-  highest: "highest",
-  keyboardHint: "Use the arrow keys to move between data points.",
-  lowest: "lowest",
-  roleDescription: "chart",
-  to: "to",
+  highest: englishMessages.chart.highest,
+  keyboardHint: englishMessages.chart.keyboardHint,
+  lowest: englishMessages.chart.lowest,
+  roleDescription: englishMessages.chart.roleDescription,
+  to: englishMessages.chart.to,
 };
 
 /**
- * The words of a chart: the English defaults, with each one that `labels`
- * gives in its place. A word given as undefined keeps its default.
+ * The words of a chart: those of `base`, the chart messages of the provider
+ * (the English defaults without one), with each one that `labels` gives in
+ * its place. A word given as undefined keeps the one of `base`.
  */
 export function chartLabels(
   labels?: Partial<CartesianChartLabels> | undefined,
+  base: CartesianChartLabels = CHART_DEFAULT_LABELS,
 ): CartesianChartLabels {
   const words = { ...CHART_DEFAULT_LABELS };
   for (const key of Object.keys(words) as (keyof CartesianChartLabels)[]) {
     const given = labels?.[key];
-    if (typeof given === "string") words[key] = given;
+    words[key] = typeof given === "string" ? given : base[key];
   }
   return words;
 }
@@ -76,7 +83,9 @@ export function chartFigureFormatter(
     `figure|${locale}|${JSON.stringify(own)}`,
     () => new Intl.NumberFormat(locale, own),
   );
-  return (value) => format.format(value);
+  // A currency or a unit in another locale has spaces that ICU versions write
+  // differently, such as 1.234,50 € (normalizeFormattedText).
+  return (value) => normalizeFormattedText(format.format(value));
 }
 
 /** A value as a compact tick label: 1.2K */

@@ -1,37 +1,35 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer siteplane {
-  /* An invalid trigger takes the field error contour, like an invalid Select
-   * trigger. */
-  :root [data-chassis].sp-date-picker-trigger[data-invalid] {
-    --sp-rw-button-rim: inset 0 0 0 var(--sp-rw-border-default)
-      light-dark(
-        oklch(67.3% 0.2102 26.56 / 40%),
-        oklch(76.15% 0.1564 26.56 / 40%)
-      );
-  }
+  /* The Button that opens a date picker: the Date Picker's trigger and the
+   * Date Range Picker's and Date Time Picker's buttons (date-picker-panel.tsx
+   * marks each sp-picker-trigger). It rests raised on the Select trigger's
+   * surface, and an invalid trigger draws the invalid edge of a field, like
+   * an invalid Select trigger, from the rules of design-rework.css that draw
+   * the Color Picker's trigger as well (Lukas, 3 and 4 November 2026). */
 
-  /* The trigger takes the field text scale of the other date and time fields:
-   * the Button's 14 px, or 16 px at xl, unless textSize sets one size for every
-   * control size. */
-  :root [data-chassis].sp-date-picker-trigger[data-text-size="sm"] {
-    font-size: var(--sp-rw-font-14);
-    line-height: var(--sp-rw-line-21);
-  }
-
-  :root [data-chassis].sp-date-picker-trigger[data-text-size="base"] {
-    font-size: var(--sp-rw-font-16);
-    line-height: var(--sp-rw-line-24);
-  }
+  /* The trigger is a field on the Button chassis, as the Color Picker's is:
+   * the text of the field scale, 14/20 at sm and 16/24 from md (Lukas,
+   * 30 October 2026), through the Button's own text tokens, the body weight,
+   * the field's inline padding and its 16 px or 20 px leading icon 8 px
+   * before the value. One rule of design-rework.css draws both triggers
+   * (beside their field states); textSize sets one text at every size (the
+   * field scale). */
 
   /* The surface (border, radius, shadow) is the floating-md recipe that
    * design-rework.css draws for the popover's data-slot. */
   .sp-date-picker-popover {
+    --sp-calendar-bleed: var(--sp-rw-space-4);
     z-index: 50;
     width: max-content;
-    padding: var(--sp-rw-space-4);
     outline: none;
     transform-origin: var(--trigger-anchor-point);
+  }
+
+  /* The popover's 16 px lie in its dialog, which scrolls when the page leaves
+   * the popover less room than the calendar (design-rework.css). */
+  .sp-date-picker-dialog {
+    padding: var(--sp-rw-space-4);
   }
 
   .sp-date-picker-popover[data-entering] {
@@ -42,6 +40,87 @@
   .sp-date-picker-popover[data-exiting] {
     animation: sp-date-picker-exit var(--motion-duration-fast)
       var(--motion-ease-soft-in-out) both;
+  }
+
+  /* A picker that confirms its value opens a panel instead (Date Picker
+   * `confirm`, and the Date Range Picker and Date Time Picker with
+   * `trigger="button"`): its body keeps the
+   * popover's 16 px around the calendar, and its footer is a band under a
+   * hairline with 16 px around what it holds, the action gap between them.
+   * Each picker's dialog drops its own padding for the panel ([data-panel] on
+   * the popover). */
+  .sp-date-picker-popover[data-panel] {
+    --sp-calendar-bleed: 0px;
+  }
+
+  .sp-date-picker-popover[data-panel] .sp-date-picker-dialog {
+    padding: 0;
+  }
+
+  /* The panel is as tall as the room its popover has (its dialog lays it out
+   * in a column, design-rework.css). In a short window only the body
+   * scrolls, with its padding inside the scroll, and the footer band stays
+   * in view, as the bands of a popup list do (rulebook S2). */
+  .sp-date-picker-panel {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
+  }
+
+  .sp-date-picker-panel-body {
+    --sp-calendar-bleed: var(--sp-rw-space-4);
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--sp-rw-space-4);
+  }
+
+  /* Beside a calendar's list of shortcuts the calendar fills the body, which
+   * gives up its padding, and the footer stands under the months: the list
+   * runs down the panel's whole height and its hairline goes on beside the
+   * footer, on the footer's edge. */
+  .sp-date-picker-panel[data-aside] {
+    grid-template-columns: var(--sp-rw-calendar-shortcut-list-width) auto;
+  }
+
+  .sp-date-picker-panel[data-aside] > .sp-date-picker-panel-body {
+    --sp-calendar-bleed: 0px;
+    grid-column: 1 / -1;
+    padding: 0;
+  }
+
+  .sp-date-picker-panel[data-aside] > .sp-date-picker-footer {
+    grid-column: 2;
+    margin-inline-start: calc(var(--sp-rw-border-default) * -1);
+    border-inline-start: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+  }
+
+  .sp-date-picker-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-rw-action-gap);
+    border-top: var(--sp-rw-border-default) solid
+      var(--sp-rw-border-translucent);
+    padding: var(--sp-rw-space-4);
+  }
+
+  .sp-date-picker-footer-start {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-rw-action-gap);
+    margin-inline-end: auto;
+  }
+
+  .sp-date-picker-actions {
+    display: flex;
+    gap: var(--sp-rw-action-gap);
+  }
+
+  /* Cancel and Apply share the footer in two equal halves (the Button
+   * chassis's fill rule). */
+  .sp-date-picker-actions[data-action-layout="fill"] {
+    flex: 1 1 auto;
   }
 
   @keyframes sp-date-picker-enter {

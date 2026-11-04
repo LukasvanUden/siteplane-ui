@@ -70,6 +70,187 @@
     }
   }
 
+  /* A half circle (shape="half") is as tall as its drawing, which follows its
+   * width, so a flex row does not stretch it. Unknown progress fills its arch
+   * from the start again and again, as the bar does. */
+  :where(.sp-progress-circle[data-shape="half"]) {
+    height: max-content;
+  }
+
+  :where(
+    .sp-progress-circle[data-shape="half"][data-indeterminate] circle:last-child
+  ) {
+    stroke-dasharray: 50 150;
+    animation: sp-progress-half-circle-fill
+      calc(var(--motion-duration-linger) * 8) var(--motion-ease-linear) infinite;
+  }
+
+  @keyframes sp-progress-half-circle-fill {
+    from {
+      stroke-dashoffset: 50;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* The floating value (labelPlacement) stands at the end of the fill, 8 px
+   * above or below the bar, and moves with the fill. Its look is the floating
+   * value label's, which Slider shares (design-rework.css). */
+  :where(
+    .sp-progress[data-label-placement$="floating"] .sp-progress-indicator
+  ) {
+    position: relative;
+  }
+
+  :where(.sp-progress-value-label) {
+    inset-inline-start: 100%;
+  }
+
+  :where(
+    .sp-progress[data-label-placement="top-floating"] .sp-progress-value-label
+  ) {
+    bottom: calc(100% + var(--sp-rw-space-2));
+  }
+
+  :where(
+    .sp-progress[data-label-placement="bottom-floating"]
+      .sp-progress-value-label
+  ) {
+    top: calc(100% + var(--sp-rw-space-2));
+  }
+
+  /* Content inside the ring (ProgressCircle children), centred in a full
+   * circle and at the foot of a half circle's arch. Its layer is a size
+   * container, so the label and the value step with the circle's width:
+   * a 12 px label on an 18 px line, 14 px on
+   * 20 from 240 px; a 12 px value on an 18 px line, 14 on 20 from 64 px, 24 on
+   * 32 from 160 px, 30 on 38 from 200 px, 36 on 44 from 240 px and 48 on 60
+   * from 280 px. Both stay within the ring's hole, three quarters of its
+   * width. */
+  :where(.sp-progress-circle-content) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    container: sp-progress-circle / inline-size;
+  }
+
+  :where(.sp-progress-circle[data-shape="half"] .sp-progress-circle-content) {
+    justify-content: flex-end;
+  }
+
+  /* The figure of a display half circle stands a little above the foot of the
+   * arch, by an amount for each size: 2 px at xxs and xs, 8 px
+   * at sm, 4 px at md and none at lg. */
+  :where(
+      .sp-progress-circle[data-shape="half"][data-display="xxs"],
+      .sp-progress-circle[data-shape="half"][data-display="xs"]
+    )
+    .sp-progress-circle-content {
+    padding-bottom: var(--sp-rw-space-0-5);
+  }
+
+  :where(.sp-progress-circle[data-shape="half"][data-display="sm"])
+    .sp-progress-circle-content {
+    padding-bottom: var(--sp-rw-space-2);
+  }
+
+  :where(.sp-progress-circle[data-shape="half"][data-display="md"])
+    .sp-progress-circle-content {
+    padding-bottom: var(--sp-rw-space-1);
+  }
+
+  :where(.sp-progress-circle-label) {
+    max-width: 75cqw;
+    color: var(--sp-rw-fg-tertiary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-rw-font-weight-label);
+    line-height: var(--sp-rw-line-18);
+    overflow-wrap: anywhere;
+  }
+
+  /* The caption of a 64 px ring (display="xxs") has no room in its hole, so it
+   * stands under the ring, centred on it and 2 px away,
+   * and the ring keeps the line it takes as space below it, so what follows
+   * the ring stays clear of it. The value stays in the hole. Under a half
+   * circle it stands below the arch. */
+  :where(
+    .sp-progress-circle[data-display="xxs"]:has(.sp-progress-circle-label)
+  ) {
+    margin-block-end: calc(var(--sp-rw-line-18) + var(--sp-rw-space-0-5));
+  }
+
+  :where(.sp-progress-circle[data-display="xxs"] .sp-progress-circle-label) {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sp-rw-space-0-5));
+    inset-inline-start: 50%;
+    width: max-content;
+    max-width: 10rem;
+    translate: -50% 0;
+    text-align: center;
+  }
+
+  /* In a right-to-left page the caption centres from the other side. */
+  :where(
+    .sp-progress-circle[data-display="xxs"]
+      .sp-progress-circle-label:is(:dir(rtl), [dir="rtl"], [dir="rtl"] *)
+  ) {
+    translate: 50% 0;
+  }
+
+  :where(.sp-progress-circle-value) {
+    max-width: 75cqw;
+    color: var(--sp-rw-fg-primary);
+    font-size: var(--sp-rw-font-12);
+    font-weight: var(--sp-rw-font-weight-strong);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--sp-rw-line-18);
+  }
+
+  @container sp-progress-circle (width >= 4rem) {
+    :where(.sp-progress-circle-value) {
+      font-size: var(--sp-rw-font-14);
+      line-height: var(--sp-rw-line-20);
+    }
+  }
+
+  @container sp-progress-circle (width >= 10rem) {
+    :where(.sp-progress-circle-value) {
+      font-size: calc(var(--sp-rw-space) * 6);
+      line-height: calc(var(--sp-rw-space) * 8);
+    }
+  }
+
+  @container sp-progress-circle (width >= 12.5rem) {
+    :where(.sp-progress-circle-value) {
+      font-size: calc(var(--sp-rw-space) * 7.5);
+      line-height: calc(var(--sp-rw-space) * 9.5);
+    }
+  }
+
+  @container sp-progress-circle (width >= 15rem) {
+    :where(.sp-progress-circle-label) {
+      font-size: var(--sp-rw-font-14);
+      line-height: var(--sp-rw-line-20);
+    }
+
+    :where(.sp-progress-circle-value) {
+      font-size: calc(var(--sp-rw-space) * 9);
+      line-height: calc(var(--sp-rw-space) * 11);
+    }
+  }
+
+  @container sp-progress-circle (width >= 17.5rem) {
+    :where(.sp-progress-circle-value) {
+      font-size: calc(var(--sp-rw-space) * 12);
+      line-height: calc(var(--sp-rw-space) * 15);
+    }
+  }
+
   /* Reduced motion moves the fill and the arc to each new value at once and
    * holds the indeterminate state still (M5): the bar keeps a segment in its
    * middle and the circle an arc centred on its top, so neither reads as a
@@ -101,6 +282,18 @@
     stroke-dashoffset: -87.5;
   }
 
+  /* A half circle holds the bar's still segment: the middle two fifths of
+   * its arch. */
+  html[data-motion-reduce="true"]
+    .sp-progress-circle[data-shape="half"][data-indeterminate]
+    circle:last-child,
+  [data-sp-motion="reduced"]
+    .sp-progress-circle[data-shape="half"][data-indeterminate]
+    circle:last-child {
+    stroke-dasharray: 20 180;
+    stroke-dashoffset: -15;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     :root .sp-progress-indicator,
     :root .sp-progress-circle circle {
@@ -117,6 +310,13 @@
     :root .sp-progress-circle[data-indeterminate] circle:last-child {
       animation: none;
       stroke-dashoffset: -87.5;
+    }
+
+    :root
+      .sp-progress-circle[data-shape="half"][data-indeterminate]
+      circle:last-child {
+      stroke-dasharray: 20 180;
+      stroke-dashoffset: -15;
     }
   }
 }

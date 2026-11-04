@@ -11,7 +11,14 @@ import {
   type SiteplaneControlSize,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import {
+  type ChoiceIndicatorPosition,
+  ChoiceMenuItemCheck,
+  choiceIndicatorPosition,
+  menuRowStack,
+} from "../../system/styles/choice-menu-item";
 import { cn } from "../../system/utils/cn";
+import { slotClass } from "../../system/utils/slot-class";
 import { Button, type ButtonBaseProps } from "../button";
 
 import "./list-box.css";
@@ -32,12 +39,15 @@ function getSelectionValue(selection: Selection): string | undefined {
   return value === undefined ? undefined : String(value);
 }
 
+// The text that typing finds: the row's own text, without its description,
+// as a Select option leaves its description out.
 function getTextValue(children: React.ReactNode): string {
   return React.Children.toArray(children)
     .map((child) =>
       typeof child === "string" || typeof child === "number"
         ? String(child)
-        : React.isValidElement<{ children?: React.ReactNode }>(child)
+        : React.isValidElement<{ children?: React.ReactNode }>(child) &&
+            child.type !== ListBoxItemDescription
           ? getTextValue(child.props.children)
           : "",
     )
@@ -118,6 +128,12 @@ export interface ListBoxItemProps extends Omit<
   | "width"
 > {
   "data-slot"?: string;
+  /**
+   * Where a row shows that it is chosen, with `selectionAppearance="check"`:
+   * at the end of the row, the default of every list of the kit, or at the
+   * start.
+   */
+  indicatorPosition?: ChoiceIndicatorPosition | undefined;
   textValue?: string;
   value: string;
 }
@@ -127,6 +143,7 @@ export function ListBoxItem({
   children,
   className,
   disabled = false,
+  indicatorPosition,
   multiline = true,
   textValue,
   value,
@@ -137,6 +154,18 @@ export function ListBoxItem({
   if (!context) {
     throw new Error("ListBoxItem must be rendered inside ListBox.");
   }
+  // The kit's one default (I8): the check ends the row.
+  const position = choiceIndicatorPosition(indicatorPosition);
+  const check =
+    context.selectionAppearance === "check" ? (
+      <ChoiceMenuItemCheck
+        className={cn(
+          "sp-list-box-check shrink-0",
+          position === "end" && "ms-auto",
+        )}
+        data-slot="list-box-check"
+      />
+    ) : null;
 
   return (
     <Button
@@ -150,6 +179,7 @@ export function ListBoxItem({
         context.selectionAppearance === "check" && "sp-check-item",
         className,
       )}
+      data-indicator-position={check ? position : undefined}
       data-selection-appearance={context.selectionAppearance}
       data-slot={dataSlot}
       disabled={disabled}
@@ -165,25 +195,48 @@ export function ListBoxItem({
       variant="ghost"
       width="full"
     >
-      {/* The check leads the row, as in Select, Combobox and the menus (I8).
-          Every option keeps its slot, so every label starts at the same x. */}
-      {context.selectionAppearance === "check" ? (
-        <svg
-          aria-hidden="true"
-          className="sp-list-box-check sp-check-glyph-motion size-3.5 shrink-0 fill-none stroke-current"
-          data-slot="list-box-check"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2.25"
-          viewBox="0 0 24 24"
-        >
-          <path
-            className="sp-check-path-motion"
-            d="M5.252 12.7 10.2 18.63 18.748 5.37"
-          />
-        </svg>
-      ) : null}
-      {children}
+      {/* The label starts at the row's padding and the check ends the row,
+          as in Select, Combobox and the menus (I8, Lukas, 31 October 2026).
+          It is the kit's check (choice-menu-item.tsx), sized by the option
+          rule of design-rework.css. A stacked description stands under the
+          name in one column, as in a Menu row (menuRowStack). */}
+      {position === "start" ? check : null}
+      {menuRowStack(children)}
+      {position === "end" ? check : null}
     </Button>
+  );
+}
+
+/**
+ * The supporting text of a row, such as what a workspace holds beside its
+ * name: the regular weight in the tertiary colour at the row's size, after
+ * the name, which then takes the title weight, as the description of a Menu
+ * row or a Select option (design-rework.css). A direct child of ListBoxItem,
+ * after the row's text. Typing finds the row by its name alone, so a row with
+ * a description needs no `textValue`.
+ */
+export function ListBoxItemDescription({
+  className,
+  stacked,
+  ...props
+}: React.ComponentProps<"span"> & {
+  /**
+   * Puts the description under the name instead of after it, in one column
+   * beside the row's icon or avatar. The name and the description stay on
+   * one line each.
+   */
+  stacked?: boolean | undefined;
+}): React.ReactElement {
+  return (
+    <span
+      className={cn(
+        slotClass("list-box-item-description", props),
+        "min-w-0 truncate",
+        className,
+      )}
+      data-layout={stacked ? "stacked" : undefined}
+      data-slot="list-box-item-description"
+      {...props}
+    />
   );
 }

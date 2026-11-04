@@ -5,18 +5,16 @@
  * outside the active category, and the lines and areas outside the stretch
  * around the active point. The levels are Siteplane's own and light, so the
  * active item stands out without the rest going pale (80 %, and 90 % for an
- * area). bklit UI steps a bar and a line back to 30 % and an area to 60 %
- * (bar.tsx `fadedOpacity`, the `dimOpacity` of its line and area, all MIT). A
- * Pie Chart steps nothing back: its shares are shades of one hue, and a faded
- * share took the colour of another one. The two speeds are bklit's: a bar steps
- * back quickly, a whole series slowly. They run on the kit's duration tokens
- * and ease in and out; reduced motion is instant.
+ * area). A Pie Chart steps nothing back: its shares are shades of one hue,
+ * and a faded share took the colour of another one. The two speeds are
+ * bklit's: a bar steps back quickly, a whole series slowly. They run on the
+ * kit's duration tokens and ease in and out; reduced motion is instant.
  *
  * The same levels and speeds serve a series that steps back because the mouse
  * is over another one's entry in the legend, as in bklit UI
  * (series-hover-dim.tsx, bar.tsx `legendHoveredIndex`, chart-legend.tsx
  * `isFaded`, all MIT): the legend's own entries fade to the level of a line,
- * 80 %, where bklit's `opacity-40` fades them to 40 %.
+ * 80 %.
  *
  * MIT License
  *
@@ -45,15 +43,14 @@ import { useReducedMotionPreference } from "../../system/motion/use-reduced-moti
 
 /**
  * What an item that steps back is drawn at, from 0 to 1: the one place that says
- * how far each kind steps back. Lighter than bklit UI's levels, which are given
- * with each kind.
+ * how far each kind steps back.
  */
 export const CHART_DIM = {
-  /** An area, its fill and its outline, outside the highlighted stretch (bklit: 0.6). */
+  /** An area, its fill and its outline, outside the highlighted stretch. */
   area: 0.9,
-  /** A bar outside the active category (bklit: 0.3). */
+  /** A bar outside the active category. */
   bar: 0.8,
-  /** The stroke of a line outside the highlighted stretch (bklit: 0.3). */
+  /** The stroke of a line outside the highlighted stretch. */
   line: 0.8,
 } as const;
 
@@ -72,10 +69,10 @@ export function chartDimOpacity(
 
 /**
  * How long the step takes, as the classes that carry it, on the kit's tokens:
- * bars and legend entries take `--motion-duration-fast` (150 ms, bklit's 0.15 s) and a
- * series, which has more to lose, `--motion-duration-linger` (380 ms, bklit's
- * 0.4 s), both easing in and out. Spelled out in full, because Tailwind finds a
- * class only where it is written whole.
+ * bars and legend entries take `--motion-duration-fast` (150 ms) and a series,
+ * which has more to lose, `--motion-duration-linger` (380 ms), both easing in
+ * and out. Spelled out in full, because Tailwind finds a class only where it is
+ * written whole.
  */
 export const chartDimClassName = {
   mark: "transition-opacity duration-(--motion-duration-fast) ease-(--motion-ease-soft-in-out)",
@@ -99,10 +96,9 @@ export function seriesSteppedBack(
 
 /**
  * The level of a legend entry that steps back: the level of a line
- * (`CHART_DIM.line`, 80 %, where bklit's `opacity-40` fades its legend entries to
- * 40 %). An entry is HTML, which takes no `opacity` attribute, so the level is a
- * class, written whole for Tailwind; its test holds it to `CHART_DIM.line`. The
- * entry steps back over the `mark` speed.
+ * (`CHART_DIM.line`, 80 %). An entry is HTML, which takes no `opacity`
+ * attribute, so the level is a class, written whole for Tailwind; its test
+ * holds it to `CHART_DIM.line`. The entry steps back over the `mark` speed.
  */
 export const chartLegendDimClassName = "opacity-80";
 

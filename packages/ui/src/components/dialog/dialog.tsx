@@ -3,14 +3,13 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { SiteplaneUIPortalScope } from "../../system/provider/siteplane-ui-provider";
 import { surfaceClassNames } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
 import { baseClass, slotClass } from "../../system/utils/slot-class";
-import { KitButton } from "../button/button-internal";
+import { CloseButton } from "../button";
 import { ScrollArea } from "../scroll-area";
 import type { KitDialogPopupProps } from "./dialog-internal";
 
@@ -244,23 +243,16 @@ export function DialogPopup(popupProps: DialogPopupProps): React.ReactElement {
           >
             {children}
             {showCloseButton && (
-              // The corner close of every overlay: the 24 px overlay-dismiss
-              // Button 8 px inside the top-end corner. The header keeps its
-              // text clear of it (design-rework.css).
+              // The corner close of a modal: the CloseButton at
+              // its md step, 40 px, which owns its box, glyph and states; the
+              // popup places it 12 px inside the top-end corner. The header
+              // keeps its text clear of it (design-rework.css). CloseButton
+              // names it ("Close" in the provider's messages).
               <DialogPrimitive.Close
-                aria-label="Close"
-                className="absolute end-2 top-2"
-                render={
-                  <KitButton
-                    profile="overlay-dismiss"
-                    shape="square"
-                    variant="ghost"
-                  />
-                }
+                className="absolute end-3 top-3"
+                render={<CloseButton size="md" />}
                 {...closeProps}
-              >
-                <XIcon />
-              </DialogPrimitive.Close>
+              />
             )}
           </DialogPrimitive.Popup>
         </DialogViewport>
@@ -291,20 +283,27 @@ export function DialogHeader({
 
 export function DialogFooter({
   className,
+  actionLayout,
   render,
   ...props
-}: useRender.ComponentProps<"div">): React.ReactElement {
+}: useRender.ComponentProps<"div"> & {
+  /**
+   * `fill` lets the Buttons of the footer share its row in equal widths, as
+   * the actions of a Card footer do; a link keeps its own width. Left unset
+   * the actions end the row at their own widths.
+   */
+  actionLayout?: "fill" | undefined;
+}): React.ReactElement {
   const defaultProps = {
     className: cn(
       // Actions that do not fit wrap onto another row with the same gap instead
-      // of overflowing a narrow popup.
+      // of overflowing a narrow popup. A dialog without content puts 16 px
+      // between its text and its actions, the footer's own top padding (S12).
       slotClass("dialog-footer", props, render),
       "flex flex-wrap",
-      // A dialog without content puts 24 px between its text and its actions in
-      // every layout (S12): 8 px here plus the footer's own 16 px top padding.
-      "[[data-slot=dialog-header]+&]:mt-2",
       className,
     ),
+    "data-action-layout": actionLayout,
     "data-slot": "dialog-footer",
   };
   return useRender({
@@ -371,7 +370,7 @@ export function DialogPanel({
   );
 }
 
-// DialogOverlay and DialogContent are the shadcn names of DialogBackdrop and
+// DialogOverlay and DialogContent are aliases of DialogBackdrop and
 // DialogPopup.
 export {
   DialogPrimitive,

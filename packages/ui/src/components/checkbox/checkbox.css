@@ -39,34 +39,8 @@
     transition-duration: var(--motion-duration-linger);
   }
 
-  /* Rulebook I5: a checkbox before text centres on the first text line, also
-   * when the text wraps. That is a checkbox that leads a label or a row in a
-   * label, or that stands before a label, as in a row with a description. A
-   * checkbox taller than the line starts at the line's top, so a one-line label
-   * keeps its height. A component rule, so a margin utility on the checkbox
-   * still replaces it. */
-  :where(label, .sp-label, .sp-field-label)
-    > .sp-base-checkbox[data-profile="control"]:first-child,
-  :where(label, .sp-label, .sp-field-label)
-    > :where(span, div)
-    > .sp-base-checkbox[data-profile="control"]:first-child,
-  .sp-base-checkbox[data-profile="control"]:first-child:has(
-      ~ :is(.sp-label, .sp-field-label),
-      ~ * :is(.sp-label, .sp-field-label)
-    ) {
-    align-self: flex-start;
-    margin-block: max(0px, calc((1lh - var(--sp-rw-choice-size)) / 2));
-  }
-
-  /* Beside its label, the checkbox does not inherit the label's line but its
-   * container's. It takes the 21 px line of a label next to a choice control
-   * (S13), so the 1lh above measures the label's first line. */
-  .sp-base-checkbox[data-profile="control"]:first-child:has(
-      ~ :is(.sp-label, .sp-field-label),
-      ~ * :is(.sp-label, .sp-field-label)
-    ) {
-    line-height: var(--sp-rw-line-21);
-  }
+  /* A checkbox before text centres on the first text line (rulebook I5): the
+   * shared rule of the checkbox, radio and switch in design-rework.css. */
 
   /* The check and the indeterminate dash draw through the shared check motion
    * in motion.css, which the check of a menu row uses too. */

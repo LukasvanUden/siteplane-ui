@@ -38,9 +38,11 @@ import {
 import { chartValue, chartXKey } from "../chart/chart-data";
 import { nearestIndex } from "../chart/chart-interaction";
 import {
+  calendarLabels,
   estimateLabelWidth,
   labelGap,
   labelStep,
+  rowTimeScale,
   valueTicks,
 } from "../chart/chart-scales";
 import { stackSeries } from "../chart/chart-stack";
@@ -49,7 +51,7 @@ import type { ChartDatum, ChartXValue } from "../chart/chart-types";
 /** The space between the bars of one category, in px, as long as the category has room for it. */
 export const BAR_GAP = 4;
 /**
- * The radius at the value end of a bar, in px: 8, as shadcn rounds its bars. It
+ * The radius at the value end of a bar, in px: 8. It
  * is the kit's control radius, `--sp-rw-radius-control`, at the default md
  * radius. An SVG path cannot read a token, so the number is kept here in step
  * with it; a bar keeps it at every provider radius.
@@ -106,21 +108,29 @@ export type BarSlot = {
 /**
  * How thick the bars of a category are and where each starts inside its band.
  * A lone bar and stacked segments take the whole band, and side-by-side bars
- * share it with a gap, so the bars fill their band the way shadcn's do. In a
+ * share it with a gap, so the bars fill their band. In a
  * band too narrow for the gap the gap gives way first; a bar is never thinner
  * than 1 px, and bars that the band cannot hold at that thickness are centred
- * on it.
+ * on it. A bar is never thicker than `maxSize`, and bars that keep to it are
+ * centred on the band as a group.
  */
-function thickness(band: number, count: number, stacked: boolean) {
+function thickness(
+  band: number,
+  count: number,
+  stacked: boolean,
+  maxSize = Number.POSITIVE_INFINITY,
+) {
+  // A cap that is not a positive number caps nothing.
+  const most = maxSize > 0 ? Math.max(1, maxSize) : Number.POSITIVE_INFINITY;
   if (stacked || count <= 1) {
-    const size = Math.max(1, band);
+    const size = Math.min(most, Math.max(1, band));
     return {
       offsets: Array.from({ length: count }, () => (band - size) / 2),
       size,
     };
   }
   let gap = BAR_GAP;
-  let size = (band - gap * (count - 1)) / count;
+  let size = Math.min(most, (band - gap * (count - 1)) / count);
   if (size < 1) {
     size = 1;
     gap = Math.max(0, (band - count) / (count - 1));
@@ -138,15 +148,17 @@ function thickness(band: number, count: number, stacked: boolean) {
 /**
  * Where the bar of the series at `order` sits in the band of its category, for
  * `count` series side by side or stacked: where it starts across the category
- * axis and how thick it is. The band is where the category is, in px.
+ * axis and how thick it is, at most `maxSize`. The band is where the category
+ * is, in px.
  */
 export function barPlace(
   band: { start: number; size: number },
   order: number,
   count: number,
   stacked: boolean,
+  maxSize?: number,
 ): { start: number; size: number } {
-  const { offsets, size } = thickness(band.size, count, stacked);
+  const { offsets, size } = thickness(band.size, count, stacked, maxSize);
   return { size, start: hundredths(band.start + (offsets[order] ?? 0)) };
 }
 
@@ -162,12 +174,15 @@ export function barSlots({
   seriesKeys,
   stacked,
   categoryScale,
+  maxSize,
 }: {
   data: readonly ChartDatum[];
   x: string;
   seriesKeys: readonly string[];
   stacked: boolean;
   categoryScale: ScaleBand<string>;
+  /** The thickest a bar may be, in px. */
+  maxSize?: number | undefined;
 }): BarSlot[] {
   const size = categoryScale.bandwidth();
   const slots: BarSlot[] = [];
@@ -179,7 +194,13 @@ export function barSlots({
       const value = chartValue(datum, series);
       if (value === null) return;
       slots.push({
-        ...barPlace({ size, start }, order, seriesKeys.length, stacked),
+        ...barPlace(
+          { size, start },
+          order,
+          seriesKeys.length,
+          stacked,
+          maxSize,
+        ),
         key: `${category}|${series}`,
         order,
         series,
@@ -233,8 +254,15 @@ export function glidingSlots(
   {
     count,
     length,
+    maxSize,
     stacked,
-  }: { count: number; length: number; stacked: boolean },
+  }: {
+    count: number;
+    length: number;
+    /** The thickest a bar may be, in px. */
+    maxSize?: number | undefined;
+    stacked: boolean;
+  },
 ): BarSlot[] {
   return entries.map(({ leaving, slot, value }) => {
     const band = leaving ? undefined : bands.get(slot.x);
@@ -246,6 +274,7 @@ export function glidingSlots(
             slot.order,
             count,
             stacked,
+            maxSize,
           ),
           value,
         }
@@ -494,7 +523,12 @@ export type CategoryLabel = { id: string; position: number; text: string };
  * The labels of the category axis that are shown: every k-th label, one k for the
  * whole axis, the smallest that leaves none on top of another, so the labels keep
  * an even rhythm however many categories there are. Along the bottom they are as
- * wide as their text; down the left side as tall as a line.
+ * wide as their text; down the left side as tall as a line. Dates are labelled
+ * on calendar ticks instead, the first of a day, a week, a month or a quarter,
+ * as many as fit, as the Line and the Area Chart label theirs (`calendarLabels`,
+ * Lukas, 3 November 2026): the bars keep their own dates, and a tick between
+ * two bars stands between them, as far along as its date is. A tick on the date
+ * of a bar takes that bar's key.
  */
 export function categoryLabels({
   centres,
@@ -507,6 +541,14 @@ export function categoryLabels({
   side: "bottom" | "left";
   format: (value: ChartXValue) => string;
 }): CategoryLabel[] {
+  const size =
+    side === "bottom" ? estimateLabelWidth : (): number => CHART_LABEL_HEIGHT;
+  const gap = side === "bottom" ? labelGap : CHART_LABEL_COLUMN_GAP;
+  const dates = rows.map((row) => row.x);
+  if (dates.every((x): x is Date => x instanceof Date)) {
+    const scale = rowTimeScale(dates, centres);
+    if (scale) return calendarLabels(scale, format, size, gap);
+  }
   const labels = rows.map((row, index) => ({
     id: row.id,
     position: centres[index] ?? 0,
@@ -514,10 +556,8 @@ export function categoryLabels({
   }));
   const step = labelStep(
     labels.map((label) => label.position),
-    labels.map((label) =>
-      side === "bottom" ? estimateLabelWidth(label.text) : CHART_LABEL_HEIGHT,
-    ),
-    side === "bottom" ? labelGap : CHART_LABEL_COLUMN_GAP,
+    labels.map((label) => size(label.text)),
+    gap,
   );
   return labels.filter((_, index) => index % step === 0);
 }

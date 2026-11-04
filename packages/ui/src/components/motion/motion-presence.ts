@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Transition } from "motion/react";
+import type { Transition } from "motion/react";
 import * as React from "react";
 
 import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
@@ -11,8 +11,10 @@ import { getMotionTransitionFromCss } from "../../system/motion/css-transition";
  * from the `--motion-*` tokens of the element itself when an animation starts
  * (rulebook M1), so a token set on any container around it applies; nothing
  * here invents a timing. Presence and glides run on the Web Animations API from
- * the frame after a change; MotionSwap's fade and the rolling number hand their
- * values to Motion. Reduced motion (M5) makes everything instant.
+ * the frame after a change, and the rolling number hands its values to Motion.
+ * A swap switches its content at once and moves only its container's height,
+ * as a CSS transition (motion-follow.ts). Reduced motion (M5) makes everything
+ * instant.
  */
 
 export type MotionLayout = "stack" | "flow";
@@ -123,20 +125,33 @@ export function playFromSecondFrame(
   return animation;
 }
 
-/** The element's own `overflow-y` while a height animation clips it. */
+/**
+ * The clip of an element while its height moves (rulebook M6-M8): its bottom
+ * edge, past which content taller than the height shown would reach, and
+ * nothing else, so a ring, a shadow or a focus ring that the content draws
+ * outside its box at the top or the sides stays whole. The inset reaches a
+ * viewport past the element on those three sides. `overflow-y: clip` cut the
+ * top edge as well: a Card's ring at the top of a MotionSwap was gone for the
+ * whole swap (4 November 2026). Being the clip of the whole element, it also
+ * cuts the element's own shadow at its bottom edge, so a shadow belongs on the
+ * content inside.
+ */
+export const heightClipPath = "inset(-100vmax -100vmax 0px -100vmax)";
+
+/** The element's own `clip-path` while a height animation clips it. */
 const clipped = new WeakMap<HTMLElement, string>();
 
 function clip(element: HTMLElement) {
   if (clipped.has(element)) return;
-  clipped.set(element, element.style.overflowY);
-  element.style.overflowY = "clip";
+  clipped.set(element, element.style.clipPath);
+  element.style.clipPath = heightClipPath;
 }
 
 function unclip(element: HTMLElement) {
   const own = clipped.get(element);
   if (own === undefined) return;
   clipped.delete(element);
-  element.style.overflowY = own;
+  element.style.clipPath = own;
 }
 
 /** A uniform `scale` as getComputedStyle reports it: "none" is 1. */
@@ -148,8 +163,9 @@ function scaleOf(value: string): number {
 /**
  * How an element comes and goes. `height`: a block that opens and closes its
  * height with a fade, a stack item or a reveal; what is below it moves with its
- * height, and it clips its content while the height moves (at rest nothing is
- * clipped, so focus rings, shadows and menus at its edge stay whole). `scale`:
+ * height, and it clips its content at its bottom edge while the height moves
+ * (`heightClipPath`; at rest nothing is clipped, so focus rings, shadows and
+ * menus at its edge stay whole). `scale`:
  * an item of a wrapping or horizontal set, a flow list, which fades in and
  * grows from `--motion-presence-scale` and fades and shrinks out, without
  * travel (M2), while its siblings glide (`GlideOnChange`).
@@ -331,7 +347,12 @@ export function stopPresence(state: PresenceMotionState): void {
  * (scroll anchoring does when items move), so the place is not taken against
  * the scrolled content.
  */
-type Place = { height: number; left: number; top: number; width: number };
+export type Place = {
+  height: number;
+  left: number;
+  top: number;
+  width: number;
+};
 
 function placeIn(element: Element, originBox: DOMRect): Place {
   const box = element.getBoundingClientRect();
@@ -483,6 +504,57 @@ function fadeIn(part: HTMLElement, timing: KeyframeAnimationOptions) {
 }
 
 /**
+ * A picture of a part: a copy of it without the ids, which would repeat the
+ * part's, standing out of the flow at `was`, against the box of the ghost
+ * holder it goes into. It is no part itself; its holder hides it from
+ * assistive technology and keeps it from input.
+ */
+export function pictureOf(part: HTMLElement, was: Place): HTMLElement {
+  const picture = part.cloneNode(true) as HTMLElement;
+  for (const element of [picture, ...picture.querySelectorAll("[id]")])
+    element.removeAttribute("id");
+  Object.assign(picture.style, {
+    height: `${was.height}px`,
+    left: `${was.left}px`,
+    margin: "0",
+    position: "absolute",
+    top: `${was.top}px`,
+    width: `${was.width}px`,
+  });
+  return picture;
+}
+
+/**
+ * The holder of the pictures of parts that have left, in `origin`, covering
+ * `box` against the origin's padding box, where an absolute child sits. It
+ * comes first in the origin, so the pictures paint under the parts that glide
+ * over their place, and it is no part's neighbour: a rule for what follows a
+ * part does not match. It is hidden from assistive technology, inert and takes
+ * no pointer, and it clips what it holds to `box` when `clip` is set.
+ */
+export function ghostHolder(
+  origin: HTMLElement,
+  box: Place,
+  clip = false,
+): HTMLElement {
+  const holder = origin.ownerDocument.createElement("div");
+  holder.setAttribute(motionGhostAttribute, "");
+  holder.setAttribute("aria-hidden", "true");
+  holder.inert = true;
+  Object.assign(holder.style, {
+    height: `${box.height}px`,
+    left: `${box.left}px`,
+    pointerEvents: "none",
+    position: "absolute",
+    top: `${box.top}px`,
+    width: `${box.width}px`,
+    ...(clip ? { overflow: "clip" } : {}),
+  });
+  origin.prepend(holder);
+  return holder;
+}
+
+/**
  * A copy of a part that has left, at the place it had, fading out under its
  * neighbours as they glide over its place; Base UI keeps such a copy of a
  * popup's previous content for the same reason. The part itself is gone at
@@ -495,36 +567,16 @@ function leavePicture(
   origin: HTMLElement,
   timing: KeyframeAnimationOptions,
 ) {
-  const picture = part.cloneNode(true) as HTMLElement;
-  for (const element of [picture, ...picture.querySelectorAll("[id]")])
-    element.removeAttribute("id");
-  Object.assign(picture.style, {
-    height: `${was.height}px`,
-    left: `${was.left}px`,
-    margin: "0",
-    position: "absolute",
-    top: `${was.top}px`,
-    width: `${was.width}px`,
-  });
-  // The holder comes first in the origin, so the picture paints under the
-  // parts that glide over its place, and it is no part's neighbour: a rule for
-  // what follows a part does not match. It covers the padding box, where an
-  // absolute child sits, from the origin's box: the picture stands where the
-  // part was seen, and scrolls with the content.
-  const holder = origin.ownerDocument.createElement("div");
-  holder.setAttribute(motionGhostAttribute, "");
-  holder.setAttribute("aria-hidden", "true");
-  holder.inert = true;
-  Object.assign(holder.style, {
-    height: `${origin.clientHeight}px`,
-    left: `${origin.scrollLeft - origin.clientLeft}px`,
-    pointerEvents: "none",
-    position: "absolute",
-    top: `${origin.scrollTop - origin.clientTop}px`,
-    width: `${origin.clientWidth}px`,
+  const picture = pictureOf(part, was);
+  // The holder covers the padding box from the origin's box: the picture
+  // stands where the part was seen, and scrolls with the content.
+  const holder = ghostHolder(origin, {
+    height: origin.clientHeight,
+    left: origin.scrollLeft - origin.clientLeft,
+    top: origin.scrollTop - origin.clientTop,
+    width: origin.clientWidth,
   });
   holder.append(picture);
-  origin.prepend(holder);
   const fade = playFromSecondFrame(
     picture,
     [
@@ -574,100 +626,39 @@ export function glyphPresence({
   } as const;
 }
 
-export type SwapTiming = {
-  /** The new content: starts late enough that the old content is nearly gone. */
-  enter: Transition;
-  /** The container height, over the whole swap. */
-  height: Transition;
-  /** The old content. */
-  leave: Transition;
-};
-
 /**
- * A swap takes `--motion-duration-base` in all: the old content fades out
- * within `--motion-duration-micro` and the new content fades in during the last
- * `--motion-duration-micro`, so the two overlap only where each is nearly
- * invisible (2 x micro - base, 20 ms by default). The container's height follows
- * over the whole swap. If the tokens leave no room, both fades run together.
+ * The timing of a swap (rulebook M8): `--motion-duration-base` on the standard
+ * curve, over which a swap container's height follows its new content (the
+ * follow rule in motion.css). The content itself switches at once, so what
+ * leaves and what takes over are never seen together and there is never a
+ * moment with neither (Lukas, 4 November 2026: the fade through, the old
+ * content out within the micro duration and the new content in during the last
+ * micro duration of the base duration, read as a flash). A part that plays
+ * beside a swap, such as the frame of an Editable's field, ends within it.
  */
-export function measureSwapTiming(element: Element | null): SwapTiming {
-  const leave = measureTiming(
-    element,
-    "--motion-duration-micro",
-    "--motion-ease-soft-in-out",
-  );
-  const enter = measureTiming(
-    element,
-    "--motion-duration-micro",
-    "--motion-ease-standard",
-  );
-  const height = measureTiming(
+export function measureSwapTiming(element: Element | null): Transition {
+  return measureTiming(
     element,
     "--motion-duration-base",
     "--motion-ease-standard",
   );
-  const delay = Math.max(
-    0,
-    ((height as { duration?: number }).duration ?? 0) -
-      ((enter as { duration?: number }).duration ?? 0),
-  );
-  return { enter: { ...enter, delay }, height, leave };
 }
 
 /**
- * The same fade through for a pane that Base UI mounts and unmounts and fades
- * with CSS transitions, such as a Tabs panel: the pane that takes over fades in
- * during the last micro duration of the base duration, the pane that leaves
- * fades out at once. The class is the kit's swap-fade rule in motion.css, which
- * names the tokens `measureSwapTiming` measures, so a swap looks the same
- * whichever way it is driven, and which is instant with reduced motion (M5).
- */
-export const swapFadeClassName = "sp-swap-fade";
-
-/**
- * A Tabs panel switches at once instead (Lukas, 13 October 2026): the panel that
- * leaves is hidden the moment the new one shows, as tabs do in the WAI-ARIA
- * pattern and most interfaces. A dissolve showed both panels' text at once
- * wherever a panel has no surface of its own, and a fade through of a whole
- * panel leaves a moment with neither. The indicator and the height of the
- * panels' container carry the motion; the height follows over the expand
- * duration (the follow rule in motion.css). The class is the kit's
- * panel-switch rule in motion.css.
+ * The switch of content that a component keeps mounted while it leaves, as
+ * Base UI keeps a Tabs panel until its exit transition has run: the part that
+ * leaves (`data-ending-style`) is hidden the moment the part that takes over
+ * shows, as tabs do in the WAI-ARIA pattern and most interfaces, and as a
+ * MotionSwap replaces its content (rulebook M8). Tabs panels take it (Lukas,
+ * 13 October 2026: a dissolve showed both panels' text at once wherever a
+ * panel has no surface of its own), and so do the Filter Bar's tab list and
+ * search field, an Editable's pencil and optional triggers, and the axis labels
+ * and grid lines that new data brings to a chart, which faded through until
+ * 4 November 2026. The height of the container carries the motion (the follow
+ * rule in motion.css), a Tabs indicator glides and a chart's axis moves with
+ * its data. The class is the kit's panel-switch rule in motion.css.
  */
 export const panelSwitchClassName = "sp-panel-switch";
-
-const instantSwap: SwapTiming = {
-  enter: instantTransition,
-  height: instantTransition,
-  leave: instantTransition,
-};
-
-/**
- * Fade through: the old pane fades out quickly, the new pane fades in after it,
- * so the two texts are never legible on top of each other.
- */
-export function swapPresence({
-  reduced,
-  resolve,
-}: {
-  reduced: boolean;
-  resolve: () => SwapTiming;
-}) {
-  const timing = () => (reduced ? instantSwap : resolve());
-  const variants = {
-    hidden: () => ({ opacity: 0, transition: timing().leave }),
-    shown: () => ({ opacity: 1, transition: timing().enter }),
-  };
-  if (reduced) {
-    return { animate: "shown", initial: false, variants } as const;
-  }
-  return {
-    animate: "shown",
-    exit: "hidden",
-    initial: "hidden",
-    variants,
-  } as const;
-}
 
 type Keyed = { key: React.Key | null };
 
@@ -830,6 +821,97 @@ export function useLeavingEntries<T extends Keyed>(
 }
 
 /**
+ * A block of a vertical stack as it is seen against the element the stack
+ * stands in: where it starts and how much of its height shows.
+ */
+export type StackBlock = { height: number; key: React.Key; top: number };
+
+/**
+ * Where a block of a stack starts and how much of it shows, at the start of a
+ * step (`from`) and at its end (`to`).
+ */
+export type StackMove = {
+  from: { height: number; top: number };
+  key: React.Key;
+  to: { height: number; top: number };
+};
+
+/**
+ * One step of a vertical stack whose blocks leave, enter and move at once,
+ * played as a stack whose blocks open and close their height in the flow
+ * (rulebook M6, M7): a block that leaves closes where it was, after the block
+ * it followed (`mergeLeaving`), a block that enters opens after the block
+ * before it, and every block after them moves with them. `before` lists the
+ * blocks as they were seen and `after` the blocks there are now, each from the
+ * top; a block keeps its key. A block that stays moves from where it was seen
+ * to where it is. A block that enters starts with no height where the stack
+ * had room for it, and a block that leaves ends with none where the stack
+ * closes over it; the space before either is the one it has in the stack it is
+ * part of. Played over one duration on one curve, every block meets the next
+ * at each frame, as in a FLIP of the blocks that stay, which Vue's
+ * TransitionGroup and Motion's popLayout play.
+ */
+export function planStack(
+  before: readonly StackBlock[],
+  after: readonly StackBlock[],
+): StackMove[] {
+  const was = new Map(before.map((block) => [block.key, block]));
+  const is = new Map(after.map((block) => [block.key, block]));
+  // Typed here, so that the keys stay React.Key in every program that compiles
+  // this file; a `flatMap` over a conditional array let some of them widen.
+  const leaving: Array<Pick<Leaving, "after" | "key">> = [];
+  before.forEach((block, index) => {
+    if (is.has(block.key)) return;
+    leaving.push({
+      after: index > 0 ? before[index - 1]!.key : null,
+      key: block.key,
+    });
+  });
+  const moves: StackMove[] = [];
+  let previous: StackMove | undefined;
+  for (const key of mergeLeaving(
+    after.map((block) => block.key),
+    leaving,
+  )) {
+    const old = was.get(key);
+    const now = is.get(key);
+    const end = (move: StackMove, at: "from" | "to") =>
+      move[at].top + move[at].height;
+    let move: StackMove;
+    if (old && now) {
+      move = {
+        from: { height: old.height, top: old.top },
+        key,
+        to: { height: now.height, top: now.top },
+      };
+    } else if (now) {
+      // The space after the block before it is the one it has now.
+      const top = previous
+        ? end(previous, "from") + now.top - end(previous, "to")
+        : now.top;
+      move = {
+        from: { height: 0, top },
+        key,
+        to: { height: now.height, top: now.top },
+      };
+    } else {
+      // The space after the block before it is the one it had.
+      const top = previous
+        ? end(previous, "to") + old!.top - end(previous, "from")
+        : old!.top;
+      move = {
+        from: { height: old!.height, top: old!.top },
+        key,
+        to: { height: 0, top },
+      };
+    }
+    moves.push(move);
+    previous = move;
+  }
+  return moves;
+}
+
+/**
  * Clips the element while its height (or its width, for the characters of a
  * rolling number) moves and releases the clip at rest. Motion keeps `auto` in
  * the element's style at rest and a pixel value while it moves, so the style
@@ -871,39 +953,4 @@ export function leavingProps(present: boolean, reduced = false) {
     inert: true,
     ...(reduced ? { style: { display: "none" } } : {}),
   };
-}
-
-type MotionTag = "div" | "li" | "ul";
-
-const wrapped = new WeakMap<object, React.ElementType>();
-
-/**
- * The `render` element, upgraded to a Motion element so that it can animate:
- * a DOM element (`<div />`) becomes its `motion.*` counterpart, a component
- * element (`<Card />`) is wrapped with `motion.create`. Without `render` the
- * default tag is used. Props, key and ref of the element are kept.
- */
-export function toMotionElement(
-  render: React.ReactElement | undefined,
-  defaultTag: MotionTag,
-): React.ReactElement {
-  if (!render)
-    return React.createElement(motion[defaultTag] as React.ElementType);
-
-  const type = render.type;
-  let component: React.ElementType;
-  if (typeof type === "string") {
-    component = (motion as unknown as Record<string, React.ElementType>)[type]!;
-  } else {
-    let existing = wrapped.get(type as object);
-    if (!existing) {
-      existing = motion.create(type as React.ElementType) as React.ElementType;
-      wrapped.set(type as object, existing);
-    }
-    component = existing;
-  }
-  return React.createElement(
-    component,
-    render.props as Record<string, unknown>,
-  );
 }

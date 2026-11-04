@@ -2,6 +2,10 @@
 
 import * as React from "react";
 
+import {
+  useFormatLocale,
+  useSiteplaneMessages,
+} from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import {
@@ -52,7 +56,7 @@ export type BarListProps = {
   heading?: BarListHeading;
   /** Writes a value at the end of its row. */
   formatValue?: (value: number) => string;
-  /** The locale of the numbers. */
+  /** The locale of the numbers: the SiteplaneLocaleProvider's unless set, en-US without one. */
   locale?: string;
   /** A CSS colour or token for the bars. The lightest brand shade by default. */
   color?: string;
@@ -94,11 +98,15 @@ export function BarList({
   label,
   heading,
   formatValue,
-  locale = CHART_DEFAULT_LOCALE,
+  locale: localeProp,
   color = lightestShade,
-  emptyLabel = "No data",
+  emptyLabel: emptyLabelProp,
   className,
 }: BarListProps): React.ReactElement {
+  const messages = useSiteplaneMessages("chart");
+  const emptyLabel = emptyLabelProp ?? messages.noData;
+  // The chart's own locale, else the provider's, else en-US.
+  const locale = useFormatLocale(localeProp, CHART_DEFAULT_LOCALE);
   const list = React.useRef<HTMLUListElement>(null);
   const format = formatValue ?? chartNumberFormatter(locale);
   // A value that is not a number counts as 0, as it does in the Pie Chart.

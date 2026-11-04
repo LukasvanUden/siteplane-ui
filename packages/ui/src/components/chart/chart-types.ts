@@ -1,3 +1,10 @@
+import type { CartesianChartLabels } from "../../system/locale/messages";
+
+export type {
+  CartesianChartLabels,
+  ChartLabels,
+} from "../../system/locale/messages";
+
 /** An x value: category text, or a date for a time axis. */
 export type ChartXValue = string | Date;
 
@@ -27,36 +34,12 @@ export type ChartSeries = {
    * it a series has one colour whatever its sign.
    */
   negativeColor?: string;
-};
-
-/**
- * The words that every chart gives screen readers. `labels` replaces them,
- * merged with the English defaults: pass the translation of each one for an
- * application in another language. An empty text leaves its part out.
- */
-export type ChartLabels = {
-  /** What screen readers call the plot: its role description. "chart" by default. */
-  roleDescription: string;
   /**
-   * The hint read after the description of the plot while it is a focus stop:
-   * how to move between its items. "Use the arrow keys to move between data
-   * points." by default.
+   * Only the Bar Chart uses it: `line` draws the series as a line through the
+   * middle of its categories, over the bars and on the same value axis, and
+   * keeps it out of a stack. `bar`, the default, draws it as bars.
    */
-  keyboardHint: string;
-};
-
-/**
- * The words of a Bar, Line or Area Chart: those of every chart, and the words of
- * the summary of its data that screen readers read, such as "Jan to Jun.
- * Desktop: lowest 73, highest 305."
- */
-export type CartesianChartLabels = ChartLabels & {
-  /** Joins the first and the last x value: "to" by default. */
-  to: string;
-  /** Comes before the lowest value of a series: "lowest" by default. */
-  lowest: string;
-  /** Comes before the highest value of a series: "highest" by default. */
-  highest: string;
+  type?: "bar" | "line";
 };
 
 /**
@@ -91,9 +74,15 @@ export type CartesianChartProps = {
   minHeight?: number;
   /** Formats a value in the tooltip, and on the value axis when given. */
   formatValue?: (value: number) => string;
+  /**
+   * Rolls the values in the tooltip and the label on the axis to the next
+   * item's, digit by digit (MotionNumber). Off by default: they change at
+   * once, so a pointer that moves across the plot costs the page little work.
+   */
+  rollingNumbers?: boolean;
   /** Formats an x value on the axis and in the tooltip heading. */
   formatX?: (value: ChartXValue) => string;
-  /** The locale of the numbers and dates. */
+  /** The locale of the numbers and dates: the SiteplaneLocaleProvider's unless set, en-US without one. */
   locale?: string;
   /**
    * The colours of the series that name none. `brand` (the default) shades the
@@ -115,8 +104,8 @@ export type CartesianChartProps = {
   emptyLabel?: string;
   /**
    * Replaces words that the chart gives screen readers, merged with the
-   * English defaults: its role description, the keyboard hint and the words of
-   * the summary of its data.
+   * messages of SiteplaneLocaleProvider (English by default): its role
+   * description, the keyboard hint and the words of the summary of its data.
    */
   labels?: Partial<CartesianChartLabels> | undefined;
   className?: string;

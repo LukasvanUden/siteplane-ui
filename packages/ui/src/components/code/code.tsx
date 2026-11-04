@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import type { CodeBlockLabels } from "../../system/locale/messages";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { RevealIcon } from "../action-icons";
@@ -48,30 +50,7 @@ const codeBlockVariants = cva(codeBlockBaseClassName, {
   variants: { size: codeBlockSizeClassNames },
 });
 
-/** The words a CodeBlock speaks to assistive technology. */
-export type CodeBlockLabels = {
-  /** Read in place of a masked value. */
-  hidden: string;
-  /** The reveal button while the value is masked. */
-  reveal: string;
-  /** The same button while the value shows. */
-  hide: string;
-  /** The copy button. */
-  copy: string;
-  /** The copy button while its check confirms a copy. */
-  copied: string;
-  /** The copy button and its announcement when the clipboard refuses. */
-  copyFailed: string;
-};
-
-const defaultCodeBlockLabels: CodeBlockLabels = {
-  hidden: "Hidden value",
-  reveal: "Reveal value",
-  hide: "Hide value",
-  copy: "Copy to clipboard",
-  copied: "Copied to clipboard",
-  copyFailed: "Copy unavailable",
-};
+export type { CodeBlockLabels };
 
 /** What a line of a block shows: a change, or a line the text calls out. */
 export type CodeLineState = "added" | "removed" | "highlighted";
@@ -247,7 +226,8 @@ export function CodeBlock({
   streaming = false,
   ...props
 }: CodeBlockProps) {
-  const text = { ...defaultCodeBlockLabels, ...labels };
+  const messages = useSiteplaneMessages("code");
+  const text = { ...messages, ...labels };
   // The person's reveal, which a change of `mask` takes back: a block that is
   // masked after it loaded is hidden again, not left in clear text.
   const [revealedByPerson, setRevealedByPerson] = useState(false);

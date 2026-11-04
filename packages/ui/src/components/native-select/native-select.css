@@ -1,0 +1,65 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* The wrapper is the control the eye sees: the Select trigger's field, its
+   * sizes, rim, dome, hover, press, focus, invalid and disabled states come
+   * from the select-trigger rules (design-rework.css), which name it beside
+   * the trigger. These defaults lay it out: as wide as its container, as a
+   * Select trigger is. */
+  :where(.sp-native-select-wrapper) {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    min-width: 0;
+    vertical-align: middle;
+    /* The value's weight, which the select-trigger rules name for the
+     * trigger's Button: the body weight. */
+    font-weight: var(--sp-rw-button-font-weight);
+  }
+
+  /* width="fit": as wide as the value and the caret, at the width the browser
+   * gives the select, that of its widest option, as a fit Select trigger is
+   * as wide as its value. */
+  :where(.sp-native-select-wrapper[data-width="fit"]) {
+    width: fit-content;
+  }
+
+  /* The select fills the wrapper and draws nothing of its own: the browser's
+   * arrow is off, and the value starts and ends where a Select trigger's does,
+   * at the field's inline padding and 8 px before the caret (the
+   * select-trigger rules name both). It acts as a button, so it shows the
+   * pointer, and not-allowed while it is disabled (rulebook T8). */
+  :where(.sp-native-select) {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    border: 0;
+    border-radius: inherit;
+    padding-block: 0;
+    padding-inline: var(--sp-rw-select-value-start)
+      var(--sp-rw-select-value-end);
+    appearance: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-overflow: ellipsis;
+    outline: none;
+    cursor: pointer;
+  }
+
+  :where(.sp-native-select:disabled) {
+    cursor: not-allowed;
+  }
+
+  /* The list is the platform's. Where the browser draws the options with the
+   * select's colours, they take the system's canvas and text, so they stay
+   * legible on a dark page whose select is transparent. */
+  :where(.sp-native-select-option),
+  :where(.sp-native-select-optgroup) {
+    background-color: Canvas;
+    color: CanvasText;
+  }
+}

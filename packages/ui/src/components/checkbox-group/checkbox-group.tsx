@@ -28,10 +28,12 @@ export function CheckboxGroup({
   return (
     <CheckboxSizeContext.Provider value={resolvedSize}>
       <CheckboxGroupPrimitive
-        // The 8 px default is a utility, so a gap in className replaces it.
+        // The 16 px default is the Radio Group's, so the two choice groups
+        // stand their options the same distance apart (Lukas, 31 October 2026).
+        // It is a utility, so a gap in className replaces it.
         className={cn(
           slotClass("checkbox-group", props),
-          "flex flex-col items-start gap-2",
+          "flex flex-col items-start gap-4",
           className,
         )}
         data-size={resolvedSize}

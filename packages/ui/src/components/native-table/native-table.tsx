@@ -1,16 +1,13 @@
 "use client";
 
 import type { ComponentProps, CSSProperties } from "react";
-import {
-  type SiteplaneControlSize,
-  useResolvedControlSize,
-} from "../../system/provider/siteplane-ui-provider";
 import { cn } from "../../system/utils/cn";
 import {
   tableAlignmentClassName,
-  tableContainerSizeClassName,
   tableFooterClassName,
+  useResolvedTableSize,
   type TableAlign,
+  type TableSize,
 } from "../table/table-shared";
 import "../table/table.css";
 import "./native-table.css";
@@ -19,7 +16,18 @@ export interface NativeTableProps extends ComponentProps<"table"> {
   containerClassName?: string | undefined;
   hoverable?: boolean | undefined;
   minWidth?: CSSProperties["minWidth"];
-  size?: SiteplaneControlSize | undefined;
+  size?: TableSize | undefined;
+  /**
+   * Keeps the heading row in view while the rows scroll, with Table's rule
+   * (table.css): it sticks to the top of the scrolling container, which takes
+   * at most the height of a parent that has one.
+   */
+  stickyHeader?: boolean | undefined;
+  /**
+   * Tints every other body row, starting with the first, with Table's rule
+   * (table.css). Row tones and the hover fill replace the tint.
+   */
+  striped?: boolean | undefined;
 }
 
 /** Native table semantics: each control keeps its own focus and keyboard behavior. */
@@ -29,18 +37,20 @@ export function NativeTable({
   hoverable = true,
   minWidth,
   size,
+  stickyHeader = false,
+  striped = false,
   style,
   ...props
 }: NativeTableProps) {
-  const resolvedSize = useResolvedControlSize(size);
+  const resolvedSize = useResolvedTableSize(size);
   return (
     <div
       data-slot="table-container"
       data-size={resolvedSize}
+      data-sticky-header={stickyHeader || undefined}
       className={cn(
         "sp-table-container",
         "relative w-full min-w-0 overflow-x-auto",
-        tableContainerSizeClassName,
         containerClassName,
       )}
     >
@@ -48,6 +58,7 @@ export function NativeTable({
         {...props}
         data-slot="table"
         data-hoverable={hoverable}
+        data-striped={striped || undefined}
         className={cn(
           "sp-table",
           "w-full border-collapse caption-bottom text-sm",

@@ -1,0 +1,302 @@
+@layer theme, base, components, siteplane, utilities;
+
+@layer siteplane {
+  /* A featured icon is a glyph centred in a box
+   * (Lukas, 30 October 2026). Without a size the box is 36 px with an 18 px
+   * glyph, the lead column of a Notification (rulebook I6, I9); sm, md, lg and
+   * xl are 32, 40, 48 and 56 px with a 16, 20, 24 and 28 px glyph.
+   * The box, the glyph and the outline's colour are defaults without
+   * specificity, which the sizes, tones and variants below refine (P6). The
+   * variables carry each size's corners: the square of dark and modern, the
+   * outer square of modern-neue, and the disc and glyph of gradient. */
+  :where(.sp-featured-icon) {
+    --sp-featured-icon-box: calc(var(--sp-rw-space) * 9);
+    --sp-featured-icon-glyph: calc(var(--sp-rw-space) * 4.5);
+    --sp-featured-icon-radius: var(--sp-rw-radius-control);
+    --sp-featured-icon-neue-radius: var(--radius-lg);
+    --sp-featured-icon-disc: calc(var(--sp-rw-space) * 6.5);
+    --sp-featured-icon-disc-glyph: var(--sp-rw-space-4);
+    --sp-featured-icon-edge: color-mix(
+      in oklch,
+      var(--sp-featured-icon-fill) 24%,
+      transparent
+    );
+
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--sp-featured-icon-box);
+    height: var(--sp-featured-icon-box);
+    color: var(--sp-featured-icon-outline);
+  }
+
+  :where(.sp-featured-icon > svg) {
+    flex-shrink: 0;
+    width: var(--sp-featured-icon-glyph);
+    height: var(--sp-featured-icon-glyph);
+  }
+
+  :root .sp-featured-icon[data-size="sm"] {
+    --sp-featured-icon-box: var(--sp-rw-space-8);
+    --sp-featured-icon-glyph: var(--sp-rw-space-4);
+    --sp-featured-icon-radius: var(--sp-rw-radius-sm);
+    --sp-featured-icon-neue-radius: var(--sp-rw-radius-control);
+    --sp-featured-icon-disc: var(--sp-rw-space-6);
+  }
+
+  :root .sp-featured-icon[data-size="md"] {
+    --sp-featured-icon-box: var(--sp-rw-space-10);
+    --sp-featured-icon-glyph: var(--sp-rw-space-5);
+    --sp-featured-icon-radius: var(--sp-rw-radius-control);
+    --sp-featured-icon-neue-radius: var(--radius-lg);
+    --sp-featured-icon-disc: var(--sp-rw-space-7);
+  }
+
+  :root .sp-featured-icon[data-size="lg"] {
+    --sp-featured-icon-box: var(--sp-rw-space-12);
+    --sp-featured-icon-glyph: var(--sp-rw-space-6);
+    --sp-featured-icon-radius: var(--radius-lg);
+    --sp-featured-icon-neue-radius: var(--sp-rw-radius-surface);
+    --sp-featured-icon-disc: var(--sp-rw-space-8);
+    --sp-featured-icon-disc-glyph: var(--sp-rw-space-5);
+  }
+
+  :root .sp-featured-icon[data-size="xl"] {
+    --sp-featured-icon-box: calc(var(--sp-rw-space) * 14);
+    --sp-featured-icon-glyph: var(--sp-rw-space-7);
+    --sp-featured-icon-radius: var(--sp-rw-radius-surface);
+    --sp-featured-icon-neue-radius: var(--radius-xl);
+    --sp-featured-icon-disc: var(--sp-rw-space-10);
+    --sp-featured-icon-disc-glyph: var(--sp-rw-space-5);
+  }
+
+  /* The tones. The outline keeps the colours of a Notification's featured
+   * icon. The other variants take the kit's status tokens: the tint and its
+   * text colour of the Badge's status variants, and the solid fill with the
+   * text that reads on it of the solid Button and Badge (inverse for
+   * neutral). */
+  :root .sp-featured-icon[data-tone="neutral"] {
+    --sp-featured-icon-outline: var(--sp-semantic-color-muted-foreground);
+    --sp-featured-icon-ink: var(--sp-rw-fg-secondary);
+    --sp-featured-icon-tint: var(--sp-rw-bg-muted);
+    --sp-featured-icon-fill: var(--sp-rw-bg-inverse);
+    --sp-featured-icon-on-fill: var(--sp-rw-fg-inverse);
+  }
+
+  :root .sp-featured-icon[data-tone="accent"] {
+    --sp-featured-icon-outline: var(--sp-rw-fg-accent);
+    --sp-featured-icon-ink: var(--sp-rw-fg-accent);
+    --sp-featured-icon-tint: var(--sp-rw-bg-accent-translucent);
+    --sp-featured-icon-fill: var(--sp-rw-bg-accent);
+    --sp-featured-icon-on-fill: var(--sp-rw-fg-on-accent);
+  }
+
+  :root .sp-featured-icon[data-tone="success"] {
+    --sp-featured-icon-outline: var(--sp-semantic-color-success-foreground);
+    --sp-featured-icon-ink: var(--sp-rw-fg-positive);
+    --sp-featured-icon-tint: var(--sp-rw-bg-positive-translucent);
+    --sp-featured-icon-fill: var(--sp-rw-bg-positive);
+    --sp-featured-icon-on-fill: var(--sp-rw-fg-emphasis);
+  }
+
+  :root .sp-featured-icon[data-tone="warning"] {
+    --sp-featured-icon-outline: var(--sp-semantic-color-warning-foreground);
+    --sp-featured-icon-ink: var(--sp-rw-fg-attention);
+    --sp-featured-icon-tint: var(--sp-rw-bg-attention-translucent);
+    --sp-featured-icon-fill: var(--sp-rw-bg-attention);
+    --sp-featured-icon-on-fill: var(--sp-rw-fg-emphasis);
+  }
+
+  :root .sp-featured-icon[data-tone="error"] {
+    --sp-featured-icon-outline: var(--sp-semantic-color-destructive-foreground);
+    --sp-featured-icon-ink: var(--sp-rw-fg-destructive);
+    --sp-featured-icon-tint: var(--sp-rw-bg-destructive-translucent);
+    --sp-featured-icon-fill: var(--sp-rw-bg-destructive);
+    --sp-featured-icon-on-fill: var(--sp-rw-fg-emphasis);
+  }
+
+  /* Light: a circle in the tone's tint, the glyph in its text colour. */
+  :root .sp-featured-icon[data-variant="light"] {
+    border-radius: var(--sp-rw-radius-full);
+    background: var(--sp-featured-icon-tint);
+    color: var(--sp-featured-icon-ink);
+  }
+
+  /* Gradient: a disc in the tone's solid fill, the glyph in the text that
+   * reads on it, inside a halo of the tint whose hairline fades out downward.
+   * Both layers lie under the glyph. */
+  :root .sp-featured-icon[data-variant="gradient"] {
+    isolation: isolate;
+    border-radius: var(--sp-rw-radius-full);
+    color: var(--sp-featured-icon-on-fill);
+  }
+
+  :root .sp-featured-icon[data-variant="gradient"]::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border: var(--sp-rw-border-default) solid var(--sp-featured-icon-edge);
+    border-radius: inherit;
+    background: var(--sp-featured-icon-tint);
+    content: "";
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+    mask-image: linear-gradient(to bottom, black, transparent);
+  }
+
+  :root .sp-featured-icon[data-variant="gradient"]::after {
+    position: absolute;
+    z-index: -1;
+    width: var(--sp-featured-icon-disc);
+    height: var(--sp-featured-icon-disc);
+    border-radius: var(--sp-rw-radius-full);
+    background: var(--sp-featured-icon-fill);
+    content: "";
+  }
+
+  :root .sp-featured-icon[data-variant="gradient"] > svg {
+    width: var(--sp-featured-icon-disc-glyph);
+    height: var(--sp-featured-icon-disc-glyph);
+  }
+
+  /* Dark: a square in the tone's solid fill with the glyph in the text that
+   * reads on it, raised by the control's depth, with a hairline of that text
+   * colour one hairline inside its edge that fades out downward. */
+  :root .sp-featured-icon[data-variant="dark"] {
+    isolation: isolate;
+    border-radius: var(--sp-featured-icon-radius);
+    background: var(--sp-featured-icon-fill);
+    box-shadow: var(--sp-rw-control-depth);
+    color: var(--sp-featured-icon-on-fill);
+  }
+
+  :root .sp-featured-icon[data-variant="dark"]::before {
+    position: absolute;
+    z-index: -1;
+    inset: var(--sp-rw-border-default);
+    border: var(--sp-rw-border-default) solid
+      color-mix(in oklch, var(--sp-featured-icon-on-fill) 12%, transparent);
+    border-radius: calc(
+      var(--sp-featured-icon-radius) - var(--sp-rw-border-default)
+    );
+    content: "";
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+    mask-image: linear-gradient(to bottom, black, transparent);
+  }
+
+  /* Modern: the raised tile, the default Button's tertiary fill and dome with
+   * the tile's edge, which reads evenly on all four sides, its bevel and the
+   * control's depth (--sp-rw-tile-shadow), and the glyph in the tone's text
+   * colour. The Button's own shadow covers its rim at the top and the bottom,
+   * which on a square of 32 to 56 px read as a missing edge (Lukas, 2
+   * November 2026). */
+  :root .sp-featured-icon[data-variant="modern"] {
+    border-radius: var(--sp-featured-icon-radius);
+    background: var(--sp-rw-control-dome), var(--sp-rw-bg-tertiary);
+    box-shadow: var(--sp-rw-tile-shadow);
+    color: var(--sp-featured-icon-ink);
+  }
+
+  /* Modern neue: a square of the tertiary fill with the outline rim, a frame
+   * that holds the raised tile 4 px inside its edge, concentric with it: the
+   * tile's edge and bevel, lifted by three layers of shadow that fall on the
+   * frame (--sp-rw-tile-raised-shadow), so the two edges read as a tile in its
+   * frame rather than as a double line (Lukas, 2 November 2026). */
+  :root .sp-featured-icon[data-variant="modern-neue"] {
+    isolation: isolate;
+    border-radius: var(--sp-featured-icon-neue-radius);
+    background: var(--sp-rw-bg-tertiary);
+    box-shadow: var(--sp-rw-outline-rim);
+    color: var(--sp-featured-icon-ink);
+  }
+
+  :root .sp-featured-icon[data-variant="modern-neue"]::before {
+    position: absolute;
+    z-index: -1;
+    inset: var(--sp-rw-space-1);
+    border-radius: calc(
+      var(--sp-featured-icon-neue-radius) - var(--sp-rw-space-1)
+    );
+    background: var(--sp-rw-control-dome), var(--sp-rw-bg-tertiary);
+    box-shadow: var(--sp-rw-tile-raised-shadow);
+    content: "";
+  }
+
+  /* Outline: the glyph alone in its box, in the outline colour above. Its two
+   * rings exist only as the pulse (rulebook I6, I1, M1, M2, M5): two identical
+   * rings in the tone colour, drawn by the box's ::before and ::after, travel
+   * outwards from the glyph and fade. A ring is a circle of seven ninths of the
+   * box, 28 px in the 36 px box; it leaves at three quarters of that, 21 px,
+   * just outside the glyph, and is gone at --motion-ring-pulse-scale (about
+   * 43 px). In a loop of --motion-duration-ring-pulse (4 s), a ring travels at
+   * an even pace for the first 80% (3.2 s), reaches --motion-ring-pulse-opacity
+   * (0.24 of the tone) a tenth of the way out and fades from there, then rests,
+   * faded, for the last 20% (0.8 s). The ::after runs half a loop behind, so
+   * both rings are under way from the first frame and a new ring leaves the
+   * glyph every half loop (2.0 s). A ring travels longer than that, so the next
+   * one leaves before it has faded: at least one ring is always in flight.
+   *
+   * Every outline icon pulses for as long as it is shown, in a NotificationList
+   * and a toast stack too: --motion-ring-pulse-count is infinite. A ring's own
+   * opacity is 0, so it shows only while it travels. Without the pulse the
+   * glyph stands alone in its box, and nothing moves: `pulse={false}` and the
+   * other variants leave out data-pulse, which every ring rule needs; reduced
+   * motion stops the rings; and an app that sets the count to a number gets
+   * the glyph alone when the last wave ends. Only transform and opacity
+   * animate, timed by the motion tokens. */
+  .sp-featured-icon[data-pulse]::before,
+  .sp-featured-icon[data-pulse]::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--sp-featured-icon-box) / 9);
+    border: 2px solid currentColor;
+    border-radius: 9999px;
+    opacity: 0;
+    pointer-events: none;
+    animation: sp-featured-icon-ring-pulse var(--motion-duration-ring-pulse)
+      var(--motion-ease-linear) var(--motion-ring-pulse-count);
+  }
+
+  /* Half a loop behind, already under way when the icon appears. */
+  .sp-featured-icon[data-pulse]::after {
+    animation-delay: calc(var(--motion-duration-ring-pulse) / -2);
+  }
+
+  /* From just outside the glyph (21 px in the 36 px box) to about 43 px over
+   * the first 80% of the loop; brightest a tenth of the way out (8%), at
+   * --motion-ring-pulse-opacity, then the ring fades as it travels. It rests,
+   * faded, for the last 20%. */
+  @keyframes sp-featured-icon-ring-pulse {
+    from {
+      opacity: 0;
+      transform: scale(0.75);
+    }
+
+    8% {
+      opacity: var(--motion-ring-pulse-opacity);
+    }
+
+    80%,
+    to {
+      opacity: 0;
+      transform: scale(var(--motion-ring-pulse-scale));
+    }
+  }
+
+  /* Reduced motion stops the rings, so the glyph stands alone and nothing moves
+   * (M5): the document mode, the provider preset and the system setting. */
+  html[data-motion-reduce="true"] .sp-featured-icon[data-pulse]::before,
+  html[data-motion-reduce="true"] .sp-featured-icon[data-pulse]::after,
+  [data-sp-motion="reduced"] .sp-featured-icon[data-pulse]::before,
+  [data-sp-motion="reduced"] .sp-featured-icon[data-pulse]::after {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sp-featured-icon[data-pulse]::before,
+    .sp-featured-icon[data-pulse]::after {
+      animation: none;
+    }
+  }
+}

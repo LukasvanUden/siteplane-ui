@@ -1,31 +1,8 @@
 @layer theme, base, components, siteplane, utilities;
 
 @layer components {
-  /* Rulebook I5: a radio before text centres on the first text line, also
-   * when the text wraps, as the Checkbox does (checkbox.css). A radio taller
-   * than the line starts at the line's top. */
-  :where(label, .sp-label, .sp-field-label)
-    > .sp-base-radio[data-profile="control"]:first-child,
-  :where(label, .sp-label, .sp-field-label)
-    > :where(span, div)
-    > .sp-base-radio[data-profile="control"]:first-child,
-  .sp-base-radio[data-profile="control"]:first-child:has(
-      ~ :is(.sp-label, .sp-field-label),
-      ~ * :is(.sp-label, .sp-field-label)
-    ) {
-    align-self: flex-start;
-    margin-block: max(0px, calc((1lh - var(--sp-rw-choice-size)) / 2));
-  }
-
-  /* Beside its label, the radio does not inherit the label's line but its
-   * container's. It takes the 21 px line of a label next to a choice control
-   * (S13), so the 1lh above measures the label's first line. */
-  .sp-base-radio[data-profile="control"]:first-child:has(
-      ~ :is(.sp-label, .sp-field-label),
-      ~ * :is(.sp-label, .sp-field-label)
-    ) {
-    line-height: var(--sp-rw-line-21);
-  }
+  /* A radio before text centres on the first text line (rulebook I5): the
+   * shared rule of the checkbox, radio and switch in design-rework.css. */
 
   /* The indicator pops and fades with the Checkbox's motion: the same slow
    * duration, standard curve and pop scale, and the same linger on the way

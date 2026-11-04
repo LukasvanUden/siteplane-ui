@@ -1,20 +1,21 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../system/utils/cn";
+import { moveFocusPast } from "../../system/utils/focus-target-after";
 import { slotClass } from "../../system/utils/slot-class";
-import { KitButton } from "../button/button-internal";
+import { CloseButton } from "../button";
 import { MotionReveal } from "../motion";
 
 // The columns are design-rework.css's (Alert): the action takes a column of
-// its own only from 640 px and only beside a title or description; below
-// 640 px it wraps under the text, so the grid keeps no empty track for it
-// (rulebook S11). The text column is minmax(0, 1fr), so a long value wraps
-// instead of pushing the action out (rulebook K5). A banner or a band lays
-// out by its own width instead (design-rework.css, Alert layouts).
+// its own only beside a title or description, and every layout places its
+// parts by the Alert's own width, never the window's: below 32rem of it an
+// inline Alert's action goes under the text and the text spans the empty
+// column, so the grid keeps no empty track (rulebook S11). The text column is
+// minmax(0, 1fr), so a long value wraps instead of pushing the action out
+// (rulebook K5).
 const alertVariants = cva("relative grid w-full items-start", {
   defaultVariants: { layout: "inline", variant: "default" },
   variants: {
@@ -29,8 +30,13 @@ const alertVariants = cva("relative grid w-full items-start", {
       default: "[&>svg]:text-muted-foreground",
       error: "[&>svg]:text-destructive",
       info: "[&>svg]:text-info",
-      success: "[&>svg]:text-success",
-      warning: "[&>svg]:text-warning",
+      // Every success glyph takes the success text's green, and every warning
+      // glyph the warning text's amber-brown (rulebook C4), the semantic
+      // foreground of the tone: the Featured Icon, the Timeline marker and the
+      // Toast's icon too. The tone's fill is the dot's and the Badge's, a step
+      // lighter than the text.
+      success: "[&>svg]:text-success-foreground",
+      warning: "[&>svg]:text-warning-foreground",
     },
   },
 });
@@ -52,7 +58,8 @@ const assertiveVariants: ReadonlySet<string> = new Set(["error", "warning"]);
  *
  * A banner and a band put the icon, the text and the close control on one
  * row while their own width allows it; below 32rem of their own width the
- * icon and the close control sit on the title's line.
+ * icon and the close control sit on the title's line. Every layout places
+ * the action by its own width: beside the text from 32rem, under it below.
  */
 export type AlertLayout = "inline" | "banner" | "band";
 
@@ -76,45 +83,6 @@ interface AlertContextValue {
 
 const AlertContext = React.createContext<AlertContextValue | null>(null);
 
-const tabbableSelector = [
-  "a[href]",
-  "area[href]",
-  "button:not([disabled])",
-  "input:not([disabled]):not([type='hidden'])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "iframe",
-  "[contenteditable]:not([contenteditable='false'])",
-  "[tabindex]",
-].join(",");
-
-function isTabbable(element: HTMLElement): boolean {
-  if (element.tabIndex < 0) return false;
-  if (element.closest("[inert], [aria-hidden='true']")) return false;
-  return element.getClientRects().length > 0;
-}
-
-/**
- * The element that takes focus when a closing Alert held it: the next tabbable
- * element after the Alert in document order, or the one before it at the end
- * of the page, so focus never falls back to the body.
- */
-function focusTargetAfter(root: HTMLElement): HTMLElement | null {
-  const candidates = Array.from(
-    root.ownerDocument.querySelectorAll<HTMLElement>(tabbableSelector),
-  ).filter((element) => !root.contains(element) && isTabbable(element));
-  const following = candidates.find(
-    (element) =>
-      root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
-  );
-  if (following) return following;
-  const preceding = candidates.filter(
-    (element) =>
-      root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_PRECEDING,
-  );
-  return preceding.at(-1) ?? null;
-}
-
 export function Alert({
   className,
   defaultOpen = true,
@@ -136,10 +104,10 @@ export function Alert({
   const context = React.useMemo<AlertContextValue>(
     () => ({
       close: (trigger) => {
-        const root = rootRef.current;
-        if (root && trigger && root.contains(document.activeElement)) {
-          focusTargetAfter(root)?.focus({ preventScroll: true });
-        }
+        // A close that holds the focus hands it to the next element after the
+        // Alert, as a Notification's close does, so it never falls back to the
+        // page (system/utils/focus-target-after.ts).
+        if (trigger) moveFocusPast(rootRef.current);
         if (openProp === undefined) setUncontrolledOpen(false);
         onOpenChange?.(false);
       },
@@ -208,18 +176,15 @@ export function AlertAction({
   className,
   ...props
 }: React.ComponentProps<"div">): React.ReactElement {
-  const layout = React.useContext(AlertContext)?.layout ?? "inline";
   return (
-    // Below 640 px the action wraps under the text, in the text's column. From
-    // 640 px it sits beside the text and spans two rows only beside a title
-    // and a description (rulebook S11). A banner or a band places it by its
-    // own width (design-rework.css).
+    // The Alert places its action by its own width, as every layout does
+    // (design-rework.css): from 32rem beside the text, spanning two rows only
+    // beside a title and a description; below, under the text, in the text's
+    // column (rulebook S11).
     <div
       className={cn(
         slotClass("alert-action", props),
         "flex empty:hidden",
-        layout === "inline" &&
-          "max-sm:mt-2 [svg~&]:col-start-2 sm:row-start-1 sm:self-center sm:[[data-slot=alert-title]~[data-slot=alert-description]~&]:row-end-3 sm:[[data-slot=alert-description]~&]:col-start-2 sm:[[data-slot=alert-title]~&]:col-start-2 sm:[svg~[data-slot=alert-description]~&]:col-start-3 sm:[svg~[data-slot=alert-title]~&]:col-start-3",
         className,
       )}
       data-slot="alert-action"
@@ -232,37 +197,40 @@ export interface AlertCloseProps extends Omit<
   React.ComponentProps<"button">,
   "children"
 > {
-  /** The accessible name of the close control. Defaults to "Close". */
+  /**
+   * The accessible name of the close control: CloseButton's message by
+   * default, "Close" in English.
+   */
   "aria-label"?: string;
 }
 
 /**
- * The × that closes the Alert: the kit's ghost dismiss control, the same as a
- * Dialog's or a Notification's. The Alert collapses with the kit's motion, and
- * focus moves to the next element after it instead of to the page.
+ * The × that closes the Alert: the CloseButton at its dense 24 px step, the
+ * close of a Dialog and a Notification too. The Alert collapses with the kit's
+ * motion, and focus moves to the next element after it instead of to the
+ * page.
  */
 export function AlertClose({
-  "aria-label": ariaLabel = "Close",
+  "aria-label": ariaLabel,
   className,
   onClick,
   ...props
 }: AlertCloseProps): React.ReactElement {
   const context = React.useContext(AlertContext);
+  // Its own slot, as the close part of a Dialog, a Drawer or a Toast carries
+  // its own; it carried only the slot's class, over the Button's slot.
   return (
-    <KitButton
-      aria-label={ariaLabel}
+    <CloseButton
       className={cn(slotClass("alert-close", props), className)}
+      data-slot="alert-close"
+      label={ariaLabel}
       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (!event.defaultPrevented) context?.close(event.currentTarget);
       }}
-      profile="overlay-dismiss"
-      shape="square"
+      size="2xs"
       type="button"
-      variant="ghost"
       {...props}
-    >
-      <XIcon aria-hidden="true" />
-    </KitButton>
+    />
   );
 }

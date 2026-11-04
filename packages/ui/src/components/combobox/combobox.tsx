@@ -1,33 +1,39 @@
 "use client";
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
-import { ChevronsUpDownIcon, XIcon } from "lucide-react";
+import { CaretUpDownIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
+import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
-import { slotClass, withClass } from "../../system/utils/slot-class";
+import { baseClass, slotClass, withClass } from "../../system/utils/slot-class";
 import { useReducedMotionPreference } from "../../system/motion/use-reduced-motion-preference";
 import {
   type SiteplaneControlSize,
   SiteplaneUIPortalScope,
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
+import { CheckboxGlyph } from "../../system/styles/checkbox-glyph";
 import {
+  type ChoiceIndicatorMark,
+  type ChoiceIndicatorPosition,
   ChoiceMenuItemCheck,
-  choiceMenuItemEndGridClassName,
-  choiceMenuItemEndLabelClassName,
+  choiceIndicatorPosition,
+  choiceMenuItemBoxSize,
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import {
-  formControlSurfaceClassNames,
   type FormControlSurface,
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { KitInput } from "../input/input-internal";
 import { ExternalInputOwner } from "../input/input";
 import { Button } from "../button";
-import { KitButton } from "../button/button-internal";
+import { CloseGlyph, KitButton } from "../button/button-internal";
+import { Kbd } from "../kbd";
+import { PopupListMotion } from "../motion/motion-follow";
 import { GlideOnChange, motionGhostAttribute } from "../motion/motion-presence";
 import { ScrollArea } from "../scroll-area";
+import { Separator } from "../separator";
 
 export const ComboboxContext: React.Context<{
   chipsRef: React.RefObject<Element | null> | null;
@@ -66,9 +72,78 @@ function useComboboxInputSize(size: SiteplaneControlSize) {
   }, [setSize, size]);
 }
 
-export function Combobox<Value, Multiple extends boolean | undefined = false>(
-  props: ComboboxPrimitive.Root.Props<Value, Multiple>,
-): React.ReactElement {
+/**
+ * What the parts of a Combobox read about its chosen options: ComboboxChips
+ * counts itself in, so the root knows the value shows as chips, and
+ * ComboboxEmpty reads whether no option is left to choose. Internal, beside
+ * the public ComboboxContext.
+ */
+const ComboboxChosenContext = React.createContext<{
+  hidesChosen: boolean;
+  nothingLeft: boolean;
+  setChips: React.Dispatch<React.SetStateAction<number>>;
+} | null>(null);
+
+type ComboboxGroup = { items: readonly unknown[] };
+
+/** Base UI's test for grouped `items`: their first entry holds `items`. */
+function isGroupedItems(
+  items: readonly unknown[],
+): items is readonly ComboboxGroup[] {
+  const first = items[0];
+  return typeof first === "object" && first !== null && "items" in first;
+}
+
+/** Whether `items` hold at least one option. */
+function hasOptions(items: readonly unknown[] | undefined): boolean {
+  if (!items || items.length === 0) return false;
+  return isGroupedItems(items)
+    ? items.some((group) => group.items.length > 0)
+    : true;
+}
+
+/**
+ * The options left to choose: `items` without the chosen ones, compared as
+ * Base UI compares an option with the value, and without a group that is left
+ * empty.
+ */
+function withoutChosen<Items extends readonly unknown[] | undefined>(
+  items: Items,
+  chosen: unknown,
+  isItemEqualToValue: ((item: never, value: never) => boolean) | undefined,
+): Items {
+  if (!items || !Array.isArray(chosen) || chosen.length === 0) return items;
+  const equal = (item: unknown, value: unknown) =>
+    item == null || value == null || !isItemEqualToValue
+      ? Object.is(item, value)
+      : isItemEqualToValue(item as never, value as never);
+  const left = (item: unknown) => !chosen.some((value) => equal(item, value));
+  if (isGroupedItems(items))
+    return items
+      .map((group) => ({ ...group, items: group.items.filter(left) }))
+      .filter((group) => group.items.length > 0) as unknown as Items;
+  return items.filter(left) as unknown as Items;
+}
+
+export type ComboboxProps<
+  Value,
+  Multiple extends boolean | undefined = false,
+> = ComboboxPrimitive.Root.Props<Value, Multiple> & {
+  /**
+   * Whether a chosen option leaves the list of a multiple Combobox with
+   * `items`. It does by default when ComboboxChips shows the value, so a name
+   * that is already a chip is not offered again, and the list closes once
+   * every option is chosen. Set `false` to keep the chosen options in the
+   * list with their check.
+   */
+  hideSelected?: boolean | undefined;
+};
+
+export function Combobox<Value, Multiple extends boolean | undefined = false>({
+  defaultOpen,
+  hideSelected,
+  ...props
+}: ComboboxProps<Value, Multiple>): React.ReactElement {
   const chipsRef = React.useRef<Element | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [inputSize, setInputSize] = React.useState<SiteplaneControlSize>();
@@ -77,49 +152,173 @@ export function Combobox<Value, Multiple extends boolean | undefined = false>(
     [inputSize],
   );
   const [resetKey, setResetKey] = React.useState(0);
+  const { defaultValue, form, isItemEqualToValue, multiple, value } = props;
+
+  // A tag field, whose value ComboboxChips shows, lists only what is not
+  // chosen yet: a chosen name leaves the list and comes back when its chip is
+  // removed. The options left are the `items` Base UI filters, so its search,
+  // keyboard navigation, empty state and filtered items all read the same
+  // list. The value is the app's, or the one Base UI keeps, mirrored here.
+  const [chips, setChips] = React.useState(0);
+  const [uncontrolledValue, setUncontrolledValue] =
+    React.useState(defaultValue);
+  const hide = multiple === true && (hideSelected ?? chips > 0);
+  const chosen = value !== undefined ? value : uncontrolledValue;
+  const items = React.useMemo(
+    () =>
+      hide
+        ? withoutChosen(props.items, chosen, isItemEqualToValue)
+        : props.items,
+    [chosen, hide, isItemEqualToValue, props.items],
+  );
+  // Once every option is chosen the list has nothing to offer, so it closes. A
+  // removed chip brings its option back, and the list opens again when the
+  // user or the app opens it. The kit keeps the open state for Base UI.
+  const nothingLeft = hide && hasOptions(props.items) && !hasOptions(items);
+  const [openState, setOpenState] = React.useState(defaultOpen ?? false);
+  if (nothingLeft && openState) setOpenState(false);
+  const open = (props.open ?? openState) && !nothingLeft;
+  const chosenValue = React.useMemo(
+    () => ({ hidesChosen: hide, nothingLeft, setChips }),
+    [hide, nothingLeft],
+  );
 
   React.useEffect(() => {
-    if (props.value !== undefined) {
+    if (value !== undefined) {
       return;
     }
 
     const handleReset = (event: Event) => {
-      const form = event.target;
+      const target = event.target;
       const input = inputRef.current;
       if (
-        form instanceof HTMLFormElement &&
-        (input?.form === form ||
-          (props.form
-            ? form.id === props.form
-            : Boolean(input && form.contains(input))))
+        target instanceof HTMLFormElement &&
+        (input?.form === target ||
+          (form
+            ? target.id === form
+            : Boolean(input && target.contains(input))))
       ) {
         setResetKey((current) => current + 1);
+        setUncontrolledValue(defaultValue);
       }
     };
 
     document.addEventListener("reset", handleReset, true);
     return () => document.removeEventListener("reset", handleReset, true);
-  }, [props.form, props.value]);
+  }, [defaultValue, form, value]);
 
   return (
     <ComboboxContext.Provider
-      value={{ chipsRef, inputRef, multiple: !!props.multiple }}
+      value={{ chipsRef, inputRef, multiple: !!multiple }}
     >
       <ComboboxInputSizeContext.Provider value={inputSizeValue}>
-        <ComboboxPrimitive.Root {...props} key={resetKey} />
+        <ComboboxChosenContext.Provider value={chosenValue}>
+          <ComboboxPrimitive.Root
+            {...props}
+            items={items}
+            key={resetKey}
+            onOpenChange={(nextOpen, eventDetails) => {
+              props.onOpenChange?.(nextOpen, eventDetails);
+              if (!eventDetails.isCanceled) setOpenState(nextOpen);
+            }}
+            onValueChange={(nextValue, eventDetails) => {
+              props.onValueChange?.(nextValue, eventDetails);
+              if (!eventDetails.isCanceled)
+                setUncontrolledValue(
+                  nextValue as ComboboxProps<Value, Multiple>["defaultValue"],
+                );
+            }}
+            open={open}
+          />
+        </ComboboxChosenContext.Provider>
       </ComboboxInputSizeContext.Provider>
     </ComboboxContext.Provider>
+  );
+}
+
+/** Whether a `shortcut` names keys to show. */
+function hasShortcutKeys(shortcut: React.ReactNode): boolean {
+  return shortcut !== undefined && shortcut !== null && shortcut !== false;
+}
+
+/**
+ * The width of a keyboard hint (`shortcut` of ComboboxInput and
+ * ComboboxChipsInput), which the box around the input keeps: the text ends
+ * 8 px before the hint, whatever keys it shows (--sp-combobox-shortcut-size,
+ * design-rework.css). The holder is the box that holds the input and the
+ * hint.
+ */
+function useShortcutSize(hasShortcut: boolean) {
+  const holderRef = React.useRef<HTMLDivElement>(null);
+  const hintRef = React.useRef<HTMLSpanElement>(null);
+
+  React.useLayoutEffect(() => {
+    const holder = holderRef.current;
+    const hint = hintRef.current;
+    if (!holder || !hint) return;
+    const measure = () =>
+      holder.style.setProperty(
+        "--sp-combobox-shortcut-size",
+        `${hint.offsetWidth}px`,
+      );
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(hint);
+    return () => {
+      observer.disconnect();
+      holder.style.removeProperty("--sp-combobox-shortcut-size");
+    };
+  }, [hasShortcut]);
+
+  return { holderRef, hintRef };
+}
+
+/**
+ * The keyboard hint at the end of a Combobox field: a string in a Kbd, or an
+ * element such as a KbdGroup. It repeats what aria-keyshortcuts on the input
+ * names, so assistive technology skips it.
+ */
+function ComboboxShortcut({
+  children,
+  hintRef,
+}: {
+  children: React.ReactNode;
+  hintRef: React.Ref<HTMLSpanElement>;
+}): React.ReactElement {
+  return (
+    <span
+      aria-hidden="true"
+      className="sp-combobox-shortcut"
+      data-slot="combobox-shortcut"
+      ref={hintRef}
+    >
+      {typeof children === "string" || typeof children === "number" ? (
+        <Kbd>{children}</Kbd>
+      ) : (
+        children
+      )}
+    </span>
   );
 }
 
 export function ComboboxChipsInput({
   className,
   ref,
+  shortcut,
   size,
   ...props
 }: Omit<WithStringClassName<ComboboxPrimitive.Input.Props>, "size"> & {
   size?: SiteplaneControlSize | number;
   ref?: React.Ref<HTMLInputElement>;
+  /**
+   * The keys of the shortcut that focuses the field, shown at the end of the
+   * last row of a tag field as a hint, such as `⌘K`, as `ComboboxInput`
+   * shows it: a string in a Kbd, or an element such as a KbdGroup. The hint
+   * is hidden from assistive technology and below `md`. The application binds
+   * the keys and names them with `aria-keyshortcuts`.
+   */
+  shortcut?: React.ReactNode;
 }): React.ReactElement {
   const visualSize = typeof size === "number" ? undefined : size;
   const nativeSize = typeof size === "number" ? size : undefined;
@@ -129,15 +328,21 @@ export function ComboboxChipsInput({
   const fallbackInputRef = React.useRef<HTMLInputElement | null>(null);
   const inputRef = contextInputRef ?? fallbackInputRef;
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  const hasShortcut = hasShortcutKeys(shortcut);
+  const { holderRef, hintRef } = useShortcutSize(hasShortcut);
 
-  return (
+  const input = (
     <ComboboxPrimitive.Input
       className={cn(
         slotClass("combobox-chips-input", props),
-        "min-w-12 flex-1 outline-none [[data-slot=combobox-chip]+&]:ps-0.5",
-        // An xl field writes in 16 px, as an xl Input does.
-        resolvedSize === "xl" ? "text-base" : "text-base sm:text-sm",
-        resolvedSize === "sm" ? "ps-1.5" : "ps-2",
+        // The input names its size on the field scale: the chips take its
+        // height, padding and text, an Input's of the same size, and a Field
+        // reads it for its hint. With the chips' start padding the text
+        // starts where an Input's does (design-rework.css); after a chip or
+        // the start addon it starts 8 px later, 2 px past the chip gap.
+        "sp-field-scale",
+        "min-w-12 flex-1 outline-none [[data-slot=combobox-chip]+&]:ps-0.5 [[data-slot=combobox-chip]+*>&]:ps-0.5 [[data-slot=combobox-start-addon]+&]:ps-0.5 [[data-slot=combobox-start-addon]+*>&]:ps-0.5",
+        "ps-1",
         className,
       )}
       data-size={resolvedSize}
@@ -146,6 +351,23 @@ export function ComboboxChipsInput({
       size={nativeSize}
       {...props}
     />
+  );
+
+  // Without a hint the input is a part of the field's row as it always was.
+  // With one it stands in a box that fills the rest of the last row, and the
+  // hint ends at the box's end (design-rework.css).
+  if (!hasShortcut) return input;
+  return (
+    <div
+      className="sp-combobox-chips-input-group relative flex flex-1 items-center"
+      data-shortcut=""
+      data-size={resolvedSize}
+      data-slot="combobox-chips-input-group"
+      ref={holderRef}
+    >
+      {input}
+      <ComboboxShortcut hintRef={hintRef}>{shortcut}</ComboboxShortcut>
+    </div>
   );
 }
 
@@ -158,6 +380,13 @@ export type ComboboxInputProps = Omit<
   showTrigger?: boolean;
   showClear?: boolean;
   startAddon?: React.ReactNode;
+  /**
+   * The keys of the shortcut that focuses the field, shown at its end as a
+   * hint, such as `⌘K`: a string in a Kbd, or an element such as a KbdGroup.
+   * The hint is hidden from assistive technology and below `md`. The
+   * application binds the keys and names them with `aria-keyshortcuts`.
+   */
+  shortcut?: React.ReactNode;
   size?: SiteplaneControlSize | number | undefined;
   variant?: FormControlSurface | undefined;
   profile?: ComboboxInputProfile;
@@ -174,12 +403,15 @@ export function ComboboxInput({
   showTrigger = true,
   showClear = false,
   startAddon,
+  shortcut,
   size,
+  style,
   variant = "default",
   triggerProps,
   clearProps,
   ...props
 }: ComboboxInputProps): React.ReactElement {
+  const messages = useSiteplaneMessages("combobox");
   const visualSize = typeof size === "number" ? undefined : size;
   const nativeSize = typeof size === "number" ? size : undefined;
   const resolvedSize = useResolvedControlSize(visualSize);
@@ -188,16 +420,46 @@ export function ComboboxInput({
   const fallbackInputRef = React.useRef<HTMLInputElement | null>(null);
   const inputRef = contextInputRef ?? fallbackInputRef;
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  const hasShortcut = hasShortcutKeys(shortcut);
+  const { holderRef: groupRef, hintRef: shortcutRef } =
+    useShortcutSize(hasShortcut);
+  // An embedded input is the search field of a popup: it is named for
+  // itself, "Search" by default (the combobox messages), and not by the
+  // Field's label, which names the trigger that opens the popup; the popup's
+  // own name says what is searched. An aria-label or aria-labelledby of the
+  // caller names it instead.
+  const searchName =
+    profile === "embedded"
+      ? {
+          "aria-label": props["aria-label"] ?? messages.search,
+          "aria-labelledby": props["aria-labelledby"],
+        }
+      : null;
 
   return (
     <ComboboxPrimitive.InputGroup
-      className="sp-combobox-input-group relative flex h-fit not-has-[>*.w-full]:w-fit w-full text-foreground"
+      // The field fills its container, like Input; an embedded input spans
+      // the popup, as the Command palette's input spans its panel. The
+      // group is the field's root: it takes `className` and `style`, as every
+      // field does (Lukas, 4 November 2026), so a margin moves the input, its
+      // trigger, its clear action and its start addon together.
+      className={cn(
+        "sp-combobox-input-group sp-field-scale relative flex h-fit w-full text-foreground",
+        className,
+      )}
+      // The group is on the field scale of its size, so the parts beside the
+      // input take the field's inline padding and icon (design-rework.css).
+      data-inset-end={showTrigger || showClear ? "" : undefined}
+      data-shortcut={hasShortcut ? "" : undefined}
+      data-size={resolvedSize}
       data-slot="combobox-input-group"
+      ref={groupRef}
+      style={style}
     >
       {startAddon && (
         <div
           aria-hidden="true"
-          className="sp-combobox-start-addon pointer-events-none absolute inset-y-0 start-px z-10 flex items-center [&_svg]:-mx-0.5"
+          className="sp-combobox-start-addon pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center"
           data-slot="combobox-start-addon"
         >
           {startAddon}
@@ -207,7 +469,8 @@ export function ComboboxInput({
       <ExternalInputOwner>
         <ComboboxPrimitive.Input
           {...props}
-          className={cn("sp-combobox-input", className)}
+          {...searchName}
+          className="sp-combobox-input"
           data-inset-end={showTrigger || showClear ? "" : undefined}
           data-inset-start={startAddon ? "" : undefined}
           data-profile="combobox"
@@ -230,10 +493,13 @@ export function ComboboxInput({
           ref={inputRef}
         />
       </ExternalInputOwner>
+      {hasShortcut ? (
+        <ComboboxShortcut hintRef={shortcutRef}>{shortcut}</ComboboxShortcut>
+      ) : null}
       {showTrigger && (
         <ComboboxTrigger
           {...triggerProps}
-          aria-label={triggerProps?.["aria-label"] ?? "Show options"}
+          aria-label={triggerProps?.["aria-label"] ?? messages.showOptions}
           className={cn(
             "absolute top-1/2 -translate-y-1/2 has-[+[data-slot=combobox-clear]]:hidden",
             triggerProps?.className,
@@ -241,26 +507,25 @@ export function ComboboxInput({
           disabled={disabled || triggerProps?.disabled}
           render={
             triggerProps?.render ?? (
-              <Button
-                profile="field-action"
-                size={resolvedSize === "xl" ? "icon-sm" : "icon-xs"}
-                variant="ghost"
-              />
+              <Button profile="field-action" shape="square" variant="ghost" />
             )
           }
         >
+          {/* The span takes the glyph's size from the field action, and the
+              caret fills it (design-rework.css); the caret names no size. */}
           <ComboboxPrimitive.Icon
+            aria-hidden="true"
             className="sp-combobox-icon"
             data-slot="combobox-icon"
           >
-            <ChevronsUpDownIcon className="size-4" />
+            <CaretUpDownIcon aria-hidden="true" />
           </ComboboxPrimitive.Icon>
         </ComboboxTrigger>
       )}
       {showClear && (
         <ComboboxClear
           {...clearProps}
-          aria-label={clearProps?.["aria-label"] ?? "Clear selection"}
+          aria-label={clearProps?.["aria-label"] ?? messages.clear}
           className={cn(
             "absolute top-1/2 -translate-y-1/2 has-[+[data-slot=combobox-clear]]:hidden",
             clearProps?.className,
@@ -268,15 +533,11 @@ export function ComboboxInput({
           disabled={disabled || clearProps?.disabled}
           render={
             clearProps?.render ?? (
-              <Button
-                profile="field-action"
-                size={resolvedSize === "xl" ? "icon-sm" : "icon-xs"}
-                variant="ghost"
-              />
+              <Button profile="field-action" shape="square" variant="ghost" />
             )
           }
         >
-          <XIcon className="size-3" />
+          <XIcon aria-hidden="true" />
         </ComboboxClear>
       )}
     </ComboboxPrimitive.InputGroup>
@@ -352,7 +613,9 @@ export function ComboboxPopup({
             className={cn(
               slotClass("combobox-popup", props),
               surfaceClassNames.floatingOverlay,
-              "flex max-h-[min(var(--available-height),23rem)] min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col overflow-hidden rounded-lg text-foreground before:rounded-[inherit]",
+              // Its surface, corners and cap are the popup rules of
+              // design-rework.css that Select and Autocomplete share.
+              "flex min-w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) flex-col before:rounded-[inherit]",
               className,
             )}
             data-item-size={itemSize}
@@ -367,10 +630,74 @@ export function ComboboxPopup({
   );
 }
 
+/**
+ * The top row of a popup that holds its search field, an embedded
+ * ComboboxInput, above the list (Lukas,
+ * 31 October 2026): 2 px above and below the field, 4 px beside an sm one,
+ * and a hairline under that space, as under the Command palette's input. The
+ * band is the popup band of design-rework.css, which the Command palette's
+ * input and footer share.
+ */
+export function ComboboxHeader({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">): React.ReactElement {
+  const size = React.useContext(ComboboxInputSizeContext)?.size;
+  return (
+    <div
+      className={cn(slotClass("combobox-header", props), "shrink-0", className)}
+      data-size={size}
+      data-slot="combobox-header"
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The bottom row of a popup that holds its actions, such as Reset and Select
+ * all in kit Buttons, at the two ends of the row, 12 px from its edges, under
+ * a hairline, as the Command palette's footer
+ * has it (the popup band of design-rework.css). The Buttons in it take the
+ * step of the field: xs beside an sm one, sm beside a larger one.
+ */
+export function ComboboxFooter({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">): React.ReactElement {
+  // The footer Buttons are xs beside an sm field and sm beside a
+  // larger one; a Button that names its size keeps it.
+  const fieldSize = useResolvedControlSize(
+    React.useContext(ComboboxInputSizeContext)?.size,
+  );
+  const buttonSize = fieldSize === "sm" ? "xs" : "sm";
+  // Its row, the 12 px between its parts and its text are the popup footer
+  // rule of design-rework.css, which the Menu and the Command share.
+  return (
+    <div
+      className={cn(slotClass("combobox-footer", props), "shrink-0", className)}
+      data-slot="combobox-footer"
+      {...props}
+    >
+      {React.Children.map(children, (child) =>
+        React.isValidElement<{ size?: unknown }>(child) &&
+        child.type === Button &&
+        child.props.size === undefined
+          ? React.cloneElement(child, { size: buttonSize })
+          : child,
+      )}
+    </div>
+  );
+}
+
 export function ComboboxItem({
   className,
   children,
-  indicatorPosition = "start",
+  indicator: indicatorProp,
+  indicatorPosition,
   onPointerCancel,
   onPointerDown,
   onPointerMove,
@@ -378,49 +705,75 @@ export function ComboboxItem({
   ...props
 }: WithStringClassName<ComboboxPrimitive.Item.Props> & {
   /**
-   * Where the item shows its check: in the leading slot (`start`), or at the
-   * end of the row (`end`) for identity rows that lead with an avatar or a
-   * logo, such as the people of an assignee picker.
+   * The mark of a selected option, the choice SelectItem offers: the check,
+   * the Checkbox's box, which shows on every option and fills on a selected
+   * one, for a list people pick several options from, or none. A multiple
+   * Combobox takes the box and any other the check, as a Select does, unless
+   * its chips show the value and a chosen option leaves the list.
    */
-  indicatorPosition?: "start" | "end" | undefined;
+  indicator?: ChoiceIndicatorMark | undefined;
+  /**
+   * Where the item shows its mark: at the end of the row, the check's default
+   * in every list of the kit, or at the start, the box's default.
+   */
+  indicatorPosition?: ChoiceIndicatorPosition | undefined;
 }): React.ReactElement {
+  const { multiple } = React.useContext(ComboboxContext);
+  const hidesChosen =
+    React.useContext(ComboboxChosenContext)?.hidesChosen ?? false;
+  const indicator =
+    indicatorProp ?? (multiple && !hidesChosen ? "checkbox" : "check");
   const touchPointerRef = React.useRef<{
     id: number;
     moved: boolean;
     x: number;
     y: number;
   } | null>(null);
-  // An identity row is the end-indicator radio row of the menus (rulebook I8):
-  // it takes their grid and label, so its avatar or logo leads in the check's
-  // slot, a row of text alone keeps that slot, and the label keeps one line.
-  // The check keeps its 8 px inset, now from the end edge.
-  const end = indicatorPosition === "end";
-  const indicator = (
-    <ComboboxPrimitive.ItemIndicator
-      className={cn(
-        "sp-combobox-item-indicator",
-        end ? "col-start-2" : "col-start-1",
-        "flex min-h-lh items-center",
-      )}
-      data-slot="combobox-item-indicator"
-      keepMounted
-    >
-      <ChoiceMenuItemCheck />
-    </ComboboxPrimitive.ItemIndicator>
+  // The kit's one default (I8): the check ends the row at its 10 px end
+  // padding, and the label starts at the row's
+  // padding, an avatar, logo or icon before the name, as in a Select option;
+  // the label keeps one line. The Checkbox's box leads the row, and so does a
+  // check placed at the start, in a column as wide as the icons. A row without
+  // a mark is its label alone, from the row's padding.
+  const position =
+    indicator === "none"
+      ? undefined
+      : choiceIndicatorPosition(indicatorPosition, indicator);
+  const end = position === "end";
+  const checkbox = indicator === "checkbox";
+  // The box takes the size its field gives it, the Combobox's input, as the
+  // box of a multiple Select's option does beside its trigger.
+  const boxSize = choiceMenuItemBoxSize(
+    useResolvedControlSize(React.useContext(ComboboxInputSizeContext)?.size),
   );
-  const label = end ? (
+  const mark =
+    indicator === "none" ? null : (
+      <ComboboxPrimitive.ItemIndicator
+        className={cn(
+          checkbox
+            ? "sp-combobox-item-checkbox inline-flex shrink-0 items-center justify-center"
+            : "sp-combobox-item-indicator",
+          end ? "col-start-2" : "col-start-1",
+          !checkbox && "flex min-h-lh items-center",
+        )}
+        data-size={checkbox ? boxSize : undefined}
+        data-slot={
+          checkbox ? "combobox-item-checkbox" : "combobox-item-indicator"
+        }
+        keepMounted
+      >
+        {checkbox ? <CheckboxGlyph size={boxSize} /> : <ChoiceMenuItemCheck />}
+      </ComboboxPrimitive.ItemIndicator>
+    );
+  const label = (
     <div
-      className={cn("sp-combobox-item-label", choiceMenuItemEndLabelClassName)}
+      className={cn(
+        "sp-combobox-item-label flex min-w-0 items-center gap-2",
+        mark && !end && "col-start-2",
+      )}
       data-slot="combobox-item-label"
     >
-      {menuRowLabel(children)}
-    </div>
-  ) : (
-    <div
-      className="sp-combobox-item-label col-start-2 flex min-w-0 items-center gap-2"
-      data-slot="combobox-item-label"
-    >
-      {children}
+      {end ? menuRowLabel(children) : children}
     </div>
   );
 
@@ -428,20 +781,26 @@ export function ComboboxItem({
     <ComboboxPrimitive.Item
       className={cn(
         slotClass("combobox-item", props),
-        "grid in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-pointer items-center gap-2 rounded-sm py-1 ps-2 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-(--sp-rw-disabled-opacity-action) sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        end
-          ? cn(choiceMenuItemEndGridClassName, "pe-2")
-          : "grid-cols-[1rem_1fr] pe-4",
-        // Rulebook I5: the check sits on the first line of a text label that
-        // wraps. The row's one track is centred in the min-height, so a
-        // one-line label stays centred, and the check's box is one line high.
-        // A label that leads with an avatar or an icon keeps the row centre,
-        // and so does a check at the end of the row.
+        // Its height, padding, gap, corners, text and icon sizes, and its
+        // columns by the place of its mark, are the option rule's that Select
+        // items share (design-rework.css).
+        "grid in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] items-center outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // Rulebook I5: a check at the start sits on the first line of a text
+        // label that wraps. The row's one track is centred in the min-height,
+        // so a one-line label stays centred, and the check's box is one line
+        // high. A label that leads with an avatar or an icon keeps the row
+        // centre, and so does a check at the end of the row, a control after
+        // the text. The Checkbox's box keeps the row centre, as beside a
+        // Checkbox's label.
         !end &&
+          indicator === "check" &&
           "[&:not(:has(>[data-slot=combobox-item-label]>*))]:content-center [&:not(:has(>[data-slot=combobox-item-label]>*))]:items-start",
         className,
       )}
-      data-indicator-position={end ? "end" : undefined}
+      // The columns of a row by its mark and the mark's place
+      // (design-rework.css).
+      data-indicator={indicator === "check" ? undefined : indicator}
+      data-indicator-position={position}
       data-slot="combobox-item"
       onPointerCancel={(event) => {
         touchPointerRef.current = null;
@@ -493,9 +852,33 @@ export function ComboboxItem({
       }}
       {...props}
     >
-      {end ? label : indicator}
-      {end ? indicator : label}
+      {end ? label : mark}
+      {end ? mark : label}
     </ComboboxPrimitive.Item>
+  );
+}
+
+/**
+ * The supporting text of an option, such as a count beside a team or a
+ * handle beside a name: the description of a Select option, in the regular
+ * weight and the tertiary colour after the name, which then takes the label
+ * weight (design-rework.css). Place it after the option's text in
+ * ComboboxItem.
+ */
+export function ComboboxItemDescription({
+  className,
+  ...props
+}: React.ComponentProps<"span">): React.ReactElement {
+  return (
+    <span
+      className={cn(
+        slotClass("combobox-item-description", props),
+        "min-w-0 truncate",
+        className,
+      )}
+      data-slot="combobox-item-description"
+      {...props}
+    />
   );
 }
 
@@ -507,10 +890,11 @@ export function ComboboxSeparator({
     <ComboboxPrimitive.Separator
       className={cn(
         slotClass("combobox-separator", props),
-        "mx-2 my-1 h-px bg-border last:hidden",
+        "last:hidden",
         className,
       )}
       data-slot="combobox-separator"
+      render={<Separator />}
       {...props}
     />
   );
@@ -539,11 +923,7 @@ export function ComboboxGroupLabel({
 }: WithStringClassName<ComboboxPrimitive.GroupLabel.Props>): React.ReactElement {
   return (
     <ComboboxPrimitive.GroupLabel
-      className={cn(
-        slotClass("combobox-group-label", props),
-        "px-2 py-1.5 font-(--sp-rw-font-weight-label) text-muted-foreground text-xs",
-        className,
-      )}
+      className={cn(slotClass("combobox-group-label", props), className)}
       data-slot="combobox-group-label"
       {...props}
     />
@@ -551,19 +931,26 @@ export function ComboboxGroupLabel({
 }
 
 export function ComboboxEmpty({
+  children,
   className,
   ...props
 }: WithStringClassName<ComboboxPrimitive.Empty.Props>): React.ReactElement {
+  // When every option is a chip the list closes (Combobox); its empty state,
+  // a live region, stays silent instead of saying that a search found nothing.
+  const nothingLeft =
+    React.useContext(ComboboxChosenContext)?.nothingLeft ?? false;
   return (
     <ComboboxPrimitive.Empty
       className={cn(
         slotClass("combobox-empty", props),
-        "not-empty:p-2 text-center text-base text-muted-foreground sm:text-sm",
+        "not-empty:p-2 text-center text-muted-foreground",
         className,
       )}
       data-slot="combobox-empty"
       {...props}
-    />
+    >
+      {nothingLeft ? null : children}
+    </ComboboxPrimitive.Empty>
   );
 }
 
@@ -628,22 +1015,41 @@ export function ComboboxList({
   className,
   ...props
 }: WithStringClassName<ComboboxPrimitive.List.Props>): React.ReactElement {
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotionPreference();
+  const filtered = ComboboxPrimitive.useFilteredItems();
   return (
-    <ScrollArea
-      className="grid h-auto min-h-0 flex-1 overflow-hidden [&>[data-slot=scroll-area-viewport]]:h-auto [&>[data-slot=scroll-area-viewport]]:min-h-0"
-      scrollbarGutter
-      scrollFade
-    >
-      <ComboboxPrimitive.List
-        className={cn(
-          slotClass("combobox-list", props),
-          "not-empty:scroll-py-1 not-empty:px-1 not-empty:py-1 in-data-has-overflow-y:pe-3",
-          className,
-        )}
-        data-slot="combobox-list"
-        {...props}
+    <>
+      <ScrollArea
+        className="grid h-auto min-h-0 flex-1 overflow-hidden [&>.sp-scroll-area-viewport]:h-auto [&>.sp-scroll-area-viewport]:max-h-(--sp-rw-combobox-list-max-height) [&>.sp-scroll-area-viewport]:min-h-0"
+        ref={scrollAreaRef}
+        scrollbarGutter
+        scrollFade
+        // The input holds the focus and the arrow keys move through the
+        // options, so the list is no tab stop between the input and the
+        // popup's footer.
+        tabbable={false}
+      >
+        <ComboboxPrimitive.List
+          className={cn(
+            slotClass("combobox-list", props),
+            "not-empty:scroll-py-1 not-empty:px-1 not-empty:py-1",
+            className,
+          )}
+          data-slot="combobox-list"
+          {...props}
+        />
+      </ScrollArea>
+      {/* An option that a search or a chosen value takes out of the list
+          fades and closes its row, the rows below glide, and the popup
+          follows its height, as in every list of a popup that filters
+          (rulebook M6, M7). */}
+      <PopupListMotion
+        change={[filtered, props.children]}
+        reduced={reduced}
+        scrollArea={() => scrollAreaRef.current}
       />
-    </ScrollArea>
+    </>
   );
 }
 
@@ -704,12 +1110,22 @@ export function ComboboxChips({
   layout?: "input" | "standalone" | undefined;
 }): React.ReactElement {
   const { chipsRef } = React.useContext(ComboboxContext);
+  // The value shows as chips, so a chosen option leaves the list (Combobox,
+  // `hideSelected`).
+  const setChips = React.useContext(ComboboxChosenContext)?.setChips;
+  React.useLayoutEffect(() => {
+    if (!setChips) return;
+    setChips((count) => count + 1);
+    return () => setChips((count) => count - 1);
+  }, [setChips]);
 
   return (
     <ComboboxPrimitive.Chips
       className={cn(
         slotClass("combobox-chips", props),
-        layout === "input" && formControlSurfaceClassNames[variant],
+        // A field of chips is on the field scale of its input's size
+        // (design-rework.css).
+        layout === "input" && "sp-field-scale",
         "relative inline-flex w-full flex-wrap outline-none has-disabled:pointer-events-none",
         className,
       )}
@@ -722,7 +1138,12 @@ export function ComboboxChips({
       {startAddon && (
         <div
           aria-hidden="true"
-          className="sp-combobox-start-addon flex shrink-0 items-center ps-2 opacity-80 has-[~[data-size=sm]]:has-[+[data-slot=combobox-chip]]:pe-1.5 has-[~[data-size=sm]]:ps-1.5 has-[+[data-slot=combobox-chip]]:pe-2 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-ms-0.5 [&_svg]:-me-1.5"
+          // The icon sits 4 px after the chips' start padding, at an Input's
+          // inline padding, and the first chip or the text follows 8 px after
+          // it, 2 px past the chip gap; the start addon rules size the icon
+          // and give it the tone of a field's leading icon
+          // (design-rework.css).
+          className="sp-combobox-start-addon flex shrink-0 items-center ps-1 has-[+[data-slot=combobox-chip]]:pe-0.5 [&_svg]:pointer-events-none"
           data-slot="combobox-start-addon"
         >
           {startAddon}
@@ -756,28 +1177,43 @@ export function ComboboxChip({
    */
   startAddon?: React.ReactNode;
 }): React.ReactElement {
-  // The remove action is named "Remove" and the chip's value, such as
-  // "Remove Mara Ellis", so each one in a row of chips is distinct.
+  // The remove action is named by the chip.remove message with the chip's
+  // value, such as "Remove Mara Ellis", so each one in a row of chips is
+  // distinct and a translation sets its own word order. A name in removeProps
+  // replaces that whole name.
+  const messages = useSiteplaneMessages("chip");
   const labelId = React.useId();
-  const removeId = React.useId();
+  const ownRemoveId = React.useId();
+  const removeId = removeProps?.id ?? ownRemoveId;
+  const named =
+    removeProps?.["aria-label"] !== undefined ||
+    removeProps?.["aria-labelledby"] !== undefined;
 
   // A chip comes, goes and glides with the value (ComboboxValue).
   return (
     <ComboboxPrimitive.Chip
+      // A chip is a pill like a Badge and a Tag: it carries the Badge
+      // foundation, the chip surface of a Tag (the white surface with the
+      // hairline) and a remove action, and takes its size from its field
+      // (design-rework.css, the pill block and the chip surface).
+      data-foundation="badge"
+      data-removable=""
       data-slot="combobox-chip"
+      data-variant="secondary"
       render={render}
       {...props}
       // A className of the app's replaces the chip's own classes; the slot's
-      // class stays either way.
+      // and the foundation's classes stay either way.
       className={withClass(
         props.className ?? "flex min-w-0 max-w-full items-center outline-none",
         slotClass("combobox-chip", props, render),
+        baseClass("badge", props, render),
       )}
     >
       {startAddon && (
         <span
           aria-hidden="true"
-          className="sp-combobox-chip-start-addon me-1 flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
+          className="sp-combobox-chip-start-addon flex shrink-0 items-center"
           data-slot="combobox-chip-start-addon"
         >
           {startAddon}
@@ -795,7 +1231,7 @@ export function ComboboxChip({
         {children}
       </span>
       <ComboboxChipRemove
-        aria-labelledby={`${removeId} ${labelId}`}
+        aria-label={named ? undefined : messages.remove(chipText(children))}
         id={removeId}
         {...removeProps}
       />
@@ -807,30 +1243,49 @@ export function ComboboxChipRemove({
   render,
   ...props
 }: WithStringClassName<ComboboxPrimitive.ChipRemove.Props>): React.ReactElement {
+  const messages = useSiteplaneMessages("chip");
   return (
     <ComboboxPrimitive.ChipRemove
-      aria-label="Remove"
+      // Inside a ComboboxChip the chip passes the whole name, with its value.
+      aria-label={messages.remove("")}
       data-slot="combobox-chip-remove"
+      // The chip remove action, the one a Tag shows: a 14 px ghost action with
+      // a 10 px cross in an sm field, 16 px with 12 px at md and lg and 24 px
+      // with 16 px at xl; the chips name the size of its cross
+      // (design-rework.css).
       render={
         render ?? (
-          <KitButton profile="chip-remove" size="icon-2xs" variant="text" />
+          <KitButton profile="chip-remove" size="icon-2xs" variant="ghost" />
         )
       }
       {...props}
       // A className of the app's replaces the action's own classes; the
-      // slot's class stays either way. The chassis keeps the kit's action at
-      // its width; an element of the app's render takes shrink-0 for that.
+      // slot's class stays either way. The chip places the action (3 px after
+      // the value and 4 px from its end, as a Tag does). The chassis keeps the
+      // kit's action at its width; an element of the app's render takes
+      // shrink-0 for that.
       className={withClass(
-        props.className ?? (render ? "me-0.5 shrink-0" : "me-0.5"),
+        props.className ?? (render ? "shrink-0" : undefined),
         slotClass("combobox-chip-remove", props, render),
       )}
     >
-      <XIcon className="size-3" />
+      {/* The X of every chip remove action: the kit's action sizes it, and in
+          an element of the app's render it is 1em, as an icon is. */}
+      <CloseGlyph />
     </ComboboxPrimitive.ChipRemove>
   );
 }
 
 export const useComboboxFilter: typeof ComboboxPrimitive.useFilter =
   ComboboxPrimitive.useFilter;
+
+/**
+ * The items the search shows, Base UI's filtered items: all of them while the
+ * query is empty, less the chosen ones where they leave the list
+ * (`hideSelected`). A Select all action in a ComboboxFooter adds these to the
+ * value. Call it in a component inside Combobox.
+ */
+export const useComboboxFilteredItems: typeof ComboboxPrimitive.useFilteredItems =
+  ComboboxPrimitive.useFilteredItems;
 
 export { ComboboxPrimitive };
