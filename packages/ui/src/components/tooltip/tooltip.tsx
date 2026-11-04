@@ -32,23 +32,41 @@ export function TooltipProvider({
  * hear the name of an icon button twice. A tooltip that adds what its trigger
  * does not say, such as a title with a sentence, opts in: the popup takes
  * `role="tooltip"` and an id, and the trigger that opened it names that id in
- * `aria-describedby` while it is open. The Tooltip hands the id to its popup
- * and its triggers; a trigger outside it, which a handle connects
- * (TooltipCreateHandle), finds the id through the handle.
+ * `aria-describedby` while it is open. `"always"` keeps that link while the
+ * popup is closed as well, for a text that must also be read on a touch
+ * screen, where no tooltip opens: the popup stays in the page, hidden while
+ * it is closed, and every trigger of the tooltip names it (Lukas, 4 November
+ * 2026; FieldHelp linked its text by hand with a hidden copy in its button).
+ * The Tooltip hands the id to its popup and its triggers; a trigger outside
+ * it, which a handle connects (TooltipCreateHandle), finds the id through the
+ * handle.
  */
-const TooltipDescriptionContext = React.createContext<string | null>(null);
+type TooltipDescription = {
+  /** The triggers name the popup also while it is closed (`"always"`). */
+  always: boolean;
+  /** The popup's id, which the triggers name in `aria-describedby`. */
+  id: string;
+};
 
-const handleDescriptions = new WeakMap<object, string>();
+const TooltipDescriptionContext =
+  React.createContext<TooltipDescription | null>(null);
+
+const handleDescriptions = new WeakMap<object, TooltipDescription>();
 const handleListeners = new WeakMap<object, Set<() => void>>();
 
-function setHandleDescription(handle: object, id: string | null): void {
-  if (id === null) handleDescriptions.delete(handle);
-  else handleDescriptions.set(handle, id);
+function setHandleDescription(
+  handle: object,
+  description: TooltipDescription | null,
+): void {
+  if (description === null) handleDescriptions.delete(handle);
+  else handleDescriptions.set(handle, description);
   handleListeners.get(handle)?.forEach((listener) => listener());
 }
 
-/** The popup id that the tooltip of a handle describes its triggers with. */
-function useHandleDescription(handle: object | undefined): string | null {
+/** How the tooltip of a handle describes its triggers. */
+function useHandleDescription(
+  handle: object | undefined,
+): TooltipDescription | null {
   const subscribe = React.useCallback(
     (listener: () => void) => {
       if (handle === undefined) return () => undefined;
@@ -77,11 +95,15 @@ export type TooltipProps<Payload = unknown> =
      * while it is open, after the ids it names itself, so a screen reader
      * reads the tooltip's text after the trigger's name. For a tooltip that
      * adds what the trigger does not say, such as a title with a sentence.
-     * A tooltip that repeats the trigger's name, the label of an icon button,
-     * leaves it off: the trigger names itself with `aria-label`, and the name
-     * would be read twice. Default: `false`.
+     * `"always"` keeps that link while the popup is closed too, for a text
+     * that must also be read on a touch screen, where no tooltip opens: the
+     * popup stays in the page, hidden while it is closed, and every trigger
+     * of the tooltip names it, so give it one trigger, or triggers that share
+     * its text. A tooltip that repeats the trigger's name, the label of an
+     * icon button, leaves it off: the trigger names itself with `aria-label`,
+     * and the name would be read twice. Default: `false`.
      */
-    describeTrigger?: boolean | undefined;
+    describeTrigger?: boolean | "always" | undefined;
   };
 
 /** The root of a tooltip: Base UI's Tooltip root, which renders no element. */
@@ -90,7 +112,13 @@ export function Tooltip<Payload = unknown>({
   ...props
 }: TooltipProps<Payload>): React.ReactElement {
   const id = React.useId();
-  const description = describeTrigger ? id : null;
+  const description = React.useMemo<TooltipDescription | null>(
+    () =>
+      describeTrigger === false
+        ? null
+        : { always: describeTrigger === "always", id },
+    [describeTrigger, id],
+  );
   const { handle } = props;
   React.useLayoutEffect(() => {
     if (handle === undefined) return undefined;
@@ -167,13 +195,14 @@ function TooltipTriggerElement({
 
 /**
  * The render of a trigger whose tooltip describes it: while this trigger has
- * the tooltip open, it names the popup in `aria-describedby`, after the ids
- * the trigger and its element name. It renders in the same tree open and
- * closed, so the element keeps its node and its focus.
+ * the tooltip open, or open and closed with `"always"`, it names the popup in
+ * `aria-describedby`, after the ids the trigger and its element name. It
+ * renders in the same tree open and closed, so the element keeps its node and
+ * its focus.
  */
 function describedRender(
   render: TooltipTriggerRender,
-  popupId: string,
+  { always, id }: TooltipDescription,
 ): TooltipTriggerRenderFunction {
   return (triggerProps, state) => {
     const element = React.isValidElement<{ "aria-describedby"?: string }>(
@@ -181,13 +210,14 @@ function describedRender(
     )
       ? render
       : undefined;
-    const describedBy = state.open
-      ? joinIds(
-          triggerProps["aria-describedby"],
-          element?.props["aria-describedby"],
-          popupId,
-        )
-      : undefined;
+    const describedBy =
+      always || state.open
+        ? joinIds(
+            triggerProps["aria-describedby"],
+            element?.props["aria-describedby"],
+            id,
+          )
+        : undefined;
     const props =
       describedBy === undefined
         ? triggerProps
@@ -279,10 +309,14 @@ export function TooltipPopup({
   variant?: "default" | "glass";
 }): React.ReactElement {
   // The popup of a tooltip that describes its trigger (`describeTrigger`)
-  // carries the id the trigger names.
+  // carries the id the trigger names. With `"always"` it stays in the page,
+  // hidden while it is closed, so the trigger names it at all times.
   const description = React.useContext(TooltipDescriptionContext);
   return (
-    <TooltipPrimitive.Portal {...portalProps}>
+    <TooltipPrimitive.Portal
+      {...portalProps}
+      {...(description?.always ? { keepMounted: true } : {})}
+    >
       <SiteplaneUIPortalScope>
         <TooltipPrimitive.Positioner
           align={align}
@@ -332,7 +366,7 @@ export function TooltipPopup({
             {...props}
             {...(description === null
               ? {}
-              : { id: description, role: "tooltip" })}
+              : { id: description.id, role: "tooltip" })}
           >
             {arrow && (
               <TooltipPrimitive.Arrow
@@ -342,11 +376,12 @@ export function TooltipPopup({
                 <TooltipArrowGlyph />
               </TooltipPrimitive.Arrow>
             )}
-            {/* The cross-fade of the current and the previous content, with
-                its width and its reduced-motion rules, is the viewport rule
-                it shares with Popover in design-rework.css. */}
+            {/* When the popup moves to another trigger, its content switches
+                at once: the kit's one switch rule hides the previous content
+                (motion.css, rulebook M8), and the viewport rule it shares with
+                Popover in design-rework.css gives the content its width. */}
             <TooltipPrimitive.Viewport
-              className="sp-tooltip-viewport relative size-full overflow-clip data-instant:transition-none **:data-previous:truncate"
+              className="sp-tooltip-viewport relative size-full overflow-clip data-instant:transition-none"
               data-slot="tooltip-viewport"
             >
               {children}

@@ -104,8 +104,10 @@ export function PopoverPopup({
           >
             <PopoverPrimitive.Viewport
               className={cn(
-                // The cross-fade of the current and the previous content is
-                // the popover viewport rule in design-rework.css.
+                // When the popup moves to another trigger, its content
+                // switches at once: the kit's one switch rule hides the
+                // previous content (motion.css, rulebook M8), and the viewport
+                // rule in design-rework.css gives the content its width.
                 "sp-popover-viewport",
                 "relative size-full max-h-(--available-height) overflow-clip px-(--viewport-inline-padding) data-instant:transition-none",
                 tooltipStyle ? "" : "not-data-transitioning:overflow-y-auto",

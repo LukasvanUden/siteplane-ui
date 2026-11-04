@@ -107,13 +107,21 @@ export const linearIndicatorSizeClassNames = {
 
 export type SurfaceClassName = keyof typeof surfaceClassNames;
 
-// The surfaces of a field (Lukas, 4 November 2026: "nur Standard und soft").
-// `default` rests inset, on the field's depth and its 2 % shade (rulebook
-// B11), and `soft`, on the members that offer it, takes a subtle fill in place
-// of the edge. The elevated and inset surfaces are gone: inset drew the
-// default, and elevated only added the elevated Card's contour.
+// The surfaces of a field (Lukas, 4 November 2026: "nur Standard und soft",
+// for the whole field family). `default` rests inset, on the field's depth
+// and its 2 % shade (rulebook B11), and `soft` lays the subtle fill under the
+// same edge and takes the page background while the field has the focus (the
+// soft block of design-rework.css). The elevated and inset surfaces are gone:
+// inset drew the default, and elevated only added the elevated Card's contour.
 export type FormControlSurface = "default";
 export type FormControlVariant = FormControlSurface | "soft";
+
+// The surfaces of a trigger that opens a list or a picker, Native Select and
+// the date pickers' button (rulebook B11): `default` rests raised, as a Button
+// does, and `outline` rests transparent in the outline Button's rim, for a
+// filter bar or a toolbar beside an inset search field. The Select trigger
+// has them too, with its ghost and segment modes (SelectTriggerMode).
+export type FormControlTriggerVariant = "default" | "outline";
 
 // The text of a field at every size: `sm` 14 px on a 20 px line, `base` 16 px
 // on 24. A field names it in data-text-size, which sets the text of its field

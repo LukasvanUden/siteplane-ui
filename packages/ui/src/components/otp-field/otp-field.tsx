@@ -9,7 +9,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  type FormControlSurface,
+  type FormControlVariant,
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { cn, type WithStringClassName } from "../../system/utils/cn";
@@ -57,7 +57,7 @@ export type OTPFieldProps = WithStringClassName<
   display?: OTPFieldDisplay | undefined;
   layout?: OTPFieldLayout | undefined;
   size?: SiteplaneControlSize | undefined;
-  variant?: FormControlSurface | undefined;
+  variant?: FormControlVariant | undefined;
 };
 
 export function OTPField({

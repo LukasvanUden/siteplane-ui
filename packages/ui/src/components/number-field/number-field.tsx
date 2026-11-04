@@ -14,7 +14,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  type FormControlSurface,
+  type FormControlVariant,
   type FormControlTextSize,
   surfaceClassNames,
 } from "../../system/styles/surface";
@@ -40,12 +40,12 @@ export const NumberFieldContext: React.Context<{
   fieldId: string;
   size: SiteplaneControlSize;
   steppers?: NumberFieldSteppers | undefined;
-  variant: FormControlSurface;
+  variant: FormControlVariant;
 } | null> = React.createContext<{
   fieldId: string;
   size: SiteplaneControlSize;
   steppers?: NumberFieldSteppers | undefined;
-  variant: FormControlSurface;
+  variant: FormControlVariant;
 } | null>(null);
 
 export function NumberField({
@@ -69,7 +69,7 @@ export function NumberField({
    */
   steppers?: NumberFieldSteppers | undefined;
   textSize?: FormControlTextSize | undefined;
-  variant?: FormControlSurface | undefined;
+  variant?: FormControlVariant | undefined;
   /**
    * `full` fills the container, like Input. `fit` keeps the compact width of
    * the steppers and a 7rem value field, room for an amount such as $1,250.00.

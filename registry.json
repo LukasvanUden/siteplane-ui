@@ -3240,7 +3240,8 @@
         ],
         "useWhen": [
           "Use for a short, non-essential label on a control that people hover or focus, such as the name of an icon button.",
-          "Set describeTrigger on a Tooltip that adds what its trigger does not say, such as a title with a sentence, so screen readers read it as the trigger's description."
+          "Set describeTrigger on a Tooltip that adds what its trigger does not say, such as a title with a sentence, so screen readers read it as the trigger's description.",
+          "Set describeTrigger=\"always\" when screen readers should read that text also while the tooltip is closed, as on a touch screen, where no tooltip opens."
         ]
       }
     },

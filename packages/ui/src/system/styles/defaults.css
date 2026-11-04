@@ -19,8 +19,7 @@
   --motion-duration-moderate: 240ms;
   --motion-duration-slow: 320ms;
   --motion-duration-linger: 380ms;
-  /* A backdrop fades, and a popover or tooltip cross-fades between its
-   * panes. */
+  /* A backdrop fades, and a date or color picker's popover enters. */
   --motion-duration-overlay: 160ms;
   /* A panel expands or collapses, an item enters or leaves a list, and the
    * panels of Tabs follow a new panel's height. */
@@ -262,8 +261,6 @@
    * it settles, and the scale the flipping popover starts from. */
   --motion-overlay-y: 4px;
   --motion-overlay-scale: 0.985;
-  /* How far the content of a NavigationMenu travels when its group changes. */
-  --motion-navigation-distance: 0.75rem;
   /* How far a floating panel travels, and the scale it grows from, as it
    * opens. */
   --motion-floating-panel-offset: 7px;

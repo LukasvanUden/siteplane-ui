@@ -7,6 +7,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { useSiteplaneMessages } from "../../system/locale/messages-context";
+import type { FormControlVariant } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 import { useFieldControlBridge } from "../field/field-control-bridge";
@@ -58,6 +59,13 @@ export type TagsInputProps = Omit<
     placeholder?: string | undefined;
     /** The control size, as Input takes it; unset, the provider's. */
     size?: SiteplaneControlSize | undefined;
+    /**
+     * The surface, as on Input and ComboboxChips: `default` rests inset on
+     * the field's light shade, `soft` lays a subtle fill under the same edge
+     * and takes the page background while the field has focus. Default:
+     * `default`.
+     */
+    variant?: FormControlVariant | undefined;
     disabled?: boolean | undefined;
     /**
      * The name of the tags in the form data, one entry per tag; a Field's
@@ -142,6 +150,7 @@ export function TagsInput({
   tooltip,
   validate,
   value,
+  variant = "default",
   ...props
 }: TagsInputProps): React.ReactElement {
   const messages = useSiteplaneMessages("tagsInput");
@@ -202,6 +211,8 @@ export function TagsInput({
       data-disabled={field.disabled || undefined}
       data-size={resolvedSize}
       data-slot="tags-input"
+      // The surface, from the field family's soft block (design-rework.css).
+      data-variant={variant}
       // A press on the field outside its tags and the text puts the caret in
       // the text.
       onMouseDown={(event) => {

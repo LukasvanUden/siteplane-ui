@@ -33,6 +33,7 @@ import {
 import {
   surfaceClassNames,
   type FormControlTextSize,
+  type FormControlTriggerVariant,
   type FormControlVariant,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
@@ -138,7 +139,14 @@ export interface DateRangePickerProps {
    */
   trigger?: "button" | "field";
   value?: DateRange | null;
-  variant?: FormControlVariant;
+  /**
+   * The surface. The field (`trigger="field"`) takes `default` or `soft`, as
+   * Input does; the Button (`trigger="button"`) takes `default`, raised as a
+   * Button, or `outline`, transparent inside the hairline rim of an outline
+   * Button, for a filter bar or a toolbar. Each form draws `default` for a
+   * value of the other. Default: `default`.
+   */
+  variant?: FormControlVariant | FormControlTriggerVariant;
   /**
    * `fit` is as wide as the two dates and the calendar button, or the button
    * as wide as its text. `full` fills the container, like Input. Default:
@@ -397,6 +405,7 @@ function DateRangeButton({
   size,
   state,
   textSize,
+  variant,
 }: {
   disabled: boolean;
   invalid: boolean;
@@ -404,6 +413,7 @@ function DateRangeButton({
   size: SiteplaneControlSize | undefined;
   state: DateRangePickerState;
   textSize: FormControlTextSize | undefined;
+  variant: FormControlTriggerVariant;
 }): React.ReactElement {
   const { locale } = useLocale();
   const formatter = React.useMemo(
@@ -432,6 +442,7 @@ function DateRangeButton({
       size={size}
       textSize={textSize}
       valueSlot="date-range-picker-value"
+      variant={variant}
     >
       {label ?? placeholder}
     </DatePickerTrigger>
@@ -711,6 +722,7 @@ export function DateRangePicker({
                 size={size}
                 state={state}
                 textSize={textSize}
+                variant={variant === "outline" ? "outline" : "default"}
               />
             </DateRangeGroupPrimitive>
             <DateRangePopoverPrimitive
@@ -794,7 +806,7 @@ export function DateRangePicker({
                 size={resolvedSize}
                 textSize={textSize}
                 tooltip={tooltip}
-                variant={variant}
+                variant={variant === "outline" ? "default" : variant}
               >
                 <DateRangeSegments>
                   <DateRangeEndpoint

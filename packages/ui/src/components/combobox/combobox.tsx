@@ -22,7 +22,7 @@ import {
   menuRowLabel,
 } from "../../system/styles/choice-menu-item";
 import {
-  type FormControlSurface,
+  type FormControlVariant,
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { KitInput } from "../input/input-internal";
@@ -388,7 +388,7 @@ export type ComboboxInputProps = Omit<
    */
   shortcut?: React.ReactNode;
   size?: SiteplaneControlSize | number | undefined;
-  variant?: FormControlSurface | undefined;
+  variant?: FormControlVariant | undefined;
   profile?: ComboboxInputProfile;
   ref?: React.Ref<HTMLInputElement>;
   triggerProps?: WithStringClassName<ComboboxPrimitive.Trigger.Props>;
@@ -1106,7 +1106,7 @@ export function ComboboxChips({
   ...props
 }: WithStringClassName<ComboboxPrimitive.Chips.Props> & {
   startAddon?: React.ReactNode;
-  variant?: FormControlSurface | undefined;
+  variant?: FormControlVariant | undefined;
   layout?: "input" | "standalone" | undefined;
 }): React.ReactElement {
   const { chipsRef } = React.useContext(ComboboxContext);

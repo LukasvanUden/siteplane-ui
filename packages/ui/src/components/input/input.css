@@ -47,14 +47,8 @@
     );
   }
 
-  .sp-input-control:not([data-unstyled])[data-variant="soft"] {
-    background-color: var(--sp-semantic-color-surface-subtle);
-  }
-
-  .sp-input-control:not([data-unstyled])[data-variant="soft"]:focus-within {
-    background-color: var(--sp-semantic-color-background);
-  }
-
+  /* The soft surface is the field family's one soft block in
+   * design-rework.css. An autofilled field shows its tint over it. */
   .sp-input-control:not([data-unstyled]):has(:autofill) {
     background-color: color-mix(
       in oklab,

@@ -88,10 +88,10 @@
   --sp-semantic-color-control: oklch(1 0 0);
   --sp-semantic-color-control-disabled: oklch(0.97 0 0);
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
-  --sp-semantic-color-control-hover: oklch(0.97 0 0);
+  --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: oklch(0.637 0.237 25.331);
   --sp-semantic-color-destructive-foreground: oklch(0.505 0.213 27.518);
-  --sp-semantic-color-destructive-hover: oklch(0.637 0.237 25.331);
+  --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
@@ -106,7 +106,7 @@
   --sp-semantic-color-popover-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-primary: var(--sp-rw-bg-accent);
   --sp-semantic-color-primary-foreground: var(--sp-rw-fg-on-accent);
-  --sp-semantic-color-primary-hover: oklch(0.623 0.214 259.815);
+  --sp-semantic-color-primary-hover: var(--sp-rw-bg-accent-hover);
   --sp-semantic-color-ring: oklch(0.708 0 0);
   --sp-semantic-color-secondary: rgb(0 0 0 / 4%);
   --sp-semantic-color-secondary-foreground: var(--sp-rw-fg-primary);
@@ -139,10 +139,10 @@
   --sp-semantic-color-control: oklch(1 0 0);
   --sp-semantic-color-control-disabled: oklch(0.97 0 0);
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
-  --sp-semantic-color-control-hover: oklch(0.97 0 0);
+  --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: oklch(0.637 0.237 25.331);
   --sp-semantic-color-destructive-foreground: oklch(0.505 0.213 27.518);
-  --sp-semantic-color-destructive-hover: oklch(0.637 0.237 25.331);
+  --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
@@ -157,7 +157,7 @@
   --sp-semantic-color-popover-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-primary: var(--sp-rw-bg-accent);
   --sp-semantic-color-primary-foreground: var(--sp-rw-fg-on-accent);
-  --sp-semantic-color-primary-hover: oklch(0.623 0.214 259.815);
+  --sp-semantic-color-primary-hover: var(--sp-rw-bg-accent-hover);
   --sp-semantic-color-ring: oklch(0.708 0 0);
   --sp-semantic-color-secondary: rgb(0 0 0 / 4%);
   --sp-semantic-color-secondary-foreground: var(--sp-rw-fg-primary);
@@ -181,10 +181,10 @@
   --sp-semantic-color-control: oklch(0.205 0 0);
   --sp-semantic-color-control-disabled: oklch(0.269 0 0);
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
-  --sp-semantic-color-control-hover: oklch(0.269 0 0);
+  --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: rgb(251.022 64.923 74.409);
   --sp-semantic-color-destructive-foreground: oklch(0.704 0.191 22.216);
-  --sp-semantic-color-destructive-hover: oklch(0.94 0.04 25);
+  --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
@@ -199,7 +199,7 @@
   --sp-semantic-color-popover-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-primary: var(--sp-rw-bg-accent);
   --sp-semantic-color-primary-foreground: var(--sp-rw-fg-on-accent);
-  --sp-semantic-color-primary-hover: oklch(0.93 0.035 250);
+  --sp-semantic-color-primary-hover: var(--sp-rw-bg-accent-hover);
   --sp-semantic-color-ring: oklch(0.556 0 0);
   --sp-semantic-color-secondary: rgb(255 255 255 / 4%);
   --sp-semantic-color-secondary-foreground: var(--sp-rw-fg-primary);
@@ -218,6 +218,20 @@
 [data-theme="dark"] [data-theme="light"] {
   --sp-semantic-color-card-foreground: oklch(10% 0 0);
   --sp-semantic-color-control-disabled-foreground: oklch(69% 0.001 107);
+  --sp-semantic-color-control-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-tertiary),
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-on-fill-hover) * 100%)
+  );
+  --sp-semantic-color-destructive-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-destructive) 60%,
+    rgb(
+      from oklch(from var(--sp-rw-bg-destructive) calc(l - 0.1) c h / 1)
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
   --sp-semantic-color-focus: oklch(61.32% 0.1364 254.2);
   --sp-semantic-color-foreground: oklch(10% 0 0);
   --sp-semantic-color-info: oklch(52.9% 0.1552 254.2);
@@ -226,5 +240,13 @@
   --sp-semantic-color-popover-foreground: oklch(10% 0 0);
   --sp-semantic-color-primary: oklch(52.9% 0.1552 254.2);
   --sp-semantic-color-primary-foreground: var(--sp-rw-fg-emphasis);
+  --sp-semantic-color-primary-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-accent) 60%,
+    rgb(
+      from oklch(from var(--sp-rw-bg-accent) calc(l - 0.1) c h / 1)
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
   --sp-semantic-color-secondary-foreground: oklch(10% 0 0);
 }

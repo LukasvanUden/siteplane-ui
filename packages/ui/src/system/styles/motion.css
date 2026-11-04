@@ -75,7 +75,12 @@
  * its own), and so do the Filter Bar's tab list and search field, an Editable's
  * pencil and optional triggers, and the axis labels and grid lines that new
  * data brings to a chart (Lukas, 4 November 2026: a fade through read as a
- * flash). Zero specificity, so a consumer's utility wins. */
+ * flash). So does the content of a Popover or a Tooltip when the popup moves
+ * to another trigger: Base UI keeps the previous content in the viewport, and
+ * it is hidden from its first frame, before it is marked as ending, while the
+ * popup's place and size follow (Lukas, 4 November 2026: it cross-faded over
+ * the overlay time). Zero specificity, so a consumer's utility wins. */
+:where(:is(.sp-popover-viewport, .sp-tooltip-viewport) > [data-previous]),
 :where(.sp-panel-switch[data-ending-style]) {
   opacity: 0;
 }

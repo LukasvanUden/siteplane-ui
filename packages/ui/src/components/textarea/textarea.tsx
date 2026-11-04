@@ -9,7 +9,7 @@ import {
 } from "../../system/provider/siteplane-ui-provider";
 import {
   surfaceClassNames,
-  type FormControlSurface,
+  type FormControlVariant,
   type FormControlTextSize,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
@@ -24,7 +24,7 @@ export type TextareaProps = React.ComponentPropsWithoutRef<"textarea"> &
   React.RefAttributes<HTMLTextAreaElement> & {
     size?: SiteplaneControlSize | undefined;
     textSize?: FormControlTextSize | undefined;
-    variant?: FormControlSurface | undefined;
+    variant?: FormControlVariant | undefined;
     unstyled?: boolean | undefined;
     /**
      * The least height as a number of text lines, fractions allowed, instead of

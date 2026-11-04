@@ -130,7 +130,8 @@ export type SelectTriggerSize = SiteplaneControlSize;
  * The trigger surface. `default` rests raised, as a Button does, like every
  * trigger that opens a list or a picker. `outline` is transparent inside the
  * hairline rim of an outline Button, for a filter bar or a toolbar beside an
- * inset search field, with the ghost trigger's hover and pressed tints.
+ * inset search field. Both take a Button's hover and pressed tints, as every
+ * trigger of a list or a picker does (design-rework.css).
  * `ghost` is the text with a caret, for a value in a row, and `segment` a
  * trigger that fills an InputGroupAddon without padding, on the group's
  * surface. A segment is as wide as its widest option and its caret when the

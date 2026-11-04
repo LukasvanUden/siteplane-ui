@@ -12,7 +12,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import {
-  type FormControlSurface,
+  type FormControlVariant,
   surfaceClassNames,
 } from "../../system/styles/surface";
 import { useSiteplaneMessages } from "../../system/locale/messages-context";
@@ -61,7 +61,7 @@ type AutocompleteInputProps = Omit<
   showClear?: boolean;
   startAddon?: React.ReactNode;
   size?: SiteplaneControlSize | number | undefined;
-  variant?: FormControlSurface | undefined;
+  variant?: FormControlVariant | undefined;
   unstyled?: boolean;
   ref?: React.Ref<HTMLInputElement>;
   triggerProps?: WithStringClassName<AutocompletePrimitive.Trigger.Props>;

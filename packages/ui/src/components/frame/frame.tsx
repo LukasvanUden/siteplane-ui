@@ -42,7 +42,7 @@ export function FramePanel({
   );
 }
 
-// Frame headers and footers are plain blocks, not banner or contentinfo
+// Frame headers and footers are plain divs, not banner or contentinfo
 // landmarks: a page holds many frames.
 export function FrameHeader({
   className,
@@ -95,6 +95,9 @@ export function FrameDescription({
   );
 }
 
+// The footer is a row, as every footer of the card family is (CardFooter,
+// CardFrameFooter): its actions stand the action gap apart, which
+// design-rework.css gives the family, and its className only aligns them.
 export function FrameFooter({
   className,
   ...props
@@ -103,7 +106,7 @@ export function FrameFooter({
     <div
       className={cn(
         slotClass("frame-footer", props),
-        "px-5 pt-3 pb-4",
+        "flex items-center px-5 pt-3 pb-4",
         className,
       )}
       data-slot="frame-footer"

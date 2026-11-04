@@ -38,12 +38,15 @@ export function InputInvalidIcon(): React.ReactElement {
 /**
  * The help of a field: a help icon, the field action that shows its children
  * in a Tooltip above it on hover and keyboard focus, named by `aria-label`.
- * Screen readers hear the help text as its description. A click keeps the
- * tooltip open, as a click on a help icon asks for the help. The popup repeats
- * the description that assistive technology reads from the button, so it is
- * hidden from it. It stands at the end of a field (`input-group-tooltip`) or
- * after the text of its label (`field-label-help`, FieldLabel and SelectLabel
- * `tooltip`).
+ * Screen readers hear the help text as its description at all times, also on
+ * a touch screen, where no tooltip opens: the Tooltip's
+ * `describeTrigger="always"` keeps the popup in the page and names it from the
+ * button (Lukas, 4 November 2026; the button carried a hidden copy of the text
+ * that it named itself). A click keeps the tooltip open, as a click on a help
+ * icon asks for the help. Assistive technology reads the text through that
+ * link, so the popup is hidden from it and the text is not read twice. It
+ * stands at the end of a field (`input-group-tooltip`) or after the text of
+ * its label (`field-label-help`, FieldLabel and SelectLabel `tooltip`).
  */
 export function FieldHelp({
   "aria-label": ariaLabelProp,
@@ -56,14 +59,12 @@ export function FieldHelp({
 }): React.ReactElement {
   const messages = useSiteplaneMessages("inputGroup");
   const ariaLabel = ariaLabelProp ?? messages.help;
-  const descriptionId = React.useId();
   return (
-    <Tooltip>
+    <Tooltip describeTrigger="always">
       <TooltipTrigger
         closeOnClick={false}
         render={
           <Button
-            aria-describedby={descriptionId}
             aria-label={ariaLabel}
             data-slot={slot}
             profile="field-action"
@@ -71,9 +72,6 @@ export function FieldHelp({
             type="button"
           >
             <QuestionIcon aria-hidden="true" />
-            <span hidden id={descriptionId}>
-              {children}
-            </span>
           </Button>
         }
       />

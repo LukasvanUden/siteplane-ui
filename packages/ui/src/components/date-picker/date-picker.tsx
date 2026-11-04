@@ -25,6 +25,7 @@ import {
 import {
   surfaceClassNames,
   type FormControlTextSize,
+  type FormControlTriggerVariant,
 } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { Calendar } from "../calendar";
@@ -84,6 +85,13 @@ export type DatePickerProps = {
   textSize?: FormControlTextSize;
   value?: Date | null;
   /**
+   * The trigger's surface. `default` rests raised, as a Button does.
+   * `outline` rests transparent inside the hairline rim of an outline Button,
+   * for a filter bar or a toolbar beside an inset search field, as the Select
+   * trigger's `outline` does. Default: `default`.
+   */
+  variant?: FormControlTriggerVariant;
+  /**
    * `fit` is as wide as the trigger's date or placeholder. `full` fills the
    * container, like Input. Default: `fit`.
    */
@@ -138,6 +146,7 @@ function DatePickerRoot({
   size,
   textSize,
   value,
+  variant = "default",
   width = "fit",
 }: DatePickerProps): React.ReactElement {
   const messages = useSiteplaneMessages("datePicker");
@@ -246,6 +255,7 @@ function DatePickerRoot({
                 size={size}
                 textSize={textSize}
                 valueSlot="date-picker-value"
+                variant={variant}
               >
                 {label}
               </DatePickerTrigger>

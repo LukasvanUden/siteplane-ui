@@ -89,12 +89,15 @@ export interface ColorPickerProps {
   showValue?: boolean;
   size?: SiteplaneControlSize;
   /**
-   * `swatch` shows the trigger as a bare swatch of the current color, drawn
-   * like a ColorSwatchPicker swatch, for a color row that ends in a custom
-   * color. The default is a raised button with the color and its hex value,
-   * on the surface of a Select trigger.
+   * The trigger. The default is a raised button with the color and its hex
+   * value, on the surface of a Select trigger. `outline` is the same button
+   * transparent inside the hairline rim of an outline Button, as the Select
+   * trigger's `outline`, for a filter bar or a toolbar. `swatch` shows the
+   * trigger as a bare swatch of the current color, drawn like a
+   * ColorSwatchPicker swatch, for a color row that ends in a custom color;
+   * it has no surface of its own, so it has no outline form.
    */
-  variant?: "default" | "swatch";
+  variant?: "default" | "outline" | "swatch";
   /** `swatch` only: the swatch is the chosen color of its row. */
   selected?: boolean;
   /** `swatch` only: how a selected swatch shows it, as ColorSwatchPicker. */
@@ -250,8 +253,9 @@ export function ColorPicker({
                   type="button"
                   // A trigger that opens a picker rests raised, on the Select
                   // trigger's surface (design-rework.css; Lukas, 4 November
-                  // 2026). It was the outline Button.
-                  variant="default"
+                  // 2026), or with variant="outline" transparent in the
+                  // outline Button's rim, as every trigger of the family.
+                  variant={variant === "outline" ? "outline" : "default"}
                 >
                   <ColorSwatchPrimitive
                     aria-hidden="true"

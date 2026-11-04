@@ -9,7 +9,10 @@ import {
 } from "react-aria-components";
 
 import { type SiteplaneControlSize } from "../../system/provider/siteplane-ui-provider";
-import { type FormControlTextSize } from "../../system/styles/surface";
+import {
+  type FormControlTextSize,
+  type FormControlTriggerVariant,
+} from "../../system/styles/surface";
 import { useSiteplaneMessages } from "../../system/locale/messages-context";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
@@ -32,7 +35,10 @@ import "./date-picker.css";
  * raised, a field you type into inset), its text the field text of that size
  * at the body weight, the field's leading icon, a calendar, at the field's
  * inline padding and 8 px before the value (design-rework.css), and the
- * placeholder colour while there is no value. The React Aria picker
+ * placeholder colour while there is no value. With `variant="outline"` it is
+ * the outline Button instead, transparent in the outline rim, as the Select
+ * trigger's outline mode is, for a filter bar or a toolbar; its field states
+ * stay the same (design-rework.css). The React Aria picker
  * around it opens the popover and names it "Calendar" and the picker's label;
  * the value it shows ends that name, so assistive technology reads the date
  * the Button shows.
@@ -46,6 +52,7 @@ export function DatePickerTrigger({
   size,
   textSize,
   valueSlot,
+  variant = "default",
 }: {
   children: React.ReactNode;
   "data-slot": string;
@@ -57,6 +64,8 @@ export function DatePickerTrigger({
   textSize: FormControlTextSize | undefined;
   /** The slot of the text that shows the value. */
   valueSlot: string;
+  /** The trigger's surface: the raised default Button, or the outline one. */
+  variant?: FormControlTriggerVariant | undefined;
 }): React.ReactElement {
   const valueId = React.useId();
   const pickerLabelledBy =
@@ -79,7 +88,7 @@ export function DatePickerTrigger({
       disabled={disabled}
       render={<PickerButtonPrimitive />}
       size={size}
-      variant="default"
+      variant={variant}
     >
       <CalendarBlankIcon aria-hidden="true" />
       <span

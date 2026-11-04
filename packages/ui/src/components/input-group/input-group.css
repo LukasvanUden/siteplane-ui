@@ -140,16 +140,11 @@
     );
   }
 
-  .sp-base-input-group[data-variant][data-variant="soft"] {
-    background-color: var(--sp-semantic-color-surface-subtle);
-  }
-
-  .sp-base-input-group[data-variant][data-variant="soft"]:focus-within {
-    background-color: var(--sp-semantic-color-background);
-  }
-
-  /* A disabled group lays the subtle fill of every disabled field, from the
-   * one rule in design-rework.css (the field disabled rules). */
+  /* A soft group lays the subtle fill and takes the page background while it
+   * has the focus, and a disabled group lays the subtle fill of every
+   * disabled field, from the field family's rules in design-rework.css (the
+   * soft block and the field disabled rules). An autofilled group shows its
+   * tint over the soft fill. */
 
   .sp-base-input-group[data-variant]:has(:autofill) {
     background-color: color-mix(

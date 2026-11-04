@@ -228,6 +228,38 @@
   --sp-rw-progress-fill: oklch(
     from var(--sp-rw-bg-accent) calc(l - 0.1107) calc(c - 0.0245) h
   );
+  /* The fills of the Buttons under the pointer, as their hover draws them:
+   * the Button's fill under its interaction layer at the hover step. The
+   * accent and the destructive Button lay their fill, 0.1 darker, over it at
+   * 40 % (their chassis below); the default Button lays the control's
+   * interaction colour over the tertiary surface at the on-fill hover step,
+   * as every trigger does. The layer is clamped to sRGB as the chassis clamps
+   * it and mixed in sRGB as the browser lays it, so the token is the hovered
+   * Button's fill. The semantic primary-hover, destructive-hover and
+   * control-hover alias them (semantic.tokens.json; Lukas, 4 November 2026:
+   * they were Tailwind blues, reds and greys that nothing read). */
+  --sp-rw-bg-accent-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-accent) 60%,
+    rgb(
+      from oklch(from var(--sp-rw-bg-accent) calc(l - 0.1) c h / 1)
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
+  --sp-rw-bg-destructive-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-destructive) 60%,
+    rgb(
+      from oklch(from var(--sp-rw-bg-destructive) calc(l - 0.1) c h / 1)
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
+  --sp-rw-bg-control-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-tertiary),
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-on-fill-hover) * 100%)
+  );
 
   /* The border flash of a Button (see "Border flash" below): how strong its ring
    * is, as a share of the Button's text colour, and, on a Button with a border
@@ -670,6 +702,35 @@
    * default accent). */
   --sp-rw-progress-fill: oklch(
     from var(--sp-rw-bg-accent) calc(l + 0.0632) calc(c - 0.0275) h
+  );
+  /* The Buttons' hover fills in Dark (the root block): the accent and the
+   * destructive Button lay their fill, 0.15 lighter at 90 % of its chroma,
+   * over it at 28 %, the layer's 70 % at the 40 % step; the default Button's
+   * is built again from the Dark surface and ladder. */
+  --sp-rw-bg-accent-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-accent) 72%,
+    rgb(
+      from oklch(from var(--sp-rw-bg-accent) calc(l + 0.15) calc(c * 0.9) h / 1)
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
+  --sp-rw-bg-destructive-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-destructive) 72%,
+    rgb(
+      from
+        oklch(
+          from var(--sp-rw-bg-destructive) calc(l + 0.15) calc(c * 0.9) h / 1
+        )
+        clamp(0, r, 255) clamp(0, g, 255) clamp(0, b, 255)
+    )
+  );
+  --sp-rw-bg-control-hover: color-mix(
+    in srgb,
+    var(--sp-rw-bg-tertiary),
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-on-fill-hover) * 100%)
   );
   --sp-rw-glow-hover: oklch(100% 0 0 / 4%);
   --sp-rw-glow-pressed: oklch(100% 0 0 / 8%);
@@ -1496,58 +1557,20 @@
 }
 
 /* The current and the previous content of a Popover or Tooltip viewport
- * (Base UI) cross-fade at the popup's inner width over the overlay time:
- * its width less the viewport's inline padding and the popup's edge on each
- * side, the 1px border of a Popover; a Tooltip draws its edge as a shadow and
- * sets --viewport-edge-width to 0. Content with a width of its own, such as
- * the Calendar picker, keeps it. The reduced-motion rules below make the swap
- * instant (M5). */
+ * (Base UI) stand at the popup's inner width: its width less the viewport's
+ * inline padding and the popup's edge on each side, the 1px border of a
+ * Popover; a Tooltip draws its edge as a shadow and sets
+ * --viewport-edge-width to 0. Content with a width of its own, such as the
+ * Calendar picker, keeps it. When the popup moves to another trigger, the
+ * content switches at once through the kit's one switch rule in motion.css
+ * (rulebook M8, Lukas, 4 November 2026: it cross-faded over the overlay
+ * time), while the popup's place and size follow. */
 :where(:is(.sp-popover-viewport, .sp-tooltip-viewport) [data-current]),
 :where(:is(.sp-popover-viewport, .sp-tooltip-viewport) [data-previous]) {
   width: calc(
     var(--popup-width) - 2 * var(--viewport-inline-padding) - 2 *
       var(--viewport-edge-width, 1px)
   );
-  opacity: 1;
-  transition-property: opacity;
-  transition-timing-function: var(--motion-ease-standard);
-  transition-duration: var(--motion-duration-overlay);
-}
-
-:where(
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-    [data-current]:is([data-starting-style], [data-ending-style])
-),
-:where(
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-    [data-previous]:is([data-starting-style], [data-ending-style])
-) {
-  opacity: 0;
-}
-
-/* Reduced motion: the content swaps at once. The document mode, the provider
- * preset (the popup's portal scope carries it) and the system setting each
- * switch it (M5). */
-html[data-motion-reduce="true"]
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-  [data-current],
-html[data-motion-reduce="true"]
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-  [data-previous],
-[data-sp-motion="reduced"]
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-  [data-current],
-[data-sp-motion="reduced"]
-  :is(.sp-popover-viewport, .sp-tooltip-viewport)
-  [data-previous] {
-  transition-duration: 1ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root :is(.sp-popover-viewport, .sp-tooltip-viewport) [data-current],
-  :root :is(.sp-popover-viewport, .sp-tooltip-viewport) [data-previous] {
-    transition-duration: 1ms;
-  }
 }
 
 /* Dialog and AlertDialog: the viewport is a grid until the wide-screen rule
@@ -6094,10 +6117,12 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
  * weigh no more than the chassis, so a dense part pins its own glyph: the
  * dense 24 px box (icon-2xs) and the field, inline, close and chip remove
  * actions, the menu rows, the Accordion, Collapsible and step triggers, the
- * Select trigger (its field scale), the tabs and the Sidebar's rows and
- * compact actions. The gap belongs to the Button itself, the default
- * profile: 4 px from the glyph to the label up to md and 6 px from lg; a
- * Button with a profile of its own keeps the content gap of the chassis. */
+ * Select trigger (its field scale), the icon laid over the insetStart or
+ * insetEnd room of an Input, in a Toolbar too (the field's icon), the tabs
+ * and the Sidebar's rows and compact actions. The gap belongs to the Button
+ * itself, the default profile: 4 px from the glyph to the label up to md and
+ * 6 px from lg; a Button with a profile of its own keeps the content gap of
+ * the chassis. */
 :root [data-chassis]:where([data-size="xs"], [data-size="icon-xs"]) {
   --sp-rw-button-icon: var(--sp-rw-space-4);
 }
@@ -8127,8 +8152,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * Select trigger, the Combobox and Autocomplete inputs and chips, Editable,
  * the Date Picker and Color Picker triggers and the time selector. A field
  * marks its root with sp-field-scale and names its size in data-size, and the
- * block switches once on it; Combobox chips take the size of their input. The
- * root holds the default, sm, for a part outside any field:
+ * block switches once on it; Combobox chips take the size of their input, and
+ * so does the icon laid over the start of an Input with insetStart (the
+ * insetStart rules below). The root holds the default, sm, for a part outside
+ * any field:
  *
  * - height: the control ladder, 36, 40, 44 and 48 px (S1);
  * - padding-inline: where the text and a leading icon start, 12, 12, 14 and
@@ -8161,7 +8188,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   .sp-combobox-chips.sp-field-scale:has(
     .sp-combobox-chips-input[data-size="md"]
   ),
-:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="md"]) {
+:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="md"]),
+:root svg:has(+ .sp-field-scale[data-size="md"][data-inset-start]) {
   --sp-rw-field-height: var(--sp-rw-control-md);
   --sp-rw-field-area-padding-inline: var(--sp-rw-space-3-5);
   --sp-rw-field-icon: var(--sp-rw-space-5);
@@ -8174,7 +8202,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   .sp-combobox-chips.sp-field-scale:has(
     .sp-combobox-chips-input[data-size="lg"]
   ),
-:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="lg"]) {
+:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="lg"]),
+:root svg:has(+ .sp-field-scale[data-size="lg"][data-inset-start]) {
   --sp-rw-field-height: var(--sp-rw-control-lg);
   --sp-rw-field-padding-inline: var(--sp-rw-space-3-5);
   --sp-rw-field-area-padding-inline: var(--sp-rw-space-3-5);
@@ -8188,7 +8217,8 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   .sp-combobox-chips.sp-field-scale:has(
     .sp-combobox-chips-input[data-size="xl"]
   ),
-:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="xl"]) {
+:root .sp-group:has(> .sp-group-text):has(> .sp-field-scale[data-size="xl"]),
+:root svg:has(+ .sp-field-scale[data-size="xl"][data-inset-start]) {
   --sp-rw-field-height: var(--sp-rw-control-xl);
   --sp-rw-field-padding-inline: var(--sp-rw-space-4);
   --sp-rw-field-area-padding-inline: var(--sp-rw-space-4);
@@ -8561,6 +8591,49 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
     [data-disabled]
   ) {
   --sp-rw-button-fill: var(--sp-semantic-color-surface-subtle);
+}
+
+/* The soft surface, variant="soft" (Lukas, 4 November 2026: "nur Standard
+ * und soft" for the whole field family). A soft field lays the subtle fill,
+ * --sp-semantic-color-surface-subtle, under its own edge and depth, and takes
+ * the page background while it has the focus; its focus, invalid and
+ * disabled states are the default field's rules. One block for every field
+ * that offers it: Input, with the Combobox and Autocomplete inputs, Textarea,
+ * InputGroup and the fields built on it (the date and time fields, File
+ * Input, Prompt Input, a joined OTP Field), Number Field, the slots of a
+ * separate OTP Field, the Combobox chips and the Tags Input, the same field
+ * of chips. Input and InputGroup drew it in input.css and input-group.css,
+ * two copies that Textarea and Number Field do not load, and the other
+ * fields had no soft surface. At rest the Input,
+ * Textarea and InputGroup selectors weigh less than the autofill tint of
+ * input.css and input-group.css, so an autofilled field keeps that tint; the
+ * focus selectors weigh more than it, in both themes. */
+:root :where(.sp-input-control:not([data-unstyled]))[data-variant="soft"],
+:root :where(.sp-textarea-control:not([data-unstyled]))[data-variant="soft"],
+:root :where(.sp-base-input-group)[data-variant="soft"],
+:root .sp-number-field[data-variant="soft"] .sp-number-field-group,
+:root
+  .sp-otp-field[data-layout="separate"][data-variant="soft"]
+  .sp-otp-field-input,
+:root .sp-combobox-chips:not([data-layout="standalone"])[data-variant="soft"],
+:root .sp-tags-input[data-variant="soft"] {
+  background-color: var(--sp-semantic-color-surface-subtle);
+}
+
+:root .sp-input-control:not([data-unstyled])[data-variant="soft"]:focus-within,
+:root
+  .sp-textarea-control:not([data-unstyled])[data-variant="soft"]:focus-within,
+:root .sp-base-input-group[data-variant][data-variant="soft"]:focus-within,
+:root .sp-number-field[data-variant="soft"] .sp-number-field-group:focus-within,
+:root
+  .sp-otp-field[data-layout="separate"][data-variant="soft"]
+  .sp-otp-field-input:focus,
+:root
+  .sp-combobox-chips:not(
+    [data-layout="standalone"]
+  )[data-variant="soft"]:focus-within,
+:root .sp-tags-input[data-variant="soft"]:focus-within {
+  background-color: var(--sp-semantic-color-background);
 }
 
 /* Number Field and OTP Field reuse the measured InputField surface. */
@@ -9225,6 +9298,28 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
     var(--sp-rw-field-padding-inline) + var(--sp-rw-space-4) +
       var(--sp-rw-space-2)
   );
+}
+
+/* The icon laid over that room is the field's (rulebook I3). An icon right
+ * before an Input with insetStart is its leading icon, the icon of the
+ * field's size, 16 px at sm and 20 px from md (the field scale names it for
+ * the icon too), and an icon right after an Input with insetEnd is its
+ * trailing icon, 16 px at every size. Each also pins the glyph that a Toolbar
+ * or a ToolbarGroup gives the bare icons in it (--sp-rw-button-icon, the
+ * Buttons' 20 px), as a trigger chevron pins the glyph of its Button, so a
+ * field in a toolbar keeps its icons (4 November 2026: the search icon before
+ * a ToolbarInput was 20 px, 4 px from the text). An icon with a size class
+ * keeps its own size. */
+:root svg:has(+ .sp-base-input[data-profile="default"][data-inset-start]) {
+  --sp-rw-button-icon: var(--sp-rw-field-icon);
+  width: var(--sp-rw-field-icon);
+  height: var(--sp-rw-field-icon);
+}
+
+:root .sp-base-input[data-profile="default"][data-inset-end] + svg {
+  --sp-rw-button-icon: var(--sp-rw-space-4);
+  width: var(--sp-rw-space-4);
+  height: var(--sp-rw-space-4);
 }
 
 /* The native file control lays its button and file name out as one line of
@@ -11389,6 +11484,75 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   pointer-events: none;
 }
 
+/* GroupText among the default Buttons of a Group, such as the page count
+ * between Previous and Next, takes the edge the Buttons draw,
+ * --sp-rw-control-rim, the default Button's rim, where it forms the outside
+ * of the group: at its top and bottom in a row, at its sides in a vertical
+ * group, and at its outer end where it starts or ends the group (Lukas,
+ * 4 November 2026: "Auf jeden Fall"; the cell drew no edge while the Buttons
+ * beside it drew theirs). Its ::before draws the rim. At a join the layer
+ * reaches one border width past the cell (the next four rules) and the cell
+ * clips it, so the rim's side falls away and the join keeps the one line of
+ * the part beside it, while the cell's outside edges meet the Buttons' at
+ * every pixel density and in either direction. A field takes the cell away
+ * (below), and a Group of outline Buttons draws one frame around all its
+ * parts, so neither draws the rim. */
+:root
+  .sp-group:not(
+    :has(> .sp-input-control:not([data-unstyled])),
+    :has(> [data-chassis][data-variant="outline"])
+  ):has(> [data-chassis][data-variant="default"])
+  > .sp-group-text {
+  overflow: clip;
+}
+
+:root
+  .sp-group:not(
+    :has(> .sp-input-control:not([data-unstyled])),
+    :has(> [data-chassis][data-variant="outline"])
+  ):has(> [data-chassis][data-variant="default"])
+  > .sp-group-text::before {
+  border-radius: inherit;
+  box-shadow: var(--sp-rw-control-rim);
+  content: "";
+}
+
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > .sp-group-text:not(
+    :nth-child(1 of [data-slot]),
+    :not([data-slot])
+  )::before {
+  inset-inline-start: calc(var(--sp-rw-border-default) * -1);
+}
+
+:root
+  .sp-group:not([data-orientation="vertical"])
+  > .sp-group-text:not(
+    :nth-last-child(1 of [data-slot]),
+    :not([data-slot])
+  )::before {
+  inset-inline-end: calc(var(--sp-rw-border-default) * -1);
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > .sp-group-text:not(
+    :nth-child(1 of [data-slot]),
+    :not([data-slot])
+  )::before {
+  inset-block-start: calc(var(--sp-rw-border-default) * -1);
+}
+
+:root
+  .sp-group[data-orientation="vertical"]
+  > .sp-group-text:not(
+    :nth-last-child(1 of [data-slot]),
+    :not([data-slot])
+  )::before {
+  inset-block-end: calc(var(--sp-rw-border-default) * -1);
+}
+
 /* In a field, a Group that pairs GroupText with an input, the text stands
  * muted on the field's own surface, with no cell and no line to the input,
  * as an InputGroup's text addon does, so the field's surface runs through
@@ -13341,11 +13505,13 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 /* The footers of a Card, a Frame and a CardFrame keep their actions the
  * action gap apart, 12 px, as the footers of a modal and a side panel do
  * (rulebook S4; Lukas, 4 November 2026, coherence audit C16: they owned none,
- * and each example wrote 8, 12 or 16 px in its className, or nothing). A gap
- * utility in className still wins. Actions that fill a Card footer
- * (actionLayout="fill") share its row in equal widths the same gap apart, as
- * a dialog's do (the Button chassis's fill rule, rulebook K1); a link keeps
- * its own width. */
+ * and each example wrote 8, 12 or 16 px in its className, or nothing). The
+ * three are rows, flex items-center in their components, so the gap reaches
+ * every one of them (Lukas, 4 November 2026: FrameFooter and CardFrameFooter
+ * were blocks, on which it did nothing). A gap utility in className still
+ * wins. Actions that fill a Card footer (actionLayout="fill") share its row in
+ * equal widths the same gap apart, as a dialog's do (the Button chassis's fill
+ * rule, rulebook K1); a link keeps its own width. */
 :root :where(.sp-card-footer),
 :root :where(.sp-frame-footer),
 :root :where(.sp-card-frame-footer) {
@@ -13568,6 +13734,26 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   --sp-rw-select-shadow:
     var(--sp-rw-control-micro), var(--sp-rw-select-rim),
     var(--sp-rw-control-spotlights), var(--sp-rw-control-depth);
+  /* The hover and pressed levels laid over that surface are the Button's
+   * ladder, the levels of a default and an outline Button and so of the date
+   * pickers' and the Color Picker's button trigger: the control's interaction
+   * colour at --sp-rw-interaction-on-fill-hover and
+   * --sp-rw-interaction-on-fill-pressed, 4 % and 7 % in Light and 6 % and
+   * 10 % in Dark (4 November 2026: one ladder for the trigger family; the
+   * Select and Native Select drew the row glows, 4 % and 8 % in both
+   * themes). The ghost and segment modes keep their own levels below. */
+  --sp-rw-select-hover: color-mix(
+    in oklab,
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-on-fill-hover) * 100%),
+    transparent
+  );
+  --sp-rw-select-pressed: color-mix(
+    in oklab,
+    var(--sp-rw-control-interaction)
+      calc(var(--sp-rw-interaction-on-fill-pressed) * 100%),
+    transparent
+  );
   --sp-rw-select-height: var(--sp-rw-field-height);
   --sp-rw-select-icon: var(--sp-rw-field-icon);
   --sp-rw-select-caret: var(--sp-rw-space-4);
@@ -13646,7 +13832,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
     [aria-disabled="true"]
   ) {
   background:
-    linear-gradient(var(--sp-rw-glow-hover), var(--sp-rw-glow-hover)),
+    linear-gradient(var(--sp-rw-select-hover), var(--sp-rw-select-hover)),
     var(--sp-rw-select-fill);
 }
 
@@ -13668,7 +13854,7 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
     [aria-disabled="true"]
   ) {
   background:
-    linear-gradient(var(--sp-rw-glow-pressed), var(--sp-rw-glow-pressed)),
+    linear-gradient(var(--sp-rw-select-pressed), var(--sp-rw-select-pressed)),
     var(--sp-rw-select-fill);
   box-shadow: var(--sp-rw-select-shadow);
 }
@@ -13676,11 +13862,15 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 /* The outline mode is the Select's transparent trigger for a filter bar or a
  * toolbar, beside an inset search field (Lukas, 4 November 2026): no fill and
  * no dome, and the hairline rim of an outline Button, --sp-rw-outline-rim, as
- * its only shadow. The shared hover and pressed levels lie over no fill, so
- * it takes the ghost mode's tints, --sp-rw-glow-hover and
- * --sp-rw-glow-pressed. Focus, open, invalid and disabled are the default
- * trigger's rules: the field's active edge, the error edge and the disabled
- * fill. */
+ * its only shadow. The shared hover and pressed levels, the Button's ladder
+ * (the hooks above), lie over no fill, as on an outline Button. Focus, open,
+ * invalid and disabled are the default trigger's rules: the field's active
+ * edge, the error edge and the disabled fill. A Native Select with
+ * variant="outline" takes the same mode, as its wrapper takes every
+ * select-trigger rule; the date pickers' button trigger and the Color
+ * Picker's trigger, Buttons, are the outline Button itself (the picker rules
+ * below). */
+:root .sp-native-select-wrapper[data-variant="outline"],
 :root
   [data-chassis][data-profile="select-trigger"][data-profile-mode="outline"] {
   --sp-rw-select-fill: transparent;
@@ -13690,9 +13880,9 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 
 /* The ghost mode is the Select's text-with-caret form, for a value that sits in
  * a row or a toolbar, such as a role or a sort order. It draws no fill, rim,
- * dome or depth at rest and takes the shared hover and pressed levels while it
- * is used. Value and caret placement, the size scale, focus and the invalid
- * state stay the field's own. */
+ * dome or depth at rest and takes the row glows, --sp-rw-glow-hover and
+ * --sp-rw-glow-pressed, while it is used. Value and caret placement, the size
+ * scale, focus and the invalid state stay the field's own. */
 :root [data-chassis][data-profile="select-trigger"][data-profile-mode="ghost"] {
   background: transparent;
   box-shadow: none;
@@ -13816,9 +14006,17 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * Buttons. These two are default Buttons, whose layers draw the Select
  * trigger's rim, light edges, dome and drop shadow from the same control
  * tokens, and take the Select trigger's fill. A flat dropdown is the Select
- * trigger's ghost mode in a row. */
+ * trigger's ghost mode in a row. The date pickers' button trigger and the
+ * Color Picker's trigger with variant="outline" are the outline Button,
+ * transparent in --sp-rw-outline-rim, as the outline Select trigger is (the
+ * outline mode above), so they keep no fill; their field states are the
+ * rules below. The :where() keeps this rule's weight under the disabled
+ * fill's. */
 :root
-  [data-chassis][data-size]:is(.sp-picker-trigger, .sp-color-picker-trigger) {
+  [data-chassis][data-size]:is(
+    .sp-picker-trigger,
+    .sp-color-picker-trigger
+  ):where(:not([data-variant="outline"])) {
   --sp-rw-button-fill: var(--sp-rw-bg-translucent);
 }
 

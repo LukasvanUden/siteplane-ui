@@ -8,6 +8,7 @@ import {
   useResolvedControlSize,
 } from "../../system/provider/siteplane-ui-provider";
 import { SelectCaretIcon } from "../../system/styles/select-caret";
+import type { FormControlTriggerVariant } from "../../system/styles/surface";
 import { cn } from "../../system/utils/cn";
 import { slotClass } from "../../system/utils/slot-class";
 
@@ -23,6 +24,13 @@ export type NativeSelectProps = Omit<
      * provider's.
      */
     size?: SiteplaneControlSize | undefined;
+    /**
+     * The surface. `default` rests raised, as the Select trigger does.
+     * `outline` rests transparent inside the hairline rim of an outline
+     * Button, for a filter bar or a toolbar beside an inset search field, as
+     * the Select trigger's `outline` does. Default: `default`.
+     */
+    variant?: FormControlTriggerVariant | undefined;
     /**
      * `full` fills the container, like Input. `fit` is as wide as the value
      * and the caret, at the width the browser gives the select, that of its
@@ -54,6 +62,7 @@ export function NativeSelect({
   ref,
   size,
   style,
+  variant = "default",
   width = "full",
   ...props
 }: NativeSelectProps): React.ReactElement {
@@ -71,6 +80,8 @@ export function NativeSelect({
       )}
       data-size={resolvedSize}
       data-slot="native-select-wrapper"
+      // The surface, from the Select trigger's mode rules (design-rework.css).
+      data-variant={variant}
       // The width of the field (native-select.css).
       data-width={width}
       // A hidden select hides its whole control.

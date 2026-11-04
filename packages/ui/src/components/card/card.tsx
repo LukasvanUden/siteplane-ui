@@ -224,10 +224,12 @@ export function CardFrameFooter({
   render,
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
+  // A row, as CardFooter and FrameFooter are: its actions stand the action
+  // gap apart, which design-rework.css gives the card family.
   const defaultProps = {
     className: cn(
       slotClass("card-frame-footer", props, render),
-      "px-[var(--card-frame-inset,--spacing(6))] py-4",
+      "flex items-center px-[var(--card-frame-inset,--spacing(6))] py-4",
       className,
     ),
     "data-slot": "card-frame-footer",

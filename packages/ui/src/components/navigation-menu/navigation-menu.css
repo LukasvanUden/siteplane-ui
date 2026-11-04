@@ -2,10 +2,10 @@
 
 @layer siteplane {
   /* Calm navigation motion. The popup fades in while it settles a few pixels
-   * into place and leaves with a plain fade. Switching between groups cross-fades
-   * the outgoing and incoming content, which travel a short distance in the
-   * direction of the switch, while the popup resizes with the same timing. No
-   * scale, no blur. */
+   * into place and leaves with a plain fade. Switching between groups
+   * cross-fades the outgoing and incoming content where they stand, while the
+   * popup resizes with the same timing (Lukas, 4 November 2026: the content
+   * also slid 12 px in the direction of the switch). No scale, no blur. */
   .sp-navigation-menu-popup {
     position: relative;
     width: var(--popup-width);
@@ -31,7 +31,7 @@
   .sp-navigation-content {
     max-height: var(--available-height);
     overflow-y: auto;
-    transition-property: opacity, translate;
+    transition-property: opacity;
     transition-duration: var(--motion-duration-navigation);
     transition-timing-function: var(--motion-ease-navigation);
   }
@@ -40,14 +40,6 @@
       [data-ending-style]
     ) {
     opacity: 0;
-  }
-  .sp-navigation-content[data-starting-style][data-activation-direction="right"],
-  .sp-navigation-content[data-ending-style][data-activation-direction="left"] {
-    translate: var(--motion-navigation-distance) 0;
-  }
-  .sp-navigation-content[data-starting-style][data-activation-direction="left"],
-  .sp-navigation-content[data-ending-style][data-activation-direction="right"] {
-    translate: calc(-1 * var(--motion-navigation-distance)) 0;
   }
   /* Closing the menu: the popup owns the fade. A near-1 opacity step registers a
    * transition, which keeps the content mounted until the popup has left. */
@@ -60,8 +52,8 @@
     display: flex;
   }
   /* Reduced motion (M5): the duration tokens are pinned to 1 ms, so the popup
-   * and the content change at once and their starting and ending offsets last
-   * no frame. */
+   * and the content change at once and the popup's starting offset lasts no
+   * frame. */
   :where(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
     .sp-navigation-menu-popup,
   :where(html[data-motion-reduce="true"], [data-sp-motion="reduced"])
