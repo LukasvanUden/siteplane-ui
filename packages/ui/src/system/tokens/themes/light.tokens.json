@@ -12,16 +12,12 @@
       "muted": { "$value": "{primitive.color.black-alpha-4}" },
       "border": { "$value": "{primitive.color.black-alpha-8}" },
       "border-strong": { "$value": "{primitive.color.neutral-400}" },
-      "destructive-foreground": { "$value": "{primitive.color.red-700}" },
       "success": { "$value": "{primitive.color.green-500}" },
       "success-foreground": { "$value": "{primitive.color.green-700}" },
       "warning": { "$value": "{primitive.color.amber-500}" },
-      "warning-foreground": { "$value": "{primitive.color.amber-700}" },
       "ring": { "$value": "{primitive.color.neutral-400}" },
       "input": { "$value": "{primitive.color.black-alpha-10}" },
       "control-disabled": { "$value": "{primitive.color.neutral-100}" },
-      "invalid": { "$value": "{primitive.color.red-500}" },
-      "invalid-muted": { "$value": "{primitive.color.red-100}" },
       "overlay-backdrop": { "$value": "{primitive.color.black-alpha-40}" }
     }
   }

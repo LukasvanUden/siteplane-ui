@@ -90,15 +90,15 @@
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
   --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: var(--sp-rw-bg-destructive);
-  --sp-semantic-color-destructive-foreground: oklch(0.505 0.213 27.518);
+  --sp-semantic-color-destructive-foreground: var(--sp-rw-fg-destructive);
   --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
   --sp-semantic-color-info-foreground: var(--sp-rw-fg-accent);
   --sp-semantic-color-input: rgb(0 0 0 / 10%);
-  --sp-semantic-color-invalid: oklch(0.637 0.237 25.331);
-  --sp-semantic-color-invalid-muted: oklch(0.94 0.04 25);
+  --sp-semantic-color-invalid: var(--sp-rw-bg-destructive);
+  --sp-semantic-color-invalid-muted: var(--sp-rw-bg-destructive-translucent);
   --sp-semantic-color-muted: rgb(0 0 0 / 4%);
   --sp-semantic-color-muted-foreground: var(--sp-rw-fg-tertiary);
   --sp-semantic-color-overlay-backdrop: oklch(0 0 0 / 0.4);
@@ -116,7 +116,7 @@
   --sp-semantic-color-surface-muted: rgb(0 0 0 / 4%);
   --sp-semantic-color-surface-subtle: rgb(0 0 0 / 4%);
   --sp-semantic-color-warning: oklch(0.769 0.188 70.08);
-  --sp-semantic-color-warning-foreground: oklch(0.52 0.112 70);
+  --sp-semantic-color-warning-foreground: var(--sp-rw-fg-attention);
   --sp-semantic-font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   --sp-semantic-font-family-mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
   --sp-semantic-font-size-body: 14px;
@@ -141,15 +141,15 @@
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
   --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: var(--sp-rw-bg-destructive);
-  --sp-semantic-color-destructive-foreground: oklch(0.505 0.213 27.518);
+  --sp-semantic-color-destructive-foreground: var(--sp-rw-fg-destructive);
   --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
   --sp-semantic-color-info-foreground: var(--sp-rw-fg-accent);
   --sp-semantic-color-input: rgb(0 0 0 / 10%);
-  --sp-semantic-color-invalid: oklch(0.637 0.237 25.331);
-  --sp-semantic-color-invalid-muted: oklch(0.94 0.04 25);
+  --sp-semantic-color-invalid: var(--sp-rw-bg-destructive);
+  --sp-semantic-color-invalid-muted: var(--sp-rw-bg-destructive-translucent);
   --sp-semantic-color-muted: rgb(0 0 0 / 4%);
   --sp-semantic-color-muted-foreground: var(--sp-rw-fg-tertiary);
   --sp-semantic-color-overlay-backdrop: oklch(0 0 0 / 0.4);
@@ -167,7 +167,7 @@
   --sp-semantic-color-surface-muted: rgb(0 0 0 / 4%);
   --sp-semantic-color-surface-subtle: rgb(0 0 0 / 4%);
   --sp-semantic-color-warning: oklch(0.769 0.188 70.08);
-  --sp-semantic-color-warning-foreground: oklch(0.52 0.112 70);
+  --sp-semantic-color-warning-foreground: var(--sp-rw-fg-attention);
 }
 
 .dark,
@@ -183,15 +183,15 @@
   --sp-semantic-color-control-disabled-foreground: var(--sp-rw-fg-quaternary);
   --sp-semantic-color-control-hover: var(--sp-rw-bg-control-hover);
   --sp-semantic-color-destructive: var(--sp-rw-bg-destructive);
-  --sp-semantic-color-destructive-foreground: oklch(0.704 0.191 22.216);
+  --sp-semantic-color-destructive-foreground: var(--sp-rw-fg-destructive);
   --sp-semantic-color-destructive-hover: var(--sp-rw-bg-destructive-hover);
   --sp-semantic-color-focus: var(--sp-rw-border-focus);
   --sp-semantic-color-foreground: var(--sp-rw-fg-primary);
   --sp-semantic-color-info: var(--sp-rw-bg-accent);
   --sp-semantic-color-info-foreground: var(--sp-rw-fg-accent);
   --sp-semantic-color-input: rgb(255 255 255 / 8%);
-  --sp-semantic-color-invalid: rgb(251.022 64.923 74.409);
-  --sp-semantic-color-invalid-muted: oklch(0.269 0 0);
+  --sp-semantic-color-invalid: var(--sp-rw-bg-destructive);
+  --sp-semantic-color-invalid-muted: var(--sp-rw-bg-destructive-translucent);
   --sp-semantic-color-muted: rgb(255 255 255 / 4%);
   --sp-semantic-color-muted-foreground: var(--sp-rw-fg-tertiary);
   --sp-semantic-color-overlay-backdrop: oklch(0 0 0 / 0.4);
@@ -209,7 +209,7 @@
   --sp-semantic-color-surface-muted: rgb(255 255 255 / 4%);
   --sp-semantic-color-surface-subtle: rgb(255 255 255 / 4%);
   --sp-semantic-color-warning: oklch(0.769 0.188 70.08);
-  --sp-semantic-color-warning-foreground: oklch(0.828 0.189 84.429);
+  --sp-semantic-color-warning-foreground: var(--sp-rw-fg-attention);
 }
 
 .dark .light,
@@ -226,6 +226,7 @@
       calc(var(--sp-rw-interaction-on-fill-hover) * 100%)
   );
   --sp-semantic-color-destructive: oklch(58.53% 0.2203 26.56);
+  --sp-semantic-color-destructive-foreground: oklch(49.84% 0.197 26.56);
   --sp-semantic-color-destructive-hover: color-mix(
     in srgb,
     var(--sp-rw-bg-destructive) 60%,
@@ -238,6 +239,8 @@
   --sp-semantic-color-foreground: oklch(10% 0 0);
   --sp-semantic-color-info: oklch(52.9% 0.1552 254.2);
   --sp-semantic-color-info-foreground: oklch(43.93% 0.1384 254.2);
+  --sp-semantic-color-invalid: oklch(58.53% 0.2203 26.56);
+  --sp-semantic-color-invalid-muted: oklch(58.53% 0.2203 26.56 / 16%);
   --sp-semantic-color-muted-foreground: oklch(50% 0.001 107);
   --sp-semantic-color-popover-foreground: oklch(10% 0 0);
   --sp-semantic-color-primary: oklch(52.9% 0.1552 254.2);
@@ -251,4 +254,5 @@
     )
   );
   --sp-semantic-color-secondary-foreground: oklch(10% 0 0);
+  --sp-semantic-color-warning-foreground: var(--sp-primitive-color-amber-700);
 }
