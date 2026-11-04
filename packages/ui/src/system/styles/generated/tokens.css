@@ -18,7 +18,7 @@
   --sp-primitive-color-amber-600: oklch(0.61 0.14 70);
   --sp-primitive-color-amber-700: oklch(0.52 0.112 70);
   --sp-primitive-color-background-dark: oklch(0.17 0 0);
-  --sp-primitive-color-background-light: oklch(0.9851 0 107);
+  --sp-primitive-color-background-light: oklch(0.9699 0 107);
   --sp-primitive-color-black-alpha-10: rgb(0 0 0 / 10%);
   --sp-primitive-color-black-alpha-4: rgb(0 0 0 / 4%);
   --sp-primitive-color-black-alpha-40: oklch(0 0 0 / 0.4);
@@ -80,7 +80,7 @@
   --sp-primitive-number-font-semibold: 600;
   --sp-primitive-number-opacity-disabled: 0.5;
   --sp-semantic-color-accent: rgb(0 0 0 / 4%);
-  --sp-semantic-color-background: oklch(0.9851 0 107);
+  --sp-semantic-color-background: oklch(0.9699 0 107);
   --sp-semantic-color-border: rgb(0 0 0 / 8%);
   --sp-semantic-color-border-strong: oklch(0.708 0 0);
   --sp-semantic-color-card: oklch(1 0 0);
@@ -131,7 +131,7 @@
 .light,
 [data-theme="light"] {
   --sp-semantic-color-accent: rgb(0 0 0 / 4%);
-  --sp-semantic-color-background: oklch(0.9851 0 107);
+  --sp-semantic-color-background: oklch(0.9699 0 107);
   --sp-semantic-color-border: rgb(0 0 0 / 8%);
   --sp-semantic-color-border-strong: oklch(0.708 0 0);
   --sp-semantic-color-card: oklch(1 0 0);
