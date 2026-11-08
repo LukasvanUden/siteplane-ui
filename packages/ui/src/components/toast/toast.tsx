@@ -207,13 +207,12 @@ function Toasts({
                         data-slot="toast-icon"
                       >
                         {Icon ? (
-                          // A success glyph takes the success text's green
-                          // and a warning glyph the warning text's amber-brown,
-                          // as every glyph of the tone and the Alert's (rulebook
-                          // C4).
+                          // The icon takes the tone of its status dot, as
+                          // every status glyph and the Alert's (rulebook C4);
+                          // the title keeps the text colour.
                           <Icon
                             aria-hidden="true"
-                            className="in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success-foreground in-data-[type=warning]:text-warning-foreground"
+                            className="in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning"
                           />
                         ) : (
                           <Spinner aria-hidden="true" className="opacity-80" />

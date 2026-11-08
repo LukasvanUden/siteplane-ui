@@ -12,6 +12,7 @@ export type SiteplaneRadius = "none" | "sm" | "md" | "lg" | "xl";
 export interface SiteplaneUIConfig {
   controlSize: SiteplaneControlSize;
   density: SiteplaneDensity;
+  hairline: boolean;
   radius: SiteplaneRadius;
 }
 
@@ -20,6 +21,15 @@ export interface SiteplaneUIProviderProps extends React.HTMLAttributes<HTMLDivEl
   controlSize?: SiteplaneControlSize;
   "data-theme"?: "dark" | "light";
   density?: SiteplaneDensity;
+  /**
+   * Whether the edges, rims and dividers of every kit component inside, and of
+   * the overlays they open, draw the kit's hairline: 0.5 px on 2x and denser
+   * screens and 1 px below them. `false` draws them 1 px wide in the colours
+   * of a 1x screen on every screen (`data-hairline="false"` on the provider
+   * and its portal scopes, design-rework.css). An inner provider without it
+   * keeps the outer provider's. Default `true`.
+   */
+  hairline?: boolean;
   /**
    * The nonce of a Content Security Policy that allows inline scripts and
    * styles only with a nonce. The kit renders no inline script or style; the
@@ -40,6 +50,7 @@ export interface SiteplaneUIProviderProps extends React.HTMLAttributes<HTMLDivEl
 export const siteplaneUIDefaults = {
   controlSize: "sm",
   density: "default",
+  hairline: true,
   radius: "md",
 } as const satisfies SiteplaneUIConfig;
 
@@ -193,7 +204,8 @@ export function useResolvedRadius<T extends string>(
 // contents` in design-rework.css, so a policy that blocks style attributes
 // leaves the layout alone). Their radius reaches the kit through data-radius:
 // the stylesheet sets the base for it and derives every corner again on the
-// scope, so a portal follows its provider.
+// scope, so a portal follows its provider. The hairline switch reaches it the
+// same way, through data-hairline.
 export function SiteplaneUIPortalScope({
   children,
 }: {
@@ -207,6 +219,7 @@ export function SiteplaneUIPortalScope({
     <div
       data-control-size={value.controlSize}
       data-density={value.density}
+      data-hairline={value.hairline ? "true" : "false"}
       data-radius={value.radius}
       className="sp-siteplane-ui-portal-scope"
       data-slot="siteplane-ui-portal-scope"
@@ -222,6 +235,7 @@ export function SiteplaneUIProvider({
   children,
   controlSize,
   density,
+  hairline,
   nonce,
   radius,
   "data-theme": theme,
@@ -239,14 +253,17 @@ export function SiteplaneUIProvider({
     () => ({
       controlSize: controlSize ?? parent.controlSize,
       density: density ?? parent.density,
+      hairline: hairline ?? parent.hairline,
       radius: radius ?? parent.radius,
     }),
     [
       controlSize,
       density,
+      hairline,
       radius,
       parent.controlSize,
       parent.density,
+      parent.hairline,
       parent.radius,
     ],
   );
@@ -259,6 +276,7 @@ export function SiteplaneUIProvider({
             className={cn("sp-siteplane-ui-provider", props.className)}
             data-control-size={value.controlSize}
             data-density={value.density}
+            data-hairline={value.hairline ? "true" : "false"}
             data-radius={value.radius}
             data-slot="siteplane-ui-provider"
             data-theme={theme}

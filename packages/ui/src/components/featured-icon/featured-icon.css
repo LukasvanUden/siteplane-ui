@@ -72,11 +72,13 @@
     --sp-featured-icon-disc-glyph: var(--sp-rw-space-5);
   }
 
-  /* The tones. The outline keeps the colours of a Notification's featured
-   * icon. The other variants take the kit's status tokens: the tint and its
-   * text colour of the Badge's status variants, and the solid fill with the
-   * text that reads on it of the solid Button and Badge (inverse for
-   * neutral). */
+  /* The tones. The outline is a bare status glyph, so it takes the tone of
+   * its status dot in both themes, as every status glyph does (rulebook C4,
+   * Lukas, 7 November 2026, as coss): the success and warning dots, the error
+   * fill and the accent fill. The other variants take the kit's status
+   * tokens: the tint and its text colour of the Badge's status variants, and
+   * the solid fill with the text that reads on it of the solid Button and
+   * Badge (inverse for neutral). */
   :root .sp-featured-icon[data-tone="neutral"] {
     --sp-featured-icon-outline: var(--sp-semantic-color-muted-foreground);
     --sp-featured-icon-ink: var(--sp-rw-fg-secondary);
@@ -86,7 +88,7 @@
   }
 
   :root .sp-featured-icon[data-tone="accent"] {
-    --sp-featured-icon-outline: var(--sp-rw-fg-accent);
+    --sp-featured-icon-outline: var(--sp-rw-bg-accent);
     --sp-featured-icon-ink: var(--sp-rw-fg-accent);
     --sp-featured-icon-tint: var(--sp-rw-bg-accent-translucent);
     --sp-featured-icon-fill: var(--sp-rw-bg-accent);
@@ -94,7 +96,7 @@
   }
 
   :root .sp-featured-icon[data-tone="success"] {
-    --sp-featured-icon-outline: var(--sp-semantic-color-success-foreground);
+    --sp-featured-icon-outline: var(--sp-semantic-color-success);
     --sp-featured-icon-ink: var(--sp-rw-fg-positive);
     --sp-featured-icon-tint: var(--sp-rw-bg-positive-translucent);
     --sp-featured-icon-fill: var(--sp-rw-bg-positive);
@@ -102,7 +104,7 @@
   }
 
   :root .sp-featured-icon[data-tone="warning"] {
-    --sp-featured-icon-outline: var(--sp-semantic-color-warning-foreground);
+    --sp-featured-icon-outline: var(--sp-semantic-color-warning);
     --sp-featured-icon-ink: var(--sp-rw-fg-attention);
     --sp-featured-icon-tint: var(--sp-rw-bg-attention-translucent);
     --sp-featured-icon-fill: var(--sp-rw-bg-attention);
@@ -110,7 +112,7 @@
   }
 
   :root .sp-featured-icon[data-tone="error"] {
-    --sp-featured-icon-outline: var(--sp-semantic-color-destructive-foreground);
+    --sp-featured-icon-outline: var(--sp-semantic-color-destructive);
     --sp-featured-icon-ink: var(--sp-rw-fg-destructive);
     --sp-featured-icon-tint: var(--sp-rw-bg-destructive-translucent);
     --sp-featured-icon-fill: var(--sp-rw-bg-destructive);

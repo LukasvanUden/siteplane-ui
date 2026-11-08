@@ -52,7 +52,10 @@ export function Timeline({
   );
 }
 
-// Marker colors keep at least 3:1 against the page in light and dark themes.
+// A marker is a status glyph, so it takes the tone of its status dot in both
+// themes (rulebook C4): the success and warning dots, the error fill and, for
+// info and accent, the accent fill. The light green and amber stay under 3:1
+// on a light page; the event's text beside the marker carries its meaning.
 // The halo, the fill of a ring marker and the icon of a filled marker all take
 // the surface the timeline sits on (`--timeline-surface`).
 const timelineDotVariants = cva(
@@ -61,12 +64,12 @@ const timelineDotVariants = cva(
     defaultVariants: { tone: "neutral" },
     variants: {
       tone: {
-        accent: "[--timeline-marker:var(--sp-rw-fg-accent)]",
-        error: "[--timeline-marker:--theme(--color-destructive-foreground)]",
-        info: "[--timeline-marker:--theme(--color-info-foreground)]",
+        accent: "[--timeline-marker:var(--sp-rw-bg-accent)]",
+        error: "[--timeline-marker:--theme(--color-destructive)]",
+        info: "[--timeline-marker:--theme(--color-info)]",
         neutral: "[--timeline-marker:--theme(--color-muted-foreground)]",
-        success: "[--timeline-marker:--theme(--color-success-foreground)]",
-        warning: "[--timeline-marker:--theme(--color-warning-foreground)]",
+        success: "[--timeline-marker:--theme(--color-success)]",
+        warning: "[--timeline-marker:--theme(--color-warning)]",
       },
     },
   },

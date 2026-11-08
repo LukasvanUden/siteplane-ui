@@ -20,6 +20,7 @@ import {
   choiceIndicatorPosition,
   choiceMenuItemBoxSize,
   menuRowLabel,
+  menuRowStack,
 } from "../../system/styles/choice-menu-item";
 import {
   type FormControlVariant,
@@ -765,6 +766,10 @@ export function ComboboxItem({
         {checkbox ? <CheckboxGlyph size={boxSize} /> : <ChoiceMenuItemCheck />}
       </ComboboxPrimitive.ItemIndicator>
     );
+  // A stacked description stands under the name in one column, as in a Menu
+  // row, whichever side the mark takes: menuRowLabel stacks it in a row whose
+  // label keeps one line, and menuRowStack in a row led by its mark, whose
+  // other labels stay as they are, so a text label still wraps (I5).
   const label = (
     <div
       className={cn(
@@ -773,7 +778,7 @@ export function ComboboxItem({
       )}
       data-slot="combobox-item-label"
     >
-      {end ? menuRowLabel(children) : children}
+      {end ? menuRowLabel(children) : menuRowStack(children)}
     </div>
   );
 
@@ -867,8 +872,17 @@ export function ComboboxItem({
  */
 export function ComboboxItemDescription({
   className,
+  stacked,
   ...props
-}: React.ComponentProps<"span">): React.ReactElement {
+}: React.ComponentProps<"span"> & {
+  /**
+   * Puts the description under the name instead of after it, in one column
+   * beside the option's avatar or icon, as a list of services shows each name
+   * over its duration and price. The name and the description stay on one
+   * line each.
+   */
+  stacked?: boolean | undefined;
+}): React.ReactElement {
   return (
     <span
       className={cn(
@@ -876,6 +890,7 @@ export function ComboboxItemDescription({
         "min-w-0 truncate",
         className,
       )}
+      data-layout={stacked ? "stacked" : undefined}
       data-slot="combobox-item-description"
       {...props}
     />

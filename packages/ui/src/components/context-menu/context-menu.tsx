@@ -401,12 +401,20 @@ export function ContextMenuSeparator({
 }
 /**
  * The supporting text of a row: the description of a Menu row
- * (MenuItemDescription).
+ * (MenuItemDescription). A direct child of the row, after its text.
  */
 export function ContextMenuItemDescription({
   className,
+  stacked,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span"> & {
+  /**
+   * Puts the description under the name instead of after it, in one column
+   * beside the row's avatar or icon, as an account list shows a name over its
+   * email. The row's name and description stay on one line each.
+   */
+  stacked?: boolean | undefined;
+}) {
   return (
     <span
       className={cn(
@@ -414,6 +422,7 @@ export function ContextMenuItemDescription({
         "min-w-0 truncate",
         className,
       )}
+      data-layout={stacked ? "stacked" : undefined}
       data-slot="context-menu-item-description"
       {...props}
     />

@@ -53,6 +53,9 @@
     transform-origin: var(--trigger-anchor-point);
   }
 
+  /* The popover opens and closes with the motion of every floating panel
+   * (motion.css), which runs as keyframes for React Aria's popovers. */
+
   /* The popover's 12 px lie in its dialog, which scrolls when the page leaves
    * the popover less room than the panel (design-rework.css). */
   .sp-color-picker-dialog {
@@ -208,43 +211,5 @@
 
   .sp-color-picker-channel-input input {
     text-align: center;
-  }
-
-  .sp-color-picker-popover[data-entering] {
-    animation: sp-color-picker-enter var(--motion-duration-overlay)
-      var(--motion-ease-standard) both;
-  }
-
-  .sp-color-picker-popover[data-exiting] {
-    animation: sp-color-picker-exit var(--motion-duration-fast)
-      var(--motion-ease-soft-in-out) both;
-  }
-
-  @keyframes sp-color-picker-enter {
-    from {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @keyframes sp-color-picker-exit {
-    to {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sp-color-picker-popover[data-entering],
-    .sp-color-picker-popover[data-exiting] {
-      animation-duration: 1ms;
-    }
-  }
-
-  html[data-motion-reduce="true"] .sp-color-picker-popover[data-entering],
-  html[data-motion-reduce="true"] .sp-color-picker-popover[data-exiting],
-  [data-sp-motion="reduced"] .sp-color-picker-popover[data-entering],
-  [data-sp-motion="reduced"] .sp-color-picker-popover[data-exiting] {
-    animation-duration: 1ms;
   }
 }

@@ -475,8 +475,17 @@ export type SelectItemProps =
  */
 export function SelectItemDescription({
   className,
+  stacked,
   ...props
-}: React.ComponentProps<"span">): React.ReactElement {
+}: React.ComponentProps<"span"> & {
+  /**
+   * Puts the description under the name instead of after it, in one column
+   * beside the option's icon, avatar or dot, as a stacked Menu row shows an
+   * email under a name. The name and the description stay on one line each,
+   * and the description stays outside the option's text.
+   */
+  stacked?: boolean | undefined;
+}): React.ReactElement {
   return (
     <span
       className={cn(
@@ -484,6 +493,7 @@ export function SelectItemDescription({
         "min-w-0 truncate",
         className,
       )}
+      data-layout={stacked ? "stacked" : undefined}
       data-slot="select-item-description"
       {...props}
     />
@@ -506,6 +516,29 @@ export function SelectValueDescription({
       data-slot="select-value-description"
       {...props}
     />
+  );
+}
+
+/**
+ * The text of an option with a stacked description: its lead, the icon,
+ * avatar or dot before the name, in one span and the name in another, so the
+ * option's grid places them by class (design-rework.css). The parts keep their
+ * order and their text, which Base UI shows and types to.
+ */
+function stackedItemText(parts: React.ReactNode[]): React.ReactNode {
+  const name = parts.at(-1);
+  const lead = parts.slice(0, -1);
+  return (
+    <>
+      {lead.length > 0 ? (
+        <span className="sp-select-item-lead" data-slot="select-item-lead">
+          {lead}
+        </span>
+      ) : null}
+      <span className="sp-select-item-name" data-slot="select-item-name">
+        {name}
+      </span>
+    </>
   );
 }
 
@@ -536,6 +569,16 @@ export function SelectItem({
       React.isValidElement(child) && child.type === SelectItemDescription,
   );
   const text = content.filter((child) => !descriptions.includes(child));
+  // A stacked description stands under the name, outside the text: the
+  // option becomes a grid of two lines and its text a subgrid of the columns
+  // of its leading element and its name, so the description takes the name's
+  // column on the second line (design-rework.css). The text stays one box,
+  // which Base UI measures. An option without one keeps its flex row.
+  const stacked = descriptions.some(
+    (child) =>
+      React.isValidElement<{ stacked?: unknown }>(child) &&
+      child.props.stacked === true,
+  );
   const selection =
     mark === "none" ? null : (
       <SelectPrimitive.ItemIndicator
@@ -566,10 +609,12 @@ export function SelectItem({
         // Its height, padding, gap, corners, text and state, the cursor and
         // the fade of a disabled option included, are the option rule's that
         // Combobox and Autocomplete options share (design-rework.css).
-        "flex items-center outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        stacked ? "grid" : "flex",
+        "items-center outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       data-indicator-position={position}
+      data-layout={stacked ? "stacked" : undefined}
       data-slot="select-item"
       {...props}
     >
@@ -579,10 +624,14 @@ export function SelectItem({
           it. A leading icon, avatar or dot sits before the name. */}
       {end ? null : selection}
       <SelectPrimitive.ItemText
-        className="sp-select-item-text flex min-w-0 items-center gap-2"
+        className={
+          stacked
+            ? "sp-select-item-text grid min-w-0 items-center"
+            : "sp-select-item-text flex min-w-0 items-center gap-2"
+        }
         data-slot="select-item-text"
       >
-        {menuRowLabel(text)}
+        {stacked ? stackedItemText(menuRowLabel(text)) : menuRowLabel(text)}
       </SelectPrimitive.ItemText>
       {descriptions}
       {end ? selection : null}

@@ -4,7 +4,10 @@
   /* The day cell, and with it the navigation, follows the control size: 40 px
    * at the default sm, the size lg had before the control ladder moved to
    * 4 px steps, 48 px at md, as xl had, and 52 and 56 px at lg and xl (Lukas,
-   * 30 October 2026). The picker popup below takes the same cells, from the
+   * 30 October 2026). xs is the compact calendar of a narrow column, 32 px,
+   * the sm of 1.x (Lukas, 7 November 2026). It comes only from the
+   * Calendar's `size`, never from a provider, whose sizes start at sm; the
+   * text stays 14 px. The picker popup below takes the same cells, from the
    * same tokens. The weights are the kit's text roles (Lukas, 4 November
    * 2026): the month heading, the picker's heading, today and the chosen day
    * take the label role (500), and the weekday row, the grid's column
@@ -12,6 +15,7 @@
    * two tokens are hooks that read the roles; the calendar had weights of its
    * own, 560 and 480. */
   :root {
+    --sp-rw-calendar-cell-xs: 2rem;
     --sp-rw-calendar-cell-sm: 2.5rem;
     --sp-rw-calendar-cell-md: 3rem;
     --sp-rw-calendar-cell-lg: 3.25rem;
@@ -27,6 +31,11 @@
   .sp-calendar,
   .sp-calendar-picker-popup {
     --calendar-cell-size: var(--sp-rw-calendar-cell-sm);
+  }
+
+  .sp-calendar[data-size="xs"],
+  .sp-calendar-picker-popup[data-calendar-size="xs"] {
+    --calendar-cell-size: var(--sp-rw-calendar-cell-xs);
   }
 
   .sp-calendar[data-size="md"],
@@ -589,7 +598,9 @@
    * number (Lukas, 31 October 2026; it was a
    * hairline box around the day). The dot is 5 px round and its top 11 px
    * under the middle of the day: 4 px above the bottom of the 40 px day of sm,
-   * and as close under the number at every size. It takes
+   * and as close under the number at every size. It keeps at least those 4 px
+   * above the bottom, so in the 32 px day of xs it rises to 23 px and never
+   * meets the edge of the fill or the inset focus ring (7 November 2026). It takes
    * the accent text colour, and on a selected day the colour of the number,
    * so it keeps the number's contrast on the accent fill and in a range, and
    * it changes colour with the day's fill. */
@@ -599,7 +610,10 @@
 
   .sp-calendar-cell[data-today]::after {
     position: absolute;
-    top: calc(50% + var(--sp-rw-space) * 2.75);
+    top: min(
+      calc(50% + var(--sp-rw-space) * 2.75),
+      calc(100% - var(--sp-rw-space) * 2.25)
+    );
     inset-inline: 0;
     width: calc(var(--sp-rw-space) * 1.25);
     height: calc(var(--sp-rw-space) * 1.25);

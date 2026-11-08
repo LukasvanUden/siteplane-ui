@@ -19,15 +19,8 @@
     padding: var(--sp-rw-space-4);
   }
 
-  .sp-date-range-popover[data-entering] {
-    animation: sp-date-range-popover-enter var(--motion-duration-overlay)
-      var(--motion-ease-standard) both;
-  }
-
-  .sp-date-range-popover[data-exiting] {
-    animation: sp-date-range-popover-exit var(--motion-duration-fast)
-      var(--motion-ease-soft-in-out) both;
-  }
+  /* The popover opens and closes with the motion of every floating panel
+   * (motion.css), which runs as keyframes for React Aria's popovers. */
 
   /* The button's panel (trigger="button") is the date pickers' panel
    * (date-picker.css): the dialog gives up its padding for it. Its footer
@@ -45,33 +38,5 @@
 
   .sp-date-range-picker-dash {
     color: var(--sp-rw-fg-tertiary);
-  }
-
-  @keyframes sp-date-range-popover-enter {
-    from {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @keyframes sp-date-range-popover-exit {
-    to {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sp-date-range-popover[data-entering],
-    .sp-date-range-popover[data-exiting] {
-      animation-duration: 1ms;
-    }
-  }
-
-  html[data-motion-reduce="true"] .sp-date-range-popover[data-entering],
-  html[data-motion-reduce="true"] .sp-date-range-popover[data-exiting],
-  [data-sp-motion="reduced"] .sp-date-range-popover[data-entering],
-  [data-sp-motion="reduced"] .sp-date-range-popover[data-exiting] {
-    animation-duration: 1ms;
   }
 }

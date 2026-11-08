@@ -138,7 +138,8 @@ export interface MotionListProps extends useRender.ComponentProps<"ul"> {
    * `stack` (default) is for vertical lists: an item expands from height 0 and
    * fades in, leaves by fading and collapsing, and the items below glide.
    * `flow` is for wrapping or horizontal sets such as chips, tags and tiles: an
-   * item fades and scales slightly and its siblings glide to their new place.
+   * item fades in as it grows from its centre and fades out as it shrinks back,
+   * and its siblings glide to their new place.
    */
   layout?: MotionLayout;
   /**
@@ -249,6 +250,7 @@ export function MotionList({
             enters a stack takes no height yet, so the others do not move. */}
         <GlideOnChange
           change={layoutDependency}
+          flow={!stack}
           origin={() => followed.current}
           parts={() => listItems(listRef.current)}
           reduced={reduced}

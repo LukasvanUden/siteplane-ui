@@ -19,13 +19,28 @@
   --motion-duration-moderate: 240ms;
   --motion-duration-slow: 320ms;
   --motion-duration-linger: 380ms;
-  /* A backdrop fades, and a date or color picker's popover enters. */
+  /* A dialog's backdrop fades. */
   --motion-duration-overlay: 160ms;
-  /* A panel expands or collapses, an item enters or leaves a list, and the
-   * panels of Tabs follow a new panel's height. */
+  /* A floating panel opens over the enter time and closes over the exit
+   * time, on the floating curve: the popup of a Menu, a Popover, a Tooltip,
+   * a Select, a Combobox or an Autocomplete, and the popover of a date or
+   * color picker. AlignUI and HeroUI open theirs in 150 ms and close them in
+   * 100 ms (Lukas, 8 November 2026; until then a panel opened over the
+   * moderate step and closed over the fast one). */
+  --motion-duration-floating-enter: 150ms;
+  --motion-duration-floating-exit: 100ms;
+  /* A panel expands or collapses and its content fades with it, an item
+   * enters or leaves a list, the panels of Tabs follow a new panel's height,
+   * and the content of a toast fades as the toast steps behind another or
+   * back to the front. */
   --motion-duration-expand: 200ms;
-  /* A dialog opens and closes. */
-  --motion-duration-modal: 210ms;
+  /* The selection indicator of Tabs glides to the new tab, on the panel
+   * curve. HeroUI moves its indicator in 250 ms (Lukas, 8 November 2026; it
+   * took the fast step, 150 ms, on the state curve until then). */
+  --motion-duration-indicator: 250ms;
+  /* A dialog opens and closes, on the modal curve (Lukas, 8 November 2026,
+   * after AlignUI and HeroUI; 210 ms until then). */
+  --motion-duration-modal: 200ms;
   /* What follows a pointer glides to its next place without overshooting:
    * the crosshair, the dots and the pill of a chart over the follow duration,
    * and the tooltip card, which trails them, over the trail duration. */
@@ -36,11 +51,21 @@
   /* A figure that changes in place: digits roll and chart marks glide to the
    * new data. */
   --motion-duration-value: var(--motion-duration-linger);
-  /* A Sheet or Drawer panel slides in from its edge, and its backdrop fades
-   * with it. A Drawer that is let go after a swipe settles within the release
-   * time, scaled by the strength of the swipe. */
-  --motion-duration-panel: 450ms;
-  --motion-duration-panel-release: 400ms;
+  /* A Sheet or Drawer panel slides in from its edge over the panel time, and
+   * its backdrop fades with it; it slides out over the release time, and a
+   * Drawer that is let go after a swipe settles within the release time,
+   * scaled by the strength of the swipe. HeroUI opens its Drawer in 250 ms
+   * and closes it in 200 ms (Lukas, 8 November 2026; 450 ms and 400 ms until
+   * then). */
+  --motion-duration-panel: 250ms;
+  --motion-duration-panel-release: 200ms;
+  /* A toast slides in over the toast time, and the stack moves with it; it
+   * slides out over the exit time and fades over the fast step, all on the
+   * panel curve. HeroUI moves its toasts so (Lukas, 8 November 2026; until
+   * then a toast moved over the linger step, 380 ms, on the standard
+   * curve). */
+  --motion-duration-toast: 350ms;
+  --motion-duration-toast-exit: 250ms;
   /* A carousel page settles like a flicked track: fast start, long calm
    * finish. */
   --motion-duration-carousel: 800ms;
@@ -77,19 +102,38 @@
   /* The standard curve: a quick start that settles softly. What appears,
    * moves, draws or changes takes it unless its motion names another curve. */
   --motion-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  /* The browser's ease, a gentle start that settles, for what opens over
+   * the page and what grows into a set: a floating panel that opens and
+   * closes (the floating curve), a Dialog or AlertDialog and its backdrop
+   * (the modal curve), and an item of a flow list that enters or leaves (the
+   * presence curve). AlignUI and HeroUI move theirs on it (Lukas, 8 November
+   * 2026: on the standard curve, which covers about three quarters of the
+   * way in the first fifth of its time, they read as hectic). */
+  --motion-ease-floating: ease;
+  --motion-ease-modal: ease;
+  --motion-ease-presence: ease;
   /* State changes: hover, press, focus and selection on fields, choice
-   * controls, tabs and accordions, the chevron of a trigger that turns, and a
-   * scrollbar that fades. */
+   * controls, tabs and accordion triggers, the chevron of a trigger that
+   * turns, and a scrollbar that fades. */
   --motion-ease-state: cubic-bezier(0.4, 0, 0.2, 1);
   /* Even in and out: a shape that morphs, a fill that sweeps, a series that
    * dims, and content that fades out of a swap. */
   --motion-ease-soft-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  /* A Collapsible's panel. */
-  --motion-ease-expand: cubic-bezier(0.7, 0.1, 0.5, 0.9);
-  /* A Sheet or Drawer panel and its backdrop. */
+  /* A panel that opens and closes in place: the panel of an Accordion and of
+   * a Collapsible. HeroUI opens its accordion on it (Lukas, 8 November 2026;
+   * the Accordion moved on the state curve and the Collapsible on a curve of
+   * its own until then). */
+  --motion-ease-expand: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Content that fades as it appears and leaves: the content of a panel that
+   * expands or collapses, and the content of a toast that steps behind
+   * another or back to the front. */
+  --motion-ease-fade: cubic-bezier(0, 0, 0.2, 1);
+  /* A quick start with a long, calm finish (HeroUI's fluid curve): a Sheet or
+   * Drawer panel and its backdrop, a toast and its stack, and the selection
+   * indicator of Tabs. */
   --motion-ease-panel: cubic-bezier(0.32, 0.72, 0, 1);
   /* The browser's default ease: a NavigationMenu, the Icon Morphs, calendar
-   * days and the fades of the toast stack. */
+   * days and the height of the toast stack. */
   --motion-ease-navigation: cubic-bezier(0.25, 0.1, 0.25, 1);
   /* A carousel page that settles (rulebook M3). */
   --motion-ease-carousel: cubic-bezier(0.25, 1, 0.5, 1);
@@ -262,11 +306,17 @@
   --motion-overlay-y: 4px;
   --motion-overlay-scale: 0.985;
   /* How far a floating panel travels, and the scale it grows from, as it
-   * opens. */
-  --motion-floating-panel-offset: 7px;
-  --motion-floating-panel-scale: 0.955;
-  /* Items of a flow list scale slightly as they enter and leave. */
-  --motion-presence-scale: 0.96;
+   * opens, and shrinks to as it closes (Lukas, 8 November 2026, after
+   * AlignUI and HeroUI; 7px and 0.955 until then). */
+  --motion-floating-panel-offset: 4px;
+  --motion-floating-panel-scale: 0.95;
+  /* The scale a Dialog or AlertDialog grows from on a wide screen, and
+   * shrinks to as it closes (Lukas, 8 November 2026; 98% until then). */
+  --motion-modal-scale: 0.95;
+  /* Items of a flow list grow from their centre as they enter and shrink to
+   * it as they leave (Lukas, 8 November 2026; 0.96 until then, which hardly
+   * showed). */
+  --motion-presence-scale: 0.8;
   /* A checked indicator pops in from this scale as its check draws in and
    * shrinks back to it as the check draws out: the Checkbox and Radio
    * indicators and the check glyph of a menu row, a list item or a swatch. */
@@ -433,7 +483,10 @@
     --motion-duration-slow: 1ms !important;
     --motion-duration-linger: 1ms !important;
     --motion-duration-overlay: 1ms !important;
+    --motion-duration-floating-enter: 1ms !important;
+    --motion-duration-floating-exit: 1ms !important;
     --motion-duration-expand: 1ms !important;
+    --motion-duration-indicator: 1ms !important;
     --motion-duration-modal: 1ms !important;
     --motion-duration-follow: 1ms !important;
     --motion-duration-follow-trail: 1ms !important;
@@ -441,6 +494,8 @@
     --motion-duration-value: 1ms !important;
     --motion-duration-panel: 1ms !important;
     --motion-duration-panel-release: 1ms !important;
+    --motion-duration-toast: 1ms !important;
+    --motion-duration-toast-exit: 1ms !important;
     --motion-duration-carousel: 1ms !important;
     --motion-duration-sweep: 1ms !important;
     --motion-duration-sweep-across: 1ms !important;
@@ -466,7 +521,10 @@
   --motion-duration-slow: 1ms !important;
   --motion-duration-linger: 1ms !important;
   --motion-duration-overlay: 1ms !important;
+  --motion-duration-floating-enter: 1ms !important;
+  --motion-duration-floating-exit: 1ms !important;
   --motion-duration-expand: 1ms !important;
+  --motion-duration-indicator: 1ms !important;
   --motion-duration-modal: 1ms !important;
   --motion-duration-follow: 1ms !important;
   --motion-duration-follow-trail: 1ms !important;
@@ -474,6 +532,8 @@
   --motion-duration-value: 1ms !important;
   --motion-duration-panel: 1ms !important;
   --motion-duration-panel-release: 1ms !important;
+  --motion-duration-toast: 1ms !important;
+  --motion-duration-toast-exit: 1ms !important;
   --motion-duration-carousel: 1ms !important;
   --motion-duration-sweep: 1ms !important;
   --motion-duration-sweep-across: 1ms !important;

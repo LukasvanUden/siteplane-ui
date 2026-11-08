@@ -407,13 +407,16 @@
     display: flex;
   }
 
+  /* The alert icon of an invalid field is a status glyph, in the error fill,
+   * the tone of the error dot (rulebook C4); the field's error message keeps
+   * the error text colour. */
   .sp-input-invalid-icon {
     flex: none;
     box-sizing: content-box;
     width: var(--sp-rw-space-4);
     height: var(--sp-rw-space-4);
     padding: calc((var(--sp-rw-space-6) - var(--sp-rw-space-4)) / 2);
-    color: var(--color-destructive-foreground);
+    color: var(--color-destructive);
     pointer-events: none;
   }
 

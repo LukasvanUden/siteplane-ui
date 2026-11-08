@@ -22,6 +22,9 @@
     transform-origin: var(--trigger-anchor-point);
   }
 
+  /* The popover opens and closes with the motion of every floating panel
+   * (motion.css), which runs as keyframes for React Aria's popovers. */
+
   .sp-date-time-picker-calendar-popover {
     width: max-content;
   }
@@ -56,47 +59,5 @@
   /* The time after the date on the button reads as its detail. */
   .sp-date-time-picker-value-time {
     color: var(--sp-rw-fg-tertiary);
-  }
-
-  .sp-date-time-picker-calendar-popover[data-entering] {
-    animation: sp-date-time-popover-enter var(--motion-duration-overlay)
-      var(--motion-ease-standard) both;
-  }
-
-  .sp-date-time-picker-calendar-popover[data-exiting] {
-    animation: sp-date-time-popover-exit var(--motion-duration-fast)
-      var(--motion-ease-soft-in-out) both;
-  }
-
-  @keyframes sp-date-time-popover-enter {
-    from {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @keyframes sp-date-time-popover-exit {
-    to {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sp-date-time-picker-calendar-popover[data-entering],
-    .sp-date-time-picker-calendar-popover[data-exiting] {
-      animation-duration: 1ms;
-    }
-  }
-
-  html[data-motion-reduce="true"]
-    .sp-date-time-picker-calendar-popover[data-entering],
-  html[data-motion-reduce="true"]
-    .sp-date-time-picker-calendar-popover[data-exiting],
-  [data-sp-motion="reduced"]
-    .sp-date-time-picker-calendar-popover[data-entering],
-  [data-sp-motion="reduced"]
-    .sp-date-time-picker-calendar-popover[data-exiting] {
-    animation-duration: 1ms;
   }
 }

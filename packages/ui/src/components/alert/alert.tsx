@@ -28,15 +28,16 @@ const alertVariants = cva("relative grid w-full items-start", {
     },
     variant: {
       default: "[&>svg]:text-muted-foreground",
+      // Every status glyph takes the tone of its status dot in both themes
+      // (rulebook C4, Lukas, 7 November 2026, as coss): the success and
+      // warning dots, the error fill and, for info, the accent fill. The
+      // Toast's icon, the Featured Icon's outline and the Timeline marker
+      // read the same tokens. The title and the description keep the text
+      // colours.
       error: "[&>svg]:text-destructive",
       info: "[&>svg]:text-info",
-      // Every success glyph takes the success text's green, and every warning
-      // glyph the warning text's amber-brown (rulebook C4), the semantic
-      // foreground of the tone: the Featured Icon, the Timeline marker and the
-      // Toast's icon too. The tone's fill is the dot's and the Badge's, a step
-      // lighter than the text.
-      success: "[&>svg]:text-success-foreground",
-      warning: "[&>svg]:text-warning-foreground",
+      success: "[&>svg]:text-success",
+      warning: "[&>svg]:text-warning",
     },
   },
 });

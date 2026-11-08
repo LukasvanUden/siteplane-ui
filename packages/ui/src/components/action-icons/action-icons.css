@@ -22,12 +22,13 @@
     transition: opacity var(--motion-duration-fast) var(--motion-ease-linear);
   }
 
-  /* The check is the success green, the colour of a copy that went through.
-   * On a Button whose fill takes a colour of its own (accent, destructive and
+  /* The check is the success green, the colour of a copy that went through:
+   * the tone of the success dot, as every status glyph (rulebook C4). On a
+   * Button whose fill takes a colour of its own (accent, destructive and
    * inverse, and the glass film) the green would sink into it, so the check
    * takes the Button's text colour there, as the copy glyph does. */
   :where(.sp-copy-check) {
-    color: var(--sp-semantic-color-success-foreground);
+    color: var(--sp-semantic-color-success);
   }
 
   [data-chassis]:is(

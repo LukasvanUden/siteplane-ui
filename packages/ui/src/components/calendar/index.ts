@@ -8,5 +8,6 @@ export type {
   CalendarRangeShortcut,
   CalendarSelectionMode,
   CalendarSingleProps,
+  CalendarSize,
   DateRange,
 } from "./calendar";

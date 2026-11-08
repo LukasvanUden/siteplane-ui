@@ -2,9 +2,10 @@
 
 @layer siteplane {
   /* The panel slides from its edge and the backdrop fades with it, on the
-   * panel time and curve that Sheet shares (rulebook M1). A panel that is let
-   * go after a swipe settles within the release time, scaled by the swipe's
-   * strength; the backdrop follows the finger without a transition. A bottom
+   * panel time and curve that Sheet shares (rulebook M1). A panel that closes
+   * settles within the release time, as a Sheet does, and one that is let go
+   * after a swipe within the release time scaled by the swipe's strength; the
+   * backdrop follows the finger without a transition. A bottom
    * panel at rest also eases its margin and padding as its snap point
    * changes. Zero specificity, so the reduced-motion rules below and a
    * consumer's transition utility both win. */

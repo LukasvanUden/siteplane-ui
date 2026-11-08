@@ -13,6 +13,14 @@
     opacity: 0;
   }
 
+  /* The panel and its backdrop open over the panel time and close over the
+   * release time, as a Drawer closes (Lukas, 8 November 2026, after HeroUI's
+   * Drawer: 250 ms in, 200 ms out). */
+  .sp-sheet-backdrop-motion[data-ending-style],
+  .sp-sheet-panel-motion[data-ending-style] {
+    transition-duration: var(--motion-duration-panel-release);
+  }
+
   .sp-sheet-panel-motion {
     transition-property: transform;
     transition-duration: var(--motion-duration-panel);

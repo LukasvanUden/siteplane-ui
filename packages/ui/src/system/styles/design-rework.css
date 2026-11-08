@@ -269,8 +269,9 @@
   --sp-rw-button-flash-text: 20%;
   --sp-rw-button-flash-rim: 35%;
 
-  --sp-rw-border-default: 1px;
-  --sp-rw-border-translucent: oklch(55% 0.002 107 / 16%);
+  /* The hairline's width, --sp-rw-border-default, and the separator colour,
+   * --sp-rw-border-translucent, follow the pixel density and the provider's
+   * hairline switch: "The hairline" below sets them. */
   --sp-rw-border-focus: oklch(61.32% 0.1364 254.2);
   --sp-rw-border-accent: oklch(61.32% 0.1364 254.2 / 40%);
   --sp-rw-border-attention: oklch(
@@ -315,19 +316,10 @@
   --sp-rw-control-spotlights:
     inset 0 2px 0 -1px oklch(100% 0 0),
     inset 0 -2px 0 -1px oklch(100% 0 0 / 80%);
-  --sp-rw-control-rim: inset 0 0 0 var(--sp-rw-border-default)
-    oklch(0% 0 0 / 16%);
-  /* The hairline of every outline control, the outline Button and the outline
-   * Toggle alike: 25% black in Light, 25% white in Dark. */
-  --sp-rw-outline-rim: inset 0 0 0 var(--sp-rw-border-default)
-    light-dark(oklch(0% 0 0 / 25%), oklch(100% 0 0 / 25%));
-  /* The edge of an unchecked Checkbox or Radio box. The edge is the only cue
-   * that the control is there, so it reaches 3:1 against the surfaces it sits
-   * on, from the depth surface to white (WCAG 1.4.11): 48% black in Light, 36%
-   * white in Dark. Fields keep --sp-rw-control-rim; the unchecked Switch track
-   * takes the same grey (its rule below). */
-  --sp-rw-choice-rim: inset 0 0 0 var(--sp-rw-border-default)
-    light-dark(oklch(0% 0 0 / 48%), oklch(100% 0 0 / 36%));
+  /* The colour of the rim of a default Button and of every field,
+   * --sp-rw-control-rim ("The hairline" below): 12% black, 12% white in Dark
+   * (Lukas, 8 November 2026; it was 16%). */
+  --sp-rw-control-edge: oklch(0% 0 0 / 12%);
   --sp-rw-control-micro:
     inset 0 0.5px 0 oklch(0% 0 0 / 8%), inset 0 -0.5px 0 oklch(0% 0 0 / 16%);
   --sp-rw-control-interaction: oklch(0% 0 0);
@@ -336,14 +328,8 @@
     transparent,
     oklch(0% 0 0 / 4%)
   );
-  /* The raised tile of a featured icon: the modern square and the tile inside
-   * the frame of modern-neue (Lukas, 2 November 2026). Its edge is the outline
-   * rim, drawn above every other layer, so it reads evenly on all four sides;
-   * the control's spotlights cover the rim at the top and the bottom, which is
-   * right for a wide Button and read as a missing edge on a small square.
-   * Inside the edge a light runs along the top and a shade along the bottom
-   * (the bevel). Below it the modern square takes the control's depth, and
-   * the tile of modern-neue a lift of three layers that its frame shows. */
+  /* The bevel and the lift of a featured icon's raised tile (the tile shadows
+   * in "The hairline" below). */
   --sp-rw-tile-bevel:
     inset 0 1px 0 light-dark(oklch(100% 0 0), oklch(100% 0 0 / 8%)),
     inset 0 -2px 2px -1px light-dark(oklch(0% 0 0 / 10%), oklch(0% 0 0 / 32%));
@@ -351,11 +337,6 @@
     0 1px 2px light-dark(oklch(0% 0 0 / 10%), oklch(0% 0 0 / 28%)),
     0 3px 3px -1px light-dark(oklch(0% 0 0 / 8%), oklch(0% 0 0 / 24%)),
     0 8px 6px -4px light-dark(oklch(0% 0 0 / 6%), oklch(0% 0 0 / 20%));
-  --sp-rw-tile-shadow:
-    var(--sp-rw-outline-rim), var(--sp-rw-tile-bevel),
-    var(--sp-rw-control-depth);
-  --sp-rw-tile-raised-shadow:
-    var(--sp-rw-outline-rim), var(--sp-rw-tile-bevel), var(--sp-rw-tile-lift);
   /* The track of a segmented control, the Tabs list and rail of the default,
    * pill and minimal variants: a 4 % well, pressed in by a soft inner shade
    * (its depth) under an edge of 12 % black, 16 % white in Dark, and the
@@ -367,23 +348,19 @@
    * their Dark values, a deeper shade and a white edge, through light-dark(),
    * which resolves where a track is drawn, so a track follows the colour
    * scheme of its surface, also the one a glass ink sets for its controls, as
-   * the Switch's literals did. */
+   * the Switch's literals did. The selection's shadow,
+   * --sp-rw-tabs-selection-shadow, stands in "The hairline" below, as its rim
+   * follows the hairline switch. */
   --sp-rw-tabs-track-fill: oklch(56.74% 0.009 106.68 / 4%);
   --sp-rw-track-depth:
     inset 0 2px 2px -1px light-dark(oklch(0% 0 0 / 4%), oklch(0% 0 0 / 8%)),
     inset 0 4px 4px -2px light-dark(oklch(0% 0 0 / 4%), oklch(0% 0 0 / 8%));
   --sp-rw-track-edge: light-dark(oklch(0% 0 0 / 12%), oklch(100% 0 0 / 16%));
-  --sp-rw-tabs-selection-shadow:
-    inset 0 0.5px 0 oklch(0% 0 0 / 8%), inset 0 -0.5px 0 oklch(0% 0 0 / 16%),
-    inset 0 0 0 0.5px oklch(0% 0 0 / 16%), inset 0 1px 0 oklch(100% 0 0),
-    inset 0 -1px 0 oklch(100% 0 0 / 80%), 0 2px 2px -1px oklch(0% 0 0 / 4%),
-    0 4px 4px -2px oklch(0% 0 0 / 2%);
   /* The pressed-in depth of a field, below its contour. A Checkbox or Radio box
    * draws the same depth with the choice rim. */
   --sp-rw-field-depth:
     inset 0 2px 2px -1px oklch(0% 0 0 / 4%),
     inset 0 4px 4px -2px oklch(0% 0 0 / 2%), 0 1px 0 oklch(100% 0 0);
-  --sp-rw-field-shadow: var(--sp-rw-field-depth), var(--sp-rw-control-rim);
   /* The fill of a field you type into, a 2 % shade fading down from its top,
    * the same in both themes (rulebook B11). */
   --sp-rw-field-fill: linear-gradient(oklch(0% 0 0 / 2%), transparent);
@@ -408,57 +385,6 @@
     inset 0 0 0 var(--sp-rw-field-focus-width)
       oklch(from var(--sp-rw-border-destructive) l c h / 1),
     var(--sp-rw-field-depth);
-  /* One edge for every surface (rulebook B7): the contour of a card, frame or
-   * panel, the inset and elevated hairlines and the neutral Alert all draw
-   * --sp-rw-surface-edge. In Light it is 24 % on a 1x screen and 40 %, the
-   * strength of the separators, on 2x and denser screens, where the hairline
-   * is 0.5 px (the pixel density block below); Dark draws a 52 % hairline at
-   * every density. It is never weaker than a separator, reads on the page
-   * canvas and on a surface of its own colour alike, and there is no second
-   * strength (Lukas, 4 November 2026). */
-  --sp-rw-surface-edge: oklch(55% 0.002 107 / 24%);
-  --sp-rw-surface-xs-shadow:
-    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
-    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-primary),
-    0 0 0 calc(var(--sp-rw-border-default) * 2) var(--sp-rw-surface-edge),
-    0 2px 1px oklch(0% 0 0 / 4%), 0 2px 1px -0.5px oklch(0% 0 0 / 4%);
-  --sp-rw-surface-sm-shadow:
-    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
-    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-primary),
-    0 0 0 calc(var(--sp-rw-border-default) * 2) var(--sp-rw-surface-edge),
-    0 2px 1px oklch(0% 0 0 / 4%), 0 2px 1px -0.5px oklch(0% 0 0 / 4%),
-    0 4px 3px -1.5px oklch(0% 0 0 / 4%);
-  --sp-rw-surface-xl-shadow:
-    var(--sp-rw-surface-sm-shadow), 0 7px 6px -3px oklch(0% 0 0 / 4%),
-    0 13px 12px -6px oklch(0% 0 0 / 4%), 0 25px 24px -12px oklch(0% 0 0 / 4%);
-  /* Pressed-in surface inside another surface: soft inner top shadow and the
-   * surface edge as an inset hairline. The Dark block composes it again from
-   * the same layers, so a Dark scope inside a light page reads its own edge. */
-  --sp-rw-surface-inset-shadow:
-    inset 0 1px 2px oklch(0% 0 0 / 6%),
-    inset 0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge);
-  /* Elevated surface: hairline plus a soft all-round shadow that also shows the
-   * top edge, biased only slightly downward. */
-  --sp-rw-surface-elevated-shadow:
-    0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge),
-    0 1px 3px oklch(0% 0 0 / 6%), 0 2px 6px -1px oklch(0% 0 0 / 5%);
-  --sp-rw-floating-md-shadow:
-    0 0 0 var(--sp-rw-border-default) transparent,
-    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-secondary),
-    0 0 0 calc(var(--sp-rw-border-default) * 2) oklch(55% 0.002 107 / 28%),
-    0 0 24px 6px oklch(0% 0 0 / 4%), 0 1.5px 1px oklch(0% 0 0 / 4%),
-    0 1.5px 1px -0.5px oklch(0% 0 0 / 4%),
-    0 3.5px 3px -1.5px oklch(0% 0 0 / 4%), 0 6.5px 6px -3px oklch(0% 0 0 / 4%),
-    0 12.5px 12px -6px oklch(0% 0 0 / 4%),
-    0 24.5px 24px -12px oklch(0% 0 0 / 4%);
-  --sp-rw-floating-lg-shadow:
-    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
-    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-secondary),
-    0 0 0 calc(var(--sp-rw-border-default) * 2) oklch(55% 0.002 107 / 16%),
-    0 0 32px 8px oklch(0% 0 0 / 4%), 0 2px 1px oklch(0% 0 0 / 4%),
-    0 2px 1px -0.5px oklch(0% 0 0 / 4%), 0 4px 3px -1.5px oklch(0% 0 0 / 4%),
-    0 7px 6px -3px oklch(0% 0 0 / 4%), 0 13px 12px -6px oklch(0% 0 0 / 4%),
-    0 25px 24px -12px oklch(0% 0 0 / 4%), 0 49px 48px -24px oklch(0% 0 0 / 4%);
 }
 
 /* SiteplaneUIProvider and its portal scopes add no box of their own, so they
@@ -745,8 +671,7 @@
     0 2px 2px -1px oklch(0% 0 0 / 12%), 0 4px 4px -2px oklch(0% 0 0 / 12%);
   --sp-rw-control-spotlights:
     inset 0 2px 0 -1px transparent, inset 0 -2px 0 -1px transparent;
-  --sp-rw-control-rim: inset 0 0 0 var(--sp-rw-border-default)
-    oklch(100% 0 0 / 16%);
+  --sp-rw-control-edge: oklch(100% 0 0 / 12%);
   --sp-rw-control-micro:
     inset 0 0.5px 0 oklch(100% 0 0 / 16%), inset 0 -0.5px 0 oklch(100% 0 0 / 4%);
   --sp-rw-control-interaction: oklch(100% 0 0);
@@ -755,29 +680,9 @@
     oklch(100% 0 0 / 4%),
     transparent
   );
-  /* A token resolves the var() it reads where it is declared, so the tile's
-   * shadow, built from the control's Dark depth, is built again here, as the
-   * field shadows below are. Declared on :root alone, a Dark scope inside a
-   * light page kept its Light layers: a modern FeaturedIcon's tile kept the
-   * Light depth (3 November 2026). The tile's bevel and lift, and so the
-   * raised tile, read light-dark(), which resolves where the shadow is
-   * drawn. */
-  --sp-rw-tile-shadow:
-    var(--sp-rw-outline-rim), var(--sp-rw-tile-bevel),
-    var(--sp-rw-control-depth);
-  /* The Tabs track's selection in Dark, without the light lines along its top
-   * and bottom. The track's fill is Light's, and its depth and edge give
-   * their Dark values through light-dark() (the root block). */
-  --sp-rw-tabs-selection-shadow:
-    inset 0 0.5px 0 oklch(100% 0 0 / 16%),
-    inset 0 -0.5px 0 oklch(100% 0 0 / 4%),
-    inset 0 0 0 0.5px oklch(100% 0 0 / 16%), inset 0 0 0 0 oklch(0% 0 0 / 8%),
-    inset 0 0 0 0 transparent, 0 2px 2px -1px oklch(0% 0 0 / 12%),
-    0 4px 4px -2px oklch(0% 0 0 / 12%);
   --sp-rw-field-depth:
     inset 0 1px 0 oklch(100% 0 0 / 8%), inset 0 -1px 0 oklch(0% 0 0 / 8%),
     0 1px 0 oklch(0% 0 0 / 12%);
-  --sp-rw-field-shadow: var(--sp-rw-field-depth), var(--sp-rw-control-rim);
   --sp-rw-field-focus-shadow:
     inset 0 0 0 var(--sp-rw-field-focus-width) var(--sp-rw-border-focus),
     var(--sp-rw-field-depth);
@@ -788,10 +693,217 @@
     inset 0 0 0 var(--sp-rw-field-focus-width)
       oklch(from var(--sp-rw-border-destructive) l c h / 1),
     var(--sp-rw-field-depth);
-  /* The surface edge of Dark: a 52 % hairline at every pixel density, stronger
-   * than the separators (B7). The pixel density block below leaves it to this
-   * scope. */
-  --sp-rw-surface-edge: oklch(55% 0.002 107 / 52%);
+  /* The film of the glass Button (see the glass tone, above): 18 % in Dark. */
+  --sp-rw-glass-button-background: oklab(0 0 0 / 18%);
+}
+
+/* A light glass tone keeps its own film on an element that is a Dark scope too:
+ * the Dark block above comes after the tone and has the same specificity. */
+:is(.dark, [data-theme="dark"])[data-glass-tone="light"] {
+  --sp-rw-glass-button-background: oklab(1 0 0 / 10%);
+}
+
+/* The hairline (rulebook B7): the width and the neutral colours of every edge,
+ * rim and divider, and the tokens built on them. Every line is as wide as
+ * --sp-rw-border-default: 1 px on a 1x screen and 0.5 px, the kit's mark, on
+ * 2x and denser screens (the pixel density block at the end). A separator,
+ * --sp-rw-border-translucent, is 11 % on a 1x screen and 28 % on a denser one;
+ * the edge of a surface, --sp-rw-surface-edge, is 17 % and 28 % in Light and
+ * 40 % at every density in Dark, so it is never weaker than a separator. The
+ * rim of a default Button and of every field is 12 % black, white in Dark, and
+ * the rim of an outline control 18 %, at every density (Lukas, 8 November
+ * 2026, lab "Ränder", Empfehlung 2: about a third softer than the 40 % and
+ * 52 % edges, the 16 % rims and the 25 % outline rim before; the 1x values
+ * took the same share).
+ *
+ * SiteplaneUIProvider's hairline={false} turns the hairline off for its
+ * children and the overlays they open: the provider and its portal scopes
+ * carry data-hairline="false", and every line under them is 1 px wide in the
+ * colours of a 1x screen, on every screen. A provider with hairline inside it
+ * carries data-hairline="true" and returns to the hairline. A custom property
+ * resolves the var() it reads where it is declared, so the tokens built on the
+ * width and the colours are declared again on each scope that changes one of
+ * them: the root, a Dark scope, and a provider or portal scope that turns the
+ * hairline off or on again. Dark keeps its surface edge at every density, so
+ * the rules for Light's edge skip a Dark scope and everything inside one. */
+:root,
+:is(
+  .sp-siteplane-ui-provider,
+  .sp-siteplane-ui-portal-scope
+)[data-hairline="false"] {
+  --sp-rw-border-default: 1px;
+  --sp-rw-border-translucent: oklch(55% 0.002 107 / 11%);
+}
+
+/* The fine line, --sp-rw-border-fine: the edge of the Tabs track and the rim
+ * of its selection keep 0.5 px on every screen while the hairline is on, as
+ * they always did, and are 1 px with the hairline off, as every other line. */
+:root,
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="true"]:is([data-hairline="false"] *) {
+  --sp-rw-border-fine: 0.5px;
+}
+
+:is(
+  .sp-siteplane-ui-provider,
+  .sp-siteplane-ui-portal-scope
+)[data-hairline="false"] {
+  --sp-rw-border-fine: 1px;
+}
+
+/* The rims, and the shadows whose layers are the same in both themes: one
+ * declaration each, made again on the root, on a Dark scope and on a hairline
+ * scope. A theme gives a rim its colour (--sp-rw-control-edge) and a shadow
+ * its depth (--sp-rw-field-depth, --sp-rw-control-depth); the outline and
+ * choice rims and the bevel and lift of the tile read light-dark(), which
+ * resolves where they are drawn. */
+:root,
+.dark,
+[data-theme="dark"],
+:is(
+  .sp-siteplane-ui-provider,
+  .sp-siteplane-ui-portal-scope
+)[data-hairline="false"],
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="true"]:is([data-hairline="false"] *) {
+  /* The rim of a default Button and of every field at rest, through the field
+   * shadow below, and of the Select trigger. */
+  --sp-rw-control-rim: inset 0 0 0 var(--sp-rw-border-default)
+    var(--sp-rw-control-edge);
+  /* The hairline of every outline control, the outline Button and the outline
+   * Toggle alike: 18% black in Light, 18% white in Dark. */
+  --sp-rw-outline-rim: inset 0 0 0 var(--sp-rw-border-default)
+    light-dark(oklch(0% 0 0 / 18%), oklch(100% 0 0 / 18%));
+  /* The edge of an unchecked Checkbox or Radio box. The edge is the only cue
+   * that the control is there, so it reaches 3:1 against the surfaces it sits
+   * on, from the depth surface to white (WCAG 1.4.11): 48% black in Light, 36%
+   * white in Dark. Fields keep --sp-rw-control-rim; the unchecked Switch track
+   * takes the same grey (its rule below). */
+  --sp-rw-choice-rim: inset 0 0 0 var(--sp-rw-border-default)
+    light-dark(oklch(0% 0 0 / 48%), oklch(100% 0 0 / 36%));
+  /* The raised tile of a featured icon: the modern square and the tile inside
+   * the frame of modern-neue (Lukas, 2 November 2026). Its edge is the outline
+   * rim, drawn above every other layer, so it reads evenly on all four sides;
+   * the control's spotlights cover the rim at the top and the bottom, which is
+   * right for a wide Button and read as a missing edge on a small square.
+   * Inside the edge a light runs along the top and a shade along the bottom
+   * (the bevel). Below it the modern square takes the control's depth, and
+   * the tile of modern-neue a lift of three layers that its frame shows. A
+   * Dark scope builds the square again from the control's Dark depth: declared
+   * on :root alone, a modern FeaturedIcon's tile in a Dark scope inside a
+   * light page kept the Light depth (3 November 2026). */
+  --sp-rw-tile-shadow:
+    var(--sp-rw-outline-rim), var(--sp-rw-tile-bevel),
+    var(--sp-rw-control-depth);
+  --sp-rw-tile-raised-shadow:
+    var(--sp-rw-outline-rim), var(--sp-rw-tile-bevel), var(--sp-rw-tile-lift);
+  /* The resting edge of a field you type into: its pressed-in depth below the
+   * control's rim. */
+  --sp-rw-field-shadow: var(--sp-rw-field-depth), var(--sp-rw-control-rim);
+  /* Pressed-in surface inside another surface: soft inner top shadow and the
+   * surface edge as an inset hairline, so a Dark scope inside a light page
+   * reads its own edge. */
+  --sp-rw-surface-inset-shadow:
+    inset 0 1px 2px oklch(0% 0 0 / 6%),
+    inset 0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge);
+}
+
+/* Light's surfaces: one edge for every surface (rulebook B7), the contour of a
+ * card, frame or panel, the inset and elevated hairlines and the neutral Alert
+ * all draw --sp-rw-surface-edge. It is 17 % here, on a 1x screen and with the
+ * hairline off, and 28 %, the strength of the separators, where the hairline
+ * is 0.5 px (the pixel density block). It is never weaker than a separator,
+ * reads on the page canvas and on a surface of its own colour alike, and there
+ * is no second strength (Lukas, 4 November 2026). The floating shadows draw a
+ * contour of their own. */
+:root,
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="false"]:not(
+    .dark,
+    [data-theme="dark"],
+    .dark *,
+    [data-theme="dark"] *
+  ),
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="true"]:is([data-hairline="false"] *):not(
+    .dark,
+    [data-theme="dark"],
+    .dark *,
+    [data-theme="dark"] *
+  ) {
+  --sp-rw-surface-edge: oklch(55% 0.002 107 / 17%);
+  --sp-rw-surface-xs-shadow:
+    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
+    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-primary),
+    0 0 0 calc(var(--sp-rw-border-default) * 2) var(--sp-rw-surface-edge),
+    0 2px 1px oklch(0% 0 0 / 4%), 0 2px 1px -0.5px oklch(0% 0 0 / 4%);
+  --sp-rw-surface-sm-shadow:
+    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
+    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-primary),
+    0 0 0 calc(var(--sp-rw-border-default) * 2) var(--sp-rw-surface-edge),
+    0 2px 1px oklch(0% 0 0 / 4%), 0 2px 1px -0.5px oklch(0% 0 0 / 4%),
+    0 4px 3px -1.5px oklch(0% 0 0 / 4%);
+  --sp-rw-surface-xl-shadow:
+    var(--sp-rw-surface-sm-shadow), 0 7px 6px -3px oklch(0% 0 0 / 4%),
+    0 13px 12px -6px oklch(0% 0 0 / 4%), 0 25px 24px -12px oklch(0% 0 0 / 4%);
+  /* Elevated surface: hairline plus a soft all-round shadow that also shows the
+   * top edge, biased only slightly downward. */
+  --sp-rw-surface-elevated-shadow:
+    0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge),
+    0 1px 3px oklch(0% 0 0 / 6%), 0 2px 6px -1px oklch(0% 0 0 / 5%);
+  --sp-rw-floating-md-shadow:
+    0 0 0 var(--sp-rw-border-default) transparent,
+    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-secondary),
+    0 0 0 calc(var(--sp-rw-border-default) * 2) oklch(55% 0.002 107 / 28%),
+    0 0 24px 6px oklch(0% 0 0 / 4%), 0 1.5px 1px oklch(0% 0 0 / 4%),
+    0 1.5px 1px -0.5px oklch(0% 0 0 / 4%),
+    0 3.5px 3px -1.5px oklch(0% 0 0 / 4%), 0 6.5px 6px -3px oklch(0% 0 0 / 4%),
+    0 12.5px 12px -6px oklch(0% 0 0 / 4%),
+    0 24.5px 24px -12px oklch(0% 0 0 / 4%);
+  --sp-rw-floating-lg-shadow:
+    0 0 0 var(--sp-rw-border-default) oklch(100% 0 0),
+    0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-secondary),
+    0 0 0 calc(var(--sp-rw-border-default) * 2) oklch(55% 0.002 107 / 16%),
+    0 0 32px 8px oklch(0% 0 0 / 4%), 0 2px 1px oklch(0% 0 0 / 4%),
+    0 2px 1px -0.5px oklch(0% 0 0 / 4%), 0 4px 3px -1.5px oklch(0% 0 0 / 4%),
+    0 7px 6px -3px oklch(0% 0 0 / 4%), 0 13px 12px -6px oklch(0% 0 0 / 4%),
+    0 25px 24px -12px oklch(0% 0 0 / 4%), 0 49px 48px -24px oklch(0% 0 0 / 4%);
+  /* The raised pill that marks the selection on a Tabs track: the control's
+   * micro lines, its rim on the fine line, the light lines along its top and
+   * bottom and the control's depth. */
+  --sp-rw-tabs-selection-shadow:
+    inset 0 0.5px 0 oklch(0% 0 0 / 8%), inset 0 -0.5px 0 oklch(0% 0 0 / 16%),
+    inset 0 0 0 var(--sp-rw-border-fine) var(--sp-rw-control-edge),
+    inset 0 1px 0 oklch(100% 0 0), inset 0 -1px 0 oklch(100% 0 0 / 80%),
+    0 2px 2px -1px oklch(0% 0 0 / 4%), 0 4px 4px -2px oklch(0% 0 0 / 2%);
+}
+
+/* Dark's surfaces: a 40 % edge at every pixel density, stronger than the
+ * separators (B7), and the surface and floating shadows of Dark. It comes after
+ * Light's block, so a Dark root takes it; a hairline scope inside a Dark scope
+ * builds them again with its own width. */
+.dark,
+[data-theme="dark"],
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="false"]:is(.dark *, [data-theme="dark"] *),
+:is(
+    .sp-siteplane-ui-provider,
+    .sp-siteplane-ui-portal-scope
+  )[data-hairline="true"]:is([data-hairline="false"] *):is(
+    .dark *,
+    [data-theme="dark"] *
+  ) {
+  --sp-rw-surface-edge: oklch(55% 0.002 107 / 40%);
   --sp-rw-surface-xs-shadow:
     0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge),
     0 0 0 var(--sp-rw-border-default) var(--sp-rw-bg-secondary),
@@ -806,9 +918,6 @@
   --sp-rw-surface-xl-shadow:
     var(--sp-rw-surface-sm-shadow), 0 7px 6px -3px oklch(0% 0 0 / 8%),
     0 13px 12px -6px oklch(0% 0 0 / 8%), 0 25px 24px -12px oklch(0% 0 0 / 8%);
-  --sp-rw-surface-inset-shadow:
-    inset 0 1px 2px oklch(0% 0 0 / 6%),
-    inset 0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge);
   --sp-rw-surface-elevated-shadow:
     0 0 0 var(--sp-rw-border-default) var(--sp-rw-surface-edge),
     0 1px 3px oklch(0% 0 0 / 24%), 0 2px 6px -1px oklch(0% 0 0 / 20%);
@@ -828,28 +937,46 @@
     0 2px 1px -0.5px oklch(0% 0 0 / 12%), 0 4px 3px -1.5px oklch(0% 0 0 / 12%),
     0 7px 6px -3px oklch(0% 0 0 / 12%), 0 13px 12px -6px oklch(0% 0 0 / 12%),
     0 25px 24px -12px oklch(0% 0 0 / 12%), 0 49px 48px -24px oklch(0% 0 0 / 12%);
-  /* The film of the glass Button (see the glass tone, above): 18 % in Dark. */
-  --sp-rw-glass-button-background: oklab(0 0 0 / 18%);
+  /* The Tabs track's selection in Dark, without the light lines along its top
+   * and bottom. The track's fill is Light's, and its depth and edge give
+   * their Dark values through light-dark() (the root block). */
+  --sp-rw-tabs-selection-shadow:
+    inset 0 0.5px 0 oklch(100% 0 0 / 16%),
+    inset 0 -0.5px 0 oklch(100% 0 0 / 4%),
+    inset 0 0 0 var(--sp-rw-border-fine) var(--sp-rw-control-edge),
+    inset 0 0 0 0 oklch(0% 0 0 / 8%), inset 0 0 0 0 transparent,
+    0 2px 2px -1px oklch(0% 0 0 / 12%), 0 4px 4px -2px oklch(0% 0 0 / 12%);
 }
 
-/* A light glass tone keeps its own film on an element that is a Dark scope too:
- * the Dark block above comes after the tone and has the same specificity. */
-:is(.dark, [data-theme="dark"])[data-glass-tone="light"] {
-  --sp-rw-glass-button-background: oklab(1 0 0 / 10%);
-}
-
+/* The pixel density block: the 0.5 px hairline of 2x and denser screens, on
+ * the root and on a provider that turns the hairline on again inside one that
+ * turned it off. */
 @media (-webkit-device-pixel-ratio >= 2), (resolution >= 2x) {
-  :root {
+  :root,
+  :is(
+      .sp-siteplane-ui-provider,
+      .sp-siteplane-ui-portal-scope
+    )[data-hairline="true"]:is([data-hairline="false"] *) {
     --sp-rw-border-default: 0.5px;
-    --sp-rw-border-translucent: oklch(55% 0.002 107 / 40%);
+    --sp-rw-border-translucent: oklch(55% 0.002 107 / 28%);
   }
 
-  /* The 0.5 px hairline of a Light surface takes the separators' 40 %, so it is
-   * never weaker than a separator beside it (B7; Lukas, 4 November 2026). A
-   * Dark root keeps the 52 % of its own scope: a plain :root rule here comes
-   * after that scope at the same specificity and would replace it. */
-  :root:not(.dark, [data-theme="dark"]) {
-    --sp-rw-surface-edge: oklch(55% 0.002 107 / 40%);
+  /* The 0.5 px hairline of a Light surface takes the separators' 28 %, so it
+   * is never weaker than a separator beside it (B7; Lukas, 4 and 8 November
+   * 2026). A Dark scope keeps its own 40 %: a plain :root rule here comes
+   * after that scope at the same specificity and would replace it on a Dark
+   * root. */
+  :root:not(.dark, [data-theme="dark"]),
+  :is(
+      .sp-siteplane-ui-provider,
+      .sp-siteplane-ui-portal-scope
+    )[data-hairline="true"]:is([data-hairline="false"] *):not(
+      .dark,
+      [data-theme="dark"],
+      .dark *,
+      [data-theme="dark"] *
+    ) {
+    --sp-rw-surface-edge: oklch(55% 0.002 107 / 28%);
   }
 }
 
@@ -1576,12 +1703,15 @@
 /* Dialog and AlertDialog: the viewport is a grid until the wide-screen rule
  * centres the popup with flexbox. A popup behind a nested dialog stays
  * visible and steps back, 10% smaller per nested dialog on a wide screen and
- * 10% less opaque (surface.ts), and it scales in from 98% on a wide screen;
- * at the bottom edge of a small screen it slides up 16 px. The popup fades,
- * scales and slides over the modal time, and their backdrop fades over the
- * overlay time. These rules are the one owner of that motion (surface.ts
- * names the classes), so Dialog, AlertDialog and the dialogs built on them
- * move alike; the reduced-motion rules below make it instant (M5). */
+ * 10% less opaque (surface.ts), and it scales in from --motion-modal-scale
+ * (95%) on a wide screen; at the bottom edge of a small screen it slides up
+ * 16 px. The popup fades, scales and slides over the modal time (200 ms),
+ * and their backdrop fades over the overlay time (160 ms), both on the modal
+ * curve, `ease`, as AlignUI and HeroUI move theirs (Lukas, 8 November 2026:
+ * until then 210 ms from 98% on the standard curve, the backdrop on it too).
+ * These rules are the one owner of that motion (surface.ts names the
+ * classes), so Dialog, AlertDialog and the dialogs built on them move alike;
+ * the reduced-motion rules below make it instant (M5). */
 :where(.sp-dialog-viewport),
 :where(.sp-alert-dialog-viewport) {
   display: grid;
@@ -1615,13 +1745,13 @@
 :where(.sp-dialog-motion) {
   transition-property: scale, opacity, translate;
   transition-duration: var(--motion-duration-modal);
-  transition-timing-function: var(--motion-ease-standard);
+  transition-timing-function: var(--motion-ease-modal);
 }
 
 :where(.sp-overlay-backdrop-motion) {
   transition-property: opacity;
   transition-duration: var(--motion-duration-overlay);
-  transition-timing-function: var(--motion-ease-standard);
+  transition-timing-function: var(--motion-ease-modal);
 }
 
 :where(
@@ -1636,7 +1766,7 @@
   }
 
   :where(.sp-dialog-motion:is([data-starting-style], [data-ending-style])) {
-    scale: 98% 98%;
+    scale: var(--motion-modal-scale);
   }
 }
 
@@ -1770,20 +1900,29 @@ html[data-motion-reduce="true"]
   outline-style: none;
 }
 
-/* Toast: the stack glides and a loading icon spins. The reduced-motion rules
- * of toast.css stop both (M5). */
+/* Toast: a toast slides in over the toast time and the stack moves with it,
+ * and a toast slides out over the exit time and fades over the fast step,
+ * all on the panel curve, as HeroUI's toasts do (Lukas, 8 November 2026, lab
+ * "Animationen 2"; the linger step on the standard curve until then). A
+ * loading icon spins. The reduced-motion rules of toast.css stop both (M5). */
 :where(.sp-toast-motion) {
   transition:
-    transform var(--motion-duration-linger) var(--motion-ease-standard),
-    opacity var(--motion-duration-linger) var(--motion-ease-navigation),
+    transform var(--motion-duration-toast) var(--motion-ease-panel),
+    opacity var(--motion-duration-toast) var(--motion-ease-panel),
     height var(--motion-duration-fast) var(--motion-ease-navigation),
-    background-color var(--motion-duration-linger) var(--motion-ease-navigation);
+    background-color var(--motion-duration-toast) var(--motion-ease-panel);
+}
+
+:where(.sp-toast-motion[data-ending-style]) {
+  transition-duration:
+    var(--motion-duration-toast-exit), var(--motion-duration-fast),
+    var(--motion-duration-fast), var(--motion-duration-toast-exit);
 }
 
 :where(.sp-toast-viewport[data-stacked]) {
   transition-property: transform, translate, scale, rotate;
-  transition-timing-function: var(--motion-ease-standard);
-  transition-duration: var(--motion-duration-linger);
+  transition-timing-function: var(--motion-ease-panel);
+  transition-duration: var(--motion-duration-toast);
 }
 
 /* Display and navigation. */
@@ -6339,16 +6478,16 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
  * strokes of the copy glyph rather than a bare svg. With a label, the inline
  * profile's icon rule above does not see that box, so this rule gives the
  * icon and the label the same flex row, spaced by the Button's content gap.
- * A failed copy shows a cross in the destructive text colour, and in the
- * Button's own text colour on a variant with a fill of its own, as the check
- * of a copy does (action-icons.css). */
+ * A failed copy shows a cross in the error fill, the tone of the error dot
+ * (rulebook C4), and in the Button's own text colour on a variant with a fill
+ * of its own, as the check of a copy does (action-icons.css). */
 :root
   .sp-copy-button[data-profile="inline"]:has(> .sp-button-content > .sp-copy) {
   display: inline-flex;
 }
 
 :where(.sp-copy-fail) {
-  color: var(--sp-semantic-color-destructive-foreground);
+  color: var(--sp-semantic-color-destructive);
 }
 
 :root
@@ -7627,17 +7766,10 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-rw-fg-tertiary);
   font-size: var(--sp-rw-font-14);
   line-height: var(--sp-rw-line-21);
-  transition: height var(--motion-duration-expand) var(--motion-ease-state);
 }
 
 :root .sp-accordion-panel > div {
   padding: 0 var(--sp-rw-space-2) var(--sp-rw-space-3);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root .sp-accordion-panel {
-    transition: none;
-  }
 }
 
 /* Collapsible disclosure styling. The chevron that an application marks with
@@ -7649,16 +7781,34 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   color: var(--sp-rw-fg-tertiary);
 }
 
+/* Disclosure panels (rulebook M1): the panel of an Accordion and of a
+ * Collapsible, the Sidebar's groups included, opens and closes in place over
+ * the expand time on the expand curve, and its content fades in and out with
+ * it on the fade curve, as HeroUI's accordion does (Lukas, 8 November 2026,
+ * lab "Animationen 2"; the Accordion moved on the state curve and the
+ * Collapsible on a curve of its own, neither faded). Under reduced motion a
+ * panel opens and closes at once (M5). */
+:root .sp-accordion-panel,
 :root .sp-collapsible-panel {
-  transition: height var(--motion-duration-expand) var(--motion-ease-expand);
+  transition:
+    height var(--motion-duration-expand) var(--motion-ease-expand),
+    opacity var(--motion-duration-expand) var(--motion-ease-fade);
 }
 
+:root .sp-accordion-panel:is([data-starting-style], [data-ending-style]),
+:root .sp-collapsible-panel:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+}
+
+html[data-motion-reduce="true"] .sp-accordion-panel,
 html[data-motion-reduce="true"] .sp-collapsible-panel,
-:where([data-sp-motion="reduced"]) .sp-collapsible-panel {
+[data-sp-motion="reduced"] .sp-accordion-panel,
+[data-sp-motion="reduced"] .sp-collapsible-panel {
   transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :root .sp-accordion-panel,
   :root .sp-collapsible-panel {
     transition: none;
   }
@@ -7785,7 +7935,7 @@ html[data-motion-reduce="true"] .sp-collapsible-panel,
  * carry their Dark values themselves (the root block), so no rule of the Tabs
  * names a theme. The indicator and an active tab before hydration draw the
  * selection's shadow (below). The track keeps its 0.5 px edge at every pixel
- * density. */
+ * density, the fine line (--sp-rw-border-fine), 1 px with the hairline off. */
 :root
   .sp-tabs-list:is(
     [data-variant="default"],
@@ -7796,7 +7946,7 @@ html[data-motion-reduce="true"] .sp-collapsible-panel,
   background: var(--sp-rw-tabs-track-fill);
   box-shadow:
     var(--sp-rw-track-depth),
-    inset 0 0 0 0.5px var(--sp-rw-track-edge);
+    inset 0 0 0 var(--sp-rw-border-fine) var(--sp-rw-track-edge);
 }
 
 :root .sp-tabs-list[data-variant="pill"],
@@ -7976,10 +8126,13 @@ html[data-motion-reduce="true"] .sp-collapsible-panel,
   height: var(--active-tab-height);
   border-radius: var(--sp-rw-radius-sm);
   transform: translateX(var(--active-tab-left));
+  /* The indicator glides to the new tab over the indicator time on the panel
+   * curve, as HeroUI's does (Lukas, 8 November 2026, lab "Animationen 2"; the
+   * fast step on the state curve until then). */
   transition:
-    width var(--motion-duration-fast) var(--motion-ease-state),
-    height var(--motion-duration-fast) var(--motion-ease-state),
-    transform var(--motion-duration-fast) var(--motion-ease-state);
+    width var(--motion-duration-indicator) var(--motion-ease-panel),
+    height var(--motion-duration-indicator) var(--motion-ease-panel),
+    transform var(--motion-duration-indicator) var(--motion-ease-panel);
 }
 
 :root
@@ -8816,9 +8969,11 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   color: var(--sp-rw-fg-accent);
 }
 
+/* A blocked step shows only its lock, a status glyph in the tone of the
+ * warning dot (rulebook C4); its title carries the status. */
 :root [data-status="blocked"] .sp-stepper-indicator {
   border-color: var(--sp-rw-border-attention);
-  color: var(--sp-rw-fg-attention);
+  color: var(--sp-semantic-color-warning);
 }
 
 :root .sp-stepper-indicator::after {
@@ -9655,15 +9810,16 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 /* A requirement that is met: the icon that leads a description names it with
- * data-valid and takes the positive colour over the state step, as the check
- * of a password hint turns green at eight characters (Lukas,
- * 31 October 2026). Until then the icon keeps the text colour. */
+ * data-valid and takes the success green over the state step, the tone of the
+ * success dot (rulebook C4), as the check of a password hint turns green at
+ * eight characters (Lukas, 31 October 2026). Until then the icon keeps the
+ * text colour. */
 :root .sp-field-description > svg:first-child {
   transition: color var(--motion-duration-fast) var(--motion-ease-state);
 }
 
 :root .sp-field-description > svg:first-child[data-valid] {
-  color: var(--sp-rw-fg-positive);
+  color: var(--sp-semantic-color-success);
 }
 
 /* When its label holds a checkbox, radio or switch, a Field's description and
@@ -13722,8 +13878,9 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * native select and a Select look alike in a form. */
 :root .sp-native-select-wrapper,
 :root [data-chassis][data-profile="select-trigger"] {
-  --sp-rw-select-rim: inset 0 0 0 var(--sp-rw-border-default)
-    oklch(0% 0 0 / 16%);
+  /* The rim of the raised trigger is the control's, the rim of a default
+   * Button, in both themes (it was a copy of it). */
+  --sp-rw-select-rim: var(--sp-rw-control-rim);
   /* The surface the trigger rests on, under its hover and pressed levels: its
    * fill, the dome on its ::before and its shadow. It rests raised, as a
    * Button does, on the control's fill, rim, light edges and drop shadow
@@ -13797,20 +13954,6 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   > .sp-button-chassis-interaction,
 :root [data-chassis][data-profile="select-trigger"] > .sp-button-chassis-rim {
   display: none;
-}
-
-:root:where(.dark) .sp-native-select-wrapper,
-:root:where([data-theme="dark"]) .sp-native-select-wrapper,
-:root :where(.dark) .sp-native-select-wrapper,
-:root :where([data-theme="dark"]) .sp-native-select-wrapper,
-:root:where(.dark) [data-chassis][data-profile="select-trigger"],
-:root:where([data-theme="dark"]) [data-chassis][data-profile="select-trigger"],
-:root :where(.dark) [data-chassis][data-profile="select-trigger"],
-:root
-  :where([data-theme="dark"])
-  [data-chassis][data-profile="select-trigger"] {
-  --sp-rw-select-rim: inset 0 0 0 var(--sp-rw-border-default)
-    oklch(100% 0 0 / 16%);
 }
 
 :root .sp-native-select-wrapper::before,
@@ -14627,6 +14770,10 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   > .sp-button-content:has(> .sp-list-box-item-description),
 :root .sp-select-item:has(> .sp-select-item-description) > .sp-select-item-text,
 :root .sp-combobox-item-label:has(> .sp-combobox-item-description),
+:root
+  .sp-combobox-item-label:has(
+    > .sp-menu-item-stack > .sp-combobox-item-description
+  ),
 :root .sp-menu-row-label:has(+ .sp-menu-item-description),
 :root .sp-menu-row-label:has(+ .sp-context-menu-item-description),
 :root .sp-menu-row-label:has(+ .sp-drawer-menu-item-description),
@@ -14649,12 +14796,13 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   font-weight: var(--sp-rw-font-weight-default);
 }
 
-/* A stacked description (`stacked` on a Menu's MenuItemDescription, a
- * DrawerMenu's DrawerMenuItemDescription or a ListBox's
- * ListBoxItemDescription) goes under the name instead of after it, as an
- * account list shows a name over its email: the row's menuRowLabel groups the
- * name and the description in one column, which takes the room beside the
- * avatar or icon, and the two keep one line each. */
+/* A stacked description (`stacked` on the description of every row: Menu's
+ * MenuItemDescription, ContextMenuItemDescription, DrawerMenuItemDescription,
+ * ListBoxItemDescription, ComboboxItemDescription and SelectItemDescription)
+ * goes under the name instead of after it, as an account list shows a name
+ * over its email: the row's menuRowLabel groups the name and the description
+ * in one column, which takes the room beside the avatar or icon, and the two
+ * keep one line each. A Select option stacks them by its grid (below). */
 :root .sp-menu-item-stack {
   display: flex;
   min-width: 0;
@@ -14662,10 +14810,90 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   flex-direction: column;
 }
 
+:root .sp-select-item-description[data-layout="stacked"],
+:root .sp-combobox-item-description[data-layout="stacked"],
+:root .sp-context-menu-item-description[data-layout="stacked"],
 :root .sp-menu-item-description[data-layout="stacked"],
 :root .sp-drawer-menu-item-description[data-layout="stacked"],
 :root .sp-list-box-item-description[data-layout="stacked"] {
   margin-inline-start: 0;
+}
+
+/* A Select option keeps its description outside its text, which Base UI
+ * shows, types to and measures (select.tsx), so it cannot join the column.
+ * With a stacked description the option is a grid of two lines instead, and
+ * its text a subgrid of the columns of its lead (the icon, avatar or dot
+ * before the name, which SelectItem wraps in `.sp-select-item-lead`) and of
+ * its name (`.sp-select-item-name`): the name takes the first line and the
+ * description the second, in the name's column, and the lead and the mark
+ * span the two, centred beside them, as in a stacked Menu row. A name without
+ * a lead takes both columns, so it starts at the row's padding. Every rule
+ * names a class as its subject, so no element outside a stacked option
+ * checks them (class anchor contract). */
+:root .sp-select-item[data-layout="stacked"] {
+  grid-template-columns:
+    [text-start] auto
+    [name-start] minmax(0, 1fr)
+    [name-end text-end];
+  grid-template-rows: auto auto;
+  row-gap: 0;
+}
+
+:root .sp-select-item[data-layout="stacked"][data-indicator-position="start"] {
+  grid-template-columns:
+    auto
+    [text-start] auto
+    [name-start] minmax(0, 1fr)
+    [name-end text-end];
+}
+
+:root .sp-select-item[data-layout="stacked"][data-indicator-position="end"] {
+  grid-template-columns:
+    [text-start] auto
+    [name-start] minmax(0, 1fr)
+    [name-end text-end] auto;
+}
+
+:root .sp-select-item[data-layout="stacked"] > .sp-select-item-indicator,
+:root .sp-select-item[data-layout="stacked"] > .sp-select-item-checkbox {
+  grid-row: 1 / -1;
+}
+
+:root .sp-select-item[data-layout="stacked"] > .sp-select-item-text {
+  grid-row: 1 / -1;
+  grid-column: text;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+}
+
+:root .sp-select-item-text > .sp-select-item-lead {
+  display: flex;
+  grid-row: 1 / -1;
+  align-items: center;
+  gap: var(--sp-rw-space-2);
+}
+
+:root .sp-select-item-text > .sp-select-item-name {
+  display: flex;
+  min-width: 0;
+  grid-row: 1;
+  grid-column: name;
+}
+
+:root .sp-select-item[data-layout="stacked"] > .sp-select-item-description {
+  grid-row: 2;
+  grid-column: name;
+}
+
+:root
+  .sp-select-item-text:not(:has(> .sp-select-item-lead))
+  > .sp-select-item-name,
+:root
+  .sp-select-item[data-layout="stacked"]:not(
+    :has(> .sp-select-item-text > .sp-select-item-lead)
+  )
+  > .sp-select-item-description {
+  grid-column: text;
 }
 
 /* The trigger's value takes the same two hierarchies beside its description,

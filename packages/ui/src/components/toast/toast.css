@@ -10,11 +10,13 @@
   }
 
   /* The content of every toast, the default one and that of notify(), fades
-   * in and out as the toast steps behind the front one and back. */
+   * in and out as the toast steps behind the front one and back, over the
+   * expand time on the fade curve (Lukas, 8 November 2026, after HeroUI; the
+   * moderate step on the standard curve until then). */
   :where(.sp-toast-content-motion) {
     transition-property: opacity;
-    transition-duration: var(--motion-duration-moderate);
-    transition-timing-function: var(--motion-ease-standard);
+    transition-duration: var(--motion-duration-expand);
+    transition-timing-function: var(--motion-ease-fade);
   }
 
   /* A toast that is updated in place replays its type: a success pulses over

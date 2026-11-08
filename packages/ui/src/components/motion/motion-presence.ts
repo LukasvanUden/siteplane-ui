@@ -167,10 +167,23 @@ function scaleOf(value: string): number {
  * (`heightClipPath`; at rest nothing is clipped, so focus rings, shadows and
  * menus at its edge stay whole). `scale`:
  * an item of a wrapping or horizontal set, a flow list, which fades in and
- * grows from `--motion-presence-scale` and fades and shrinks out, without
- * travel (M2), while its siblings glide (`GlideOnChange`).
+ * grows from `--motion-presence-scale` around its centre and fades and
+ * shrinks out, without travel (M2), while its siblings glide
+ * (`GlideOnChange`).
  */
 export type PresenceKind = "height" | "scale";
+
+/**
+ * The curve each kind of presence takes, over the expand duration: a block
+ * that opens its height takes the standard curve, and an item of a flow list
+ * grows in from 80 % and shrinks out on the presence curve, `ease`, as
+ * AlignUI's and HeroUI's tags do (Lukas, 8 November 2026: from 96 % on the
+ * standard curve it hardly showed and read as hectic).
+ */
+const presenceEasing: Record<PresenceKind, `--motion-${string}`> = {
+  height: "--motion-ease-standard",
+  scale: "--motion-ease-presence",
+};
 
 /**
  * The keyframe an element shows now: the frame a running motion is at, or,
@@ -192,15 +205,16 @@ const presenceGone: Record<PresenceKind, (element: HTMLElement) => Keyframe> = {
   height: () => ({ height: "0px", opacity: 0 }),
   scale: (element) => ({
     opacity: 0,
-    scale: measureNumber(element, "--motion-presence-scale", 0.96),
+    scale: measureNumber(element, "--motion-presence-scale", 0.8),
   }),
 };
 
 /**
- * Starts the presence motion of an element over the expand duration: towards
- * rest when it is present, towards gone when it is not. A motion that still
- * runs is replaced from what it shows, so a change of course does not jump
- * back. `then` runs when the motion has finished.
+ * Starts the presence motion of an element over the expand duration, on the
+ * curve of its kind (`presenceEasing`): towards rest when it is present,
+ * towards gone when it is not. A motion that still runs is replaced from what
+ * it shows, so a change of course does not jump back. `then` runs when the
+ * motion has finished.
  */
 export function playPresence(
   element: HTMLElement,
@@ -224,7 +238,7 @@ export function playPresence(
       ...keyframeTiming(
         element,
         "--motion-duration-expand",
-        "--motion-ease-standard",
+        presenceEasing[kind],
       ),
       // A leaving element keeps its last keyframe until it is removed.
       fill: present ? "none" : "forwards",
@@ -391,6 +405,13 @@ export type GlideOnChangeProps = {
    * where it was and takes no input.
    */
   presence?: boolean | undefined;
+  /**
+   * The set is a flow list, such as the tags of a Tag Group: its parts glide
+   * on the presence curve, as the parts that come and go grow in on it, so
+   * the whole set moves on one curve (Lukas, 8 November 2026, lab
+   * "Animationen": Recommended). A stack glides on the standard curve.
+   */
+  flow?: boolean | undefined;
   reduced: boolean;
 };
 
@@ -436,7 +457,7 @@ export class GlideOnChange extends React.Component<GlideOnChangeProps> {
 }
 
 function glideParts(
-  { origin: originOf, parts: partsOf, presence }: GlideOnChangeProps,
+  { flow, origin: originOf, parts: partsOf, presence }: GlideOnChangeProps,
   { origin: originBefore, places: before }: Before,
 ) {
   const origin = originOf();
@@ -451,15 +472,23 @@ function glideParts(
     left: originBefore.left - originBox.left,
     top: originBefore.top - originBox.top,
   };
+  // The parts of a flow list, and of a set whose parts grow in as flow items
+  // do, glide on the presence curve, so the set moves on one curve; the parts
+  // of a stack glide on the standard one.
   const timing = keyframeTiming(
     origin,
     "--motion-duration-expand",
-    "--motion-ease-standard",
+    flow || presence ? presenceEasing.scale : "--motion-ease-standard",
   );
+  // A part that comes or goes grows in or shrinks out as an item of a flow
+  // list does, on the presence curve.
+  const presenceTiming = presence
+    ? keyframeTiming(origin, "--motion-duration-expand", presenceEasing.scale)
+    : timing;
   for (const part of parts) {
     const was = before.get(part);
     if (!was) {
-      if (presence) fadeIn(part, timing);
+      if (presence) fadeIn(part, presenceTiming);
       continue;
     }
     const now = placeIn(part, originBox);
@@ -491,7 +520,7 @@ function glideParts(
         part,
         { ...was, left: was.left + moved.left, top: was.top + moved.top },
         origin,
-        timing,
+        presenceTiming,
       );
 }
 
@@ -583,7 +612,7 @@ function leavePicture(
       { opacity: Number(getComputedStyle(picture).opacity) },
       {
         opacity: 0,
-        scale: measureNumber(picture, "--motion-presence-scale", 0.96),
+        scale: measureNumber(picture, "--motion-presence-scale", 0.8),
       },
     ],
     { ...timing, fill: "forwards" },

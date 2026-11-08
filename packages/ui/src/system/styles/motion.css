@@ -1,25 +1,44 @@
+/* A floating panel, one motion for every popup over the page (rulebook M6):
+ * the popup of a Menu, a Dropdown Menu, a Context Menu, a Popover, a Tooltip,
+ * a Preview Card, a Select, a Combobox and an Autocomplete, the Time Field's
+ * selector, and the popovers of the Date Picker, the Date Range Picker, the
+ * Date Time Picker and the Color Picker. It opens over the floating enter
+ * time on the floating curve, fading in and growing from
+ * --motion-floating-panel-scale as it travels --motion-floating-panel-offset
+ * from its trigger, and closes the same way over the floating exit time, as
+ * AlignUI and HeroUI open and close theirs (Lukas, 8 November 2026: 150 ms
+ * on `ease` from 95 % with 4 px of travel, and 100 ms back, where the kit
+ * took the moderate step on the standard curve from 95.5 % with 7 px). Base
+ * UI's popups run it as a transition between their starting or ending style
+ * and rest; React Aria's popovers, which wait for an animation before they
+ * unmount, run the same values as keyframes (below). A NavigationMenu popup
+ * keeps its own motion (navigation-menu.css). */
 .sp-floating-panel {
   --sp-floating-panel-x: 0px;
   --sp-floating-panel-y: calc(var(--motion-floating-panel-offset) * -1);
   transform-origin: var(--transform-origin, top center);
   transition-property: opacity, transform;
-  transition-duration: var(--motion-duration-moderate);
-  transition-timing-function: var(--motion-ease-standard);
+  transition-duration: var(--motion-duration-floating-enter);
+  transition-timing-function: var(--motion-ease-floating);
   will-change: opacity, transform;
 }
 
-.sp-floating-panel[data-side="top"] {
+/* The side the panel stands on: Base UI writes data-side, React Aria
+ * data-placement. */
+.sp-floating-panel:is([data-side="top"], [data-placement="top"]) {
   --sp-floating-panel-y: var(--motion-floating-panel-offset);
 }
 
 .sp-floating-panel[data-side="left"],
-.sp-floating-panel[data-side="inline-start"] {
+.sp-floating-panel[data-side="inline-start"],
+.sp-floating-panel[data-placement="left"] {
   --sp-floating-panel-x: var(--motion-floating-panel-offset);
   --sp-floating-panel-y: 0px;
 }
 
 .sp-floating-panel[data-side="right"],
-.sp-floating-panel[data-side="inline-end"] {
+.sp-floating-panel[data-side="inline-end"],
+.sp-floating-panel[data-placement="right"] {
   --sp-floating-panel-x: calc(var(--motion-floating-panel-offset) * -1);
   --sp-floating-panel-y: 0px;
 }
@@ -54,16 +73,48 @@
     scale(var(--motion-floating-panel-scale));
 }
 
-/* A floating panel leaves as the kit's other popovers do, the Date Time
- * Picker's calendar and the Color Picker's: over the fast step on the even
- * curve of content that fades out, so its surface and its content fade
- * together. On the standard curve over the moderate step it fell below a
- * tenth of its opacity within 50 ms and stayed there for nearly 200 ms more,
- * where its text still read and its white surface no longer did: a ghost of
- * the Time Field's columns after the selector closed (4 November 2026). */
+/* A floating panel closes over the floating exit time on the floating curve
+ * (Lukas, 8 November 2026), so its surface and its content fade together:
+ * it is below a tenth of its opacity only for its last 40 ms or so. On the
+ * standard curve over the moderate step it fell below a tenth within 50 ms
+ * and stayed there for nearly 200 ms more, where its text still read and its
+ * white surface no longer did: a ghost of the Time Field's columns after the
+ * selector closed (4 November 2026); from then until 8 November 2026 it
+ * closed over the fast step on the even curve. */
 .sp-floating-panel[data-ending-style] {
-  transition-duration: var(--motion-duration-fast);
-  transition-timing-function: var(--motion-ease-soft-in-out);
+  transition-duration: var(--motion-duration-floating-exit);
+  transition-timing-function: var(--motion-ease-floating);
+}
+
+/* React Aria's popovers, the calendars of the Date Picker, the Date Range
+ * Picker and the Date Time Picker and the Color Picker's, mark their entry
+ * and exit with data-entering and data-exiting and stay mounted until the
+ * exit animation has ended, so they run the panel's motion as keyframes:
+ * the same tokens, travel and scale as a transition above. */
+.sp-floating-panel[data-entering] {
+  animation: sp-floating-panel-enter var(--motion-duration-floating-enter)
+    var(--motion-ease-floating) both;
+}
+
+.sp-floating-panel[data-exiting] {
+  animation: sp-floating-panel-exit var(--motion-duration-floating-exit)
+    var(--motion-ease-floating) both;
+}
+
+@keyframes sp-floating-panel-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--sp-floating-panel-x), var(--sp-floating-panel-y))
+      scale(var(--motion-floating-panel-scale));
+  }
+}
+
+@keyframes sp-floating-panel-exit {
+  to {
+    opacity: 0;
+    transform: translate(var(--sp-floating-panel-x), var(--sp-floating-panel-y))
+      scale(var(--motion-floating-panel-scale));
+  }
 }
 
 /* Content that replaces content switches at once (rulebook M8;
@@ -115,15 +166,25 @@
 /* A floating panel that follows its height, such as the popup of a Combobox
  * or an Autocomplete whose options change while it is open (PopupListMotion
  * in motion-follow.ts), adds the height to its own fade and move, which the
- * floating panel rule above names. The rule outranks that one, as the panel's
- * own transition would otherwise leave the height out; the reduced-motion
- * rules below still win, and nothing follows under reduced motion (M5). */
+ * floating panel rules above time. The rules outrank those, as the panel's
+ * own transition would otherwise leave the height out; its fade and move
+ * keep the floating times and curve, in and out, and the height follows over
+ * the expand duration on the standard curve. The reduced-motion rules below
+ * still win, and nothing follows under reduced motion (M5). */
 .sp-floating-panel.sp-height-follow {
   transition-property: opacity, transform, height;
   transition-duration:
-    var(--motion-duration-moderate), var(--motion-duration-moderate),
+    var(--motion-duration-floating-enter),
+    var(--motion-duration-floating-enter), var(--motion-duration-expand);
+  transition-timing-function:
+    var(--motion-ease-floating), var(--motion-ease-floating),
+    var(--motion-ease-standard);
+}
+
+.sp-floating-panel.sp-height-follow[data-ending-style] {
+  transition-duration:
+    var(--motion-duration-floating-exit), var(--motion-duration-floating-exit),
     var(--motion-duration-expand);
-  transition-timing-function: var(--motion-ease-standard);
 }
 
 @keyframes sp-calendar-slide-in-from-right {
@@ -339,6 +400,13 @@ html[data-motion-reduce="true"] .sp-floating-panel,
   transition-duration: 1ms;
 }
 
+html[data-motion-reduce="true"]
+  .sp-floating-panel:is([data-entering], [data-exiting]),
+[data-sp-motion="reduced"]
+  .sp-floating-panel:is([data-entering], [data-exiting]) {
+  animation-duration: 1ms;
+}
+
 html[data-motion-reduce="true"] .sp-icon-pop,
 :where([data-sp-motion="reduced"]) .sp-icon-pop {
   animation-duration: 1ms;
@@ -405,6 +473,10 @@ html[data-motion-reduce="true"] .sp-shimmer,
 
   .sp-floating-panel {
     transition-duration: 1ms;
+  }
+
+  .sp-floating-panel:is([data-entering], [data-exiting]) {
+    animation-duration: 1ms;
   }
 
   .sp-floating-panel[data-starting-style],

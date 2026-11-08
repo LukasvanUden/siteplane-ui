@@ -32,15 +32,8 @@
     padding: var(--sp-rw-space-4);
   }
 
-  .sp-date-picker-popover[data-entering] {
-    animation: sp-date-picker-enter var(--motion-duration-overlay)
-      var(--motion-ease-standard) both;
-  }
-
-  .sp-date-picker-popover[data-exiting] {
-    animation: sp-date-picker-exit var(--motion-duration-fast)
-      var(--motion-ease-soft-in-out) both;
-  }
+  /* The popover opens and closes with the motion of every floating panel
+   * (motion.css), which runs as keyframes for React Aria's popovers. */
 
   /* A picker that confirms its value opens a panel instead (Date Picker
    * `confirm`, and the Date Range Picker and Date Time Picker with
@@ -121,33 +114,5 @@
    * chassis's fill rule). */
   .sp-date-picker-actions[data-action-layout="fill"] {
     flex: 1 1 auto;
-  }
-
-  @keyframes sp-date-picker-enter {
-    from {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @keyframes sp-date-picker-exit {
-    to {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sp-date-picker-popover[data-entering],
-    .sp-date-picker-popover[data-exiting] {
-      animation-duration: 1ms;
-    }
-  }
-
-  html[data-motion-reduce="true"] .sp-date-picker-popover[data-entering],
-  html[data-motion-reduce="true"] .sp-date-picker-popover[data-exiting],
-  [data-sp-motion="reduced"] .sp-date-picker-popover[data-entering],
-  [data-sp-motion="reduced"] .sp-date-picker-popover[data-exiting] {
-    animation-duration: 1ms;
   }
 }

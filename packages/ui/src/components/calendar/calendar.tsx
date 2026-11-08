@@ -63,6 +63,14 @@ export type CalendarSelectionMode = "multiple" | "range" | "single";
 type PointCalendarSelectionMode = Exclude<CalendarSelectionMode, "range">;
 
 /**
+ * The sizes of a calendar: the provider's control sizes and `xs`, the compact
+ * calendar with 32 px days for a narrow column, 1.x's `sm` (Lukas, 7 November
+ * 2026). A provider never gives `xs`, since its sizes start at sm, so a
+ * calendar takes it only from its own `size`.
+ */
+export type CalendarSize = "xs" | SiteplaneControlSize;
+
+/**
  * A range of days, from its first day to its last. An end is unset while the
  * range is incomplete.
  */
@@ -145,7 +153,12 @@ type CalendarBaseProps = CalendarOptions & {
   onMonthChange?: ((month: Date) => void) | undefined;
   /** Keeps the selection as it is; the user can still move through months. */
   readOnly?: boolean | undefined;
-  size?: SiteplaneControlSize | undefined;
+  /**
+   * The size of the days: 32, 40, 48, 52 and 56 px from `xs` to `xl`.
+   * Without it, the provider's control size, `sm` by default; `xs` comes only
+   * from this prop.
+   */
+  size?: CalendarSize | undefined;
 };
 
 export type CalendarSingleProps = CalendarBaseProps & {
@@ -692,7 +705,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
   shortcuts?: readonly CalendarRangeShortcut[] | undefined;
   showDateInput?: boolean;
   showToday?: boolean;
-  size: SiteplaneControlSize;
+  size: CalendarSize;
   state: CalendarState<M> | RangeCalendarState;
   todayDate?: CalendarDate | undefined;
   visibleMonths?: number;
@@ -700,6 +713,12 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
 }) {
   const { locale } = useLocale();
   const messages = useSiteplaneMessages("calendar");
+  // The days, the header and the month and year picker take every size, xs
+  // too. The date input and the List Box of shortcuts start at sm, as every
+  // field and List Box does, so at xs they take sm, as a Table's checkbox
+  // takes its smallest step at xs; Today keeps the height of the input
+  // beside it.
+  const controlSize: SiteplaneControlSize = size === "xs" ? "sm" : size;
 
   // The Calendar tells a change of month by the day that had focus last, and
   // places a controlled month by the months on screen.
@@ -795,7 +814,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
           <CalendarDateEntry
             isDisabled={isDisabled}
             onSelect={selectDay}
-            size={size}
+            size={controlSize}
             state={state}
           />
         ) : null}
@@ -806,7 +825,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
               isDisabled || state.isReadOnly || !isDateAllowed(todayValue)
             }
             onClick={() => selectDay(todayValue)}
-            size={size}
+            size={controlSize}
           >
             {messages.today}
           </Button>
@@ -837,7 +856,7 @@ function CalendarContent<M extends PointCalendarSelectionMode>({
             if (shortcut) selectShortcut(shortcut.value);
           }}
           selectionAppearance="row"
-          size={size}
+          size={controlSize}
           // No choice is selected while the range matches none.
           value={matchingShortcut?.label ?? ""}
         >
@@ -1150,7 +1169,7 @@ function CalendarMonthHeading<M extends PointCalendarSelectionMode>({
   locale: string;
   navigationMotion: CalendarNavigationMotion | null;
   pickerState: CalendarState<M> | RangeCalendarState;
-  size: SiteplaneControlSize;
+  size: CalendarSize;
   state: CalendarState<M> | RangeCalendarState;
 }) {
   const messages = useSiteplaneMessages("calendar");
