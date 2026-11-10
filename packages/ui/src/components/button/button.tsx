@@ -183,6 +183,14 @@ function flashesBorder({
   return !(profile === "default" && chassis === "link");
 }
 
+/**
+ * The tones of a Button's status dot (`indicator`), the tones of the kit's
+ * BadgeDot: an error behind the Button, a warning, a success, information or
+ * something new in the accent.
+ */
+export type ButtonIndicator =
+  "accent" | "error" | "info" | "success" | "warning";
+
 /** Every size the chassis draws, the CloseButton's own step included. */
 type ButtonChassisSize = NonNullable<
   VariantProps<typeof buttonVariants>["size"]
@@ -211,6 +219,21 @@ export interface ButtonBaseProps extends useRender.ComponentProps<"button"> {
   align?: "center" | "start" | "between";
   multiline?: boolean;
   width?: "auto" | "fit" | "full";
+  /**
+   * A status dot, such as an error in a panel the Button shows or something
+   * new behind a bell: the kit's BadgeDot in the tone named, 8 px, cut out of
+   * the Button by a 2 px ring in the colour of the surface, as the corner marks
+   * of an Avatar are. It sits on the top-end corner of the Button's glyph, the
+   * leading icon of a labelled Button, and on the top-end corner of the content
+   * of a Button without one. Name what it means with `indicatorLabel`.
+   */
+  indicator?: ButtonIndicator | undefined;
+  /**
+   * What the dot means, such as "Errors in the fields": the Button's
+   * description for assistive technology, read after its name. Without it the
+   * dot is decoration only.
+   */
+  indicatorLabel?: string | undefined;
 }
 
 /**
@@ -336,6 +359,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
   // Kit components pass internal profiles through KitButton
   // (button-internal.ts), the same function with the wider props type.
   const {
+    "aria-describedby": ariaDescribedByProp,
     "aria-disabled": ariaDisabledProp,
     // Read here and never forwarded: the attribute is the Button's own.
     "data-flash": flashProp,
@@ -349,6 +373,8 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
     loading = false,
     showTextWhileLoading = false,
     multiline = false,
+    indicator,
+    indicatorLabel,
     onClick,
     onClickCapture,
     onKeyDown,
@@ -370,6 +396,14 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
     ariaDisabledProp === "true",
   );
   const loadingBesideText = loading && showTextWhileLoading;
+  // The dot's meaning is a hidden part of the Button that its description
+  // names, so a labelled Button keeps its name and both read it once.
+  const indicatorId = React.useId();
+  const indicatorNamed = Boolean(indicator && indicatorLabel);
+  const describedBy =
+    [ariaDescribedByProp, indicatorNamed ? indicatorId : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
   // The spinner only shows the busy state that aria-busy already announces, so
   // it stays out of the accessible name: a status region inside the Button
   // would read "Loading Saving" where the label alone says "Saving".
@@ -507,6 +541,24 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
         >
           {loadingBesideText ? loadingIndicator : null}
           {content}
+          {indicator ? (
+            <span
+              aria-hidden="true"
+              className="sp-button-indicator"
+              data-slot="button-indicator"
+              data-variant={indicator}
+            />
+          ) : null}
+          {indicatorNamed ? (
+            <span
+              className="sp-button-indicator-label"
+              data-slot="button-indicator-label"
+              hidden
+              id={indicatorId}
+            >
+              {indicatorLabel}
+            </span>
+          ) : null}
         </span>
         {loadingBesideText ? null : loadingIndicator}
       </>
@@ -523,6 +575,7 @@ export function Button(buttonProps: ButtonProps): React.ReactElement {
       className,
     ),
     "aria-busy": loading || undefined,
+    "aria-describedby": describedBy,
     "aria-disabled": isAriaDisabled || undefined,
     "data-align": align === "center" ? undefined : align,
     "data-loading": loading ? "" : undefined,

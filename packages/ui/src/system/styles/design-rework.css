@@ -9782,6 +9782,25 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   border-color: var(--sp-semantic-color-border-strong);
 }
 
+/* A selected Card (Card selected) is chosen as a checked choice card is: the
+ * strong edge and the accent fill at half (Lukas, 10 November 2026, lab
+ * "Ausgewählte Karte", app finding 25). The Card draws its edge as a ring of
+ * its shadow, outside its box, so the strong edge is an outline on that ring
+ * and the shadow stays; the fill lies over the surface colour, under the
+ * content. A glass card keeps its own fill and takes the edge alone. */
+:root .sp-card[data-selected] {
+  outline: var(--sp-rw-border-default) solid
+    var(--sp-semantic-color-border-strong);
+  outline-offset: var(--sp-rw-border-default);
+}
+
+:root .sp-card[data-selected]:not([data-variant="glass"]) {
+  background-image: linear-gradient(
+    color-mix(in oklab, var(--sp-semantic-color-accent) 50%, transparent),
+    color-mix(in oklab, var(--sp-semantic-color-accent) 50%, transparent)
+  );
+}
+
 :root :where(label):has(:where(.sp-checkbox, .sp-radio, .sp-switch)):active,
 :root :where(.sp-label):has(:where(.sp-checkbox, .sp-radio, .sp-switch)):active,
 :root
@@ -13221,19 +13240,21 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
  * the tone of the variant, success, warning, error or destructive, info or
  * accent, the fill of a colour tint (slate, sky, blue, indigo, purple, pink and
  * orange), and otherwise the grey of the Avatar's offline dot. A dot or an
- * icon with a variant of its own takes that tone by the same rule. On a solid
- * fill (accent, destructive, inverse) the tone would vanish, so the dot takes
- * the text colour that reads on it; the status profile has no fill and keeps
- * the tone. */
+ * icon with a variant of its own, and a Button's status dot, take that tone
+ * by the same rule. On a solid fill (accent, destructive, inverse) the tone
+ * would vanish, so the dot takes the text colour that reads on it; the status
+ * profile has no fill and keeps the tone. */
 :root .sp-base-badge[data-variant="success"],
 :root .sp-badge-dot[data-variant="success"],
-:root .sp-badge-icon[data-variant="success"] {
+:root .sp-badge-icon[data-variant="success"],
+:root .sp-button-indicator[data-variant="success"] {
   --sp-badge-dot-color: var(--color-success);
 }
 
 :root .sp-base-badge[data-variant="warning"],
 :root .sp-badge-dot[data-variant="warning"],
-:root .sp-badge-icon[data-variant="warning"] {
+:root .sp-badge-icon[data-variant="warning"],
+:root .sp-button-indicator[data-variant="warning"] {
   --sp-badge-dot-color: var(--color-warning);
 }
 
@@ -13241,13 +13262,20 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
   .sp-base-badge:where([data-variant="error"], [data-variant="destructive"]),
 :root .sp-badge-dot:where([data-variant="error"], [data-variant="destructive"]),
 :root
-  .sp-badge-icon:where([data-variant="error"], [data-variant="destructive"]) {
+  .sp-badge-icon:where([data-variant="error"], [data-variant="destructive"]),
+:root
+  .sp-button-indicator:where(
+    [data-variant="error"],
+    [data-variant="destructive"]
+  ) {
   --sp-badge-dot-color: var(--color-destructive);
 }
 
 :root .sp-base-badge:where([data-variant="info"], [data-variant="accent"]),
 :root .sp-badge-dot:where([data-variant="info"], [data-variant="accent"]),
-:root .sp-badge-icon:where([data-variant="info"], [data-variant="accent"]) {
+:root .sp-badge-icon:where([data-variant="info"], [data-variant="accent"]),
+:root
+  .sp-button-indicator:where([data-variant="info"], [data-variant="accent"]) {
   --sp-badge-dot-color: var(--sp-rw-bg-accent);
 }
 
@@ -13303,14 +13331,54 @@ html[data-motion-reduce="true"] .sp-tab-indicator,
 }
 
 /* The dot, a part of a badge (BadgeDot) that the status profile renders before
- * its words: 8 px in a 10 px box in every variant. */
-:root .sp-badge-dot {
+ * its words, and a Button's status dot: 8 px in a 10 px box in every variant.
+ * Each part keys on its own class (rulebook P6). */
+:root .sp-badge-dot,
+:root .sp-button-indicator {
   width: var(--sp-badge-dot-size, var(--sp-rw-space-2));
   height: var(--sp-badge-dot-size, var(--sp-rw-space-2));
   margin: calc(var(--sp-rw-space-0-5) / 2);
   flex-shrink: 0;
   border-radius: var(--sp-rw-radius-full);
   background: var(--sp-badge-dot-color, var(--color-muted-foreground));
+}
+
+/* A Button's status dot (Button indicator) is the badge's dot, drawn by the
+ * dot's rules above and cut out of the Button by a 2 px ring in the colour of
+ * the surface, as the corner marks of an Avatar are (Lukas, 10 November 2026,
+ * lab "Punkt am Icon-Knopf", app finding 34). It sits on the top-end corner of an icon Button's glyph: the content
+ * row is the Button's centred box, so the glyph's corner lies half a glyph
+ * from its middle, and the dot's own margin sets it 1 px inside the glyph's
+ * end and 1 px over its top. A labelled Button takes it on its leading icon
+ * in the same place, and one without an icon on the top-end corner of its
+ * content. */
+:root .sp-button-indicator {
+  position: absolute;
+  inset-block-start: -2px;
+  inset-inline-end: -2px;
+  box-shadow: 0 0 0 2px
+    var(
+      --sp-button-indicator-ring,
+      var(--sp-rw-surface-color, var(--sp-rw-bg-base))
+    );
+  pointer-events: none;
+}
+
+:root [data-chassis][data-size^="icon"] .sp-button-indicator {
+  inset-block-start: calc(50% - var(--sp-rw-button-icon) / 2 - 2px);
+  inset-inline-end: calc(50% - var(--sp-rw-button-icon) / 2);
+}
+
+/* A labelled Button with a leading icon takes the dot on that glyph's corner
+ * too: the glyph starts at the content's start, so its end lies a glyph from
+ * it, and the dot ends 1 px inside it. */
+:root
+  [data-chassis]:not([data-size^="icon"])
+  > .sp-button-content:has(> svg:first-child)
+  > .sp-button-indicator {
+  inset-block-start: calc(50% - var(--sp-rw-button-icon) / 2 - 2px);
+  inset-inline-start: calc(var(--sp-rw-button-icon) - 10px);
+  inset-inline-end: auto;
 }
 
 /* A coloured icon, a part of a badge (BadgeIcon): the badge's icon in the tone

@@ -24,6 +24,7 @@ export function Card({
   density,
   hoverColor,
   render,
+  selected,
   variant = "raised",
   ...props
 }: useRender.ComponentProps<"div"> & {
@@ -40,6 +41,14 @@ export function Card({
    * and description turn dark on it.
    */
   hoverColor?: CardHoverColor | undefined;
+  /**
+   * Draws the card as the chosen one of a set, such as the change a review
+   * shows beside its preview: the strong edge and the accent fill at half,
+   * the look of a checked choice card (Label variant="card"). It is a look
+   * only: the element that selects the card carries the state for assistive
+   * technology, such as aria-pressed, aria-selected or aria-current.
+   */
+  selected?: boolean | undefined;
   variant?:
     | "raised"
     | "subtle"
@@ -76,6 +85,7 @@ export function Card({
     // ContextMenu trigger), so the Card's base radius still reaches it.
     "data-foundation": "card",
     "data-hover-color": hoverColor,
+    "data-selected": selected ? "" : undefined,
     "data-slot": "card",
     "data-variant": variant,
   };

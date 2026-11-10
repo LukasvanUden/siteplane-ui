@@ -218,7 +218,7 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -248,9 +248,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/spinner.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/spinner.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json"
       ],
       "files": [
         {
@@ -309,11 +309,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/copy-button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/color-swatch-picker.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/copy-button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/color-swatch-picker.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json"
       ],
       "files": [
         {
@@ -365,8 +365,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json"
       ],
       "files": [
         {
@@ -422,10 +422,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -508,12 +508,12 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/locale.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/popover.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/date-field.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/list-box.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/list-box.json"
       ],
       "files": [
         {
@@ -571,14 +571,14 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/locale.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/popover.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/time-field.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/time-field.json"
       ],
       "files": [
         {
@@ -641,14 +641,14 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/list-box.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/popover.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/list-box.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/popover.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -706,11 +706,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/locale.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/locale.json"
       ],
       "files": [
         {
@@ -774,14 +774,14 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/date-field.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/locale.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/date-picker.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/date-picker.json"
       ],
       "files": [
         {
@@ -843,15 +843,15 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/calendar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/date-field.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/locale.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/time-field.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/date-picker.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/calendar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/date-field.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/locale.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/time-field.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/date-picker.json"
       ],
       "files": [
         {
@@ -912,11 +912,11 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/textarea.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/textarea.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -975,7 +975,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1018,8 +1018,8 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -1071,7 +1071,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1117,7 +1117,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1159,8 +1159,8 @@
       "description": "Menu button whose bars morph into a close icon. Search terms: actions.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -1210,7 +1210,7 @@
       "description": "Layered surface with headers, panels, descriptions and footers.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1257,8 +1257,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -1304,9 +1304,9 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json"
       ],
       "files": [
         {
@@ -1363,13 +1363,13 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/kbd.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/kbd.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -1416,7 +1416,7 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1437,7 +1437,7 @@
       "title": "German Messages",
       "description": "Every text of the kit in German, for the messages of the Locale Provider. Install it with @siteplane/locale and pass it as messages.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1456,7 +1456,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1504,10 +1504,10 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/avatar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/avatar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -1564,8 +1564,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/avatar.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/avatar.json"
       ],
       "files": [
         {
@@ -1624,8 +1624,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -1682,8 +1682,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json"
       ],
       "files": [
         {
@@ -1741,7 +1741,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1786,7 +1786,7 @@
       "title": "Credit Card",
       "description": "Show a payment card with its issuer, cardholder, number, expiry date and network mark, in one of thirteen looks. Search terms: payment method, card preview, bank card, billing.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -1845,9 +1845,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -1895,9 +1895,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/featured-icon.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/avatar.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/featured-icon.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/avatar.json"
       ],
       "files": [
         {
@@ -1962,7 +1962,7 @@
       "description": "Show a drawing of a cloud, a box, a credit card or a few documents, with an optional glyph, to give an empty state its picture. Search terms: empty state illustration, empty state picture, cloud illustration, no data drawing, zero state.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2018,7 +2018,7 @@
       "description": "Decorative loading placeholder with consumer-owned geometry.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2064,7 +2064,7 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2116,9 +2116,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -2168,10 +2168,10 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/copy-button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/copy-button.json"
       ],
       "files": [
         {
@@ -2238,8 +2238,8 @@
         "shiki@4.5.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/code.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/code.json"
       ],
       "files": [
         {
@@ -2256,7 +2256,7 @@
       "description": "Keyboard input notation for keys and grouped shortcuts.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2301,7 +2301,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2351,7 +2351,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2403,7 +2403,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2449,8 +2449,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json"
       ],
       "files": [
         {
@@ -2507,7 +2507,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2562,8 +2562,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/checkbox.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/checkbox.json"
       ],
       "files": [
         {
@@ -2611,7 +2611,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2668,7 +2668,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2725,7 +2725,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2777,9 +2777,9 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/toggle.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/toggle.json"
       ],
       "files": [
         {
@@ -2829,9 +2829,9 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/label.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/label.json"
       ],
       "files": [
         {
@@ -2883,10 +2883,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/label.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/label.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -2941,7 +2941,7 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -2987,7 +2987,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -3037,13 +3037,13 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/checkbox.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/radio-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/switch.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/radio-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/switch.json"
       ],
       "files": [
         {
@@ -3099,9 +3099,9 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json"
       ],
       "files": [
         {
@@ -3155,8 +3155,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -3205,7 +3205,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -3253,7 +3253,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -3301,10 +3301,10 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/switch.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/switch.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -3356,9 +3356,9 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/switch.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/switch.json"
       ],
       "files": [
         {
@@ -3408,8 +3408,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -3456,13 +3456,13 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/avatar.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/avatar-label-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/card.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/sidebar.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/avatar.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/avatar-label-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/sidebar.json"
       ],
       "files": [
         {
@@ -3521,8 +3521,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -3567,9 +3567,9 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -3629,10 +3629,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -3677,9 +3677,9 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/spinner.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/spinner.json"
       ],
       "files": [
         {
@@ -3742,7 +3742,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -3798,17 +3798,17 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/collapsible.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/sheet.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/skeleton.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/collapsible.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/sheet.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/skeleton.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -3874,7 +3874,7 @@
       "description": "The Menu under DropdownMenu-prefixed part names.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json"
       ],
       "files": [
         {
@@ -3923,11 +3923,11 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json"
       ],
       "files": [
         {
@@ -3971,7 +3971,7 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -4029,12 +4029,12 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -4086,8 +4086,8 @@
         "class-variance-authority@0.7.1"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -4139,7 +4139,7 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -4197,11 +4197,11 @@
         "react-aria-components@1.20.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/checkbox.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/checkbox.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -4259,10 +4259,10 @@
       "description": "Type free-text tags into a field that shows each one as a removable tag before the text. Search terms: tag input, chips input, keywords, email list, multi value input.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tag-group.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tag-group.json"
       ],
       "files": [
         {
@@ -4324,10 +4324,10 @@
       "description": "Searchable keyboard-first action collection.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/autocomplete.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/dialog.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/menu.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/autocomplete.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/dialog.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/menu.json"
       ],
       "files": [
         {
@@ -4373,8 +4373,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -4418,8 +4418,8 @@
       "description": "Show which page of a carousel or a short sequence is current, as dots or line segments, and go to another page. Search terms: carousel dots, carousel indicator, pagination dots, slide indicator.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -4478,9 +4478,9 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/page-indicator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/page-indicator.json"
       ],
       "files": [
         {
@@ -4541,7 +4541,7 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -4583,8 +4583,8 @@
       "description": "Responsive application frame with a sidebar, a header and scrolling content. Search terms: sticky header.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/sidebar.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/sidebar.json"
       ],
       "files": [
         {
@@ -4635,12 +4635,12 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tabs.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tabs.json"
       ],
       "files": [
         {
@@ -4697,8 +4697,8 @@
       "description": "Right-side drawer for the details of a record, with an optional edit form.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/drawer.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/drawer.json"
       ],
       "files": [
         {
@@ -4746,10 +4746,10 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -4807,9 +4807,9 @@
       "description": "Sectioned settings surface with passive items and consumer-provided controls, tags and supporting content. Search terms: preferences, rows.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/card.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -4855,7 +4855,7 @@
       "description": "Show the details of one record as label and value rows, side by side or stacked. Search terms: description list, detail list, key value, properties, dl.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -4909,8 +4909,8 @@
         "@base-ui/react@1.7.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -4967,10 +4967,10 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -5027,11 +5027,11 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/textarea.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/textarea.json"
       ],
       "files": [
         {
@@ -5092,8 +5092,8 @@
       "description": "Sign in with Google, Facebook, Apple, X, Figma or Dribbble on a button that shows the provider's logo, in its brand color or neutral. Search terms: social login, continue with Apple, OAuth, SSO, login button.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -5155,9 +5155,9 @@
       "description": "Link to your app on the App Store, Google Play, Galaxy Store or AppGallery with a badge that shows the store's mark and name, in black or as an outline. Search terms: app store badge, store badge, download on the App Store, get it on Google Play, mobile app download.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/social-button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/social-button.json"
       ],
       "files": [
         {
@@ -5220,11 +5220,11 @@
       "description": "Choose files in a field that shows their names and ends with an Upload button, and send them with a form. Search terms: file upload, upload field, attachment, browse files.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/spinner.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/spinner.json"
       ],
       "files": [
         {
@@ -5285,7 +5285,7 @@
       "description": "A glyph in a tinted circle, a solid or raised square or with pulsing rings, to lead a message, a dialog or an empty state. Search terms: icon container, icon badge, status icon, pulse.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -5342,10 +5342,10 @@
       "description": "Feature one offer or status in a sidebar or a panel, such as the storage a team has used, with its progress and a pair of link actions. Search terms: upgrade card, usage card, storage card, sidebar card, promo card.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/card.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/progress.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/card.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/progress.json"
       ],
       "files": [
         {
@@ -5403,8 +5403,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -5463,8 +5463,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/toggle.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/toggle.json"
       ],
       "files": [
         {
@@ -5516,9 +5516,9 @@
       "description": "Show how a total divides into shares as a donut or pie chart. Search terms: ring, distribution.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json"
       ],
       "files": [
         {
@@ -5586,9 +5586,9 @@
       "description": "Show progress toward a goal as a ring that fills, or compare a few measures as concentric rings against one maximum. Search terms: progress circle, progress ring, activity rings, gauge.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json"
       ],
       "files": [
         {
@@ -5652,10 +5652,10 @@
       "description": "Compare one or several series across a handful of measures on spokes that share one value axis. Search terms: spider chart, web chart, polar chart, star chart.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json"
       ],
       "files": [
         {
@@ -5722,7 +5722,7 @@
         "@types/react-file-icon@1.0.5"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -5778,8 +5778,8 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json"
       ],
       "files": [
         {
@@ -5837,8 +5837,8 @@
       "description": "Native HTML table in the look of Table, for content that people read and for cells whose inputs and buttons keep their own tab stops. Search terms: static table, report, markdown table.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/table.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/table.json"
       ],
       "files": [
         {
@@ -5897,7 +5897,7 @@
         "motion@12.43.0"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -6029,10 +6029,10 @@
         "@types/d3-array@3.2.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/badge.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/badge.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -6143,8 +6143,8 @@
       "title": "Line Chart",
       "description": "Show how one or several measures change over time or across ordered categories. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json"
       ],
       "files": [
         {
@@ -6205,8 +6205,8 @@
       "title": "Area Chart",
       "description": "Show how one or several measures change over time as filled areas, overlaid or stacked. Search terms: trend, time series, graph, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json"
       ],
       "files": [
         {
@@ -6272,9 +6272,9 @@
         "d3-scale@4.0.2"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json"
       ],
       "files": [
         {
@@ -6351,9 +6351,9 @@
       "title": "Sparkline",
       "description": "Show the trend of one or several measures in a small chart without axes. Search terms: spark chart, spark line, spark area, mini chart, inline chart, metric.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -6412,10 +6412,10 @@
       "title": "Bar List",
       "description": "Rank labeled values with a bar for each, relative to the largest. Search terms: ranking, top list, leaderboard, horizontal bars, chart, analytics.",
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/chart.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/chart.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -6479,11 +6479,11 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/action-icons.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/action-icons.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json"
       ],
       "files": [
         {
@@ -6562,7 +6562,7 @@
       "description": "Lay out one turn of a conversation with the message, its actions and, in a chat between people, an avatar and a header. Search terms: chat message, message actions, message group.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -6618,7 +6618,7 @@
       "description": "Show the text of a chat message on a surface that fits its sender and purpose. Search terms: chat bubble, message bubble, speech bubble.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json"
       ],
       "files": [
         {
@@ -6673,8 +6673,8 @@
       "description": "Show a line in a conversation that is not a message, such as a status, a note or a date. Search terms: status line, system message, date separator, divider, thinking, typing indicator.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {
@@ -6734,10 +6734,10 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/collapsible.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/collapsible.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json"
       ],
       "files": [
         {
@@ -6803,10 +6803,10 @@
       "description": "Show a file or an image attached to a message or a draft, with its upload state. Search terms: thumbnail, file chip, file part, chat.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/scroll-area.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/scroll-area.json"
       ],
       "files": [
         {
@@ -6871,13 +6871,13 @@
         "@phosphor-icons/react@2.1.10"
       ],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/form.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/input-group.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/motion.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/tooltip.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/form.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/input-group.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/motion.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/tooltip.json"
       ],
       "files": [
         {
@@ -6948,11 +6948,11 @@
       "description": "Set rendered markdown, such as a chat answer or a document, in the kit's type, with a map for the components prop of a markdown renderer. Search terms: prose, typography, rich text, react-markdown, streamdown.",
       "dependencies": [],
       "registryDependencies": [
-        "https://ui.siteplane.io/registry/v/2.0.1/base.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/button.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/code.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/native-table.json",
-        "https://ui.siteplane.io/registry/v/2.0.1/separator.json"
+        "https://ui.siteplane.io/registry/v/2.1.0/base.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/button.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/code.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/native-table.json",
+        "https://ui.siteplane.io/registry/v/2.1.0/separator.json"
       ],
       "files": [
         {

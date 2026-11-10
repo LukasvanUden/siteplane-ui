@@ -207,12 +207,19 @@ function Toasts({
                     // Schrift", app finding 35: in one row the text column
                     // shrank to a few pixels).
                     "@max-[16rem]/toast:flex-wrap @max-[16rem]/toast:gap-y-2",
+                    // Below 12rem the icon stands above the text, in the row
+                    // of the close button, so the text below takes the whole
+                    // width: at 320 px and 200 % the text column kept about
+                    // 100 px beside the icon and the close button (Lukas,
+                    // 10 November 2026, lab "Toast schmal ohne Aktion", app
+                    // finding 36).
+                    "@max-[12rem]/toast:pe-3.5",
                   )}
                 >
                   {/* The text column may shrink, so a long title or
                       description wraps instead of pushing the action out
                       (rulebook K5). */}
-                  <div className="flex min-w-0 gap-2 @max-[16rem]/toast:basis-full">
+                  <div className="flex min-w-0 gap-2 @max-[16rem]/toast:basis-full @max-[12rem]/toast:flex-col @max-[12rem]/toast:gap-1">
                     {hasIcon && (
                       <div
                         className="sp-toast-icon [&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
@@ -248,8 +255,10 @@ function Toasts({
                       className={cn(
                         "sp-toast-action",
                         // Under the text it starts where the text does,
-                        // after the 16 px icon and its 8 px gap.
-                        hasIcon && "@max-[16rem]/toast:ms-6",
+                        // after the 16 px icon and its 8 px gap, and at the
+                        // start once the icon stands above the text.
+                        hasIcon &&
+                          "@max-[16rem]/toast:ms-6 @max-[12rem]/toast:ms-0",
                       )}
                       data-slot="toast-action"
                       render={<Button size="xs" />}
