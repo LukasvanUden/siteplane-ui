@@ -136,12 +136,15 @@ function Toasts({
               ? TOAST_ICONS[toast.type as keyof typeof TOAST_ICONS]
               : null;
           const toastData = toast.data as ToastData | undefined;
+          const hasIcon = Boolean(Icon) || toast.type === "loading";
 
           return (
             <Toast.Root
               key={toast.id}
               className={cn(
                 toastSurfaceClassName,
+                // The toast is the container its content row reads (below).
+                "@container/toast",
                 "absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none sp-toast-motion data-expanded:bg-(--sp-rw-surface-color) dark:data-expanded:bg-(--sp-rw-surface-color)",
                 "data-[position*=right]:right-0 data-[position*=right]:left-auto",
                 "data-[position*=left]:right-auto data-[position*=left]:left-0",
@@ -195,13 +198,22 @@ function Toasts({
                   className={cn(
                     toastContentClassName,
                     "flex items-center justify-between gap-1.5 overflow-hidden py-3 ps-3.5 pe-10 text-sm",
+                    // Below 16rem of the toast's width the action goes under
+                    // the text, in line with it, as the Alert's goes under
+                    // its text below 32rem of its width. A toast is 18 to
+                    // 22.5rem wide at a 16 px font, so this happens only at a
+                    // larger browser font, from about 150 % on a phone
+                    // (Lukas, 10 November 2026, lab "Toast bei großer
+                    // Schrift", app finding 35: in one row the text column
+                    // shrank to a few pixels).
+                    "@max-[16rem]/toast:flex-wrap @max-[16rem]/toast:gap-y-2",
                   )}
                 >
                   {/* The text column may shrink, so a long title or
                       description wraps instead of pushing the action out
                       (rulebook K5). */}
-                  <div className="flex min-w-0 gap-2">
-                    {(Icon || toast.type === "loading") && (
+                  <div className="flex min-w-0 gap-2 @max-[16rem]/toast:basis-full">
+                    {hasIcon && (
                       <div
                         className="sp-toast-icon [&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
                         data-slot="toast-icon"
@@ -233,7 +245,12 @@ function Toasts({
                   </div>
                   {toast.actionProps && (
                     <Toast.Action
-                      className="sp-toast-action"
+                      className={cn(
+                        "sp-toast-action",
+                        // Under the text it starts where the text does,
+                        // after the 16 px icon and its 8 px gap.
+                        hasIcon && "@max-[16rem]/toast:ms-6",
+                      )}
                       data-slot="toast-action"
                       render={<Button size="xs" />}
                     >

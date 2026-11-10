@@ -9,17 +9,20 @@ import {
 } from "react";
 
 // The kit's media utilities (sm:, md:, lg:, ...) use Tailwind's default
-// breakpoints, so the JS table names the same widths: a component that switches
-// in JS (Sidebar's sheet, Header Navigation's menu) and its CSS switch at the
-// same width.
+// breakpoints, so the JS table names the same widths in the same unit, rem: a
+// component that switches in JS (Sidebar's sheet, Header Navigation's menu)
+// and its CSS switch at the same width at every default font size of the
+// browser. md is 768 px at a 16 px font and 960 px at 20 px. In px the two
+// parted at a larger font, and between them neither the sheet nor the desktop
+// navigation showed (app finding 33, 10 November 2026).
 const BREAKPOINTS = {
-  "2xl": 1536,
-  "3xl": 1600,
-  "4xl": 2000,
-  lg: 1024,
-  md: 768,
-  sm: 640,
-  xl: 1280,
+  "2xl": 96,
+  "3xl": 100,
+  "4xl": 125,
+  lg: 64,
+  md: 48,
+  sm: 40,
+  xl: 80,
 } as const;
 
 type Breakpoint = keyof typeof BREAKPOINTS;
@@ -27,14 +30,27 @@ type Breakpoint = keyof typeof BREAKPOINTS;
 type BreakpointQuery =
   Breakpoint | `max-${Breakpoint}` | `${Breakpoint}:max-${Breakpoint}`;
 
+/** A breakpoint's width in rem, as Tailwind writes it; a number is px. */
+function queryWidth(value: Breakpoint | number): string {
+  return typeof value === "number" ? `${value}px` : `${BREAKPOINTS[value]}rem`;
+}
+
+// The range syntax of Tailwind's own queries, so a width between two whole
+// pixels, as at a browser zoom, falls on one side and never between them.
 function resolveMin(value: Breakpoint | number): string {
-  const px = typeof value === "number" ? value : BREAKPOINTS[value];
-  return `(min-width: ${px}px)`;
+  return `(width >= ${queryWidth(value)})`;
 }
 
 function resolveMax(value: Breakpoint | number): string {
-  const px = typeof value === "number" ? value : BREAKPOINTS[value];
-  return `(max-width: ${px - 1}px)`;
+  return `(width < ${queryWidth(value)})`;
+}
+
+/** The root element's font size in px, which a container query's rem is. */
+function rootFontSize(): number {
+  const size = Number.parseFloat(
+    getComputedStyle(document.documentElement).fontSize,
+  );
+  return Number.isFinite(size) && size > 0 ? size : 16;
 }
 
 function parseQuery(
@@ -46,7 +62,7 @@ function parseQuery(
     if (query.max != null) parts.push(resolveMax(query.max));
     if (query.pointer === "coarse") parts.push("(pointer: coarse)");
     if (query.pointer === "fine") parts.push("(pointer: fine)");
-    if (parts.length === 0) return "(min-width: 0px)";
+    if (parts.length === 0) return "(width >= 0px)";
     return parts.join(" and ");
   }
 
@@ -107,10 +123,13 @@ export function useIsMobile(): boolean {
  * Whether the element in `ref` is narrower than a breakpoint (`max-lg`) or at
  * least that wide (`lg`): the container query of a component that switches in
  * JS at its own width, as Header Navigation does, under the names its
- * container query utilities use. The server and the first render, before the
- * element is measured, get false. The element is measured before the first
- * paint and again whenever its width changes; it renders together with the
- * component that asks, as Header Navigation's row does.
+ * container query utilities use. The width is the breakpoint's rem in the root
+ * element's font size, as a CSS container query counts it, so the JS and an
+ * `@min-[64rem]` utility switch together at every font size. The server and
+ * the first render, before the element is measured, get false. The element is
+ * measured before the first paint and again whenever its width changes; it
+ * renders together with the component that asks, as Header Navigation's row
+ * does.
  */
 export function useContainerQuery(
   ref: RefObject<Element | null>,
@@ -121,9 +140,11 @@ export function useContainerQuery(
     const element = ref.current;
     if (!element) return;
     const max = query.startsWith("max-");
-    const px = BREAKPOINTS[(max ? query.slice(4) : query) as Breakpoint];
-    const measure = (width: number) =>
+    const rem = BREAKPOINTS[(max ? query.slice(4) : query) as Breakpoint];
+    const measure = (width: number) => {
+      const px = rem * rootFontSize();
       setMatches(max ? width < px : width >= px);
+    };
     measure(element.getBoundingClientRect().width);
     if (typeof ResizeObserver === "undefined") return;
     // A change of width is applied in the next frame, outside the observer's

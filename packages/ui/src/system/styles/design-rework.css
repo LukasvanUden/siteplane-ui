@@ -1242,11 +1242,24 @@
 /* Actions that fill a footer (data-action-layout="fill") share its row in
  * equal widths, as the actions of a CardFooter, of a ModalBlock footer and of
  * a carousel footer do (rulebook K1); a link keeps its own width. The rule
- * keys on the chassis, so a Button that a Close part re-slots counts too. */
+ * keys on the chassis, so a Button that a Close part re-slots counts too.
+ * An action is never narrower than its words: while they fit, the actions
+ * stay equal; one that needs more than its share takes it; when they do not
+ * fit side by side, each takes a row of its own; and a label wider than a
+ * whole row wraps onto more lines, as a multiline Button's does (Lukas,
+ * 10 November 2026, lab "Fußleiste bei großer Schrift", app finding 31: at a
+ * large font the equal halves cut "Request changes" to "Re…"). */
+:where([data-action-layout="fill"]) {
+  flex-wrap: wrap;
+}
+
 :where(
   [data-action-layout="fill"] > [data-chassis]:not([data-chassis="link"])
 ) {
   flex: 1;
+  min-width: fit-content;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 :where([data-chassis] svg) {
@@ -3704,8 +3717,9 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 }
 
 /* An inset side panel, a Drawer or a Sheet, takes the dialog's corners from
- * 640 px, where it stands clear of the screen's edges (C13). */
-@media (min-width: 640px) {
+ * Tailwind's sm, 40rem (640 px at a 16 px font), where it stands clear of the
+ * screen's edges (C13), with the sm: utilities that set it off them. */
+@media (width >= 40rem) {
   :root .sp-drawer-popup[data-position][data-variant="inset"],
   :root .sp-sheet-popup[data-variant="inset"] {
     border-radius: var(--sp-rw-radius-dialog);
@@ -5997,7 +6011,7 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
   background: var(--sp-rw-glow-pressed);
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   :root [data-chassis][data-profile="responsive-navigation"] {
     aspect-ratio: 1;
     padding: 0;
@@ -6529,33 +6543,52 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 }
 
 /* A multiline Button stays on the control scale (S1): one line is as tall as a
- * Button of the same size, and more lines grow from there. The padding of
- * every size centres one line in that height, and lg and xl also take it as
- * their minimum. A profile with its own
- * row recipe (menu rows, accordion, stepper) outranks these rules. The first
- * rule lets the height follow the lines at every size; it outranks each size
- * rule, the icon sizes below included. */
-:root [data-chassis][data-size][data-multiline] {
+ * Button of the same size, and more lines grow from there. An action that
+ * fills a footer is one too, so a label wider than a whole row wraps. The
+ * padding of every size centres one line in that height, and lg and xl also
+ * take it as their minimum. A profile with its own row recipe (menu rows,
+ * accordion, stepper) outranks these rules. The first rule lets the height
+ * follow the lines at every size; it outranks each size rule, the icon sizes
+ * below included. */
+:root [data-chassis][data-size][data-multiline],
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"])[data-size] {
   height: auto;
 }
 
-:root [data-chassis][data-multiline]:where([data-size="xs"]) {
+:root [data-chassis][data-multiline]:where([data-size="xs"]),
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"]):where([data-size="xs"]) {
   padding-block: calc((var(--sp-rw-control-xs) - 1lh) / 2);
 }
 
-:root [data-chassis][data-multiline]:where([data-size="sm"]) {
+:root [data-chassis][data-multiline]:where([data-size="sm"]),
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"]):where([data-size="sm"]) {
   padding-block: calc((var(--sp-rw-control-sm) - 1lh) / 2);
 }
 
-:root [data-chassis][data-multiline]:where([data-size="md"]) {
+:root [data-chassis][data-multiline]:where([data-size="md"]),
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"]):where([data-size="md"]) {
   padding-block: calc((var(--sp-rw-control-md) - 1lh) / 2);
 }
 
-:root [data-chassis][data-multiline]:where([data-size="lg"]) {
+:root [data-chassis][data-multiline]:where([data-size="lg"]),
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"]):where([data-size="lg"]) {
   min-height: var(--sp-rw-control-lg);
 }
 
-:root [data-chassis][data-multiline]:where([data-size="xl"]) {
+:root [data-chassis][data-multiline]:where([data-size="xl"]),
+:root
+  :where([data-action-layout="fill"])
+  > [data-chassis]:not([data-chassis="link"]):where([data-size="xl"]) {
   min-height: var(--sp-rw-control-xl);
 }
 
@@ -6713,7 +6746,8 @@ html[data-motion-reduce="true"] .sp-pagination-content::before {
 :where(
     [data-chassis][data-profile="default"]:not(
         [data-multiline],
-        [data-size^="icon-"]
+        [data-size^="icon-"],
+        [data-action-layout="fill"] > :not([data-chassis="link"])
       )
       > .sp-button-content
   )

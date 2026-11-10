@@ -423,7 +423,9 @@ export function CardFooter({
 }: useRender.ComponentProps<"div"> & {
   /**
    * `fill` lets the footer's buttons share its row in equal widths, such as
-   * Cancel and Apply under a calendar; a link keeps its own width. Unset, the
+   * Cancel and Apply under a calendar; a link keeps its own width. No button
+   * gets narrower than its words: they stack when they do not fit side by
+   * side, and a label wider than the row wraps. Unset, the
    * actions keep their own widths and its `className` lays out the row. Either
    * way they stand the action gap apart, 12 px, as in every footer of the
    * kit (design-rework.css).

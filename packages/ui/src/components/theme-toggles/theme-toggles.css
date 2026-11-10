@@ -22,7 +22,7 @@
     --sp-sun-moon-icon-size: 1.9375rem;
   }
 
-  @media (min-width: 640px) {
+  @media (width >= 40rem) {
     .sp-sun-moon-morph-toggle-root {
       --sp-sun-moon-icon-size: 1.5625rem;
     }
@@ -163,7 +163,7 @@
     --sp-layered-theme-icon-size: 1.625rem;
   }
 
-  @media (min-width: 640px) {
+  @media (width >= 40rem) {
     .sp-layered-theme-toggle-root {
       --sp-layered-theme-icon-size: 1.375rem;
     }

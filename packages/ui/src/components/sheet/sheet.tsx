@@ -212,8 +212,10 @@ export function SheetFooter({
 }: useRender.ComponentProps<"div"> & {
   /**
    * `fill` lets the Buttons of the footer share its row in equal widths, as
-   * the actions of a Card footer do; a link keeps its own width. Left unset
-   * the actions end the row at their own widths.
+   * the actions of a Card footer do; a link keeps its own width. No Button
+   * gets narrower than its words: they stack when they do not fit side by
+   * side, and a label wider than the row wraps. Left unset the actions end
+   * the row at their own widths.
    */
   actionLayout?: "fill" | undefined;
 }): React.ReactElement {

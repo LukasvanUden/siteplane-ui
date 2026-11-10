@@ -145,7 +145,7 @@ export function DatePickerPanel({
 /**
  * The footer of a picker's panel: what the picker shows at its start, such as
  * typed dates, and Cancel and Apply at its end. `fill` lets Cancel and Apply
- * share the footer in two equal halves.
+ * share the footer in two equal halves, never narrower than their words.
  */
 export function DatePickerFooter({
   actionLayout,

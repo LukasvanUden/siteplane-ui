@@ -120,7 +120,13 @@ export function Carousel({
   const [items, setItems] = React.useState<readonly HTMLElement[]>([]);
   const [uncontrolled, setUncontrolled] = React.useState(defaultIndex);
   const controlled = indexProp !== undefined;
-  const count = items.length;
+  // Until the slides have registered, which happens after the first render,
+  // the carousel counts the slides its markup declares, so the server's
+  // markup already shows a dot for every slide and the arrows in their state,
+  // and nothing moves when the page hydrates (app finding, real-world check,
+  // 10 November 2026: the dots appeared only after hydration).
+  const declared = React.useMemo(() => declaredSlides(children), [children]);
+  const count = items.length > 0 ? items.length : declared;
   const last = Math.max(count - 1, 0);
   // Before the slides have registered (the server's markup and the first
   // render) the slide asked for stands, so the track does not travel to it.
@@ -201,6 +207,27 @@ export function Carousel({
       </div>
     </CarouselContext.Provider>
   );
+}
+
+/**
+ * The slides a carousel's markup declares: every element among the children
+ * of its CarouselContent, each a slide, as the parts are composed. A slide
+ * that a component of the application renders elsewhere counts once it has
+ * registered.
+ */
+function declaredSlides(children: React.ReactNode): number {
+  let slides = 0;
+  React.Children.forEach(children, (child) => {
+    if (
+      !React.isValidElement<{ children?: React.ReactNode }>(child) ||
+      child.type !== CarouselContent
+    )
+      return;
+    React.Children.forEach(child.props.children, (slide) => {
+      if (React.isValidElement(slide)) slides += 1;
+    });
+  });
+  return slides;
 }
 
 /** How far a drag must go to turn the slide: a fifth of it, or a quick flick. */
